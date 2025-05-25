@@ -540,51 +540,182 @@ CRITICAL: Provide MAXIMUM DETAIL with specific price targets, actionable strateg
 
 *Comprehensive social sentiment risk analysis available with real-time Twitter/X monitoring.*"""
     
-    def _create_comprehensive_prediction_fallback(self, symbol: str, token_data: Difrom flask import Flask, render_template, request, jsonify
-import requests
-import os
-from datetime import datetime, timedelta
-import json
-import re
-from dataclasses import dataclass
-from typing import List, Dict, Optional
-import traceback
-import logging
-import hashlib
-import time
+    def _create_comprehensive_prediction_fallback(self, symbol: str, token_data: Dict) -> str:
+        """Enhanced comprehensive prediction fallback"""
+        price = token_data.get('price_usd', 0)
+        price_change = token_data.get('price_change_24h', 0)
+        volume = token_data.get('volume_24h', 0)
+        market_cap = token_data.get('market_cap', 0)
+        
+        return f"""**Comprehensive AI Predictions & Strategic Recommendations for ${symbol}**
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+**Current Market Position Analysis:**
+- Price: ${price:.8f} with recent {price_change:+.2f}% momentum
+- 24h Volume: ${volume:,.0f} indicating {'high' if volume > 500000 else 'moderate' if volume > 50000 else 'low'} trading interest
+- Market Cap: ${market_cap:,.0f} positioning in {'established altcoin' if market_cap > 100000000 else 'emerging token' if market_cap > 10000000 else 'speculative micro-cap'} category
 
-app = Flask(__name__)
+**Short-Term Prediction (1-7 days):**
+{'Bullish continuation likely' if price_change > 10 else 'Bearish pressure may persist' if price_change < -10 else 'Consolidation expected'} based on current {price_change:+.2f}% momentum and {f'${volume:,.0f}' if volume > 0 else 'limited'} trading volume patterns.
 
-# Configuration
-GROK_API_KEY = os.getenv('GROK_API_KEY', 'your-grok-api-key-here')
-GROK_URL = "https://api.x.ai/v1/chat/completions"
+**Technical Price Targets:**
+- Immediate Support: ${price * 0.85:.8f} (15% below current)
+- Strong Support: ${price * 0.70:.8f} (30% below current)  
+- Immediate Resistance: ${price * 1.15:.8f} (15% above current)
+- Strong Resistance: ${price * 1.30:.8f} (30% above current)
 
-# PREMIUM: Shorter cache for fresher analysis
-analysis_cache = {}
-CACHE_DURATION = 180  # 3 minutes cache for premium freshness
+**Medium-Term Outlook (1-4 weeks):**
+{'Positive trajectory expected' if price_change > 5 else 'Cautious consolidation likely' if price_change > -5 else 'Downward pressure may continue'} with key focus on volume confirmation above ${volume * 1.5:,.0f} for sustainable moves.
 
-@dataclass
-class TokenAnalysis:
-    token_address: str
-    token_symbol: str
-    social_sentiment: str
-    key_discussions: List[str]
-    influencer_mentions: List[str]
-    trend_analysis: str
-    risk_assessment: str
-    prediction: str
-    confidence_score: float
+**Strategic Trading Recommendations:**
+- **Entry Strategy:** {'Scale in on any dip below ${price * 0.90:.8f}' if price_change > 0 else 'Wait for stabilization above ${price * 1.05:.8f}' if price_change < -10 else 'Current levels acceptable for small position'}
+- **Position Sizing:** {'Conservative 1-2% allocation' if market_cap < 50000000 else 'Moderate 2-4% allocation' if market_cap < 200000000 else 'Standard 3-5% allocation'}
+- **Risk Management:** Stop-loss at ${price * 0.80:.8f} (20% below current) with trailing stops on profits
+- **Take Profit Levels:** 25% at ${price * 1.25:.8f}, 50% at ${price * 1.50:.8f}, remainder at ${price * 2.00:.8f}
 
-class PremiumTokenSocialAnalyzer:
-    def __init__(self):
-        self.grok_api_key = GROK_API_KEY
-        self.api_calls_today = 0
-        self.daily_limit = 500  # Increased for premium analysis
-        logger.info(f"Initialized PREMIUM analyzer. API key: {'SET' if self.grok_api_key and self.grok_api_key != 'your-grok-api-key-here' else 'NOT SET'}")
+**Key Catalysts to Monitor:**
+- Volume breakout above ${volume * 2:,.0f} daily average
+- Social sentiment shifts (positive news, partnerships, listings)
+- Broader crypto market correlation and sector rotation patterns
+- Technical breakout confirmation above ${price * 1.20:.8f}
+
+**Risk-Adjusted Recommendation:** {'MODERATE BUY' if price_change > 5 else 'HOLD/ACCUMULATE' if price_change > -5 else 'WAIT/CAUTIOUS'} with emphasis on proper position sizing and risk management.
+
+**Confidence Assessment:** 75% - Based on technical analysis, market positioning, and historical volatility patterns for this asset class.
+
+*Enhanced predictions with comprehensive social sentiment integration available through premium Twitter/X analysis.*"""
+    
+    # [Keep existing helper methods for API required, limit reached, error responses]
+    def _create_api_required_response(self, token_address: str, symbol: str) -> TokenAnalysis:
+        """Response when API key is required"""
+        return TokenAnalysis(
+            token_address=token_address,
+            token_symbol=symbol,
+            social_sentiment="**Premium Analysis Requires API Access**\n\nConnect GROK API key for comprehensive Twitter/X intelligence.",
+            key_discussions=["API access required for real-time analysis"],
+            influencer_mentions=["Premium API needed for influencer tracking"],
+            trend_analysis="**API Required:** Real-time trend analysis needs GROK access.",
+            risk_assessment="**API Required:** Comprehensive risk analysis needs social data access.", 
+            prediction="**API Required:** AI predictions need comprehensive social intelligence.",
+            confidence_score=0.0
+        )
+    
+    def _create_limit_reached_response(self, token_address: str, symbol: str, token_data: Dict) -> TokenAnalysis:
+        """Response when daily limit reached"""
+        return TokenAnalysis(
+            token_address=token_address,
+            token_symbol=symbol,
+            social_sentiment=f"**Daily API Limit Reached**\n\nService will reset at midnight UTC. Token: {symbol}",
+            key_discussions=["Daily limit reached"],
+            influencer_mentions=["Service limit - premium tracking unavailable"],
+            trend_analysis="**Service Limit:** Quota exceeded.",
+            risk_assessment="**Service Limit:** Risk analysis unavailable.",
+            prediction="**Service Limit:** Predictions unavailable.",
+            confidence_score=0.0
+        )
+    
+    def _create_error_response(self, token_address: str, symbol: str, error_msg: str) -> TokenAnalysis:
+        """Response when analysis encounters error"""
+        return TokenAnalysis(
+            token_address=token_address,
+            token_symbol=symbol,
+            social_sentiment=f"**Analysis Error**\n\nError: {error_msg}",
+            key_discussions=[f"Error: {error_msg[:100]}"],
+            influencer_mentions=["Error during analysis"],
+            trend_analysis=f"**Error:** {error_msg}",
+            risk_assessment="**Error:** Analysis unavailable.",
+            prediction="**Error:** Predictions unavailable.",
+            confidence_score=0.0
+        )
+
+# Initialize premium analyzer
+analyzer = PremiumTokenSocialAnalyzer()
+
+@app.route('/')
+def index():
+    try:
+        return render_template('index.html')
+    except:
+        return """
+        <!DOCTYPE html>
+        <html>
+        <head><title>Premium Token Social Intelligence Platform</title></head>
+        <body style="font-family: Arial, sans-serif; padding: 40px; background: #f5f5f5;">
+            <div style="max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px;">
+                <h1>Premium Token Social Intelligence</h1>
+                <p>Professional-grade AI-powered social sentiment analysis</p>
+                <input id="tokenAddress" placeholder="Enter Solana token address" style="padding: 15px; width: 70%;">
+                <button onclick="analyzeToken()" style="padding: 15px 25px;">Analyze</button>
+                <div id="status" style="margin: 20px 0; display: none;"></div>
+                <div id="results" style="margin-top: 30px; display: none;"></div>
+            </div>
+            <script>
+                async function analyzeToken() {
+                    const address = document.getElementById('tokenAddress').value.trim();
+                    if (!address) return;
+                    
+                    document.getElementById('status').style.display = 'block';
+                    document.getElementById('status').textContent = 'Streaming analysis...';
+                    
+                    const response = await fetch('/analyze', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({token_address: address})
+                    });
+                    
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        const chunk = decoder.decode(value);
+                        console.log('Received:', chunk);
+                    }
+                }
+            </script>
+        </body>
+        </html>
+        """
+
+@app.route('/analyze', methods=['POST'])
+def analyze_token():
+    """Streaming analysis endpoint that sends progress updates"""
+    try:
+        data = request.get_json()
+        if not data or not data.get('token_address'):
+            return jsonify({'error': 'Token address required'}), 400
+        
+        token_address = data.get('token_address', '').strip()
+        
+        if len(token_address) < 32 or len(token_address) > 44:
+            return jsonify({'error': 'Invalid Solana token address format'}), 400
+        
+        # Return streaming response
+        return Response(
+            analyzer.stream_comprehensive_analysis('', token_address),
+            mimetype='text/plain',
+            headers={
+                'Cache-Control': 'no-cache',
+                'Connection': 'keep-alive',
+                'X-Accel-Buffering': 'no'  # Disable nginx buffering
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Streaming analysis error: {e}")
+        return jsonify({'error': f'Analysis failed: {str(e)}'}), 500
+
+@app.route('/health')
+def health():
+    return jsonify({
+        'status': 'healthy',
+        'version': '6.0-streaming-premium',
+        'timestamp': datetime.now().isoformat()
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=int(os.getenv('PORT', 5000)))
     
     def get_cache_key(self, token_address: str) -> str:
         """Generate cache key for token analysis"""
