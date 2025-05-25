@@ -68,7 +68,7 @@
 
         .input-group {
             flex: 1;
-            min-width: 350px;
+            min-width: 300px;
         }
 
         .input-group label {
@@ -79,7 +79,7 @@
             font-size: 1.1rem;
         }
 
-        .input-group input {
+        .input-group input, .input-group select {
             width: 100%;
             padding: 16px 20px;
             border: 2px solid #e5e7eb;
@@ -89,11 +89,20 @@
             background: #fafafa;
         }
 
-        .input-group input:focus {
+        .input-group input:focus, .input-group select:focus {
             outline: none;
             border-color: #667eea;
             background: white;
             box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .mode-selector {
+            min-width: 200px;
+        }
+
+        .mode-selector select {
+            font-weight: 600;
+            color: #374151;
         }
 
         .analyze-btn {
@@ -209,6 +218,110 @@
             margin-bottom: 30px;
         }
 
+        /* Sentiment Metrics Visualization Section */
+        .sentiment-metrics-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(230,230,230,0.8);
+            width: 100%;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .metric-visual {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+        }
+
+        .circular-progress {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(#667eea 0deg, #667eea var(--progress), #e5e7eb var(--progress), #e5e7eb 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .circular-progress::before {
+            content: '';
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            position: absolute;
+        }
+
+        .metric-value {
+            position: relative;
+            z-index: 1;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .metric-description {
+            font-size: 0.8rem;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        /* Thermometer style for some metrics */
+        .thermometer {
+            width: 20px;
+            height: 80px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            margin: 0 auto 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thermometer-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to top, #ef4444, #f59e0b, #10b981);
+            border-radius: 10px;
+            transition: height 1s ease-in-out;
+        }
+
         .social-sentiment-card {
             background: white;
             border-radius: 20px;
@@ -219,17 +332,8 @@
         }
 
         .social-sentiment-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 30px;
             margin-top: 20px;
-        }
-
-        .sentiment-column {
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
+            line-height: 1.7;
         }
 
         .side-by-side-container {
@@ -302,12 +406,6 @@
             font-size: 1.1rem;
         }
 
-        .section-content .content-subheading {
-            font-weight: 600;
-            color: #374151;
-            margin: 15px 0 8px 0;
-        }
-
         .section-content p {
             margin-bottom: 15px;
         }
@@ -322,14 +420,25 @@
             color: #4b5563;
         }
 
-        .twitter-account {
-            background: #e1f5fe;
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin: 5px 0;
-            font-family: monospace;
+        .influencer-item {
+            background: linear-gradient(135deg, #e1f5fe, #f0f9ff);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 4px solid #03a9f4;
+            font-family: 'Inter', sans-serif;
             color: #0277bd;
-            border-left: 3px solid #03a9f4;
+            font-size: 0.95rem;
+        }
+
+        .discussion-topic {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 4px solid #16a34a;
+            color: #166534;
+            font-size: 0.95rem;
         }
 
         .confidence-section {
@@ -538,8 +647,8 @@
 
         /* Mobile responsiveness */
         @media (max-width: 1024px) {
-            .social-sentiment-content {
-                grid-template-columns: 1fr;
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .side-by-side-container {
@@ -568,7 +677,7 @@
                 padding: 20px;
             }
 
-            .social-sentiment-content {
+            .metrics-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -610,6 +719,13 @@
                         value=""
                     >
                 </div>
+                <div class="input-group mode-selector">
+                    <label for="analysisMode">Analysis Mode:</label>
+                    <select id="analysisMode">
+                        <option value="analytical">📊 Analytical</option>
+                        <option value="degenerate">🎯 Degenerate</option>
+                    </select>
+                </div>
                 <button class="analyze-btn" onclick="analyzeToken()">
                     🔍 Analyze Token
                 </button>
@@ -621,15 +737,15 @@
                     <div style="text-align: left; max-width: 500px; margin: 0 auto;">
                         <div style="margin-bottom: 15px; color: #667eea; font-weight: 600;">🚀 Progressive Premium Analysis</div>
                         <div id="progressStep1" class="progress-step">
-                            <span>📊 Social Sentiment Analysis</span>
+                            <span>📊 Social Intelligence Gathering</span>
                             <span class="step-status">Waiting...</span>
                         </div>
                         <div id="progressStep2" class="progress-step">
-                            <span>👑 Key Influencer Activity</span>
+                            <span>👑 Influencer Activity Tracking</span>
                             <span class="step-status">Waiting...</span>
                         </div>
                         <div id="progressStep3" class="progress-step">
-                            <span>📈 Discussion Trends</span>
+                            <span>📈 Viral Trends Analysis</span>
                             <span class="step-status">Waiting...</span>
                         </div>
                         <div id="progressStep4" class="progress-step">
@@ -637,10 +753,10 @@
                             <span class="step-status">Waiting...</span>
                         </div>
                         <div id="progressStep5" class="progress-step">
-                            <span>🔮 AI Predictions</span>
+                            <span>🔮 Market Predictions</span>
                             <span class="step-status">Waiting...</span>
                         </div>
-                        <div style="margin-top: 15px; font-size: 0.9rem; color: #999;">Each section analyzed separately for complete results</div>
+                        <div style="margin-top: 15px; font-size: 0.9rem; color: #999;">Real-time insider intelligence gathering</div>
                     </div>
                 </div>
             </div>
@@ -669,10 +785,21 @@
                     </div>
                 </div>
 
+                <!-- Sentiment Metrics Visualization -->
+                <div class="sentiment-metrics-card">
+                    <div class="section-header">
+                        <span class="section-icon">📊</span>
+                        <h3 class="section-title">Social Sentiment Metrics</h3>
+                    </div>
+                    <div class="metrics-grid" id="sentimentMetrics">
+                        <!-- Will be populated with visual metrics -->
+                    </div>
+                </div>
+
                 <!-- Token Overview -->
                 <div class="analysis-section token-overview">
                     <div class="section-header">
-                        <span class="section-icon">📊</span>
+                        <span class="section-icon">📈</span>
                         <h3 class="section-title">Token Overview</h3>
                     </div>
                     <div class="token-stats" id="tokenStats">
@@ -680,14 +807,14 @@
                     </div>
                 </div>
 
-                <!-- Social Sentiment -->
+                <!-- Social Sentiment Analysis -->
                 <div class="social-sentiment-card">
                     <div class="section-header">
                         <span class="section-icon">💭</span>
-                        <h3 class="section-title">Social Sentiment Analysis</h3>
+                        <h3 class="section-title">Social Sentiment Intelligence</h3>
                     </div>
-                    <div class="social-sentiment-content" id="socialSentimentGrid">
-                        <!-- Will be populated with 3 columns -->
+                    <div class="social-sentiment-content" id="socialSentimentContent">
+                        <!-- Will be populated with formatted content -->
                     </div>
                 </div>
 
@@ -700,15 +827,15 @@
                             <h3 class="section-title">Key Influencer Activity</h3>
                         </div>
                         <div class="section-content formatted-content" id="influencerMentions">
-                            <!-- Will be populated with Twitter accounts -->
+                            <!-- Will be populated with influencer data -->
                         </div>
                     </div>
 
                     <!-- Discussion Trends -->
                     <div class="analysis-section">
                         <div class="section-header">
-                            <span class="section-icon">📈</span>
-                            <h3 class="section-title">Discussion Trends</h3>
+                            <span class="section-icon">🔥</span>
+                            <h3 class="section-title">Viral Trends & Topics</h3>
                         </div>
                         <div class="section-content formatted-content" id="trendAnalysis">
                             <!-- Will be populated -->
@@ -731,7 +858,7 @@
                 <div class="analysis-section prediction-section ai-analysis-section">
                     <div class="section-header">
                         <span class="section-icon">🔮</span>
-                        <h3 class="section-title">AI Prediction & Recommendations</h3>
+                        <h3 class="section-title">Market Predictions & Strategy</h3>
                     </div>
                     <div class="prediction-badges" id="predictionBadges">
                         <!-- Will be populated -->
@@ -760,6 +887,7 @@
 
         async function analyzeToken() {
             const tokenAddress = document.getElementById('tokenAddress').value.trim();
+            const analysisMode = document.getElementById('analysisMode').value;
             
             if (!tokenAddress) {
                 showError('Please enter a token address');
@@ -783,7 +911,8 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        token_address: tokenAddress
+                        token_address: tokenAddress,
+                        analysis_mode: analysisMode
                     })
                 });
 
@@ -845,8 +974,8 @@
         }
 
         function updateProgressStep(step, stage, message) {
-            if (step >= 1 && step <= 5) {
-                const stepEl = document.getElementById(`progressStep${step}`);
+            if (step >= 1 && step <= 6) {
+                const stepEl = document.getElementById(`progressStep${Math.min(step, 5)}`); // Map step 6 to step 5
                 if (stepEl) {
                     const statusEl = stepEl.querySelector('.step-status');
                     
@@ -864,7 +993,7 @@
                         statusEl.textContent = '✗ Error';
                     } else if (stage.includes('fallback')) {
                         stepEl.classList.add('complete');
-                        statusEl.textContent = '✓ Fallback';
+                        statusEl.textContent = '✓ Enhanced';
                     }
                 }
             }
@@ -922,6 +1051,11 @@
                 document.getElementById('confidenceFill').style.width = confidencePercent + '%';
             }, 300);
 
+            // Update sentiment metrics visualization
+            if (data.sentiment_metrics) {
+                displaySentimentMetrics(data.sentiment_metrics);
+            }
+
             // Update token stats
             const tokenStatsHtml = `
                 <div class="token-stat">
@@ -943,14 +1077,14 @@
             `;
             document.getElementById('tokenStats').innerHTML = tokenStatsHtml;
 
-            // Update social sentiment with 3-column layout
-            document.getElementById('socialSentimentGrid').innerHTML = formatSocialSentiment3Column(data.social_sentiment);
+            // Update social sentiment content
+            document.getElementById('socialSentimentContent').innerHTML = formatSocialContent(data.social_sentiment);
             
-            // Update influencer section with Twitter accounts list
-            document.getElementById('influencerMentions').innerHTML = formatInfluencerAccounts(data.influencer_mentions);
+            // Update influencer section
+            document.getElementById('influencerMentions').innerHTML = formatInfluencerContent(data.influencer_mentions);
             
             // Update other sections
-            document.getElementById('trendAnalysis').innerHTML = formatCleanContent(data.trend_analysis);
+            document.getElementById('trendAnalysis').innerHTML = formatTrendContent(data.trend_analysis, data.key_discussions);
             document.getElementById('riskAssessment').innerHTML = formatRiskContent(data.risk_assessment);
             document.getElementById('prediction').innerHTML = formatCleanContent(data.prediction);
 
@@ -962,116 +1096,114 @@
             document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Format social sentiment into 3 columns without duplicates
-        function formatSocialSentiment3Column(text) {
+        function displaySentimentMetrics(metrics) {
+            const metricsContainer = document.getElementById('sentimentMetrics');
+            
+            const metricsHtml = `
+                <div class="metric-card">
+                    <div class="metric-label">Bullish Sentiment</div>
+                    <div class="metric-visual">
+                        <div class="circular-progress" style="--progress: ${metrics.bullish_percentage * 3.6}deg;">
+                            <div class="metric-value">${metrics.bullish_percentage}%</div>
+                        </div>
+                    </div>
+                    <div class="metric-description">Positive sentiment detected across social platforms</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Volume Activity</div>
+                    <div class="metric-visual">
+                        <div class="thermometer">
+                            <div class="thermometer-fill" style="height: ${metrics.volume_activity}%;"></div>
+                        </div>
+                    </div>
+                    <div class="metric-value">${metrics.volume_activity}%</div>
+                    <div class="metric-description">Social discussion activity level</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Community Strength</div>
+                    <div class="metric-visual">
+                        <div class="circular-progress" style="--progress: ${metrics.community_strength * 3.6}deg;">
+                            <div class="metric-value">${metrics.community_strength}%</div>
+                        </div>
+                    </div>
+                    <div class="metric-description">Community conviction and engagement quality</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Viral Potential</div>
+                    <div class="metric-visual">
+                        <div class="thermometer">
+                            <div class="thermometer-fill" style="height: ${metrics.viral_potential}%;"></div>
+                        </div>
+                    </div>
+                    <div class="metric-value">${metrics.viral_potential}%</div>
+                    <div class="metric-description">Content virality and reach potential</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Engagement Quality</div>
+                    <div class="metric-visual">
+                        <div class="circular-progress" style="--progress: ${metrics.engagement_quality * 3.6}deg;">
+                            <div class="metric-value">${metrics.engagement_quality}%</div>
+                        </div>
+                    </div>
+                    <div class="metric-description">Quality of discussions and interactions</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Bearish Sentiment</div>
+                    <div class="metric-visual">
+                        <div class="circular-progress" style="--progress: ${metrics.bearish_percentage * 3.6}deg; background: conic-gradient(#ef4444 0deg, #ef4444 var(--progress), #e5e7eb var(--progress), #e5e7eb 360deg);">
+                            <div class="metric-value">${metrics.bearish_percentage}%</div>
+                        </div>
+                    </div>
+                    <div class="metric-description">Negative sentiment and concerns</div>
+                </div>
+            `;
+            
+            metricsContainer.innerHTML = metricsHtml;
+        }
+
+        function formatSocialContent(text) {
             if (!text || text.trim() === '') {
                 return '<p><em>No social sentiment data available.</em></p>';
             }
-
-            // Remove duplicates and split into sections
-            const cleanText = removeDuplicateContent(text);
-            const sections = extractSentimentSections(cleanText);
             
-            return `
-                <div class="sentiment-column">
-                    <div class="content-heading"><u><b>Overall Sentiment</b></u></div>
-                    ${sections.sentiment || '<p>Analysis in progress...</p>'}
-                </div>
-                <div class="sentiment-column">
-                    <div class="content-heading"><u><b>Volume & Activity</b></u></div>
-                    ${sections.volume || '<p>Tracking discussion volume...</p>'}
-                </div>
-                <div class="sentiment-column">
-                    <div class="content-heading"><u><b>Community Themes</b></u></div>
-                    ${sections.themes || '<p>Analyzing community themes...</p>'}
-                </div>
-            `;
+            return formatCleanContent(text);
         }
 
-        // Format influencer section to show Twitter accounts
-        function formatInfluencerAccounts(mentions) {
+        function formatInfluencerContent(mentions) {
             if (!mentions || mentions.length === 0) {
                 return `
-                    <div class="content-heading"><u><b>Twitter Accounts Mentioning Token</b></u></div>
-                    <p><em>No major influencer activity detected in recent discussions.</em></p>
+                    <div class="content-heading"><u><b>Key Influencer Intelligence</b></u></div>
+                    <p><em>No major influencer activity detected in recent analysis window.</em></p>
                 `;
             }
 
-            let content = '<div class="content-heading"><u><b>Twitter Accounts Mentioning Token</b></u></div>';
+            let content = '<div class="content-heading"><u><b>Influencer Activity Detected</b></u></div>';
             
-            // Extract and display Twitter accounts
-            const accounts = extractTwitterAccounts(mentions);
-            if (accounts.length > 0) {
-                accounts.forEach(account => {
-                    content += `<div class="twitter-account">${account}</div>`;
+            mentions.forEach(mention => {
+                content += `<div class="influencer-item">${mention}</div>`;
+            });
+            
+            return content;
+        }
+
+        function formatTrendContent(trendAnalysis, keyDiscussions) {
+            let content = formatCleanContent(trendAnalysis);
+            
+            if (keyDiscussions && keyDiscussions.length > 0) {
+                content += '<div class="content-heading" style="margin-top: 25px;"><u><b>Key Discussion Topics</b></u></div>';
+                keyDiscussions.forEach(topic => {
+                    content += `<div class="discussion-topic">${topic}</div>`;
                 });
-            } else {
-                content += '<p><em>Monitoring social activity...</em></p>';
             }
             
             return content;
         }
 
-        // Helper function to remove duplicate content
-        function removeDuplicateContent(text) {
-            const lines = text.split('\n').filter(line => line.trim());
-            const uniqueLines = [];
-            const seen = new Set();
-            
-            for (const line of lines) {
-                const cleanLine = line.trim().toLowerCase().replace(/[^\w\s]/g, '');
-                if (!seen.has(cleanLine) && cleanLine.length > 10) {
-                    seen.add(cleanLine);
-                    uniqueLines.push(line.trim());
-                }
-            }
-            
-            return uniqueLines.join('\n');
-        }
-
-        // Extract sentiment sections
-        function extractSentimentSections(text) {
-            const sections = { sentiment: '', volume: '', themes: '' };
-            const lines = text.split('\n');
-            
-            let currentSection = '';
-            for (const line of lines) {
-                const lowerLine = line.toLowerCase();
-                if (lowerLine.includes('sentiment') || lowerLine.includes('bullish') || lowerLine.includes('bearish')) {
-                    currentSection = 'sentiment';
-                    sections.sentiment += `<p>${line}</p>`;
-                } else if (lowerLine.includes('volume') || lowerLine.includes('activity') || lowerLine.includes('discussion')) {
-                    currentSection = 'volume';
-                    sections.volume += `<p>${line}</p>`;
-                } else if (lowerLine.includes('theme') || lowerLine.includes('community') || lowerLine.includes('tone')) {
-                    currentSection = 'themes';
-                    sections.themes += `<p>${line}</p>`;
-                } else if (currentSection && line.trim()) {
-                    sections[currentSection] += `<p>${line}</p>`;
-                }
-            }
-            
-            return sections;
-        }
-
-        // Extract Twitter accounts from mentions
-        function extractTwitterAccounts(mentions) {
-            const accounts = [];
-            for (const mention of mentions) {
-                if (typeof mention === 'string') {
-                    // Look for @username patterns
-                    const matches = mention.match(/@[a-zA-Z0-9_]+/g);
-                    if (matches) {
-                        accounts.push(...matches);
-                    } else if (mention.toLowerCase().includes('demo') || mention.toLowerCase().includes('example')) {
-                        accounts.push(mention);
-                    }
-                }
-            }
-            return [...new Set(accounts)]; // Remove duplicates
-        }
-
-        // Clean content formatting with proper bold/underline headers
         function formatCleanContent(text) {
             if (!text || text.trim() === '') {
                 return '<p><em>No data available for this section.</em></p>';
@@ -1090,12 +1222,17 @@
                     }
                     
                     // Handle bullet points
-                    if (line.startsWith('- ')) {
+                    if (line.startsWith('- ') || line.startsWith('• ')) {
                         return `<div class="bullet-point">${line.substring(2)}</div>`;
                     }
                     
                     // Handle inline bold text **text** -> <b>text</b>
                     line = line.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                    
+                    // Handle separator lines
+                    if (line.includes('═══') || line.includes('───')) {
+                        return '<hr style="margin: 20px 0; border: none; height: 1px; background: linear-gradient(90deg, transparent, #e5e7eb, transparent);">';
+                    }
                     
                     return `<p>${line}</p>`;
                 })
