@@ -3,7 +3,7 @@ services:
     name: token-social-analyzer
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn --bind 0.0.0.0:$PORT --timeout 380 --workers 1 --worker-class sync --worker-connections 1000 --max-requests 1000 --max-requests-jitter 50 --preload app:app
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --timeout 1080 --workers 1 --worker-class sync --worker-connections 1000 --max-requests 1000 --max-requests-jitter 50 --preload app:app
     envVars:
       - key: GROK_API_KEY
         sync: false
