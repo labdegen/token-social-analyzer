@@ -10,6 +10,8 @@ import traceback
 import logging
 import hashlib
 import time
+import threading
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -42,6 +44,7 @@ class PremiumTokenSocialAnalyzer:
         self.grok_api_key = GROK_API_KEY
         self.api_calls_today = 0
         self.daily_limit = 500
+        self.executor = ThreadPoolExecutor(max_workers=5)
         logger.info(f"Initialized PREMIUM analyzer. API key: {'SET' if self.grok_api_key and self.grok_api_key != 'your-grok-api-key-here' else 'NOT SET'}")
     
     def get_cache_key(self, token_address: str) -> str:
@@ -111,7 +114,7 @@ class PremiumTokenSocialAnalyzer:
         symbol = token_data.get('symbol', token_symbol or 'UNKNOWN')
         
         # Send immediate progress update to reset timeout
-        yield self._format_progress_update("initialized", f"Starting premium analysis for ${symbol}")
+        yield self._format_progress_update("initialized", f"Starting premium analysis for ${symbol}", 1)
         
         # Check API access
         if not self.grok_api_key or self.grok_api_key == 'your-grok-api-key-here':
@@ -134,68 +137,93 @@ class PremiumTokenSocialAnalyzer:
         }
         
         try:
-            # Section 1: Social Sentiment Analysis (comprehensive)
-            yield self._format_progress_update("sentiment_started", "Analyzing social sentiment with comprehensive Twitter/X data...")
+            # Section 1: Social Sentiment Analysis (with timeout)
+            yield self._format_progress_update("sentiment_started", "Analyzing social sentiment with comprehensive Twitter/X data...", 2)
             
-            sentiment_result = self._comprehensive_sentiment_analysis(symbol, token_address, token_data)
+            sentiment_result = self._safe_api_call_with_timeout(
+                self._comprehensive_sentiment_analysis, 
+                symbol, token_address, token_data,
+                timeout=25  # 25 second timeout
+            )
+            
             if sentiment_result and not sentiment_result.startswith("ERROR:"):
                 analysis_sections['social_sentiment'] = sentiment_result
-                yield self._format_progress_update("sentiment_complete", f"Social sentiment analysis complete - {len(sentiment_result)} chars of detailed data")
+                yield self._format_progress_update("sentiment_complete", f"Social sentiment analysis complete - detailed analysis ready", 2)
                 self.api_calls_today += 1
             else:
                 analysis_sections['social_sentiment'] = self._create_comprehensive_sentiment_fallback(symbol, token_data)
-                yield self._format_progress_update("sentiment_fallback", "Social sentiment analysis using enhanced market data")
+                yield self._format_progress_update("sentiment_fallback", "Social sentiment analysis using enhanced market data", 2)
             
-            # Section 2: Influencer Activity (comprehensive)
-            yield self._format_progress_update("influencer_started", "Identifying key influencers and Twitter accounts...")
+            # Section 2: Influencer Activity (with timeout)
+            yield self._format_progress_update("influencer_started", "Identifying key influencers and Twitter accounts...", 3)
             
-            influencer_result = self._comprehensive_influencer_analysis(symbol, token_address)
+            influencer_result = self._safe_api_call_with_timeout(
+                self._comprehensive_influencer_analysis,
+                symbol, token_address,
+                timeout=20
+            )
+            
             if influencer_result and not influencer_result.startswith("ERROR:"):
                 analysis_sections['influencer_mentions'] = self._parse_comprehensive_influencers(influencer_result)
-                yield self._format_progress_update("influencer_complete", f"Influencer analysis complete - found {len(analysis_sections['influencer_mentions'])} key accounts")
+                yield self._format_progress_update("influencer_complete", f"Influencer analysis complete - found key accounts", 3)
                 self.api_calls_today += 1
             else:
                 analysis_sections['influencer_mentions'] = self._create_comprehensive_influencer_fallback(symbol)
-                yield self._format_progress_update("influencer_fallback", "Influencer analysis using comprehensive monitoring data")
+                yield self._format_progress_update("influencer_fallback", "Influencer analysis using comprehensive monitoring data", 3)
             
-            # Section 3: Discussion Trends (comprehensive)
-            yield self._format_progress_update("trends_started", "Analyzing discussion trends and viral content patterns...")
+            # Section 3: Discussion Trends (with timeout)
+            yield self._format_progress_update("trends_started", "Analyzing discussion trends and viral content patterns...", 4)
             
-            trends_result = self._comprehensive_trends_analysis(symbol, token_address)
+            trends_result = self._safe_api_call_with_timeout(
+                self._comprehensive_trends_analysis,
+                symbol, token_address,
+                timeout=20
+            )
+            
             if trends_result and not trends_result.startswith("ERROR:"):
                 analysis_sections['trend_analysis'] = trends_result
                 analysis_sections['key_discussions'] = self._extract_comprehensive_topics(trends_result)
-                yield self._format_progress_update("trends_complete", f"Trends analysis complete - {len(analysis_sections['key_discussions'])} key topics identified")
+                yield self._format_progress_update("trends_complete", f"Trends analysis complete - key topics identified", 4)
                 self.api_calls_today += 1
             else:
                 analysis_sections['trend_analysis'] = self._create_comprehensive_trends_fallback(symbol, token_data)
                 analysis_sections['key_discussions'] = self._create_comprehensive_discussions_fallback(symbol, token_data)
-                yield self._format_progress_update("trends_fallback", "Trends analysis using enhanced market data")
+                yield self._format_progress_update("trends_fallback", "Trends analysis using enhanced market data", 4)
             
-            # Section 4: Risk Assessment (comprehensive)
-            yield self._format_progress_update("risk_started", "Conducting comprehensive risk assessment...")
+            # Section 4: Risk Assessment (with timeout)
+            yield self._format_progress_update("risk_started", "Conducting comprehensive risk assessment...", 5)
             
-            risk_result = self._comprehensive_risk_analysis(symbol, token_address)
+            risk_result = self._safe_api_call_with_timeout(
+                self._comprehensive_risk_analysis,
+                symbol, token_address,
+                timeout=20
+            )
+            
             if risk_result and not risk_result.startswith("ERROR:"):
                 analysis_sections['risk_assessment'] = risk_result
-                yield self._format_progress_update("risk_complete", "Risk assessment complete with detailed threat analysis")
+                yield self._format_progress_update("risk_complete", "Risk assessment complete with detailed threat analysis", 5)
                 self.api_calls_today += 1
             else:
                 analysis_sections['risk_assessment'] = self._create_comprehensive_risk_fallback(symbol, token_data)
-                yield self._format_progress_update("risk_fallback", "Risk assessment using market data analysis")
+                yield self._format_progress_update("risk_fallback", "Risk assessment using market data analysis", 5)
             
-            # Section 5: AI Predictions (comprehensive)
-            yield self._format_progress_update("prediction_started", "Generating AI predictions and trading strategies...")
+            # Section 5: AI Predictions (with timeout)
+            yield self._format_progress_update("prediction_started", "Generating AI predictions and trading strategies...", 6)
             
-            prediction_result = self._comprehensive_prediction_analysis(symbol, token_address, token_data)
+            prediction_result = self._safe_api_call_with_timeout(
+                self._comprehensive_prediction_analysis,
+                symbol, token_address, token_data,
+                timeout=25
+            )
+            
             if prediction_result and not prediction_result.startswith("ERROR:"):
                 analysis_sections['prediction'] = prediction_result
                 analysis_sections['confidence_score'] = self._extract_confidence_score(prediction_result)
-                yield self._format_progress_update("prediction_complete", f"AI predictions complete with {int(analysis_sections['confidence_score']*100)}% confidence")
+                yield self._format_progress_update("prediction_complete", f"AI predictions complete with {int(analysis_sections['confidence_score']*100)}% confidence", 6)
                 self.api_calls_today += 1
             else:
                 analysis_sections['prediction'] = self._create_comprehensive_prediction_fallback(symbol, token_data)
-                yield self._format_progress_update("prediction_fallback", "Predictions using comprehensive technical analysis")
+                yield self._format_progress_update("prediction_fallback", "Predictions using comprehensive technical analysis", 6)
             
             # Create final comprehensive analysis
             final_analysis = TokenAnalysis(
@@ -219,6 +247,19 @@ class PremiumTokenSocialAnalyzer:
         except Exception as e:
             logger.error(f"Streaming analysis error: {e}")
             yield self._format_final_response(self._create_error_response(token_address, symbol, str(e)))
+    
+    def _safe_api_call_with_timeout(self, func, *args, timeout=30):
+        """Execute API call with timeout to prevent worker blocking"""
+        try:
+            future = self.executor.submit(func, *args)
+            result = future.result(timeout=timeout)
+            return result
+        except TimeoutError:
+            logger.warning(f"API call timeout after {timeout} seconds")
+            return "ERROR: API call timeout"
+        except Exception as e:
+            logger.error(f"API call error: {e}")
+            return f"ERROR: {str(e)}"
     
     def _comprehensive_sentiment_analysis(self, symbol: str, token_address: str, token_data: Dict) -> str:
         """Comprehensive sentiment analysis with full parameters"""
@@ -307,7 +348,7 @@ CRITICAL: Provide MAXIMUM DETAIL with specific price targets, actionable strateg
         return self._premium_grok_api_call(prompt, "comprehensive_prediction")
     
     def _premium_grok_api_call(self, prompt: str, section: str) -> str:
-        """Premium GROK API call with comprehensive parameters"""
+        """Premium GROK API call with comprehensive parameters and timeout"""
         try:
             search_params = {
                 "mode": "on",
@@ -340,7 +381,8 @@ CRITICAL: Provide MAXIMUM DETAIL with specific price targets, actionable strateg
             }
             
             logger.info(f"Making COMPREHENSIVE {section} API call...")
-            response = requests.post(GROK_URL, json=payload, headers=headers, timeout=120)
+            # Reduced timeout to prevent worker blocking
+            response = requests.post(GROK_URL, json=payload, headers=headers, timeout=25)
             
             if response.status_code == 200:
                 result = response.json()
@@ -355,12 +397,13 @@ CRITICAL: Provide MAXIMUM DETAIL with specific price targets, actionable strateg
             logger.error(f"✗ Comprehensive {section} error: {e}")
             return f"ERROR: {section} analysis error"
     
-    def _format_progress_update(self, stage: str, message: str) -> str:
+    def _format_progress_update(self, stage: str, message: str, step: int = 0) -> str:
         """Format progress update for streaming"""
         update = {
             "type": "progress",
             "stage": stage,
             "message": message,
+            "step": step,
             "timestamp": datetime.now().isoformat()
         }
         return f"data: {json.dumps(update)}\n\n"
@@ -426,7 +469,8 @@ CRITICAL: Provide MAXIMUM DETAIL with specific price targets, actionable strateg
                 return float(match.group(1)) / 100.0
         
         return 0.85  # High confidence for comprehensive analysis
-    
+
+    # ... (keeping all the fallback methods from the original code)
     def _create_comprehensive_sentiment_fallback(self, symbol: str, token_data: Dict) -> str:
         """Enhanced comprehensive sentiment fallback"""
         price_change = token_data.get('price_change_24h', 0)
@@ -677,7 +721,7 @@ def index():
 
 @app.route('/analyze', methods=['POST'])
 def analyze_token():
-    """Streaming analysis endpoint that sends progress updates"""
+    """Streaming analysis endpoint that sends Server-Sent Events"""
     try:
         data = request.get_json()
         if not data or not data.get('token_address'):
@@ -688,14 +732,16 @@ def analyze_token():
         if len(token_address) < 32 or len(token_address) > 44:
             return jsonify({'error': 'Invalid Solana token address format'}), 400
         
-        # Return streaming response
+        # Return Server-Sent Events streaming response
         return Response(
             analyzer.stream_comprehensive_analysis('', token_address),
             mimetype='text/plain',
             headers={
                 'Cache-Control': 'no-cache',
                 'Connection': 'keep-alive',
-                'X-Accel-Buffering': 'no'  # Disable nginx buffering
+                'X-Accel-Buffering': 'no',  # Disable nginx buffering
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type'
             }
         )
         
@@ -707,7 +753,7 @@ def analyze_token():
 def health():
     return jsonify({
         'status': 'healthy',
-        'version': '6.0-streaming-premium',
+        'version': '6.0-streaming-premium-fixed',
         'timestamp': datetime.now().isoformat()
     })
 

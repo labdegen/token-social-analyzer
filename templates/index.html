@@ -152,6 +152,31 @@
             font-size: 1.1rem;
         }
 
+        .progress-step {
+            margin: 8px 0;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .progress-step.active {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .progress-step.complete {
+            color: #10b981;
+        }
+
+        .progress-step.error {
+            color: #ef4444;
+        }
+
+        .step-status {
+            font-size: 0.9rem;
+        }
+
         .chart-container {
             display: none;
             margin: 40px 0;
@@ -177,7 +202,6 @@
             margin-top: 40px;
         }
 
-        /* FIXED: Full width sections with proper layouts */
         .analysis-grid {
             display: flex;
             flex-direction: column;
@@ -185,7 +209,6 @@
             margin-bottom: 30px;
         }
 
-        /* Full width card for social sentiment with 3 columns */
         .social-sentiment-card {
             background: white;
             border-radius: 20px;
@@ -209,7 +232,6 @@
             border-left: 4px solid #667eea;
         }
 
-        /* Side by side for influencer and trends */
         .side-by-side-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -266,7 +288,6 @@
             margin: 0;
         }
 
-        /* FIXED: Proper content formatting with bold and underlined headings */
         .section-content {
             line-height: 1.7;
             color: #374151;
@@ -301,7 +322,6 @@
             color: #4b5563;
         }
 
-        /* Twitter account styling */
         .twitter-account {
             background: #e1f5fe;
             padding: 8px 12px;
@@ -429,7 +449,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* FIXED: Clean consistent styling, no weird backgrounds */
         .ai-analysis-section {
             background: white;
             border: 1px solid rgba(230,230,230,0.8);
@@ -463,7 +482,6 @@
             text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
         }
 
-        /* Enhanced content formatting */
         .formatted-content {
             line-height: 1.8;
         }
@@ -555,7 +573,6 @@
             }
         }
 
-        /* Loading animation enhancements */
         .fade-in {
             animation: fadeIn 0.6s ease-in;
         }
@@ -603,11 +620,26 @@
                 <div class="loading-steps" id="loadingText">
                     <div style="text-align: left; max-width: 500px; margin: 0 auto;">
                         <div style="margin-bottom: 15px; color: #667eea; font-weight: 600;">🚀 Progressive Premium Analysis</div>
-                        <div id="progressStep1" style="margin: 8px 0; color: #999;">📊 Social Sentiment Analysis - <span style="color: #667eea;">Loading...</span></div>
-                        <div id="progressStep2" style="margin: 8px 0; color: #999;">👑 Key Influencer Activity - <span style="color: #999;">Waiting...</span></div>
-                        <div id="progressStep3" style="margin: 8px 0; color: #999;">📈 Discussion Trends - <span style="color: #999;">Waiting...</span></div>
-                        <div id="progressStep4" style="margin: 8px 0; color: #999;">⚠️ Risk Assessment - <span style="color: #999;">Waiting...</span></div>
-                        <div id="progressStep5" style="margin: 8px 0; color: #999;">🔮 AI Predictions - <span style="color: #999;">Waiting...</span></div>
+                        <div id="progressStep1" class="progress-step">
+                            <span>📊 Social Sentiment Analysis</span>
+                            <span class="step-status">Waiting...</span>
+                        </div>
+                        <div id="progressStep2" class="progress-step">
+                            <span>👑 Key Influencer Activity</span>
+                            <span class="step-status">Waiting...</span>
+                        </div>
+                        <div id="progressStep3" class="progress-step">
+                            <span>📈 Discussion Trends</span>
+                            <span class="step-status">Waiting...</span>
+                        </div>
+                        <div id="progressStep4" class="progress-step">
+                            <span>⚠️ Risk Assessment</span>
+                            <span class="step-status">Waiting...</span>
+                        </div>
+                        <div id="progressStep5" class="progress-step">
+                            <span>🔮 AI Predictions</span>
+                            <span class="step-status">Waiting...</span>
+                        </div>
                         <div style="margin-top: 15px; font-size: 0.9rem; color: #999;">Each section analyzed separately for complete results</div>
                     </div>
                 </div>
@@ -648,7 +680,7 @@
                     </div>
                 </div>
 
-                <!-- Social Sentiment - FIXED: Full width with 3 columns -->
+                <!-- Social Sentiment -->
                 <div class="social-sentiment-card">
                     <div class="section-header">
                         <span class="section-icon">💭</span>
@@ -684,7 +716,7 @@
                     </div>
                 </div>
 
-                <!-- Risk Assessment - Full width -->
+                <!-- Risk Assessment -->
                 <div class="analysis-section">
                     <div class="section-header">
                         <span class="section-icon">⚠️</span>
@@ -695,7 +727,7 @@
                     </div>
                 </div>
 
-                <!-- AI Prediction - Full width, clean styling -->
+                <!-- AI Prediction -->
                 <div class="analysis-section prediction-section ai-analysis-section">
                     <div class="section-header">
                         <span class="section-icon">🔮</span>
@@ -724,6 +756,7 @@
 
     <script>
         let currentAnalysis = null;
+        let streamReader = null;
 
         async function analyzeToken() {
             const tokenAddress = document.getElementById('tokenAddress').value.trim();
@@ -755,15 +788,42 @@
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Analysis failed');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                const data = await response.json();
-                currentAnalysis = data;
-                
-                hideLoading();
-                displayResults(data);
+                // Handle Server-Sent Events stream
+                streamReader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await streamReader.read();
+                    
+                    if (done) {
+                        console.log('Stream completed');
+                        break;
+                    }
+
+                    buffer += decoder.decode(value, { stream: true });
+                    
+                    // Process complete SSE messages
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || ''; // Keep incomplete line in buffer
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const jsonData = line.substring(6); // Remove "data: " prefix
+                                if (jsonData.trim()) {
+                                    const data = JSON.parse(jsonData);
+                                    handleStreamMessage(data);
+                                }
+                            } catch (e) {
+                                console.warn('Failed to parse SSE message:', line, e);
+                            }
+                        }
+                    }
+                }
                 
             } catch (error) {
                 console.error('Analysis error:', error);
@@ -772,37 +832,57 @@
             }
         }
 
+        function handleStreamMessage(data) {
+            console.log('Received stream message:', data);
+            
+            if (data.type === 'progress') {
+                updateProgressStep(data.step, data.stage, data.message);
+            } else if (data.type === 'complete') {
+                currentAnalysis = data;
+                hideLoading();
+                displayResults(data);
+            }
+        }
+
+        function updateProgressStep(step, stage, message) {
+            if (step >= 1 && step <= 5) {
+                const stepEl = document.getElementById(`progressStep${step}`);
+                if (stepEl) {
+                    const statusEl = stepEl.querySelector('.step-status');
+                    
+                    // Remove previous classes
+                    stepEl.classList.remove('active', 'complete', 'error');
+                    
+                    if (stage.includes('started') || stage.includes('loading')) {
+                        stepEl.classList.add('active');
+                        statusEl.textContent = 'Loading...';
+                    } else if (stage.includes('complete')) {
+                        stepEl.classList.add('complete');
+                        statusEl.textContent = '✓ Complete';
+                    } else if (stage.includes('error')) {
+                        stepEl.classList.add('error');
+                        statusEl.textContent = '✗ Error';
+                    } else if (stage.includes('fallback')) {
+                        stepEl.classList.add('complete');
+                        statusEl.textContent = '✓ Fallback';
+                    }
+                }
+            }
+            
+            console.log(`Progress Step ${step}: ${stage} - ${message}`);
+        }
+
         function showLoading() {
             document.getElementById('loadingSpinner').style.display = 'block';
             document.querySelector('.analyze-btn').disabled = true;
             
-            const loadingTextEl = document.getElementById('loadingText');
-            loadingTextEl.innerHTML = `
-                <div style="text-align: left; max-width: 500px; margin: 0 auto;">
-                    <div style="margin-bottom: 15px; color: #667eea; font-weight: 600;">🚀 Progressive Premium Analysis</div>
-                    <div id="progressStep1" style="margin: 8px 0; color: #999;">📊 Social Sentiment Analysis - <span style="color: #667eea;">Loading...</span></div>
-                    <div id="progressStep2" style="margin: 8px 0; color: #999;">👑 Key Influencer Activity - <span style="color: #999;">Waiting...</span></div>
-                    <div id="progressStep3" style="margin: 8px 0; color: #999;">📈 Discussion Trends - <span style="color: #999;">Waiting...</span></div>
-                    <div id="progressStep4" style="margin: 8px 0; color: #999;">⚠️ Risk Assessment - <span style="color: #999;">Waiting...</span></div>
-                    <div id="progressStep5" style="margin: 8px 0; color: #999;">🔮 AI Predictions - <span style="color: #999;">Waiting...</span></div>
-                    <div style="margin-top: 15px; font-size: 0.9rem; color: #999;">Each section analyzed separately for complete results</div>
-                </div>
-            `;
-        }
-
-        function updateLoadingProgress(step, status) {
-            const stepEl = document.getElementById(`progressStep${step}`);
-            if (stepEl) {
-                const statusSpan = stepEl.querySelector('span');
-                if (status === 'loading') {
-                    statusSpan.style.color = '#667eea';
-                    statusSpan.textContent = 'Loading...';
-                } else if (status === 'complete') {
-                    statusSpan.style.color = '#10b981';
-                    statusSpan.textContent = '✓ Complete';
-                } else if (status === 'error') {
-                    statusSpan.style.color = '#ef4444';
-                    statusSpan.textContent = '✗ Error';
+            // Reset progress steps
+            for (let i = 1; i <= 5; i++) {
+                const stepEl = document.getElementById(`progressStep${i}`);
+                if (stepEl) {
+                    stepEl.classList.remove('active', 'complete', 'error');
+                    const statusEl = stepEl.querySelector('.step-status');
+                    statusEl.textContent = 'Waiting...';
                 }
             }
         }
@@ -863,10 +943,10 @@
             `;
             document.getElementById('tokenStats').innerHTML = tokenStatsHtml;
 
-            // FIXED: Update social sentiment with 3-column layout
+            // Update social sentiment with 3-column layout
             document.getElementById('socialSentimentGrid').innerHTML = formatSocialSentiment3Column(data.social_sentiment);
             
-            // FIXED: Update influencer section with Twitter accounts list
+            // Update influencer section with Twitter accounts list
             document.getElementById('influencerMentions').innerHTML = formatInfluencerAccounts(data.influencer_mentions);
             
             // Update other sections
@@ -882,7 +962,7 @@
             document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // FIXED: Format social sentiment into 3 columns without duplicates
+        // Format social sentiment into 3 columns without duplicates
         function formatSocialSentiment3Column(text) {
             if (!text || text.trim() === '') {
                 return '<p><em>No social sentiment data available.</em></p>';
@@ -908,7 +988,7 @@
             `;
         }
 
-        // FIXED: Format influencer section to show Twitter accounts
+        // Format influencer section to show Twitter accounts
         function formatInfluencerAccounts(mentions) {
             if (!mentions || mentions.length === 0) {
                 return `
@@ -991,7 +1071,7 @@
             return [...new Set(accounts)]; // Remove duplicates
         }
 
-        // FIXED: Clean content formatting with proper bold/underline headers
+        // Clean content formatting with proper bold/underline headers
         function formatCleanContent(text) {
             if (!text || text.trim() === '') {
                 return '<p><em>No data available for this section.</em></p>';
@@ -1003,7 +1083,7 @@
                 .map(line => {
                     line = line.trim();
                     
-                    // FIXED: Convert **headers** to proper HTML with bold and underline
+                    // Convert **headers** to proper HTML with bold and underline
                     if (line.startsWith('**') && line.endsWith('**')) {
                         const headerText = line.replace(/\*\*/g, '');
                         return `<div class="content-heading"><u><b>${headerText}</b></u></div>`;
@@ -1014,7 +1094,7 @@
                         return `<div class="bullet-point">${line.substring(2)}</div>`;
                     }
                     
-                    // FIXED: Handle inline bold text **text** -> <b>text</b>
+                    // Handle inline bold text **text** -> <b>text</b>
                     line = line.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
                     
                     return `<p>${line}</p>`;
@@ -1070,6 +1150,13 @@
         document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 analyzeToken();
+            }
+        });
+
+        // Cancel stream if page is unloaded
+        window.addEventListener('beforeunload', function() {
+            if (streamReader) {
+                streamReader.cancel();
             }
         });
     </script>
