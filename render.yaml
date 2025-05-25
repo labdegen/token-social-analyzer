@@ -3,13 +3,13 @@ services:
     name: token-social-analyzer
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn --bind 0.0.0.0:$PORT --timeout 180 --workers 2 --worker-class sync --worker-connections 100 --max-requests 500 --max-requests-jitter 25 --preload --keep-alive 5 app:app
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --timeout 60 --workers 3 --worker-class sync --worker-connections 50 --max-requests 200 --max-requests-jitter 10 --preload --keep-alive 2 app:app
     envVars:
       - key: GROK_API_KEY
         sync: false
       - key: PORT
         value: 5000
       - key: WEB_CONCURRENCY
-        value: 2
+        value: 3
       - key: PYTHONUNBUFFERED
         value: 1
