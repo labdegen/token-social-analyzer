@@ -23,7 +23,7 @@ GROK_URL = "https://api.x.ai/v1/chat/completions"
 
 # OPTIMIZATION: In-memory cache to reduce API calls
 analysis_cache = {}
-CACHE_DURATION = 300  # 5 minutes cache to balance freshness vs cost
+CACHE_DURATION = 900  # 5 minutes cache to balance freshness vs cost
 
 @dataclass
 class TokenAnalysis:
