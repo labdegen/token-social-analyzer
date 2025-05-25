@@ -630,21 +630,21 @@ Premium prediction service provides:
         volume_str = f"${volume:,.0f}" if volume > 0 else 'N/A'
         market_cap_str = f"${market_cap:,.0f}" if market_cap > 0 else 'N/A'
         
+        # Create the social sentiment text safely
+        sentiment_text = f"**Daily API Limit Reached**\n\n" + \
+                        f"The premium analysis service has reached its daily API limit of {self.daily_limit} requests.\n\n" + \
+                        f"**Current Token Data Available:**\n" + \
+                        f"- Symbol: {symbol}\n" + \
+                        f"- Price: ${price}\n" + \
+                        f"- 24h Change: {price_change}%\n" + \
+                        f"- Volume: {volume_str}\n" + \
+                        f"- Market Cap: {market_cap_str}\n\n" + \
+                        f"**Service will reset at midnight UTC.** Premium social intelligence analysis will resume then."
+        
         return TokenAnalysis(
             token_address=token_address,
             token_symbol=symbol,
-            social_sentiment=f"""**Daily API Limit Reached**
-
-The premium analysis service has reached its daily API limit of {self.daily_limit} requests.
-
-**Current Token Data Available:**
-- Symbol: {symbol}
-- Price: ${price}
-- 24h Change: {price_change}%
-- Volume: {volume_str}
-- Market Cap: {market_cap_str}
-
-**Service will reset at midnight UTC.** Premium social intelligence analysis will resume then.""",
+            social_sentiment=sentiment_text,
             
             key_discussions=[f"Daily limit reached - {self.api_calls_today}/{self.daily_limit} API calls used"],
             influencer_mentions=["Service limit reached - premium influencer tracking unavailable"],
