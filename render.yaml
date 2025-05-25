@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: token-social-analyzer
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+    envVars:
+      - key: GROK_API_KEY
+        sync: false
+      - key: PORT
+        value: 5000

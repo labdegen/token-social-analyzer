@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Social Intelligence Platform - Powered by $DEGEN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .analyzer-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .input-section {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: fit-content;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 15px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .chart-container {
+            display: none;
+            margin: 30px 0;
+            position: relative;
+            width: 100%;
+            padding-bottom: 75%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .chart-container iframe {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border: 0;
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .analysis-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid #667eea;
+        }
+
+        .analysis-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .analysis-section .icon {
+            font-size: 1.5rem;
+        }
+
+        .confidence-meter {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #28a745 100%);
+            transition: width 0.8s ease;
+        }
+
+        .token-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .token-stat {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .token-stat .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .token-stat .label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        .prediction-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+
+        .prediction-bullish {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .prediction-bearish {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .prediction-neutral {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        @media (max-width: 768px) {
+            .input-section {
+                flex-direction: column;
+            }
+            
+            .input-group {
+                min-width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .analyzer-container {
+                padding: 20px;
+            }
+        }
+
+        .powered-by {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        .powered-by a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .powered-by a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Token Social Intelligence</h1>
+            <p>AI-powered social sentiment analysis for Solana tokens using live Twitter/X data</p>
+        </div>
+
+        <div class="analyzer-container">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="tokenAddress">Solana Token Address:</label>
+                    <input 
+                        type="text" 
+                        id="tokenAddress" 
+                        placeholder="e.g. So11111111111111111111111111111111111111112"
+                        value=""
+                    >
+                </div>
+                <button class="analyze-btn" onclick="analyzeToken()">
+                    🔍 Analyze Token
+                </button>
+            </div>
+
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <div class="loading-text" id="loadingText">Analyzing token social sentiment...</div>
+            </div>
+
+            <div class="error-message" id="errorMessage" style="display: none;"></div>
+        </div>
+
+        <div class="chart-container" id="chartContainer">
+            <iframe id="dexscreenerChart" src=""></iframe>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <!-- Token basic info -->
+            <div class="analysis-section">
+                <h3><span class="icon">📊</span> Token Overview</h3>
+                <div class="token-info" id="tokenInfo">
+                    <!-- Will be populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Confidence Score -->
+            <div class="analysis-section">
+                <h3><span class="icon">🎯</span> Confidence Score</h3>
+                <div class="confidence-meter">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Analysis Confidence:</span>
+                        <span id="confidenceScore" style="font-weight: 700;">0%</span>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Sentiment -->
+            <div class="analysis-section">
+                <h3><span class="icon">💭</span> Social Sentiment Analysis</h3>
+                <div id="socialSentiment">
+                    <!-- Will be populated -->
+                </div>
+            </div>
+
+            <!-- Influencer Mentions -->
+            <div class="analysis-section">
+                <h3><span class="icon">👑</span> Key Influencer Activity</h3>
+                <div id="influencerMentions">
+                    <!-- Will be populated -->
+                </div>
+            </div>
+
+            <!-- Trend Analysis -->
+            <div class="analysis-section">
+                <h3><span class="icon">📈</span> Discussion Trends</h3>
+                <div id="trendAnalysis">
+                    <!-- Will be populated -->
+                </div>
+            </div>
+
+            <!-- Risk Assessment -->
+            <div class="analysis-section">
+                <h3><span class="icon">⚠️</span> Risk Assessment</h3>
+                <div id="riskAssessment">
+                    <!-- Will be populated -->
+                </div>
+            </div>
+
+            <!-- Prediction -->
+            <div class="analysis-section">
+                <h3><span class="icon">🔮</span> AI Prediction</h3>
+                <div id="prediction">
+                    <!-- Will be populated -->
+                </div>
+            </div>
+        </div>
+
+        <div class="powered-by">
+            <p>Powered by <a href="https://x.ai" target="_blank">GROK AI</a> & <a href="https://dexscreener.com" target="_blank">DexScreener</a></p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">🟢 Live Twitter/X data analysis • Real-time social sentiment • AI-powered predictions</p>
+            <p style="margin-top: 15px; font-size: 0.8rem; opacity: 0.8;">
+                🚀 Powered by <strong>$DEGEN</strong> - 
+                <a href="https://dexscreener.com/solana/6ztpBm31cmBNPwa396ocmDfaWyKKY95Bu8T664QfCe7f" target="_blank" style="color: #FFD700;">
+                    Premium features available for $DEGEN holders
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let currentAnalysis = null;
+
+        async function analyzeToken() {
+            const tokenAddress = document.getElementById('tokenAddress').value.trim();
+            
+            if (!tokenAddress) {
+                showError('Please enter a token address');
+                return;
+            }
+
+            // Validate basic format
+            if (tokenAddress.length < 32 || tokenAddress.length > 44) {
+                showError('Invalid Solana token address format');
+                return;
+            }
+
+            // Show loading state
+            showLoading();
+            hideError();
+            hideResults();
+
+            // Show chart immediately
+            showChart(tokenAddress);
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        token_address: tokenAddress
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Analysis failed');
+                }
+
+                const data = await response.json();
+                currentAnalysis = data;
+                
+                hideLoading();
+                displayResults(data);
+                
+            } catch (error) {
+                console.error('Analysis error:', error);
+                hideLoading();
+                showError('Analysis failed: ' + error.message);
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.querySelector('.analyze-btn').disabled = true;
+            
+            // Animate loading text
+            const loadingTexts = [
+                'Analyzing token social sentiment...',
+                'Scanning Twitter/X discussions...',
+                'Identifying key influencers...',
+                'Analyzing discussion trends...',
+                'Assessing social risks...',
+                'Generating AI prediction...',
+                'Compiling results...'
+            ];
+            
+            let textIndex = 0;
+            const loadingTextEl = document.getElementById('loadingText');
+            
+            const textInterval = setInterval(() => {
+                if (document.getElementById('loadingSpinner').style.display === 'none') {
+                    clearInterval(textInterval);
+                    return;
+                }
+                
+                textIndex = (textIndex + 1) % loadingTexts.length;
+                loadingTextEl.textContent = loadingTexts[textIndex];
+            }, 3000);
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.querySelector('.analyze-btn').disabled = false;
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function showChart(tokenAddress) {
+            const chartContainer = document.getElementById('chartContainer');
+            const iframe = document.getElementById('dexscreenerChart');
+            
+            iframe.src = `https://dexscreener.com/solana/${tokenAddress}?embed=1&loadChartSettings=0&chartLeftToolbar=0&chartTheme=dark&theme=dark&chartStyle=0&chartType=usd&interval=15`;
+            chartContainer.style.display = 'block';
+        }
+
+        function displayResults(data) {
+            // Show results container
+            document.getElementById('resultsContainer').style.display = 'block';
+
+            // Update confidence score
+            const confidencePercent = Math.round(data.confidence_score * 100);
+            document.getElementById('confidenceScore').textContent = confidencePercent + '%';
+            document.getElementById('confidenceFill').style.width = confidencePercent + '%';
+
+            // Update token info (basic grid - will be enhanced when we get DexScreener data)
+            const tokenInfoHtml = `
+                <div class="token-stat">
+                    <div class="value">${data.token_symbol}</div>
+                    <div class="label">Symbol</div>
+                </div>
+                <div class="token-stat">
+                    <div class="value">${confidencePercent}%</div>
+                    <div class="label">Confidence</div>
+                </div>
+                <div class="token-stat">
+                    <div class="value">${new Date().toLocaleDateString()}</div>
+                    <div class="label">Analysis Date</div>
+                </div>
+            `;
+            document.getElementById('tokenInfo').innerHTML = tokenInfoHtml;
+
+            // Update social sentiment
+            document.getElementById('socialSentiment').innerHTML = formatAnalysisText(data.social_sentiment);
+
+            // Update influencer mentions
+            const influencerHtml = data.influencer_mentions.length > 0 
+                ? '<ul>' + data.influencer_mentions.map(mention => `<li>${mention}</li>`).join('') + '</ul>' + formatAnalysisText(data.trend_analysis)
+                : formatAnalysisText(data.trend_analysis);
+            document.getElementById('influencerMentions').innerHTML = influencerHtml;
+
+            // Update trend analysis
+            document.getElementById('trendAnalysis').innerHTML = formatAnalysisText(data.trend_analysis);
+
+            // Update risk assessment
+            document.getElementById('riskAssessment').innerHTML = formatAnalysisText(data.risk_assessment);
+
+            // Update prediction with badge
+            const predictionText = data.prediction;
+            let predictionClass = 'prediction-neutral';
+            
+            if (predictionText.toLowerCase().includes('bullish') || predictionText.toLowerCase().includes('buy')) {
+                predictionClass = 'prediction-bullish';
+            } else if (predictionText.toLowerCase().includes('bearish') || predictionText.toLowerCase().includes('sell')) {
+                predictionClass = 'prediction-bearish';
+            }
+
+            const predictionHtml = `
+                <div class="prediction-badge ${predictionClass}">
+                    Confidence: ${confidencePercent}%
+                </div>
+                ${formatAnalysisText(predictionText)}
+            `;
+            document.getElementById('prediction').innerHTML = predictionHtml;
+
+            // Scroll to results
+            document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function formatAnalysisText(text) {
+            // Basic formatting: convert line breaks to paragraphs and bold **text**
+            return text
+                .split('\n')
+                .filter(line => line.trim())
+                .map(line => `<p>${line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`)
+                .join('');
+        }
+
+        function hideResults() {
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('chartContainer').style.display = 'none';
+        }
+
+        // Allow Enter key to trigger analysis
+        document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeToken();
+            }
+        });
+
+        // Load default token on page load for demo
+        window.addEventListener('load', function() {
+            // You can set a default token address here for testing
+            // document.getElementById('tokenAddress').value = 'So11111111111111111111111111111111111111112';
+        });
+    </script>
+</body>
+</html>
