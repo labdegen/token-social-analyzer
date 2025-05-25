@@ -177,11 +177,43 @@
             margin-top: 40px;
         }
 
+        /* FIXED: Full width sections with proper layouts */
         .analysis-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Full width card for social sentiment with 3 columns */
+        .social-sentiment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(230,230,230,0.8);
+            width: 100%;
+        }
+
+        .social-sentiment-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .sentiment-column {
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        /* Side by side for influencer and trends */
+        .side-by-side-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            margin-bottom: 30px;
         }
 
         .analysis-section {
@@ -234,16 +266,25 @@
             margin: 0;
         }
 
+        /* FIXED: Proper content formatting with bold and underlined headings */
         .section-content {
             line-height: 1.7;
             color: #374151;
             font-size: 1rem;
         }
 
-        .section-content h3, .section-content h4 {
+        .section-content .content-heading {
+            font-weight: bold;
+            text-decoration: underline;
             color: #1f2937;
-            margin: 20px 0 10px 0;
+            margin: 20px 0 12px 0;
+            font-size: 1.1rem;
+        }
+
+        .section-content .content-subheading {
             font-weight: 600;
+            color: #374151;
+            margin: 15px 0 8px 0;
         }
 
         .section-content p {
@@ -260,8 +301,18 @@
             color: #4b5563;
         }
 
+        /* Twitter account styling */
+        .twitter-account {
+            background: #e1f5fe;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 5px 0;
+            font-family: monospace;
+            color: #0277bd;
+            border-left: 3px solid #03a9f4;
+        }
+
         .confidence-section {
-            grid-column: 1 / -1;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             text-align: center;
@@ -313,7 +364,6 @@
         }
 
         .token-overview {
-            grid-column: 1 / -1;
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         }
 
@@ -346,7 +396,6 @@
         }
 
         .prediction-section {
-            grid-column: 1 / -1;
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
         }
@@ -367,6 +416,7 @@
             justify-content: center;
             gap: 15px;
             margin: 20px 0;
+            flex-wrap: wrap;
         }
 
         .prediction-badge {
@@ -377,6 +427,12 @@
             font-weight: 600;
             font-size: 0.9rem;
             backdrop-filter: blur(10px);
+        }
+
+        /* FIXED: Clean consistent styling, no weird backgrounds */
+        .ai-analysis-section {
+            background: white;
+            border: 1px solid rgba(230,230,230,0.8);
         }
 
         .error-message {
@@ -412,7 +468,7 @@
             line-height: 1.8;
         }
 
-        .formatted-content strong {
+        .formatted-content strong, .formatted-content b {
             color: #1f2937;
             font-weight: 600;
         }
@@ -464,7 +520,11 @@
 
         /* Mobile responsiveness */
         @media (max-width: 1024px) {
-            .analysis-grid {
+            .social-sentiment-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .side-by-side-container {
                 grid-template-columns: 1fr;
             }
         }
@@ -488,6 +548,10 @@
             
             .analysis-section {
                 padding: 20px;
+            }
+
+            .social-sentiment-content {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -574,40 +638,43 @@
                     </div>
                 </div>
 
-                <!-- Social Sentiment -->
-                <div class="analysis-section">
+                <!-- Social Sentiment - FIXED: Full width with 3 columns -->
+                <div class="social-sentiment-card">
                     <div class="section-header">
                         <span class="section-icon">💭</span>
                         <h3 class="section-title">Social Sentiment Analysis</h3>
                     </div>
-                    <div class="section-content formatted-content" id="socialSentiment">
-                        <!-- Will be populated -->
+                    <div class="social-sentiment-content" id="socialSentimentGrid">
+                        <!-- Will be populated with 3 columns -->
                     </div>
                 </div>
 
-                <!-- Influencer Activity -->
-                <div class="analysis-section">
-                    <div class="section-header">
-                        <span class="section-icon">👑</span>
-                        <h3 class="section-title">Key Influencer Activity</h3>
+                <!-- Side by side: Influencer Activity and Discussion Trends -->
+                <div class="side-by-side-container">
+                    <!-- Influencer Activity -->
+                    <div class="analysis-section">
+                        <div class="section-header">
+                            <span class="section-icon">👑</span>
+                            <h3 class="section-title">Key Influencer Activity</h3>
+                        </div>
+                        <div class="section-content formatted-content" id="influencerMentions">
+                            <!-- Will be populated with Twitter accounts -->
+                        </div>
                     </div>
-                    <div class="section-content formatted-content" id="influencerMentions">
-                        <!-- Will be populated -->
+
+                    <!-- Discussion Trends -->
+                    <div class="analysis-section">
+                        <div class="section-header">
+                            <span class="section-icon">📈</span>
+                            <h3 class="section-title">Discussion Trends</h3>
+                        </div>
+                        <div class="section-content formatted-content" id="trendAnalysis">
+                            <!-- Will be populated -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Discussion Trends -->
-                <div class="analysis-section">
-                    <div class="section-header">
-                        <span class="section-icon">📈</span>
-                        <h3 class="section-title">Discussion Trends</h3>
-                    </div>
-                    <div class="section-content formatted-content" id="trendAnalysis">
-                        <!-- Will be populated -->
-                    </div>
-                </div>
-
-                <!-- Risk Assessment -->
+                <!-- Risk Assessment - Full width -->
                 <div class="analysis-section">
                     <div class="section-header">
                         <span class="section-icon">⚠️</span>
@@ -618,8 +685,8 @@
                     </div>
                 </div>
 
-                <!-- AI Prediction -->
-                <div class="analysis-section prediction-section">
+                <!-- AI Prediction - Full width, clean styling -->
+                <div class="analysis-section prediction-section ai-analysis-section">
                     <div class="section-header">
                         <span class="section-icon">🔮</span>
                         <h3 class="section-title">AI Prediction & Recommendations</h3>
@@ -779,12 +846,16 @@
             `;
             document.getElementById('tokenStats').innerHTML = tokenStatsHtml;
 
-            // Update all sections with enhanced formatting
-            document.getElementById('socialSentiment').innerHTML = formatPremiumContent(data.social_sentiment);
-            document.getElementById('influencerMentions').innerHTML = formatInfluencerContent(data.influencer_mentions, data.trend_analysis);
-            document.getElementById('trendAnalysis').innerHTML = formatPremiumContent(data.trend_analysis);
+            // FIXED: Update social sentiment with 3-column layout
+            document.getElementById('socialSentimentGrid').innerHTML = formatSocialSentiment3Column(data.social_sentiment);
+            
+            // FIXED: Update influencer section with Twitter accounts list
+            document.getElementById('influencerMentions').innerHTML = formatInfluencerAccounts(data.influencer_mentions);
+            
+            // Update other sections
+            document.getElementById('trendAnalysis').innerHTML = formatCleanContent(data.trend_analysis);
             document.getElementById('riskAssessment').innerHTML = formatRiskContent(data.risk_assessment);
-            document.getElementById('prediction').innerHTML = formatPredictionContent(data.prediction);
+            document.getElementById('prediction').innerHTML = formatCleanContent(data.prediction);
 
             // Add prediction badges
             const badges = generatePredictionBadges(data.prediction, confidencePercent);
@@ -794,7 +865,117 @@
             document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function formatPremiumContent(text) {
+        // FIXED: Format social sentiment into 3 columns without duplicates
+        function formatSocialSentiment3Column(text) {
+            if (!text || text.trim() === '') {
+                return '<p><em>No social sentiment data available.</em></p>';
+            }
+
+            // Remove duplicates and split into sections
+            const cleanText = removeDuplicateContent(text);
+            const sections = extractSentimentSections(cleanText);
+            
+            return `
+                <div class="sentiment-column">
+                    <div class="content-heading"><u><b>Overall Sentiment</b></u></div>
+                    ${sections.sentiment || '<p>Analysis in progress...</p>'}
+                </div>
+                <div class="sentiment-column">
+                    <div class="content-heading"><u><b>Volume & Activity</b></u></div>
+                    ${sections.volume || '<p>Tracking discussion volume...</p>'}
+                </div>
+                <div class="sentiment-column">
+                    <div class="content-heading"><u><b>Community Themes</b></u></div>
+                    ${sections.themes || '<p>Analyzing community themes...</p>'}
+                </div>
+            `;
+        }
+
+        // FIXED: Format influencer section to show Twitter accounts
+        function formatInfluencerAccounts(mentions) {
+            if (!mentions || mentions.length === 0) {
+                return `
+                    <div class="content-heading"><u><b>Twitter Accounts Mentioning Token</b></u></div>
+                    <p><em>No major influencer activity detected in recent discussions.</em></p>
+                `;
+            }
+
+            let content = '<div class="content-heading"><u><b>Twitter Accounts Mentioning Token</b></u></div>';
+            
+            // Extract and display Twitter accounts
+            const accounts = extractTwitterAccounts(mentions);
+            if (accounts.length > 0) {
+                accounts.forEach(account => {
+                    content += `<div class="twitter-account">${account}</div>`;
+                });
+            } else {
+                content += '<p><em>Monitoring social activity...</em></p>';
+            }
+            
+            return content;
+        }
+
+        // Helper function to remove duplicate content
+        function removeDuplicateContent(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            const uniqueLines = [];
+            const seen = new Set();
+            
+            for (const line of lines) {
+                const cleanLine = line.trim().toLowerCase().replace(/[^\w\s]/g, '');
+                if (!seen.has(cleanLine) && cleanLine.length > 10) {
+                    seen.add(cleanLine);
+                    uniqueLines.push(line.trim());
+                }
+            }
+            
+            return uniqueLines.join('\n');
+        }
+
+        // Extract sentiment sections
+        function extractSentimentSections(text) {
+            const sections = { sentiment: '', volume: '', themes: '' };
+            const lines = text.split('\n');
+            
+            let currentSection = '';
+            for (const line of lines) {
+                const lowerLine = line.toLowerCase();
+                if (lowerLine.includes('sentiment') || lowerLine.includes('bullish') || lowerLine.includes('bearish')) {
+                    currentSection = 'sentiment';
+                    sections.sentiment += `<p>${line}</p>`;
+                } else if (lowerLine.includes('volume') || lowerLine.includes('activity') || lowerLine.includes('discussion')) {
+                    currentSection = 'volume';
+                    sections.volume += `<p>${line}</p>`;
+                } else if (lowerLine.includes('theme') || lowerLine.includes('community') || lowerLine.includes('tone')) {
+                    currentSection = 'themes';
+                    sections.themes += `<p>${line}</p>`;
+                } else if (currentSection && line.trim()) {
+                    sections[currentSection] += `<p>${line}</p>`;
+                }
+            }
+            
+            return sections;
+        }
+
+        // Extract Twitter accounts from mentions
+        function extractTwitterAccounts(mentions) {
+            const accounts = [];
+            for (const mention of mentions) {
+                if (typeof mention === 'string') {
+                    // Look for @username patterns
+                    const matches = mention.match(/@[a-zA-Z0-9_]+/g);
+                    if (matches) {
+                        accounts.push(...matches);
+                    } else if (mention.toLowerCase().includes('demo') || mention.toLowerCase().includes('example')) {
+                        accounts.push(mention);
+                    }
+                }
+            }
+            return [...new Set(accounts)]; // Remove duplicates
+        }
+
+        // FIXED: Clean content formatting with proper bold/underline headers
+        function formatCleanContent(text) {
             if (!text || text.trim() === '') {
                 return '<p><em>No data available for this section.</em></p>';
             }
@@ -805,10 +986,10 @@
                 .map(line => {
                     line = line.trim();
                     
-                    // Handle headers
+                    // FIXED: Convert **headers** to proper HTML with bold and underline
                     if (line.startsWith('**') && line.endsWith('**')) {
                         const headerText = line.replace(/\*\*/g, '');
-                        return `<h4>${headerText}</h4>`;
+                        return `<div class="content-heading"><u><b>${headerText}</b></u></div>`;
                     }
                     
                     // Handle bullet points
@@ -816,36 +997,12 @@
                         return `<div class="bullet-point">${line.substring(2)}</div>`;
                     }
                     
-                    // Handle important highlights
-                    if (line.includes('**')) {
-                        line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                    }
-                    
-                    // Create highlight boxes for important info
-                    if (line.toLowerCase().includes('high') || line.toLowerCase().includes('significant')) {
-                        return `<div class="highlight-box">${line}</div>`;
-                    }
+                    // FIXED: Handle inline bold text **text** -> <b>text</b>
+                    line = line.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
                     
                     return `<p>${line}</p>`;
                 })
                 .join('');
-        }
-
-        function formatInfluencerContent(mentions, trends) {
-            let content = '';
-            
-            if (mentions && mentions.length > 0) {
-                content += '<h4>Key Mentions:</h4>';
-                mentions.forEach(mention => {
-                    content += `<div class="bullet-point">${mention}</div>`;
-                });
-            }
-            
-            if (trends) {
-                content += formatPremiumContent(trends);
-            }
-            
-            return content || '<p><em>No influencer activity detected in recent discussions.</em></p>';
         }
 
         function formatRiskContent(text) {
@@ -853,7 +1010,7 @@
                 return '<p><em>Risk assessment data not available.</em></p>';
             }
 
-            let formatted = formatPremiumContent(text);
+            let formatted = formatCleanContent(text);
             
             // Add risk level styling
             if (text.toLowerCase().includes('high risk')) {
@@ -865,14 +1022,6 @@
             }
             
             return formatted;
-        }
-
-        function formatPredictionContent(text) {
-            if (!text || text.trim() === '') {
-                return '<p><em>Prediction data not available.</em></p>';
-            }
-
-            return formatPremiumContent(text);
         }
 
         function generatePredictionBadges(prediction, confidence) {
