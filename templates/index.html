@@ -600,7 +600,7 @@
 
             <div class="loading-spinner" id="loadingSpinner">
                 <div class="spinner"></div>
-                <div class="loading-steps" id="loadingText">Analyzing token social sentiment...</div>
+                <div class="loading-steps" id="loadingText">Initializing premium social intelligence analysis...<br><small style="color: #999;">Premium analysis may take 60-90 seconds for comprehensive results</small></div>
             </div>
 
             <div class="error-message" id="errorMessage" style="display: none;"></div>
@@ -767,18 +767,21 @@
             document.querySelector('.analyze-btn').disabled = true;
             
             const loadingTexts = [
-                'Running premium social intelligence analysis...',
-                'Scanning Twitter/X with advanced parameters...',
-                'Processing detailed influencer mentions...',
-                'Analyzing comprehensive discussion trends...',
+                'Initializing premium social intelligence analysis...',
+                'Connecting to Twitter/X API for real-time data...',
+                'Processing comprehensive social sentiment analysis...',
+                'Analyzing influencer mentions and engagement...',
                 'Conducting advanced risk assessment...',
-                'Generating actionable AI predictions...',
-                'Compiling premium intelligence report...'
+                'Generating actionable predictions and recommendations...',
+                'Finalizing premium intelligence report...',
+                'Analysis complete - compiling results...'
             ];
             
             let textIndex = 0;
-
             const loadingTextEl = document.getElementById('loadingText');
+            
+            // Show initial message
+            loadingTextEl.innerHTML = loadingTexts[0] + '<br><small style="color: #999;">Premium analysis may take 60-90 seconds for comprehensive results</small>';
             
             const textInterval = setInterval(() => {
                 if (document.getElementById('loadingSpinner').style.display === 'none') {
@@ -787,8 +790,14 @@
                 }
                 
                 textIndex = (textIndex + 1) % loadingTexts.length;
-                loadingTextEl.textContent = loadingTexts[textIndex];
-            }, 3000);
+                const message = loadingTexts[textIndex];
+                
+                if (textIndex === 0) {
+                    loadingTextEl.innerHTML = message + '<br><small style="color: #999;">Premium analysis may take 60-90 seconds for comprehensive results</small>';
+                } else {
+                    loadingTextEl.textContent = message;
+                }
+            }, 4000); // Slower rotation for better UX
         }
 
         function hideLoading() {

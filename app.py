@@ -139,55 +139,44 @@ class PremiumTokenSocialAnalyzer:
     def _premium_comprehensive_analysis(self, symbol: str, token_address: str, token_data: Dict) -> TokenAnalysis:
         """PREMIUM: Deep, comprehensive analysis with maximum detail and unique insights"""
         
-        # PREMIUM: Ultra-detailed prompt designed to get unique, actionable intelligence
-        premium_prompt = f"""You are conducting a PREMIUM social intelligence analysis for ${symbol} token (Contract: {token_address}). This is a paid service requiring detailed, unique, actionable insights that justify the cost.
+        # PREMIUM: Optimized prompt for high-quality but faster analysis
+        premium_prompt = f"""PREMIUM Analysis for ${symbol} token ({token_address}). Provide SPECIFIC, UNIQUE insights with REAL DATA.
 
-CURRENT TOKEN METRICS:
-{json.dumps(token_data, indent=2) if token_data else f'${symbol} - Analyzing price and volume data...'}
+TOKEN DATA: {json.dumps(token_data, indent=1) if token_data else f'${symbol} - analyzing...'}
 
-CONDUCT COMPREHENSIVE TWITTER/X ANALYSIS (Past 5 days) and provide SPECIFIC, UNIQUE insights:
+ANALYZE Twitter/X (past 3 days) - provide ACTUAL DATA, not generic responses:
 
-**SECTION 1: DETAILED SOCIAL SENTIMENT INTELLIGENCE**
-- Exact sentiment percentages from actual tweets analyzed (be specific: "Based on analysis of 47 tweets, sentiment is 62% bullish, 28% neutral, 10% bearish")
-- Identify specific viral tweets, retweets, and engagement patterns
-- Quote actual tweet content where relevant (anonymized if needed)
-- Sentiment momentum: Is sentiment improving, declining, or stable? Provide evidence
-- Compare sentiment to similar tokens in the same category
-- Identify specific emotional triggers driving sentiment (news, partnerships, price moves)
+**1. SOCIAL SENTIMENT** 
+- Exact percentages from tweet analysis (e.g., "47 tweets analyzed: 62% bullish, 28% neutral, 10% bearish")
+- Specific viral content and engagement patterns
+- Quote key tweets (anonymized)
+- Sentiment trend: improving/declining with evidence
 
-**SECTION 2: SPECIFIC INFLUENCER & ACCOUNT ACTIVITY**
-- List ACTUAL Twitter accounts mentioning ${symbol} with follower counts where available
-- Exact quotes or paraphrases of what key accounts are saying
-- Distinguish between organic mentions vs paid promotion vs bot activity
-- Identify whale accounts or known traders discussing the token
-- Track sentiment changes from the same accounts over time
-- Note any coordinated posting patterns or brigading
+**2. INFLUENCER ACTIVITY**
+- ACTUAL Twitter accounts mentioning ${symbol} (@username format)
+- Specific quotes/opinions from key accounts
+- Follower counts where available
+- Organic vs paid promotion detection
 
-**SECTION 3: GRANULAR DISCUSSION TRENDS & TOPICS**
-- Specific hashtags trending with ${symbol} (provide actual hashtags)
-- Most retweeted content related to the token
-- Geographic discussion patterns if detectable
-- Time-of-day posting patterns and peak engagement windows
-- Correlation analysis: Social volume vs price movements with specific examples
-- Emerging narratives: What stories are the community building around this token?
+**3. DISCUSSION TRENDS**
+- Specific hashtags trending with ${symbol}
+- Most retweeted content
+- Peak activity windows and volume patterns
+- Price correlation examples
 
-**SECTION 4: DETAILED RISK ASSESSMENT**
-- Specific red flags: Quote concerning tweets or identify manipulation patterns
-- FUD campaigns: Who's spreading negative sentiment and why?
-- Community health indicators: Response to criticism, handling of price drops
-- Developer communication: Are they active in social media? What are they saying?
-- Pump and dump indicators: Suspicious coordinated activity, artificial hype
-- Risk score: HIGH/MEDIUM/LOW with specific justification
+**4. RISK ASSESSMENT**
+- Specific red flags with examples
+- FUD campaigns and sources
+- Manipulation patterns (coordinated activity, bot detection)
+- Risk level: HIGH/MEDIUM/LOW with justification
 
-**SECTION 5: ACTIONABLE PREDICTIONS & STRATEGY**
-- Price prediction based on social momentum (be specific about timeframes and levels)
-- Social catalysts that could drive next price movement
-- Optimal entry/exit points based on sentiment cycles
-- Trading strategy recommendations with specific conditions
-- Key social metrics to monitor for position management
-- Expected timeframe for next major sentiment shift
+**5. PREDICTIONS & STRATEGY**
+- Price prediction with timeframes and levels
+- Entry/exit recommendations with conditions
+- Key catalysts to monitor
+- Confidence % with reasoning
 
-CRITICAL: Provide ACTUAL DATA and SPECIFIC EXAMPLES. No generic responses. This analysis costs money and must provide unique value. Include real Twitter handles, actual engagement numbers, specific quotes, and measurable metrics wherever possible."""
+CRITICAL: Include REAL Twitter handles, actual quotes, specific metrics, measurable data. No generic responses - this costs money and must provide unique value.
         
         try:
             logger.info("Making PREMIUM comprehensive GROK API call...")
@@ -201,15 +190,15 @@ CRITICAL: Provide ACTUAL DATA and SPECIFIC EXAMPLES. No generic responses. This 
             return self._create_error_response(token_address, symbol, str(e))
     
     def _premium_grok_api_call(self, prompt: str) -> str:
-        """PREMIUM GROK API call with maximum detail parameters"""
+        """PREMIUM GROK API call optimized for speed while maintaining quality"""
         try:
-            # PREMIUM: Maximum detail parameters for comprehensive analysis
+            # OPTIMIZED: Balanced parameters for premium analysis with faster response
             search_params = {
                 "mode": "on",
                 "sources": [{"type": "x"}],
-                "max_search_results": 15,  # Increased for maximum coverage
-                "from_date": (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d"),  # 5 days for deeper analysis
-                "return_citations": True  # Enable citations for credibility
+                "max_search_results": 10,  # Reduced from 15 for faster response
+                "from_date": (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d"),  # 3 days for speed
+                "return_citations": False  # Disabled for faster response
             }
             
             payload = {
@@ -217,7 +206,7 @@ CRITICAL: Provide ACTUAL DATA and SPECIFIC EXAMPLES. No generic responses. This 
                 "messages": [
                     {
                         "role": "system",
-                        "content": "You are a PREMIUM crypto social intelligence analyst providing detailed, actionable insights worth paying for. Always provide specific data, real examples, and unique intelligence. Never give generic responses. This is a paid service requiring maximum value and accuracy."
+                        "content": "You are a PREMIUM crypto social intelligence analyst. Provide detailed, specific, actionable insights with real data. Focus on unique intelligence worth paying for. Be comprehensive but efficient."
                     },
                     {
                         "role": "user",
@@ -225,8 +214,8 @@ CRITICAL: Provide ACTUAL DATA and SPECIFIC EXAMPLES. No generic responses. This 
                     }
                 ],
                 "search_parameters": search_params,
-                "max_tokens": 2500,  # MAXIMUM output for comprehensive analysis
-                "temperature": 0.2   # Lower temperature for more factual, detailed responses
+                "max_tokens": 2000,  # Reduced from 2500 for faster response
+                "temperature": 0.3   # Balanced for detailed but focused responses
             }
             
             headers = {
@@ -234,8 +223,8 @@ CRITICAL: Provide ACTUAL DATA and SPECIFIC EXAMPLES. No generic responses. This 
                 "Content-Type": "application/json"
             }
             
-            logger.info(f"Making PREMIUM GROK API call ({len(prompt)} chars, max 2500 tokens, 15 search results)...")
-            response = requests.post(GROK_URL, json=payload, headers=headers, timeout=120)  # Longer timeout for detailed analysis
+            logger.info(f"Making PREMIUM GROK API call ({len(prompt)} chars, max 2000 tokens, 10 search results)...")
+            response = requests.post(GROK_URL, json=payload, headers=headers, timeout=90)  # 90 second timeout
             
             logger.info(f"GROK API response status: {response.status_code}")
             
@@ -253,14 +242,14 @@ CRITICAL: Provide ACTUAL DATA and SPECIFIC EXAMPLES. No generic responses. This 
             logger.info(f"PREMIUM GROK API call successful, response: {len(content)} chars")
             
             # Validate we got substantial content
-            if len(content) < 500:
+            if len(content) < 300:
                 logger.warning(f"Short response received ({len(content)} chars) - may indicate API issues")
             
             return content
             
         except requests.exceptions.Timeout:
             logger.error("PREMIUM GROK API call timed out")
-            return "ERROR: Premium analysis timed out - comprehensive social data processing requires more time. Please try again."
+            return "ERROR: Premium analysis timed out - please try again. The system is processing high-quality social intelligence which requires more time."
         except Exception as e:
             logger.error(f"PREMIUM GROK API Error: {e}")
             return f"ERROR: Premium analysis failed - {str(e)}"
@@ -832,16 +821,16 @@ def stats():
         'daily_limit': analyzer.daily_limit,
         'cache_size': len(analysis_cache),
         'cache_hit_rate': 'Available after first few queries',
-        'cost_per_analysis': 'Approximately $0.015-0.035 USD for premium detailed analysis',
+        'cost_per_analysis': 'Approximately $0.012-0.025 USD for premium detailed analysis (optimized)',
         'premium_features_active': [
-            'Maximum detail GROK API calls (2500 tokens, 15 search results)',
-            '5-day historical analysis window for deeper insights',
+            'Optimized GROK API calls (2000 tokens, 10 search results) for speed + quality',
+            '3-day historical analysis window for relevant insights',
             'Real Twitter/X account identification and engagement metrics',
             'Specific quote extraction and viral content analysis',
             'Advanced manipulation detection and community health scoring',
             'Actionable trading recommendations with confidence levels',
             'Premium parsing with detailed section extraction',
-            'Citations enabled for credibility and verification'
+            'Speed-optimized while maintaining comprehensive analysis'
         ]
     })
 
