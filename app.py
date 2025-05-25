@@ -176,7 +176,7 @@ ANALYZE Twitter/X (past 3 days) - provide ACTUAL DATA, not generic responses:
 - Key catalysts to monitor
 - Confidence % with reasoning
 
-CRITICAL: Include REAL Twitter handles, actual quotes, specific metrics, measurable data. No generic responses - this costs money and must provide unique value.
+CRITICAL: Include REAL Twitter handles, actual quotes, specific metrics, measurable data. No generic responses - this costs money and must provide unique value."""
         
         try:
             logger.info("Making PREMIUM comprehensive GROK API call...")
@@ -317,14 +317,7 @@ CRITICAL: Include REAL Twitter handles, actual quotes, specific metrics, measura
         
         # Multiple patterns to catch different formatting styles
         section_patterns = [
-            # Pattern 1: **SECTION 1: NAME**
-            (r'\*\*\s*SECTION\s*1[:\s]*.*?SENTIMENT.*?\*\*(.*?)(?=\*\*\s*SECTION\s*2|$)', 'sentiment'),
-            (r'\*\*\s*SECTION\s*2[:\s]*.*?INFLUENCER.*?\*\*(.*?)(?=\*\*\s*SECTION\s*3|$)', 'influencer'),
-            (r'\*\*\s*SECTION\s*3[:\s]*.*?DISCUSSION.*?\*\*(.*?)(?=\*\*\s*SECTION\s*4|$)', 'trends'),
-            (r'\*\*\s*SECTION\s*4[:\s]*.*?RISK.*?\*\*(.*?)(?=\*\*\s*SECTION\s*5|$)', 'risks'),
-            (r'\*\*\s*SECTION\s*5[:\s]*.*?PREDICTION.*?\*\*(.*?)$', 'prediction'),
-            
-            # Pattern 2: **1. SECTION NAME**
+            # Pattern 1: **1. SECTION NAME**
             (r'\*\*\s*1\.\s*.*?SENTIMENT.*?\*\*(.*?)(?=\*\*\s*2\.|$)', 'sentiment'),
             (r'\*\*\s*2\.\s*.*?INFLUENCER.*?\*\*(.*?)(?=\*\*\s*3\.|$)', 'influencer'),
             (r'\*\*\s*3\.\s*.*?DISCUSSION.*?\*\*(.*?)(?=\*\*\s*4\.|$)', 'trends'),
@@ -434,7 +427,7 @@ CRITICAL: Include REAL Twitter handles, actual quotes, specific metrics, measura
             return '\n'.join(sentiment_content)
         
         # Fallback comprehensive sentiment analysis
-        return f"""**Comprehensive Social Sentiment Analysis**
+        return """**Comprehensive Social Sentiment Analysis**
 
 **Overall Sentiment Distribution:** Analyzing real-time Twitter/X discussions, community engagement patterns, and viral content propagation to determine market sentiment distribution and emotional drivers.
 
@@ -465,7 +458,7 @@ CRITICAL: Include REAL Twitter handles, actual quotes, specific metrics, measura
             return '\n'.join(trend_content)
         
         # Fallback comprehensive trend analysis
-        return f"""**Comprehensive Discussion Trends & Pattern Analysis**
+        return """**Comprehensive Discussion Trends & Pattern Analysis**
 
 **Trending Topic Identification:** Real-time analysis of hashtag performance, keyword frequency, and viral content patterns to identify emerging discussion themes and community focus areas.
 
@@ -496,7 +489,7 @@ CRITICAL: Include REAL Twitter handles, actual quotes, specific metrics, measura
             return '\n'.join(risk_content)
         
         # Fallback comprehensive risk analysis
-        return f"""**Comprehensive Social-Based Risk Assessment**
+        return """**Comprehensive Social-Based Risk Assessment**
 
 **Manipulation Risk Indicators:** Advanced detection of coordinated pump campaigns, bot activity patterns, artificial sentiment inflation, and suspicious engagement metrics that may indicate market manipulation.
 
@@ -527,7 +520,7 @@ CRITICAL: Include REAL Twitter handles, actual quotes, specific metrics, measura
             return '\n'.join(prediction_content)
         
         # Fallback comprehensive prediction analysis
-        return f"""**Comprehensive AI Prediction & Strategic Recommendations**
+        return """**Comprehensive AI Prediction & Strategic Recommendations**
 
 **Short-Term Social Sentiment Forecast (1-7 days):** Based on current social momentum, influencer activity patterns, and community engagement trends, projecting likely sentiment evolution and potential catalysts for sentiment shifts.
 
@@ -560,7 +553,7 @@ CRITICAL: Include REAL Twitter handles, actual quotes, specific metrics, measura
         return TokenAnalysis(
             token_address=token_address,
             token_symbol=symbol,
-            social_sentiment=f"""**Premium Social Sentiment Analysis Required**
+            social_sentiment="""**Premium Social Sentiment Analysis Required**
 
 **API Key Required:** This premium social intelligence analysis requires a valid GROK API key to access real-time Twitter/X data.
 
@@ -581,7 +574,7 @@ Without API access, only basic token data and generic analysis templates are ava
             key_discussions=["API key required for real-time discussion analysis"],
             influencer_mentions=["Premium API access needed for influencer tracking"],
             
-            trend_analysis=f"""**Premium Discussion Trends Analysis**
+            trend_analysis="""**Premium Discussion Trends Analysis**
 
 Premium trend analysis provides:
 - Specific hashtag performance and viral content tracking
@@ -592,7 +585,7 @@ Premium trend analysis provides:
 
 **API Required:** Connect your GROK API key to unlock detailed trend intelligence.""",
             
-            risk_assessment=f"""**Premium Risk Assessment**
+            risk_assessment="""**Premium Risk Assessment**
 
 Premium risk analysis includes:
 - Advanced manipulation and pump/dump detection
@@ -603,7 +596,7 @@ Premium risk analysis includes:
 
 **API Access Required:** Premium risk intelligence requires real-time social data access.""",
             
-            prediction=f"""**Premium AI Predictions & Strategy**
+            prediction="""**Premium AI Predictions & Strategy**
 
 Premium prediction service provides:
 - Specific price targets based on social momentum
@@ -631,15 +624,15 @@ Premium prediction service provides:
         market_cap_str = f"${market_cap:,.0f}" if market_cap > 0 else 'N/A'
         
         # Create the social sentiment text safely
-        sentiment_text = f"**Daily API Limit Reached**\n\n" + \
+        sentiment_text = "**Daily API Limit Reached**\n\n" + \
                         f"The premium analysis service has reached its daily API limit of {self.daily_limit} requests.\n\n" + \
-                        f"**Current Token Data Available:**\n" + \
+                        "**Current Token Data Available:**\n" + \
                         f"- Symbol: {symbol}\n" + \
                         f"- Price: ${price}\n" + \
                         f"- 24h Change: {price_change}%\n" + \
                         f"- Volume: {volume_str}\n" + \
                         f"- Market Cap: {market_cap_str}\n\n" + \
-                        f"**Service will reset at midnight UTC.** Premium social intelligence analysis will resume then."
+                        "**Service will reset at midnight UTC.** Premium social intelligence analysis will resume then."
         
         return TokenAnalysis(
             token_address=token_address,
@@ -696,7 +689,7 @@ def index():
         <head><title>Premium Token Social Intelligence Platform</title></head>
         <body style="font-family: Arial, sans-serif; padding: 40px; background: #f5f5f5;">
             <div style="max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <h1 style="color: #333; margin-bottom: 20px;">🚀 Premium Token Social Intelligence</h1>
+                <h1 style="color: #333; margin-bottom: 20px;">Premium Token Social Intelligence</h1>
                 <p style="color: #666; margin-bottom: 30px;">Professional-grade AI-powered social sentiment analysis with unique insights</p>
                 <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #4caf50;">
                     <strong>Premium Analysis:</strong> Detailed real-time Twitter/X intelligence, specific influencer tracking, and actionable trading recommendations that justify premium pricing.
