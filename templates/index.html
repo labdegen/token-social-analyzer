@@ -600,7 +600,17 @@
 
             <div class="loading-spinner" id="loadingSpinner">
                 <div class="spinner"></div>
-                <div class="loading-steps" id="loadingText">Initializing premium social intelligence analysis...<br><small style="color: #999;">Premium analysis may take 60-90 seconds for comprehensive results</small></div>
+                <div class="loading-steps" id="loadingText">
+                    <div style="text-align: left; max-width: 500px; margin: 0 auto;">
+                        <div style="margin-bottom: 15px; color: #667eea; font-weight: 600;">🚀 Progressive Premium Analysis</div>
+                        <div id="progressStep1" style="margin: 8px 0; color: #999;">📊 Social Sentiment Analysis - <span style="color: #667eea;">Loading...</span></div>
+                        <div id="progressStep2" style="margin: 8px 0; color: #999;">👑 Key Influencer Activity - <span style="color: #999;">Waiting...</span></div>
+                        <div id="progressStep3" style="margin: 8px 0; color: #999;">📈 Discussion Trends - <span style="color: #999;">Waiting...</span></div>
+                        <div id="progressStep4" style="margin: 8px 0; color: #999;">⚠️ Risk Assessment - <span style="color: #999;">Waiting...</span></div>
+                        <div id="progressStep5" style="margin: 8px 0; color: #999;">🔮 AI Predictions - <span style="color: #999;">Waiting...</span></div>
+                        <div style="margin-top: 15px; font-size: 0.9rem; color: #999;">Each section analyzed separately for complete results</div>
+                    </div>
+                </div>
             </div>
 
             <div class="error-message" id="errorMessage" style="display: none;"></div>
@@ -766,38 +776,35 @@
             document.getElementById('loadingSpinner').style.display = 'block';
             document.querySelector('.analyze-btn').disabled = true;
             
-            const loadingTexts = [
-                'Initializing premium social intelligence analysis...',
-                'Connecting to Twitter/X API for real-time data...',
-                'Processing comprehensive social sentiment analysis...',
-                'Analyzing influencer mentions and engagement...',
-                'Conducting advanced risk assessment...',
-                'Generating actionable predictions and recommendations...',
-                'Finalizing premium intelligence report...',
-                'Analysis complete - compiling results...'
-            ];
-            
-            let textIndex = 0;
             const loadingTextEl = document.getElementById('loadingText');
-            
-            // Show initial message
-            loadingTextEl.innerHTML = loadingTexts[0] + '<br><small style="color: #999;">Premium analysis may take 60-90 seconds for comprehensive results</small>';
-            
-            const textInterval = setInterval(() => {
-                if (document.getElementById('loadingSpinner').style.display === 'none') {
-                    clearInterval(textInterval);
-                    return;
+            loadingTextEl.innerHTML = `
+                <div style="text-align: left; max-width: 500px; margin: 0 auto;">
+                    <div style="margin-bottom: 15px; color: #667eea; font-weight: 600;">🚀 Progressive Premium Analysis</div>
+                    <div id="progressStep1" style="margin: 8px 0; color: #999;">📊 Social Sentiment Analysis - <span style="color: #667eea;">Loading...</span></div>
+                    <div id="progressStep2" style="margin: 8px 0; color: #999;">👑 Key Influencer Activity - <span style="color: #999;">Waiting...</span></div>
+                    <div id="progressStep3" style="margin: 8px 0; color: #999;">📈 Discussion Trends - <span style="color: #999;">Waiting...</span></div>
+                    <div id="progressStep4" style="margin: 8px 0; color: #999;">⚠️ Risk Assessment - <span style="color: #999;">Waiting...</span></div>
+                    <div id="progressStep5" style="margin: 8px 0; color: #999;">🔮 AI Predictions - <span style="color: #999;">Waiting...</span></div>
+                    <div style="margin-top: 15px; font-size: 0.9rem; color: #999;">Each section analyzed separately for complete results</div>
+                </div>
+            `;
+        }
+
+        function updateLoadingProgress(step, status) {
+            const stepEl = document.getElementById(`progressStep${step}`);
+            if (stepEl) {
+                const statusSpan = stepEl.querySelector('span');
+                if (status === 'loading') {
+                    statusSpan.style.color = '#667eea';
+                    statusSpan.textContent = 'Loading...';
+                } else if (status === 'complete') {
+                    statusSpan.style.color = '#10b981';
+                    statusSpan.textContent = '✓ Complete';
+                } else if (status === 'error') {
+                    statusSpan.style.color = '#ef4444';
+                    statusSpan.textContent = '✗ Error';
                 }
-                
-                textIndex = (textIndex + 1) % loadingTexts.length;
-                const message = loadingTexts[textIndex];
-                
-                if (textIndex === 0) {
-                    loadingTextEl.innerHTML = message + '<br><small style="color: #999;">Premium analysis may take 60-90 seconds for comprehensive results</small>';
-                } else {
-                    loadingTextEl.textContent = message;
-                }
-            }, 4000); // Slower rotation for better UX
+            }
         }
 
         function hideLoading() {

@@ -137,57 +137,243 @@ class PremiumTokenSocialAnalyzer:
             return self._create_error_response(token_address, token_symbol or 'UNKNOWN', str(e))
     
     def _premium_comprehensive_analysis(self, symbol: str, token_address: str, token_data: Dict) -> TokenAnalysis:
-        """PREMIUM: Deep, comprehensive analysis with maximum detail and unique insights"""
-        
-        # PREMIUM: Optimized prompt for high-quality but faster analysis
-        premium_prompt = f"""PREMIUM Analysis for ${symbol} token ({token_address}). Provide SPECIFIC, UNIQUE insights with REAL DATA.
-
-TOKEN DATA: {json.dumps(token_data, indent=1) if token_data else f'${symbol} - analyzing...'}
-
-ANALYZE Twitter/X (past 3 days) - provide ACTUAL DATA, not generic responses:
-
-**1. SOCIAL SENTIMENT** 
-- Exact percentages from tweet analysis (e.g., "47 tweets analyzed: 62% bullish, 28% neutral, 10% bearish")
-- Specific viral content and engagement patterns
-- Quote key tweets (anonymized)
-- Sentiment trend: improving/declining with evidence
-
-**2. INFLUENCER ACTIVITY**
-- ACTUAL Twitter accounts mentioning ${symbol} (@username format)
-- Specific quotes/opinions from key accounts
-- Follower counts where available
-- Organic vs paid promotion detection
-
-**3. DISCUSSION TRENDS**
-- Specific hashtags trending with ${symbol}
-- Most retweeted content
-- Peak activity windows and volume patterns
-- Price correlation examples
-
-**4. RISK ASSESSMENT**
-- Specific red flags with examples
-- FUD campaigns and sources
-- Manipulation patterns (coordinated activity, bot detection)
-- Risk level: HIGH/MEDIUM/LOW with justification
-
-**5. PREDICTIONS & STRATEGY**
-- Price prediction with timeframes and levels
-- Entry/exit recommendations with conditions
-- Key catalysts to monitor
-- Confidence % with reasoning
-
-CRITICAL: Include REAL Twitter handles, actual quotes, specific metrics, measurable data. No generic responses - this costs money and must provide unique value."""
+        """PREMIUM: Progressive analysis with separate API calls for each section"""
         
         try:
-            logger.info("Making PREMIUM comprehensive GROK API call...")
-            result = self._premium_grok_api_call(premium_prompt)
+            logger.info("Starting progressive premium analysis...")
             
-            # Parse the premium result with enhanced extraction
-            return self._parse_premium_analysis(result, token_address, symbol, token_data)
+            # Initialize with placeholders
+            analysis_sections = {
+                'social_sentiment': 'Analysis in progress...',
+                'influencer_mentions': ['Loading influencer data...'],
+                'trend_analysis': 'Tracking discussion trends...',
+                'risk_assessment': 'Conducting risk assessment...',
+                'prediction': 'Generating predictions...',
+                'key_discussions': ['Analyzing discussion topics...'],
+                'confidence_score': 0.75
+            }
+            
+            # Section 1: Social Sentiment Analysis (focused and fast)
+            sentiment_result = self._analyze_social_sentiment_section(symbol, token_address, token_data)
+            if sentiment_result and not sentiment_result.startswith("ERROR:"):
+                analysis_sections['social_sentiment'] = sentiment_result
+                logger.info("✓ Social sentiment analysis completed")
+            
+            # Section 2: Influencer Activity (specific Twitter accounts)
+            influencer_result = self._analyze_influencer_section(symbol, token_address)
+            if influencer_result and not influencer_result.startswith("ERROR:"):
+                analysis_sections['influencer_mentions'] = self._parse_influencer_list(influencer_result)
+                logger.info("✓ Influencer analysis completed")
+            
+            # Section 3: Discussion Trends
+            trends_result = self._analyze_trends_section(symbol, token_address)
+            if trends_result and not trends_result.startswith("ERROR:"):
+                analysis_sections['trend_analysis'] = trends_result
+                analysis_sections['key_discussions'] = self._extract_key_topics_from_text(trends_result)
+                logger.info("✓ Trends analysis completed")
+            
+            # Section 4: Risk Assessment
+            risk_result = self._analyze_risk_section(symbol, token_address)
+            if risk_result and not risk_result.startswith("ERROR:"):
+                analysis_sections['risk_assessment'] = risk_result
+                logger.info("✓ Risk analysis completed")
+            
+            # Section 5: Predictions & Strategy
+            prediction_result = self._analyze_prediction_section(symbol, token_address, token_data)
+            if prediction_result and not prediction_result.startswith("ERROR:"):
+                analysis_sections['prediction'] = prediction_result
+                analysis_sections['confidence_score'] = self._extract_confidence_score(prediction_result)
+                logger.info("✓ Prediction analysis completed")
+            
+            return TokenAnalysis(
+                token_address=token_address,
+                token_symbol=symbol,
+                social_sentiment=analysis_sections['social_sentiment'],
+                key_discussions=analysis_sections['key_discussions'],
+                influencer_mentions=analysis_sections['influencer_mentions'],
+                trend_analysis=analysis_sections['trend_analysis'],
+                risk_assessment=analysis_sections['risk_assessment'],
+                prediction=analysis_sections['prediction'],
+                confidence_score=analysis_sections['confidence_score']
+            )
             
         except Exception as e:
-            logger.error(f"Premium analysis failed: {e}")
+            logger.error(f"Progressive analysis failed: {e}")
             return self._create_error_response(token_address, symbol, str(e))
+    
+    def _analyze_social_sentiment_section(self, symbol: str, token_address: str, token_data: Dict) -> str:
+        """Focused API call for social sentiment only"""
+        prompt = f"""Analyze SOCIAL SENTIMENT for ${symbol} token. Be specific and detailed.
+
+TOKEN DATA: {json.dumps(token_data, indent=1) if token_data else f'${symbol}'}
+
+Focus ONLY on social sentiment from Twitter/X (past 2 days):
+
+**Provide EXACT DATA:**
+- Sentiment percentages from actual tweets (e.g., "Analyzed 23 tweets: 65% bullish, 25% neutral, 10% bearish")
+- Specific emotional tone and key sentiment drivers
+- Quote 2-3 actual tweet examples (anonymized)
+- Sentiment momentum: improving/declining with evidence
+- Community engagement quality (retweets, replies, likes)
+
+**Critical:** Include real engagement numbers, specific examples, measurable data. No generic responses."""
+        
+        return self._fast_grok_api_call(prompt, "sentiment")
+    
+    def _analyze_influencer_section(self, symbol: str, token_address: str) -> str:
+        """Focused API call for influencer activity only"""
+        prompt = f"""Analyze INFLUENCER ACTIVITY for ${symbol} token. List ACTUAL Twitter accounts.
+
+Focus ONLY on influencer mentions from Twitter/X (past 2 days):
+
+**Provide SPECIFIC DATA:**
+- List ACTUAL Twitter accounts mentioning ${symbol} (@username format)
+- Follower counts where available
+- Exact quotes or paraphrases from these accounts
+- Distinguish organic vs paid promotion
+- Account verification status and influence level
+
+**Format as list:**
+@username1 (followers: X) - "quote or summary"
+@username2 (followers: Y) - "quote or summary"
+
+**Critical:** Real Twitter handles only. If no major influencers found, list smaller accounts that mentioned the token."""
+        
+        return self._fast_grok_api_call(prompt, "influencer")
+    
+    def _analyze_trends_section(self, symbol: str, token_address: str) -> str:
+        """Focused API call for discussion trends only"""
+        prompt = f"""Analyze DISCUSSION TRENDS for ${symbol} token. Focus on trending topics and patterns.
+
+Focus ONLY on discussion patterns from Twitter/X (past 2 days):
+
+**Provide SPECIFIC DATA:**
+- Trending hashtags with ${symbol} (actual hashtags used)
+- Most retweeted content about the token
+- Peak activity time periods
+- Discussion volume patterns (increasing/decreasing)
+- Key topics being discussed (partnerships, listings, price, etc.)
+- Geographic patterns if detectable
+
+**Critical:** Real hashtags, actual trending topics, measurable patterns. Include specific examples."""
+        
+        return self._fast_grok_api_call(prompt, "trends")
+    
+    def _analyze_risk_section(self, symbol: str, token_address: str) -> str:
+        """Focused API call for risk assessment only"""
+        prompt = f"""Analyze RISK FACTORS for ${symbol} token. Focus on social-based risks.
+
+Focus ONLY on risk indicators from Twitter/X (past 2 days):
+
+**Provide SPECIFIC ANALYSIS:**
+- Red flags: Quote concerning tweets or identify manipulation patterns
+- FUD campaigns: Who's spreading negative sentiment and why
+- Bot activity detection and coordinated posting patterns
+- Community health: Response to criticism, handling of volatility
+- Pump/dump indicators: Suspicious activity, artificial hype
+- Overall risk level: HIGH/MEDIUM/LOW with specific justification
+
+**Critical:** Specific examples of risks, actual concerning content, measurable indicators."""
+        
+        return self._fast_grok_api_call(prompt, "risk")
+    
+    def _analyze_prediction_section(self, symbol: str, token_address: str, token_data: Dict) -> str:
+        """Focused API call for predictions and strategy only"""
+        prompt = f"""Generate PREDICTIONS & STRATEGY for ${symbol} token based on social sentiment.
+
+TOKEN DATA: {json.dumps(token_data, indent=1) if token_data else f'${symbol}'}
+
+Focus ONLY on predictions based on social data:
+
+**Provide ACTIONABLE RECOMMENDATIONS:**
+- Short-term prediction (1-7 days) with specific price levels if possible
+- Medium-term outlook (1-4 weeks) based on social trends
+- Key social catalysts that could drive price movement
+- Entry/exit recommendations with specific conditions
+- Risk management strategy
+- Confidence percentage with detailed reasoning
+
+**Critical:** Specific price targets, actionable advice, clear confidence assessment."""
+        
+        return self._fast_grok_api_call(prompt, "prediction")
+    
+    def _fast_grok_api_call(self, prompt: str, section: str) -> str:
+        """Fast, focused GROK API call for individual sections"""
+        try:
+            # ULTRA-FAST: Minimal parameters for each section
+            search_params = {
+                "mode": "on",
+                "sources": [{"type": "x"}],
+                "max_search_results": 3,  # Very focused
+                "from_date": (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d"),
+                "return_citations": False
+            }
+            
+            payload = {
+                "model": "grok-3-latest",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": f"You are analyzing the {section} section only. Provide specific, detailed insights with real data. Focus on actual Twitter/X content and measurable metrics."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "search_parameters": search_params,
+                "max_tokens": 800,  # Focused response per section
+                "temperature": 0.3
+            }
+            
+            headers = {
+                "Authorization": f"Bearer {self.grok_api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            logger.info(f"Making FAST {section} API call...")
+            response = requests.post(GROK_URL, json=payload, headers=headers, timeout=30)  # 30 second timeout per section
+            
+            if response.status_code == 200:
+                result = response.json()
+                content = result['choices'][0]['message']['content']
+                logger.info(f"✓ {section} API call successful: {len(content)} chars")
+                return content
+            else:
+                logger.warning(f"✗ {section} API call failed: {response.status_code}")
+                return f"ERROR: {section} analysis failed"
+                
+        except Exception as e:
+            logger.error(f"✗ {section} API call error: {e}")
+            return f"ERROR: {section} analysis error"
+    
+    def _parse_influencer_list(self, text: str) -> List[str]:
+        """Parse influencer analysis into list format"""
+        mentions = []
+        lines = text.split('\n')
+        
+        for line in lines:
+            if '@' in line and len(line.strip()) > 5:
+                mentions.append(line.strip())
+        
+        # If no specific mentions found, extract general content
+        if not mentions:
+            for line in lines:
+                if len(line.strip()) > 10 and any(keyword in line.lower() for keyword in ['influencer', 'account', 'mentioned', 'follower']):
+                    mentions.append(line.strip())
+        
+        return mentions[:8] if mentions else ["No specific influencer mentions detected in recent analysis"]
+    
+    def _extract_key_topics_from_text(self, text: str) -> List[str]:
+        """Extract key topics from trends analysis"""
+        topics = []
+        lines = text.split('\n')
+        
+        for line in lines:
+            if any(keyword in line.lower() for keyword in ['hashtag', 'trending', 'topic', 'discussion', '#']):
+                topics.append(line.strip())
+        
+        return topics[:6] if topics else ["Discussion trends analysis in progress"]
     
     def _premium_grok_api_call(self, prompt: str) -> str:
         """PREMIUM GROK API call optimized for SPEED to avoid timeouts"""
