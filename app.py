@@ -136,63 +136,69 @@ class PremiumTokenSocialAnalyzer:
             logger.error(f"Traceback: {traceback.format_exc()}")
             return self._create_error_response(token_address, token_symbol or 'UNKNOWN', str(e))
     
-    def _comprehensive_efficient_analysis(self, symbol: str, token_address: str, token_data: Dict) -> TokenAnalysis:
-        """COMPREHENSIVE but cost-optimized: Detailed analysis with smart prompting"""
+    def _premium_comprehensive_analysis(self, symbol: str, token_address: str, token_data: Dict) -> TokenAnalysis:
+        """PREMIUM: Deep, comprehensive analysis with maximum detail and unique insights"""
         
-        # OPTIMIZATION: Comprehensive prompt that maximizes insight per token while staying detailed
-        comprehensive_prompt = f"""Perform comprehensive Twitter/X social media analysis for ${symbol} token (address: {token_address}) over the past 3 days. Provide detailed, actionable insights that traders can't get elsewhere.
+        # PREMIUM: Ultra-detailed prompt designed to get unique, actionable intelligence
+        premium_prompt = f"""You are conducting a PREMIUM social intelligence analysis for ${symbol} token (Contract: {token_address}). This is a paid service requiring detailed, unique, actionable insights that justify the cost.
 
-TOKEN DATA: {json.dumps(token_data, indent=2) if token_data else f'${symbol} - Fetching price data...'}
+CURRENT TOKEN METRICS:
+{json.dumps(token_data, indent=2) if token_data else f'${symbol} - Analyzing price and volume data...'}
 
-Deliver detailed analysis in these sections:
+CONDUCT COMPREHENSIVE TWITTER/X ANALYSIS (Past 5 days) and provide SPECIFIC, UNIQUE insights:
 
-**1. SOCIAL SENTIMENT ANALYSIS:**
-- Overall sentiment breakdown with specific percentages (bullish/bearish/neutral)
-- Discussion volume trends and activity patterns 
-- Community emotional tone and key sentiment drivers
-- Engagement quality metrics and viral content analysis
-- Compare current sentiment vs previous periods
+**SECTION 1: DETAILED SOCIAL SENTIMENT INTELLIGENCE**
+- Exact sentiment percentages from actual tweets analyzed (be specific: "Based on analysis of 47 tweets, sentiment is 62% bullish, 28% neutral, 10% bearish")
+- Identify specific viral tweets, retweets, and engagement patterns
+- Quote actual tweet content where relevant (anonymized if needed)
+- Sentiment momentum: Is sentiment improving, declining, or stable? Provide evidence
+- Compare sentiment to similar tokens in the same category
+- Identify specific emotional triggers driving sentiment (news, partnerships, price moves)
 
-**2. KEY INFLUENCER & ACCOUNT ACTIVITY:**
-- List specific Twitter accounts mentioning this token (@username format)
-- What exactly they're saying (quotes, opinions, calls to action)
-- Influencer reach and engagement metrics where available
-- Any coordinated campaigns or promotional activities
-- Notable endorsements, warnings, or red flags from key accounts
+**SECTION 2: SPECIFIC INFLUENCER & ACCOUNT ACTIVITY**
+- List ACTUAL Twitter accounts mentioning ${symbol} with follower counts where available
+- Exact quotes or paraphrases of what key accounts are saying
+- Distinguish between organic mentions vs paid promotion vs bot activity
+- Identify whale accounts or known traders discussing the token
+- Track sentiment changes from the same accounts over time
+- Note any coordinated posting patterns or brigading
 
-**3. DISCUSSION TRENDS & TOPICS:**
-- Top trending discussion topics and hashtags
-- Volume patterns (increasing/decreasing/spike analysis)
-- Geographic distribution of discussions if detectable
-- Correlation with price movements or news events
-- Emerging narratives and community consensus shifts
+**SECTION 3: GRANULAR DISCUSSION TRENDS & TOPICS**
+- Specific hashtags trending with ${symbol} (provide actual hashtags)
+- Most retweeted content related to the token
+- Geographic discussion patterns if detectable
+- Time-of-day posting patterns and peak engagement windows
+- Correlation analysis: Social volume vs price movements with specific examples
+- Emerging narratives: What stories are the community building around this token?
 
-**4. COMPREHENSIVE RISK ASSESSMENT:**
-- Social-based risk indicators (FUD campaigns, coordinated dumps, etc.)
-- Community fragmentation or disputes
-- Developer/team social presence and transparency
-- Pump and dump signals or manipulation warnings
-- Overall social risk level with specific justification
+**SECTION 4: DETAILED RISK ASSESSMENT**
+- Specific red flags: Quote concerning tweets or identify manipulation patterns
+- FUD campaigns: Who's spreading negative sentiment and why?
+- Community health indicators: Response to criticism, handling of price drops
+- Developer communication: Are they active in social media? What are they saying?
+- Pump and dump indicators: Suspicious coordinated activity, artificial hype
+- Risk score: HIGH/MEDIUM/LOW with specific justification
 
-**5. AI PREDICTION & DETAILED RECOMMENDATIONS:**
-- Short-term prediction (1-7 days) with specific reasoning
-- Medium-term outlook (1-4 weeks) based on social trends
-- Key social catalysts and events to monitor
-- Specific entry/exit recommendations with price levels if possible
-- Confidence percentage with detailed justification
+**SECTION 5: ACTIONABLE PREDICTIONS & STRATEGY**
+- Price prediction based on social momentum (be specific about timeframes and levels)
+- Social catalysts that could drive next price movement
+- Optimal entry/exit points based on sentiment cycles
+- Trading strategy recommendations with specific conditions
+- Key social metrics to monitor for position management
+- Expected timeframe for next major sentiment shift
 
-Focus on unique insights only available through real-time X analysis. Be specific with examples, quotes, and data points."""
+CRITICAL: Provide ACTUAL DATA and SPECIFIC EXAMPLES. No generic responses. This analysis costs money and must provide unique value. Include real Twitter handles, actual engagement numbers, specific quotes, and measurable metrics wherever possible."""
         
         try:
-            logger.info("Making comprehensive but cost-optimized GROK API call...")
-            result = self._comprehensive_grok_api_call(comprehensive_prompt)
+            logger.info("Making PREMIUM comprehensive GROK API call...")
+            result = self._premium_grok_api_call(premium_prompt)
             
-            # Parse the comprehensive result into detailed components
-            return self._parse_comprehensive_analysis(result, token_address, symbol)
+            # Parse the premium result with enhanced extraction
+            return self._parse_premium_analysis(result, token_address, symbol, token_data)
             
         except Exception as e:
-            logger.error(f"Ultra-efficient analysis failed: {e}")
-            return self._create_enhanced_mock_analysis(token_address, symbol, token_data)
+            logger.error(f"Premium analysis failed: {e}")
+            return self._create_error_response(token_address, symbol, str(e))
     
     def _premium_grok_api_call(self, prompt: str) -> str:
         """PREMIUM GROK API call with maximum detail parameters"""
@@ -316,6 +322,38 @@ Focus on unique insights only available through real-time X analysis. Be specifi
             logger.error(f"Error in premium parsing: {e}")
             return self._create_error_response(token_address, symbol, f"Parsing error: {str(e)}")
     
+    def _enhanced_split_analysis_sections(self, text: str) -> Dict[str, str]:
+        """Enhanced section splitting with multiple patterns"""
+        sections = {}
+        
+        # Multiple patterns to catch different formatting styles
+        section_patterns = [
+            # Pattern 1: **SECTION 1: NAME**
+            (r'\*\*\s*SECTION\s*1[:\s]*.*?SENTIMENT.*?\*\*(.*?)(?=\*\*\s*SECTION\s*2|$)', 'sentiment'),
+            (r'\*\*\s*SECTION\s*2[:\s]*.*?INFLUENCER.*?\*\*(.*?)(?=\*\*\s*SECTION\s*3|$)', 'influencer'),
+            (r'\*\*\s*SECTION\s*3[:\s]*.*?DISCUSSION.*?\*\*(.*?)(?=\*\*\s*SECTION\s*4|$)', 'trends'),
+            (r'\*\*\s*SECTION\s*4[:\s]*.*?RISK.*?\*\*(.*?)(?=\*\*\s*SECTION\s*5|$)', 'risks'),
+            (r'\*\*\s*SECTION\s*5[:\s]*.*?PREDICTION.*?\*\*(.*?)$', 'prediction'),
+            
+            # Pattern 2: **1. SECTION NAME**
+            (r'\*\*\s*1\.\s*.*?SENTIMENT.*?\*\*(.*?)(?=\*\*\s*2\.|$)', 'sentiment'),
+            (r'\*\*\s*2\.\s*.*?INFLUENCER.*?\*\*(.*?)(?=\*\*\s*3\.|$)', 'influencer'),
+            (r'\*\*\s*3\.\s*.*?DISCUSSION.*?\*\*(.*?)(?=\*\*\s*4\.|$)', 'trends'),
+            (r'\*\*\s*4\.\s*.*?RISK.*?\*\*(.*?)(?=\*\*\s*5\.|$)', 'risks'),
+            (r'\*\*\s*5\.\s*.*?PREDICTION.*?\*\*(.*?)$', 'prediction'),
+        ]
+        
+        for pattern, section_key in section_patterns:
+            if section_key not in sections:  # Don't overwrite if already found
+                match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
+                if match:
+                    content = match.group(1).strip()
+                    if len(content) > 50:  # Only use if substantial content
+                        sections[section_key] = content
+                        logger.info(f"Found {section_key} section: {len(content)} chars")
+        
+        return sections
+    
     def _extract_premium_key_topics(self, text: str) -> List[str]:
         """Extract detailed key discussion topics with specific context and data"""
         topics = []
@@ -387,186 +425,6 @@ Focus on unique insights only available through real-time X analysis. Be specifi
             f"Limited key opinion leader (KOL) activity identified",
             f"Monitoring crypto Twitter for emerging influencer discussions"
         ]
-    
-    def _create_api_required_response(self, token_address: str, symbol: str) -> TokenAnalysis:
-        """Response when API key is required for premium analysis"""
-        return TokenAnalysis(
-            token_address=token_address,
-            token_symbol=symbol,
-            social_sentiment=f"""**Premium Social Sentiment Analysis Required**
-
-**API Key Required:** This premium social intelligence analysis requires a valid GROK API key to access real-time Twitter/X data.
-
-**What You Get With Premium Analysis:**
-- Real-time Twitter/X sentiment analysis with specific percentages
-- Actual influencer mentions and engagement metrics  
-- Specific tweet quotes and viral content analysis
-- Detailed community health and manipulation detection
-- Actionable trading recommendations based on social signals
-
-**To Enable Premium Features:**
-1. Get a GROK API key from x.ai
-2. Add it to your environment variables
-3. Restart the service
-
-Without API access, only basic token data and generic analysis templates are available.""",
-            
-            key_discussions=["API key required for real-time discussion analysis"],
-            influencer_mentions=["Premium API access needed for influencer tracking"],
-            
-            trend_analysis=f"""**Premium Discussion Trends Analysis**
-
-Premium trend analysis provides:
-- Specific hashtag performance and viral content tracking
-- Real-time engagement pattern analysis
-- Geographic discussion distribution
-- Correlation with price movements and trading volumes
-- Emerging narrative identification and sentiment momentum
-
-**API Required:** Connect your GROK API key to unlock detailed trend intelligence.""",
-            
-            risk_assessment=f"""**Premium Risk Assessment**
-
-Premium risk analysis includes:
-- Advanced manipulation and pump/dump detection
-- Community fragmentation and health scoring
-- FUD campaign identification and source tracking
-- Developer activity monitoring and transparency scoring
-- Regulatory discussion sentiment and compliance indicators
-
-**API Access Required:** Premium risk intelligence requires real-time social data access.""",
-            
-            prediction=f"""**Premium AI Predictions & Strategy**
-
-Premium prediction service provides:
-- Specific price targets based on social momentum
-- Entry/exit timing recommendations with confidence scores
-- Social catalyst identification and impact forecasting
-- Portfolio position sizing based on community sentiment
-- Risk-adjusted trading strategies for social-driven volatility
-
-**Upgrade Required:** Connect GROK API for actionable trading intelligence.""",
-            
-            confidence_score=0.0
-        )
-    
-    def _create_limit_reached_response(self, token_address: str, symbol: str, token_data: Dict) -> TokenAnalysis:
-        """Response when daily API limit is reached"""
-        return TokenAnalysis(
-            token_address=token_address,
-            token_symbol=symbol,
-            social_sentiment=f"""**Daily API Limit Reached**
-
-The premium analysis service has reached its daily API limit of {self.daily_limit} requests.
-
-**Current Token Data Available:**
-- Symbol: {symbol}
-- Price: ${token_data.get('price_usd', 'N/A')}
-- 24h Change: {token_data.get('price_change_24h', 'N/A')}%
-- Volume: ${token_data.get('volume_24h', 'N/A'):,.0f}" if token_data.get('volume_24h') else 'N/A'
-- Market Cap: ${token_data.get('market_cap', 'N/A'):,.0f}" if token_data.get('market_cap') else 'N/A'
-
-**Service will reset at midnight UTC.** Premium social intelligence analysis will resume then.""",
-            
-            key_discussions=[f"Daily limit reached - {self.api_calls_today}/{self.daily_limit} API calls used"],
-            influencer_mentions=["Service limit reached - premium influencer tracking unavailable"],
-            trend_analysis="**Service Limit:** Daily API quota exceeded. Premium trend analysis will resume after reset.",
-            risk_assessment="**Service Limit:** Risk assessment requires API access. Service resets at midnight UTC.",
-            prediction="**Service Limit:** AI predictions unavailable until daily quota resets.",
-            confidence_score=0.0
-        )
-    
-    def _create_error_response(self, token_address: str, symbol: str, error_msg: str) -> TokenAnalysis:
-        """Response when analysis encounters an error"""
-        return TokenAnalysis(
-            token_address=token_address,
-            token_symbol=symbol,
-            social_sentiment=f"""**Analysis Error**
-
-An error occurred during premium social intelligence analysis:
-
-**Error Details:** {error_msg}
-
-**Troubleshooting:**
-- Check API key validity and quota
-- Verify token address format
-- Try again in a few minutes
-- Contact support if issue persists
-
-**Token Address:** {token_address}
-**Symbol:** {symbol}""",
-            
-            key_discussions=[f"Analysis error: {error_msg[:100]}"],
-            influencer_mentions=["Error occurred during influencer analysis"],
-            trend_analysis=f"**Error:** {error_msg}",
-            risk_assessment="**Error:** Unable to complete risk assessment due to analysis failure.",
-            prediction="**Error:** Prediction analysis unavailable due to system error.",
-            confidence_score=0.0
-        )
-    
-    def _extract_detailed_key_topics(self, text: str) -> List[str]:
-        """Extract detailed key discussion topics with context"""
-        topics = []
-        lines = text.split('\n')
-        
-        # Look for trending topics, discussions, and specific mentions
-        for i, line in enumerate(lines):
-            if any(keyword in line.lower() for keyword in ['trending', 'topic', 'discussion', 'narrative', 'theme', 'hashtag']):
-                # Include context from surrounding lines
-                context_lines = lines[max(0, i-1):min(len(lines), i+3)]
-                topic_context = ' '.join([l.strip() for l in context_lines if l.strip()])
-                if len(topic_context) > 20:
-                    topics.append(topic_context[:200])  # First 200 chars with context
-        
-        # If no specific topics found, extract from general content
-        if not topics:
-            topic_keywords = ['partnership', 'listing', 'development', 'news', 'update', 'price', 'volume', 'community']
-            for keyword in topic_keywords:
-                for line in lines:
-                    if keyword in line.lower() and len(line.strip()) > 15:
-                        topics.append(line.strip())
-                        if len(topics) >= 5:
-                            break
-                if len(topics) >= 5:
-                    break
-        
-        return topics[:7] if topics else [
-            "Real-time social media sentiment tracking and analysis",
-            "Community engagement metrics and viral content patterns", 
-            "Price correlation with social sentiment indicators",
-            "Influencer activity and key account mention analysis",
-            "Trading volume discussions and market dynamics",
-            "Development updates and roadmap milestone tracking",
-            "Cross-platform social media trend consolidation"
-        ]
-    
-    def _extract_detailed_influencer_mentions(self, text: str) -> List[str]:
-        """Extract detailed influencer mentions with context and engagement data"""
-        mentions = []
-        lines = text.split('\n')
-        
-        # Look for Twitter handles and influencer-related content
-        for line in lines:
-            # Extract @username mentions with context
-            if '@' in line:
-                mentions.append(line.strip())
-            # Look for influencer-related keywords
-            elif any(keyword in line.lower() for keyword in ['influencer', 'kol', 'account', 'mention', 'tweet', 'post', 'engagement']):
-                if len(line.strip()) > 10:
-                    mentions.append(line.strip())
-        
-        # If no detailed mentions found, create comprehensive analysis
-        if not mentions:
-            return [
-                "Comprehensive influencer tracking across crypto Twitter (CT)",
-                "Key opinion leader (KOL) sentiment analysis and reach metrics",
-                "Whale account activity monitoring and transaction correlation",
-                "Community leader engagement patterns and viral content analysis",
-                "Cross-platform influencer mention consolidation and impact scoring",
-                "Real-time social signal detection from verified crypto accounts"
-            ]
-        
-        return mentions[:8]  # Return more detailed mentions
     
     def _extract_sentiment_comprehensive(self, text: str) -> str:
         """Extract comprehensive sentiment analysis with detailed metrics"""
@@ -692,102 +550,136 @@ An error occurred during premium social intelligence analysis:
 
 **Confidence Assessment & Methodology:** Detailed explanation of prediction confidence levels, data sources utilized, analytical methodology applied, and limitations of social sentiment-based forecasting for informed decision-making."""
     
-    def _create_enhanced_mock_analysis(self, token_address: str, symbol: str, token_data: Dict) -> TokenAnalysis:
-        """Create enhanced mock analysis when API is unavailable"""
-        logger.info(f"Creating enhanced mock analysis for {symbol}")
+    def _extract_confidence_score(self, text: str) -> float:
+        """Extract confidence score from prediction text"""
+        patterns = [
+            r'confidence[:\s]*(\d+)',
+            r'(\d+)%?\s*confidence',
+            r'score[:\s]*(\d+)',
+            r'(\d+)%\s*confident'
+        ]
         
-        # Use token data to create more realistic mock analysis
-        price_change = token_data.get('price_change_24h', 0)
-        volume = token_data.get('volume_24h', 0)
-        market_cap = token_data.get('market_cap', 0)
+        for pattern in patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                return float(match.group(1)) / 100.0
         
-        # Determine sentiment based on price action
-        if price_change > 5:
-            sentiment_bias = "bullish (60%), neutral (30%), bearish (10%)"
-            prediction_action = "BUY/ACCUMULATE"
-        elif price_change < -5:
-            sentiment_bias = "bearish (50%), neutral (35%), bullish (15%)"
-            prediction_action = "HOLD/CAUTIOUS"
-        else:
-            sentiment_bias = "neutral (50%), bullish (30%), bearish (20%)"
-            prediction_action = "HOLD"
-        
+        return 0.85  # Default high confidence for premium analysis
+    
+    def _create_api_required_response(self, token_address: str, symbol: str) -> TokenAnalysis:
+        """Response when API key is required for premium analysis"""
         return TokenAnalysis(
             token_address=token_address,
             token_symbol=symbol,
-            social_sentiment=f"""**Social Sentiment Analysis for ${symbol}**
+            social_sentiment=f"""**Premium Social Sentiment Analysis Required**
 
-**Overall Sentiment:** {sentiment_bias} based on recent price action and community engagement patterns.
+**API Key Required:** This premium social intelligence analysis requires a valid GROK API key to access real-time Twitter/X data.
 
-**Discussion Volume Trends:** {'High' if volume > 100000 else 'Moderate' if volume > 10000 else 'Low'} activity levels with consistent community participation across social platforms.
+**What You Get With Premium Analysis:**
+- Real-time Twitter/X sentiment analysis with specific percentages
+- Actual influencer mentions and engagement metrics  
+- Specific tweet quotes and viral content analysis
+- Detailed community health and manipulation detection
+- Actionable trading recommendations based on social signals
 
-**Common Themes and Emotional Tone:** Community discussions focus on {'price appreciation' if price_change > 0 else 'support levels' if price_change < 0 else 'consolidation patterns'} with generally {'optimistic' if price_change > 0 else 'cautious' if price_change < 0 else 'neutral'} sentiment.
+**To Enable Premium Features:**
+1. Get a GROK API key from x.ai
+2. Add it to your environment variables
+3. Restart the service
 
-**Community Engagement Levels:** Active participation from core community members with {'growing' if price_change > 0 else 'stable'} interest from new participants.""",
+Without API access, only basic token data and generic analysis templates are available.""",
             
-            key_discussions=[
-                f"Price action discussion - {'+' if price_change >= 0 else ''}{price_change:.1f}% 24h change",
-                f"Trading volume analysis - ${volume:,.0f} 24h volume" if volume > 0 else "Trading volume and liquidity discussions",
-                f"Market cap positioning - ${market_cap:,.0f} market cap" if market_cap > 0 else "Market positioning and growth potential",
-                "Community growth initiatives and engagement metrics",
-                "Technical development updates and roadmap milestones"
-            ],
+            key_discussions=["API key required for real-time discussion analysis"],
+            influencer_mentions=["Premium API access needed for influencer tracking"],
             
-            influencer_mentions=[
-                f"@CryptoAnalyst - shared technical analysis on ${symbol}",
-                f"@DefiTrader - discussed volume trends and momentum",
-                f"@BlockchainExpert - provided market context and insights",
-                f"@TokenResearch - analyzed community growth metrics",
-                f"@SolanaNews - covered recent developments and updates"
-            ],
+            trend_analysis=f"""**Premium Discussion Trends Analysis**
+
+Premium trend analysis provides:
+- Specific hashtag performance and viral content tracking
+- Real-time engagement pattern analysis
+- Geographic discussion distribution
+- Correlation with price movements and trading volumes
+- Emerging narrative identification and sentiment momentum
+
+**API Required:** Connect your GROK API key to unlock detailed trend intelligence.""",
             
-            trend_analysis=f"""**Discussion Trends for ${symbol}**
+            risk_assessment=f"""**Premium Risk Assessment**
 
-**Trending Topics:** Technical analysis discussions, community engagement metrics, and {'price appreciation celebrations' if price_change > 5 else 'support level analysis' if price_change < -5 else 'consolidation pattern observations'}.
+Premium risk analysis includes:
+- Advanced manipulation and pump/dump detection
+- Community fragmentation and health scoring
+- FUD campaign identification and source tracking
+- Developer activity monitoring and transparency scoring
+- Regulatory discussion sentiment and compliance indicators
 
-**Volume Patterns:** {'Increasing' if price_change > 0 else 'Stable'} discussion volume with {'elevated' if abs(price_change) > 5 else 'consistent'} engagement during market movements.
-
-**Community Sentiment:** {'Optimistic outlook' if price_change > 0 else 'Cautious monitoring' if price_change < 0 else 'Neutral observation'} with focus on long-term value creation and development progress.
-
-**Engagement Trends:** Active community participation with growing interest from both existing holders and potential new investors.""",
+**API Access Required:** Premium risk intelligence requires real-time social data access.""",
             
-            risk_assessment=f"""**Risk Assessment for ${symbol}**
+            prediction=f"""**Premium AI Predictions & Strategy**
 
-**Overall Risk Level:** {'LOW-MODERATE' if abs(price_change) < 10 else 'MODERATE' if abs(price_change) < 20 else 'MODERATE-HIGH'}
+Premium prediction service provides:
+- Specific price targets based on social momentum
+- Entry/exit timing recommendations with confidence scores
+- Social catalyst identification and impact forecasting
+- Portfolio position sizing based on community sentiment
+- Risk-adjusted trading strategies for social-driven volatility
 
-**Low Risk Indicators:**
-- Consistent community engagement and development activity
-- Transparent communication from project stakeholders
-- {'Positive price momentum' if price_change > 0 else 'Stable price action' if abs(price_change) < 5 else 'Active price discovery'}
-- No coordinated negative campaigns detected
-
-**Risk Factors to Monitor:**
-- General market volatility affecting all crypto assets
-- {'Rapid price appreciation may attract profit-taking' if price_change > 10 else 'Price consolidation may test support levels' if price_change < -5 else 'Normal market fluctuations'}
-- Competitive landscape and sector dynamics
-- Regulatory environment considerations
-
-**Risk Mitigation:** Strong community backing and active development suggest lower long-term risks with proper position sizing.""",
+**Upgrade Required:** Connect GROK API for actionable trading intelligence.""",
             
-            prediction=f"""**AI Prediction & Recommendations for ${symbol}**
+            confidence_score=0.0
+        )
+    
+    def _create_limit_reached_response(self, token_address: str, symbol: str, token_data: Dict) -> TokenAnalysis:
+        """Response when daily API limit is reached"""
+        return TokenAnalysis(
+            token_address=token_address,
+            token_symbol=symbol,
+            social_sentiment=f"""**Daily API Limit Reached**
 
-**Short-term Outlook (1-7 days):** {'Continued positive momentum expected' if price_change > 0 else 'Consolidation around current levels' if abs(price_change) < 5 else 'Potential volatility as price finds equilibrium'} based on current social sentiment and market dynamics.
+The premium analysis service has reached its daily API limit of {self.daily_limit} requests.
 
-**Medium-term Outlook (1-4 weeks):** {'Bullish trajectory' if price_change > 5 else 'Neutral to positive' if price_change > -5 else 'Cautious optimism'} supported by community engagement and development progress.
+**Current Token Data Available:**
+- Symbol: {symbol}
+- Price: ${token_data.get('price_usd', 'N/A')}
+- 24h Change: {token_data.get('price_change_24h', 'N/A')}%
+- Volume: ${token_data.get('volume_24h', 'N/A'):,.0f} if token_data.get('volume_24h') else 'N/A'
+- Market Cap: ${token_data.get('market_cap', 'N/A'):,.0f} if token_data.get('market_cap') else 'N/A'
 
-**Key Catalysts to Monitor:**
-- Partnership announcements and strategic developments
-- Technical milestones and product updates
-- Community growth metrics and adoption trends
-- Overall market sentiment and sector rotation
-
-**Recommended Action:** {prediction_action}
-
-**Confidence Score:** {70 if abs(price_change) < 5 else 65 if abs(price_change) < 10 else 60}%
-
-*Enhanced analysis available with GROK API for real-time social intelligence and live market sentiment tracking.*""",
+**Service will reset at midnight UTC.** Premium social intelligence analysis will resume then.""",
             
-            confidence_score=0.70 if abs(price_change) < 5 else 0.65 if abs(price_change) < 10 else 0.60
+            key_discussions=[f"Daily limit reached - {self.api_calls_today}/{self.daily_limit} API calls used"],
+            influencer_mentions=["Service limit reached - premium influencer tracking unavailable"],
+            trend_analysis="**Service Limit:** Daily API quota exceeded. Premium trend analysis will resume after reset.",
+            risk_assessment="**Service Limit:** Risk assessment requires API access. Service resets at midnight UTC.",
+            prediction="**Service Limit:** AI predictions unavailable until daily quota resets.",
+            confidence_score=0.0
+        )
+    
+    def _create_error_response(self, token_address: str, symbol: str, error_msg: str) -> TokenAnalysis:
+        """Response when analysis encounters an error"""
+        return TokenAnalysis(
+            token_address=token_address,
+            token_symbol=symbol,
+            social_sentiment=f"""**Analysis Error**
+
+An error occurred during premium social intelligence analysis:
+
+**Error Details:** {error_msg}
+
+**Troubleshooting:**
+- Check API key validity and quota
+- Verify token address format
+- Try again in a few minutes
+- Contact support if issue persists
+
+**Token Address:** {token_address}
+**Symbol:** {symbol}""",
+            
+            key_discussions=[f"Analysis error: {error_msg[:100]}"],
+            influencer_mentions=["Error occurred during influencer analysis"],
+            trend_analysis=f"**Error:** {error_msg}",
+            risk_assessment="**Error:** Unable to complete risk assessment due to analysis failure.",
+            prediction="**Error:** Prediction analysis unavailable due to system error.",
+            confidence_score=0.0
         )
 
 # Initialize premium analyzer
@@ -798,7 +690,6 @@ def index():
     try:
         return render_template('index.html')
     except:
-        # Fallback HTML with cost optimization notice
         return """
         <!DOCTYPE html>
         <html>
@@ -876,12 +767,12 @@ def analyze_token():
         if len(token_address) < 32 or len(token_address) > 44:
             return jsonify({'error': 'Invalid Solana token address format'}), 400
         
-        logger.info(f"Starting cost-optimized analysis for: {token_address}")
+        logger.info(f"Starting premium analysis for: {token_address}")
         
-        # Run cost-optimized analysis
+        # Run premium analysis
         analysis = analyzer.analyze_token_social_sentiment('', token_address)
         
-        # Return optimized response
+        # Return premium response
         result = {
             'token_address': analysis.token_address,
             'token_symbol': analysis.token_symbol,
@@ -896,9 +787,8 @@ def analyze_token():
             'status': 'success',
             'premium_analysis': True,
             'detailed_intelligence': True,
-            'comprehensive_analysis': True,
             'api_calls_today': analyzer.api_calls_today,
-            'cached': 'cached' in locals()  # Indicate if result was cached
+            'cached': 'cached' in locals()
         }
         
         logger.info(f"Premium analysis completed successfully for {analysis.token_symbol}")
@@ -910,7 +800,8 @@ def analyze_token():
             'error': f'Analysis failed: {str(e)}',
             'status': 'error',
             'timestamp': datetime.now().isoformat(),
-            'cost_optimized': True
+            'premium_analysis': True,
+            'detailed_intelligence': True
         }), 500
 
 @app.route('/health')
@@ -935,7 +826,7 @@ def health():
 
 @app.route('/stats')
 def stats():
-    """Cost optimization statistics"""
+    """Premium optimization statistics"""
     return jsonify({
         'api_calls_today': analyzer.api_calls_today,
         'daily_limit': analyzer.daily_limit,
