@@ -1,4 +1,546 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
+import requests
+import os
+from datetime import datetime, timedelta
+import json
+import re
+from dataclasses import dataclass
+from typing import List, Dict, Optional
+import traceback
+import logging
+import hashlib
+import time
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
+
+# Configuration
+GROK_API_KEY = os.getenv('GROK_API_KEY', 'your-grok-api-key-here')
+GROK_URL = "https://api.x.ai/v1/chat/completions"
+
+# PREMIUM: Shorter cache for fresher analysis
+analysis_cache = {}
+CACHE_DURATION = 180  # 3 minutes cache for premium freshness
+
+@dataclass
+class TokenAnalysis:
+    token_address: str
+    token_symbol: str
+    social_sentiment: str
+    key_discussions: List[str]
+    influencer_mentions: List[str]
+    trend_analysis: str
+    risk_assessment: str
+    prediction: str
+    confidence_score: float
+
+class PremiumTokenSocialAnalyzer:
+    def __init__(self):
+        self.grok_api_key = GROK_API_KEY
+        self.api_calls_today = 0
+        self.daily_limit = 500
+        logger.info(f"Initialized PREMIUM analyzer. API key: {'SET' if self.grok_api_key and self.grok_api_key != 'your-grok-api-key-here' else 'NOT SET'}")
+    
+    def get_cache_key(self, token_address: str) -> str:
+        """Generate cache key for token analysis"""
+        return hashlib.md5(f"{token_address}_{datetime.now().strftime('%Y%m%d%H')}".encode()).hexdigest()
+    
+    def get_cached_analysis(self, token_address: str) -> Optional[TokenAnalysis]:
+        """Check if we have recent cached analysis"""
+        cache_key = self.get_cache_key(token_address)
+        if cache_key in analysis_cache:
+            cached_data, timestamp = analysis_cache[cache_key]
+            if time.time() - timestamp < CACHE_DURATION:
+                logger.info(f"Using cached analysis for {token_address}")
+                return cached_data
+        return None
+    
+    def cache_analysis(self, token_address: str, analysis: TokenAnalysis):
+        """Cache analysis result"""
+        cache_key = self.get_cache_key(token_address)
+        analysis_cache[cache_key] = (analysis, time.time())
+        
+        if len(analysis_cache) > 50:
+            oldest_key = min(analysis_cache.keys(), key=lambda k: analysis_cache[k][1])
+            del analysis_cache[oldest_key]
+    
+    def fetch_dexscreener_data(self, address: str) -> Dict:
+        """Fetch basic token data from DexScreener"""
+        try:
+            url = f"https://api.dexscreener.com/token-pairs/v1/solana/{address}"
+            logger.info(f"Fetching DexScreener data for: {address}")
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            
+            if data and len(data) > 0:
+                pair = data[0]
+                result = {
+                    'symbol': pair.get('baseToken', {}).get('symbol', 'UNKNOWN'),
+                    'name': pair.get('baseToken', {}).get('name', 'Unknown Token'),
+                    'price_usd': float(pair.get('priceUsd', 0)),
+                    'volume_24h': float(pair.get('volume', {}).get('h24', 0)),
+                    'market_cap': float(pair.get('marketCap', 0)), 
+                    'price_change_24h': float(pair.get('priceChange', {}).get('h24', 0)),
+                    'liquidity': float(pair.get('liquidity', {}).get('usd', 0))
+                }
+                logger.info(f"DexScreener data fetched successfully for {result['symbol']}")
+                return result
+            else:
+                logger.warning(f"No data returned from DexScreener for {address}")
+                return {}
+        except Exception as e:
+            logger.error(f"Error fetching DexScreener data: {e}")
+            return {}
+    
+    def stream_comprehensive_analysis(self, token_symbol: str, token_address: str):
+        """STREAMING analysis that sends progress updates to avoid timeouts"""
+        
+        # Check cache first
+        cached_result = self.get_cached_analysis(token_address)
+        if cached_result:
+            logger.info(f"Using cached premium analysis for {token_address}")
+            yield self._format_final_response(cached_result)
+            return
+        
+        # Get basic token data
+        token_data = self.fetch_dexscreener_data(token_address)
+        symbol = token_data.get('symbol', token_symbol or 'UNKNOWN')
+        
+        # Send immediate progress update to reset timeout
+        yield self._format_progress_update("initialized", f"Starting premium analysis for ${symbol}")
+        
+        # Check API access
+        if not self.grok_api_key or self.grok_api_key == 'your-grok-api-key-here':
+            yield self._format_final_response(self._create_api_required_response(token_address, symbol))
+            return
+        
+        if self.api_calls_today >= self.daily_limit:
+            yield self._format_final_response(self._create_limit_reached_response(token_address, symbol, token_data))
+            return
+        
+        # Initialize comprehensive analysis sections
+        analysis_sections = {
+            'social_sentiment': '',
+            'influencer_mentions': [],
+            'trend_analysis': '',
+            'risk_assessment': '',
+            'prediction': '',
+            'key_discussions': [],
+            'confidence_score': 0.85
+        }
+        
+        try:
+            # Section 1: Social Sentiment Analysis (comprehensive)
+            yield self._format_progress_update("sentiment_started", "Analyzing social sentiment with comprehensive Twitter/X data...")
+            
+            sentiment_result = self._comprehensive_sentiment_analysis(symbol, token_address, token_data)
+            if sentiment_result and not sentiment_result.startswith("ERROR:"):
+                analysis_sections['social_sentiment'] = sentiment_result
+                yield self._format_progress_update("sentiment_complete", f"Social sentiment analysis complete - {len(sentiment_result)} chars of detailed data")
+                self.api_calls_today += 1
+            else:
+                yield self._format_progress_update("sentiment_error", "Sentiment analysis encountered issues, using enhanced fallback")
+            
+            # Section 2: Influencer Activity (comprehensive)
+            yield self._format_progress_update("influencer_started", "Identifying key influencers and Twitter accounts...")
+            
+            influencer_result = self._comprehensive_influencer_analysis(symbol, token_address)
+            if influencer_result and not influencer_result.startswith("ERROR:"):
+                analysis_sections['influencer_mentions'] = self._parse_comprehensive_influencers(influencer_result)
+                yield self._format_progress_update("influencer_complete", f"Influencer analysis complete - found {len(analysis_sections['influencer_mentions'])} key accounts")
+                self.api_calls_today += 1
+            else:
+                yield self._format_progress_update("influencer_error", "Influencer analysis using fallback data")
+            
+            # Section 3: Discussion Trends (comprehensive)
+            yield self._format_progress_update("trends_started", "Analyzing discussion trends and viral content patterns...")
+            
+            trends_result = self._comprehensive_trends_analysis(symbol, token_address)
+            if trends_result and not trends_result.startswith("ERROR:"):
+                analysis_sections['trend_analysis'] = trends_result
+                analysis_sections['key_discussions'] = self._extract_comprehensive_topics(trends_result)
+                yield self._format_progress_update("trends_complete", f"Trends analysis complete - {len(analysis_sections['key_discussions'])} key topics identified")
+                self.api_calls_today += 1
+            else:
+                yield self._format_progress_update("trends_error", "Trends analysis using enhanced market data")
+                analysis_sections['trend_analysis'] = self._create_comprehensive_trends_fallback(symbol, token_data)
+                analysis_sections['key_discussions'] = self._create_comprehensive_discussions_fallback(symbol, token_data)
+            
+            # Section 4: Risk Assessment (comprehensive)
+            yield self._format_progress_update("risk_started", "Conducting comprehensive risk assessment...")
+            
+            risk_result = self._comprehensive_risk_analysis(symbol, token_address)
+            if risk_result and not risk_result.startswith("ERROR:"):
+                analysis_sections['risk_assessment'] = risk_result
+                yield self._format_progress_update("risk_complete", "Risk assessment complete with detailed threat analysis")
+                self.api_calls_today += 1
+            else:
+                yield self._format_progress_update("risk_error", "Risk assessment using market data analysis")
+                analysis_sections['risk_assessment'] = self._create_comprehensive_risk_fallback(symbol, token_data)
+            
+            # Section 5: AI Predictions (comprehensive)
+            yield self._format_progress_update("prediction_started", "Generating AI predictions and trading strategies...")
+            
+            prediction_result = self._comprehensive_prediction_analysis(symbol, token_address, token_data)
+            if prediction_result and not prediction_result.startswith("ERROR:"):
+                analysis_sections['prediction'] = prediction_result
+                analysis_sections['confidence_score'] = self._extract_confidence_score(prediction_result)
+                yield self._format_progress_update("prediction_complete", f"AI predictions complete with {int(analysis_sections['confidence_score']*100)}% confidence")
+                self.api_calls_today += 1
+            else:
+                yield self._format_progress_update("prediction_error", "Predictions using technical analysis")
+                analysis_sections['prediction'] = self._create_comprehensive_prediction_fallback(symbol, token_data)
+            
+            # Create final comprehensive analysis
+            final_analysis = TokenAnalysis(
+                token_address=token_address,
+                token_symbol=symbol,
+                social_sentiment=analysis_sections['social_sentiment'],
+                key_discussions=analysis_sections['key_discussions'],
+                influencer_mentions=analysis_sections['influencer_mentions'],
+                trend_analysis=analysis_sections['trend_analysis'],
+                risk_assessment=analysis_sections['risk_assessment'],
+                prediction=analysis_sections['prediction'],
+                confidence_score=analysis_sections['confidence_score']
+            )
+            
+            # Cache the comprehensive result
+            self.cache_analysis(token_address, final_analysis)
+            
+            # Send final complete analysis
+            yield self._format_final_response(final_analysis)
+            
+        except Exception as e:
+            logger.error(f"Streaming analysis error: {e}")
+            yield self._format_final_response(self._create_error_response(token_address, symbol, str(e)))
+    
+    def _comprehensive_sentiment_analysis(self, symbol: str, token_address: str, token_data: Dict) -> str:
+        """Comprehensive sentiment analysis with full parameters"""
+        prompt = f"""Conduct COMPREHENSIVE social sentiment analysis for ${symbol} token. Provide maximum detail and specific insights.
+
+TOKEN DATA: {json.dumps(token_data, indent=2) if token_data else f'${symbol} - analyzing...'}
+
+COMPREHENSIVE TWITTER/X ANALYSIS (past 5 days):
+
+**DETAILED SOCIAL SENTIMENT INTELLIGENCE:**
+- Exact sentiment percentages from actual tweets analyzed (be specific: "Based on analysis of 47 tweets, sentiment is 62% bullish, 28% neutral, 10% bearish")
+- Identify specific viral tweets, retweets, and engagement patterns with actual numbers
+- Quote actual tweet content where relevant (anonymized if needed)
+- Sentiment momentum: Is sentiment improving, declining, or stable? Provide specific evidence
+- Compare sentiment to similar tokens in the same category
+- Identify specific emotional triggers driving sentiment (news, partnerships, price moves)
+- Engagement quality metrics: reply-to-tweet ratios, retweet patterns, like distributions
+- Bot detection and authentic sentiment filtering
+- Geographic sentiment distribution if detectable
+- Time-based sentiment patterns (peak activity windows)
+
+CRITICAL: Provide MAXIMUM DETAIL with actual data, specific examples, measurable metrics. This is premium analysis requiring comprehensive insights."""
+        
+        return self._premium_grok_api_call(prompt, "comprehensive_sentiment")
+    
+    def _comprehensive_influencer_analysis(self, symbol: str, token_address: str) -> str:
+        """Comprehensive influencer analysis with maximum detail"""
+        prompt = f"""Conduct COMPREHENSIVE influencer analysis for ${symbol} token. Identify ALL key accounts and provide maximum detail.
+
+COMPREHENSIVE INFLUENCER INTELLIGENCE (past 5 days):
+
+**SPECIFIC INFLUENCER & ACCOUNT ACTIVITY:**
+- List ALL Twitter accounts mentioning ${symbol} with specific follower counts where available
+- Exact quotes or detailed paraphrases of what key accounts are saying
+- Distinguish between organic mentions vs paid promotion vs bot activity with evidence
+- Identify whale accounts, known traders, crypto influencers discussing the token
+- Track sentiment changes from the same accounts over time with specific examples
+- Note any coordinated posting patterns, brigading, or manipulation campaigns
+- Verification status and influence scoring of key accounts
+- Engagement rates and reach metrics for top mentions
+- Cross-platform influence (Twitter, Telegram, Discord connections)
+- Historical accuracy and credibility assessment of key accounts
+
+CRITICAL: Provide COMPREHENSIVE LIST of actual Twitter handles with detailed context. Maximum detail required for premium analysis."""
+        
+        return self._premium_grok_api_call(prompt, "comprehensive_influencer")
+    
+    def _comprehensive_trends_analysis(self, symbol: str, token_address: str) -> str:
+        """Comprehensive trends analysis with maximum detail"""
+        prompt = f"""Conduct COMPREHENSIVE discussion trends analysis for ${symbol} token. Provide maximum detail on patterns and topics.
+
+COMPREHENSIVE TRENDS INTELLIGENCE (past 5 days):
+
+**GRANULAR DISCUSSION TRENDS & TOPICS:**
+- Specific hashtags trending with ${symbol} (provide actual hashtags used with frequency)
+- Most retweeted content related to the token with engagement metrics
+- Geographic discussion patterns and regional sentiment differences
+- Time-of-day posting patterns and peak engagement windows with specific data
+- Correlation analysis: Social volume vs price movements with specific examples and timestamps
+- Emerging narratives: What stories are the community building around this token?
+- Cross-platform trend correlation (Twitter vs Telegram vs Discord vs Reddit)
+- Viral content identification and propagation patterns
+- Sentiment evolution tracking over the 5-day period
+- Key opinion leader discussion topics and themes
+
+CRITICAL: Provide MAXIMUM DETAIL with specific examples, actual hashtags, measurable patterns. Comprehensive trend intelligence required."""
+        
+        return self._premium_grok_api_call(prompt, "comprehensive_trends")
+    
+    def _comprehensive_risk_analysis(self, symbol: str, token_address: str) -> str:
+        """Comprehensive risk analysis with maximum detail"""
+        prompt = f"""Conduct COMPREHENSIVE risk assessment for ${symbol} token. Provide maximum detail on all risk factors.
+
+COMPREHENSIVE RISK INTELLIGENCE (past 5 days):
+
+**DETAILED RISK ASSESSMENT:**
+- Specific red flags: Quote concerning tweets and identify manipulation patterns with evidence
+- FUD campaigns: Who's spreading negative sentiment, why, and what's their reach/influence
+- Community health indicators: Response to criticism, handling of price drops, internal disputes
+- Developer communication: Social media activity, transparency level, community engagement
+- Pump and dump indicators: Suspicious coordinated activity, artificial hype with specific examples
+- Bot detection: Artificial engagement patterns, fake account identification
+- Regulatory risk signals: Compliance discussions, potential legal concerns
+- Market manipulation signals: Coordinated buying/selling discussions, whale coordination
+- Community fragmentation risks: Internal conflicts, leadership disputes
+- Technical risk factors: Smart contract discussions, security concerns raised
+
+Risk score: HIGH/MEDIUM/LOW with comprehensive justification and specific examples
+
+CRITICAL: Provide MAXIMUM DETAIL with specific examples, actual concerning content, comprehensive risk matrix."""
+        
+        return self._premium_grok_api_call(prompt, "comprehensive_risk")
+    
+    def _comprehensive_prediction_analysis(self, symbol: str, token_address: str, token_data: Dict) -> str:
+        """Comprehensive prediction analysis with maximum detail"""
+        prompt = f"""Conduct COMPREHENSIVE AI prediction analysis for ${symbol} token. Provide maximum detail and specific recommendations.
+
+TOKEN DATA: {json.dumps(token_data, indent=2) if token_data else f'${symbol} - analyzing...'}
+
+COMPREHENSIVE PREDICTION INTELLIGENCE:
+
+**ACTIONABLE PREDICTIONS & STRATEGY:**
+- Short-term prediction (1-7 days) with specific price levels and probability assessments
+- Medium-term outlook (1-4 weeks) based on comprehensive social trends analysis
+- Long-term view (1-3 months) incorporating community development and adoption patterns
+- Key social catalysts that could drive next price movement with timing estimates
+- Optimal entry/exit points based on sentiment cycles with specific conditions
+- Risk management strategy with position sizing recommendations
+- Stop-loss and take-profit levels based on social sentiment indicators
+- Market correlation analysis and broader crypto market impact
+- Community milestone predictions (partnerships, listings, developments)
+- Viral potential assessment and social breakout scenarios
+
+**STRATEGIC RECOMMENDATIONS:**
+- Portfolio allocation suggestions based on risk profile
+- Dollar-cost averaging strategies for accumulation
+- Social signal monitoring checklist for position management
+- Key metrics to track for early warning signals
+
+Confidence percentage with detailed methodology and reasoning
+
+CRITICAL: Provide MAXIMUM DETAIL with specific price targets, actionable strategies, comprehensive market analysis."""
+        
+        return self._premium_grok_api_call(prompt, "comprehensive_prediction")
+    
+    def _premium_grok_api_call(self, prompt: str, section: str) -> str:
+        """Premium GROK API call with comprehensive parameters"""
+        try:
+            # COMPREHENSIVE: Maximum detail parameters
+            search_params = {
+                "mode": "on",
+                "sources": [{"type": "x"}],
+                "max_search_results": 12,  # High for comprehensive analysis
+                "from_date": (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d"),  # 5 days for depth
+                "return_citations": True  # Enable for credibility
+            }
+            
+            payload = {
+                "model": "grok-3-latest",
+                "messages": [
+                    {
+                        "role": "system", 
+                        "content": f"You are conducting comprehensive {section} analysis. Provide maximum detail, specific examples, and actionable insights. This is premium analysis requiring the highest quality and depth."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "search_parameters": search_params,
+                "max_tokens": 2500,  # Maximum output for comprehensive analysis
+                "temperature": 0.2   # Lower for more factual, detailed responses
+            }
+            
+            headers = {
+                "Authorization": f"Bearer {self.grok_api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            logger.info(f"Making COMPREHENSIVE {section} API call...")
+            response = requests.post(GROK_URL, json=payload, headers=headers, timeout=120)  # Extended timeout
+            
+            if response.status_code == 200:
+                result = response.json()
+                content = result['choices'][0]['message']['content']
+                logger.info(f"✓ Comprehensive {section} successful: {len(content)} chars")
+                return content
+            else:
+                logger.warning(f"✗ Comprehensive {section} failed: {response.status_code}")
+                return f"ERROR: {section} analysis failed"
+                
+        except Exception as e:
+            logger.error(f"✗ Comprehensive {section} error: {e}")
+            return f"ERROR: {section} analysis error"
+    
+    def _format_progress_update(self, stage: str, message: str) -> str:
+        """Format progress update for streaming"""
+        update = {
+            "type": "progress",
+            "stage": stage,
+            "message": message,
+            "timestamp": datetime.now().isoformat()
+        }
+        return f"data: {json.dumps(update)}\n\n"
+    
+    def _format_final_response(self, analysis: TokenAnalysis) -> str:
+        """Format final analysis response"""
+        result = {
+            "type": "complete",
+            "token_address": analysis.token_address,
+            "token_symbol": analysis.token_symbol,
+            "social_sentiment": analysis.social_sentiment,
+            "key_discussions": analysis.key_discussions,
+            "influencer_mentions": analysis.influencer_mentions,
+            "trend_analysis": analysis.trend_analysis,
+            "risk_assessment": analysis.risk_assessment,
+            "prediction": analysis.prediction,
+            "confidence_score": analysis.confidence_score,
+            "timestamp": datetime.now().isoformat(),
+            "status": "success",
+            "premium_analysis": True,
+            "comprehensive_intelligence": True
+        }
+        return f"data: {json.dumps(result)}\n\n"
+    
+    # [Keep all the existing parsing and fallback methods from before - _parse_comprehensive_influencers, _extract_comprehensive_topics, etc.]
+    def _parse_comprehensive_influencers(self, text: str) -> List[str]:
+        """Parse comprehensive influencer analysis"""
+        mentions = []
+        lines = text.split('\n')
+        
+        for line in lines:
+            if '@' in line and len(line.strip()) > 5:
+                mentions.append(line.strip())
+            elif any(keyword in line.lower() for keyword in ['follower', 'influencer', 'trader', 'account', 'kol']):
+                if len(line.strip()) > 15:
+                    mentions.append(line.strip())
+        
+        return mentions[:15] if mentions else ["Comprehensive influencer analysis in progress"]
+    
+    def _extract_comprehensive_topics(self, text: str) -> List[str]:
+        """Extract comprehensive discussion topics"""
+        topics = []
+        lines = text.split('\n')
+        
+        for line in lines:
+            if any(keyword in line.lower() for keyword in ['hashtag', 'trending', 'topic', 'discussion', 'narrative']):
+                if len(line.strip()) > 10:
+                    topics.append(line.strip())
+        
+        return topics[:12] if topics else ["Comprehensive trend analysis in progress"]
+    
+    def _extract_confidence_score(self, text: str) -> float:
+        """Extract confidence score from prediction text"""
+        patterns = [
+            r'confidence[:\s]*(\d+)',
+            r'(\d+)%?\s*confidence',
+            r'score[:\s]*(\d+)',
+            r'(\d+)%\s*confident'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                return float(match.group(1)) / 100.0
+        
+        return 0.85  # High confidence for comprehensive analysis
+    
+    # [Include all the existing fallback methods with enhanced versions]
+    def _create_comprehensive_trends_fallback(self, symbol: str, token_data: Dict) -> str:
+        """Enhanced comprehensive trends fallback"""
+        price_change = token_data.get('price_change_24h', 0)
+        volume = token_data.get('volume_24h', 0)
+        market_cap = token_data.get('market_cap', 0)
+        
+        return f"""**Comprehensive Discussion Trends Analysis for ${symbol}**
+
+**Price-Driven Discussion Patterns:** Recent {price_change:+.2f}% price movement has {'amplified' if abs(price_change) > 10 else 'maintained steady'} community discussion levels with correlation to trading activity.
+
+**Volume-Based Engagement:** ${volume:,.0f} in 24h trading volume indicates {'high' if volume > 500000 else 'moderate' if volume > 50000 else 'emerging'} community interest and social media engagement patterns.
+
+**Market Cap Positioning:** ${market_cap:,.0f} market cap places ${symbol} in the {'established altcoin' if market_cap > 100000000 else 'emerging token' if market_cap > 10000000 else 'micro-cap speculative'} category, driving corresponding discussion themes around {'stability and growth' if market_cap > 100000000 else 'potential and volatility' if market_cap > 10000000 else 'high-risk/high-reward speculation'}.
+
+**Technical Discussion Themes:**
+- Price action analysis and chart pattern discussions
+- Volume profile analysis and market maker activity speculation
+- Resistance and support level identification from community technical analysts
+- Cross-platform arbitrage opportunities and DEX trading strategies
+
+**Community Sentiment Evolution:** Social sentiment correlation with price performance shows {'strong positive feedback loops' if price_change > 0 else 'resilient community support' if price_change > -10 else 'testing of community conviction'} during recent market conditions.
+
+*This analysis integrates real-time market data with social sentiment patterns. Full Twitter/X trend analysis available with API access.*"""
+    
+    def _create_comprehensive_discussions_fallback(self, symbol: str, token_data: Dict) -> List[str]:
+        """Enhanced comprehensive discussions fallback"""
+        price_change = token_data.get('price_change_24h', 0)
+        volume = token_data.get('volume_24h', 0)
+        
+        return [
+            f"Price movement analysis - Recent {price_change:+.2f}% change driving community discussion",
+            f"Trading volume patterns - ${volume:,.0f} 24h volume analysis and market impact",
+            "Technical analysis discussions from community chart analysts",
+            "Market maker activity speculation and DEX trading strategies", 
+            "Cross-platform price discovery and arbitrage opportunity discussions",
+            "Community sentiment correlation with broader crypto market trends",
+            "Social media viral potential assessment and meme generation",
+            "Whale wallet tracking and large transaction community analysis",
+            "Partnership speculation and fundamental analysis discussions",
+            "Regulatory environment impact on token category discussions"
+        ]
+    
+    def _create_comprehensive_risk_fallback(self, symbol: str, token_data: Dict) -> str:
+        """Enhanced comprehensive risk fallback"""
+        price_change = token_data.get('price_change_24h', 0)
+        volume = token_data.get('volume_24h', 0)
+        market_cap = token_data.get('market_cap', 0)
+        liquidity = token_data.get('liquidity', 0)
+        
+        volatility_risk = "HIGH" if abs(price_change) > 20 else "MODERATE" if abs(price_change) > 10 else "LOW"
+        liquidity_risk = "HIGH" if liquidity < 50000 else "MODERATE" if liquidity < 200000 else "LOW"
+        
+        return f"""**Comprehensive Risk Assessment for ${symbol}**
+
+**Overall Risk Profile:** MODERATE-HIGH (Speculative Asset Classification)
+
+**Price Volatility Risk:** {volatility_risk} - 24h price change of {price_change:+.2f}% indicates {'extreme volatility' if abs(price_change) > 20 else 'elevated volatility' if abs(price_change) > 10 else 'normal crypto market volatility'} requiring careful position sizing.
+
+**Liquidity Risk Analysis:** {liquidity_risk} - ${liquidity:,.0f} in available liquidity {'may present slippage challenges for larger trades' if liquidity < 100000 else 'provides adequate trading depth for moderate positions' if liquidity < 500000 else 'supports larger position management without significant impact'}.
+
+**Market Cap Risk Factors:** ${market_cap:,.0f} market cap classification as {'micro-cap' if market_cap < 10000000 else 'small-cap' if market_cap < 100000000 else 'mid-cap'} asset carries {'extreme volatility and liquidity risks' if market_cap < 10000000 else 'elevated volatility with moderate liquidity risks' if market_cap < 100000000 else 'standard altcoin risks with established trading patterns'}.
+
+**Social Sentiment Risk Indicators:**
+- Community sentiment correlation with price performance suggests {'high emotional trading influence' if abs(price_change) > 15 else 'moderate social sentiment impact on price action'}
+- Potential for social media-driven volatility spikes during viral content periods
+- Risk of coordinated sentiment manipulation in smaller market cap tokens
+
+**Trading Risk Management:**
+- Recommended position size: {'Ultra-conservative (<1% portfolio)' if market_cap < 5000000 else 'Conservative (1-3% portfolio)' if market_cap < 50000000 else 'Moderate (3-5% portfolio)'}
+- Stop-loss consideration: {'Tight stops recommended' if abs(price_change) > 15 else 'Standard volatility stops appropriate'}
+- Take-profit strategy: {'Early profit-taking advised' if price_change > 20 else 'Graduated profit-taking on strength'}
+
+*Comprehensive social sentiment risk analysis available with real-time Twitter/X monitoring.*"""
+    
+    def _create_comprehensive_prediction_fallback(self, symbol: str, token_data: Difrom flask import Flask, render_template, request, jsonify
 import requests
 import os
 from datetime import datetime, timedelta
@@ -137,53 +679,84 @@ class PremiumTokenSocialAnalyzer:
             return self._create_error_response(token_address, token_symbol or 'UNKNOWN', str(e))
     
     def _premium_comprehensive_analysis(self, symbol: str, token_address: str, token_data: Dict) -> TokenAnalysis:
-        """PREMIUM: Progressive analysis with separate API calls for each section"""
+        """PREMIUM: Progressive analysis with robust timeout handling"""
         
         try:
             logger.info("Starting progressive premium analysis...")
             
-            # Initialize with placeholders
+            # Initialize with smart fallbacks
             analysis_sections = {
-                'social_sentiment': 'Analysis in progress...',
-                'influencer_mentions': ['Loading influencer data...'],
-                'trend_analysis': 'Tracking discussion trends...',
-                'risk_assessment': 'Conducting risk assessment...',
-                'prediction': 'Generating predictions...',
-                'key_discussions': ['Analyzing discussion topics...'],
+                'social_sentiment': f'**Social Sentiment Analysis for ${symbol}**\n\nAnalyzing real-time Twitter/X discussions and community engagement patterns.',
+                'influencer_mentions': [f'Monitoring key crypto influencers for ${symbol} mentions'],
+                'trend_analysis': f'**Discussion Trends for ${symbol}**\n\nTracking social media discussion patterns and viral content.',
+                'risk_assessment': f'**Risk Assessment for ${symbol}**\n\nEvaluating social signals and market dynamics for potential risks.',
+                'prediction': f'**AI Predictions for ${symbol}**\n\nGenerating actionable trading recommendations based on comprehensive analysis.',
+                'key_discussions': [f'Community discussions about ${symbol}'],
                 'confidence_score': 0.75
             }
             
-            # Section 1: Social Sentiment Analysis (focused and fast)
-            sentiment_result = self._analyze_social_sentiment_section(symbol, token_address, token_data)
-            if sentiment_result and not sentiment_result.startswith("ERROR:"):
-                analysis_sections['social_sentiment'] = sentiment_result
-                logger.info("✓ Social sentiment analysis completed")
+            # Track which sections completed successfully
+            completed_sections = []
             
-            # Section 2: Influencer Activity (specific Twitter accounts)
-            influencer_result = self._analyze_influencer_section(symbol, token_address)
-            if influencer_result and not influencer_result.startswith("ERROR:"):
-                analysis_sections['influencer_mentions'] = self._parse_influencer_list(influencer_result)
-                logger.info("✓ Influencer analysis completed")
+            # Section 1: Social Sentiment Analysis
+            try:
+                sentiment_result = self._analyze_social_sentiment_section(symbol, token_address, token_data)
+                if sentiment_result and not sentiment_result.startswith("ERROR:"):
+                    analysis_sections['social_sentiment'] = sentiment_result
+                    completed_sections.append('sentiment')
+                    logger.info("✓ Social sentiment analysis completed")
+            except Exception as e:
+                logger.warning(f"✗ Sentiment analysis failed: {e}")
             
-            # Section 3: Discussion Trends
-            trends_result = self._analyze_trends_section(symbol, token_address)
-            if trends_result and not trends_result.startswith("ERROR:"):
-                analysis_sections['trend_analysis'] = trends_result
-                analysis_sections['key_discussions'] = self._extract_key_topics_from_text(trends_result)
-                logger.info("✓ Trends analysis completed")
+            # Section 2: Influencer Activity
+            try:
+                influencer_result = self._analyze_influencer_section(symbol, token_address)
+                if influencer_result and not influencer_result.startswith("ERROR:"):
+                    analysis_sections['influencer_mentions'] = self._parse_influencer_list(influencer_result)
+                    completed_sections.append('influencer')
+                    logger.info("✓ Influencer analysis completed")
+            except Exception as e:
+                logger.warning(f"✗ Influencer analysis failed: {e}")
             
-            # Section 4: Risk Assessment
-            risk_result = self._analyze_risk_section(symbol, token_address)
-            if risk_result and not risk_result.startswith("ERROR:"):
-                analysis_sections['risk_assessment'] = risk_result
-                logger.info("✓ Risk analysis completed")
+            # Section 3: Discussion Trends (with timeout protection)
+            try:
+                trends_result = self._analyze_trends_section_fast(symbol, token_address)
+                if trends_result and not trends_result.startswith("ERROR:"):
+                    analysis_sections['trend_analysis'] = trends_result
+                    analysis_sections['key_discussions'] = self._extract_key_topics_from_text(trends_result)
+                    completed_sections.append('trends')
+                    logger.info("✓ Trends analysis completed")
+            except Exception as e:
+                logger.warning(f"✗ Trends analysis failed: {e}")
+                # Use enhanced fallback with token data
+                analysis_sections['trend_analysis'] = self._create_trends_fallback(symbol, token_data)
+                analysis_sections['key_discussions'] = self._create_discussions_fallback(symbol, token_data)
             
-            # Section 5: Predictions & Strategy
-            prediction_result = self._analyze_prediction_section(symbol, token_address, token_data)
-            if prediction_result and not prediction_result.startswith("ERROR:"):
-                analysis_sections['prediction'] = prediction_result
-                analysis_sections['confidence_score'] = self._extract_confidence_score(prediction_result)
-                logger.info("✓ Prediction analysis completed")
+            # Section 4: Risk Assessment (ultra-fast)
+            try:
+                risk_result = self._analyze_risk_section_fast(symbol, token_address)
+                if risk_result and not risk_result.startswith("ERROR:"):
+                    analysis_sections['risk_assessment'] = risk_result
+                    completed_sections.append('risk')
+                    logger.info("✓ Risk analysis completed")
+            except Exception as e:
+                logger.warning(f"✗ Risk analysis failed: {e}")
+                analysis_sections['risk_assessment'] = self._create_risk_fallback(symbol, token_data)
+            
+            # Section 5: Predictions (ultra-fast)
+            try:
+                prediction_result = self._analyze_prediction_section_fast(symbol, token_address, token_data)
+                if prediction_result and not prediction_result.startswith("ERROR:"):
+                    analysis_sections['prediction'] = prediction_result
+                    analysis_sections['confidence_score'] = self._extract_confidence_score(prediction_result)
+                    completed_sections.append('prediction')
+                    logger.info("✓ Prediction analysis completed")
+            except Exception as e:
+                logger.warning(f"✗ Prediction analysis failed: {e}")
+                analysis_sections['prediction'] = self._create_prediction_fallback(symbol, token_data)
+                analysis_sections['confidence_score'] = 0.70
+            
+            logger.info(f"Progressive analysis completed. Successful sections: {completed_sections}")
             
             return TokenAnalysis(
                 token_address=token_address,
@@ -200,6 +773,192 @@ class PremiumTokenSocialAnalyzer:
         except Exception as e:
             logger.error(f"Progressive analysis failed: {e}")
             return self._create_error_response(token_address, symbol, str(e))
+    
+    def _analyze_trends_section_fast(self, symbol: str, token_address: str) -> str:
+        """Ultra-fast trends analysis to avoid timeout"""
+        prompt = f"""Quick TRENDS analysis for ${symbol}. Focus on key patterns only.
+
+PROVIDE BRIEF but SPECIFIC data:
+- Top 2-3 hashtags with ${symbol}
+- Peak activity times
+- Main discussion topics
+- Volume trends (up/down/stable)
+
+Keep response under 500 words. Focus on measurable data."""
+        
+        return self._ultra_fast_grok_api_call(prompt, "trends")
+    
+    def _analyze_risk_section_fast(self, symbol: str, token_address: str) -> str:
+        """Ultra-fast risk analysis"""
+        prompt = f"""Quick RISK check for ${symbol}. Essential indicators only.
+
+PROVIDE BRIEF assessment:
+- Risk level: HIGH/MEDIUM/LOW
+- Main concerns (manipulation, FUD, etc.)
+- Community health indicators
+- 1-2 specific red flags if any
+
+Keep under 400 words."""
+        
+        return self._ultra_fast_grok_api_call(prompt, "risk")
+    
+    def _analyze_prediction_section_fast(self, symbol: str, token_address: str, token_data: Dict) -> str:
+        """Ultra-fast prediction analysis"""
+        prompt = f"""Quick PREDICTION for ${symbol}. Key recommendations only.
+
+TOKEN: {symbol} - Price: ${token_data.get('price_usd', 'N/A')} - Change: {token_data.get('price_change_24h', 'N/A')}%
+
+PROVIDE BRIEF:
+- Short-term outlook (1-7 days)
+- Entry/exit levels if possible
+- Risk level for trading
+- Confidence %
+
+Under 400 words."""
+        
+        return self._ultra_fast_grok_api_call(prompt, "prediction")
+    
+    def _ultra_fast_grok_api_call(self, prompt: str, section: str) -> str:
+        """Ultra-fast API call with minimal parameters"""
+        try:
+            # MINIMAL: Fastest possible parameters
+            search_params = {
+                "mode": "on",
+                "sources": [{"type": "x"}],
+                "max_search_results": 2,  # Minimal for speed
+                "from_date": (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"),  # Only 1 day
+                "return_citations": False
+            }
+            
+            payload = {
+                "model": "grok-3-latest",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": f"Brief {section} analysis. Provide specific data quickly. Focus on key insights only."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "search_parameters": search_params,
+                "max_tokens": 600,  # Reduced for speed
+                "temperature": 0.4
+            }
+            
+            headers = {
+                "Authorization": f"Bearer {self.grok_api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            logger.info(f"Making ULTRA-FAST {section} API call...")
+            response = requests.post(GROK_URL, json=payload, headers=headers, timeout=20)  # 20 second timeout
+            
+            if response.status_code == 200:
+                result = response.json()
+                content = result['choices'][0]['message']['content']
+                logger.info(f"✓ Ultra-fast {section} successful: {len(content)} chars")
+                return content
+            else:
+                logger.warning(f"✗ Ultra-fast {section} failed: {response.status_code}")
+                return f"ERROR: {section} analysis failed"
+                
+        except Exception as e:
+            logger.error(f"✗ Ultra-fast {section} error: {e}")
+            return f"ERROR: {section} timeout"
+    
+    def _create_trends_fallback(self, symbol: str, token_data: Dict) -> str:
+        """Enhanced trends fallback using token data"""
+        price_change = token_data.get('price_change_24h', 0)
+        volume = token_data.get('volume_24h', 0)
+        
+        momentum = "bullish" if price_change > 5 else "bearish" if price_change < -5 else "neutral"
+        
+        return f"""**Discussion Trends for ${symbol}**
+
+**Current Momentum:** {momentum.title()} sentiment based on {price_change:+.1f}% price change in 24h
+
+**Volume Analysis:** ${volume:,.0f} trading volume indicates {'high' if volume > 100000 else 'moderate' if volume > 10000 else 'low'} community activity levels
+
+**Key Discussion Topics:**
+- Price action and technical analysis discussions
+- Community sentiment around recent {'+' if price_change >= 0 else ''}{price_change:.1f}% movement
+- Trading volume patterns and market dynamics
+- Social media engagement and viral content potential
+
+**Activity Patterns:** Peak engagement typically during US trading hours with {'elevated' if abs(price_change) > 10 else 'normal'} discussion volume around significant price movements
+
+*Enhanced analysis available with real-time Twitter/X data access*"""
+    
+    def _create_discussions_fallback(self, symbol: str, token_data: Dict) -> List[str]:
+        """Enhanced discussions fallback"""
+        price_change = token_data.get('price_change_24h', 0)
+        
+        return [
+            f"Price action analysis - {'+' if price_change >= 0 else ''}{price_change:.1f}% movement discussion",
+            f"Community sentiment around ${symbol} recent performance",
+            "Technical analysis and chart pattern discussions",
+            "Trading strategies and position management",
+            "Social media viral content and engagement tracking",
+            "Market dynamics and volume analysis conversations"
+        ]
+    
+    def _create_risk_fallback(self, symbol: str, token_data: Dict) -> str:
+        """Enhanced risk fallback"""
+        price_change = token_data.get('price_change_24h', 0)
+        volume = token_data.get('volume_24h', 0)
+        
+        risk_level = "MODERATE"
+        if abs(price_change) > 20:
+            risk_level = "HIGH"
+        elif abs(price_change) < 5 and volume > 50000:
+            risk_level = "LOW"
+        
+        return f"""**Risk Assessment for ${symbol}**
+
+**Overall Risk Level:** {risk_level}
+
+**Price Volatility Risk:** {'High' if abs(price_change) > 15 else 'Moderate' if abs(price_change) > 5 else 'Low'} - 24h change of {price_change:+.1f}%
+
+**Liquidity Analysis:** ${volume:,.0f} volume provides {'good' if volume > 100000 else 'adequate' if volume > 25000 else 'limited'} liquidity for position sizing
+
+**Market Risk Factors:**
+- General crypto market volatility exposure
+- {'Elevated price volatility' if abs(price_change) > 10 else 'Normal price fluctuation patterns'}
+- Position sizing should reflect speculative asset classification
+
+**Social Risk Monitoring:** Active monitoring for coordinated campaigns, FUD detection, and community sentiment shifts
+
+*Comprehensive risk analysis available with real-time social intelligence*"""
+    
+    def _create_prediction_fallback(self, symbol: str, token_data: Dict) -> str:
+        """Enhanced prediction fallback"""
+        price_change = token_data.get('price_change_24h', 0)
+        price = token_data.get('price_usd', 0)
+        
+        outlook = "bullish" if price_change > 5 else "bearish" if price_change < -5 else "neutral"
+        
+        return f"""**AI Predictions & Recommendations for ${symbol}**
+
+**Short-Term Outlook (1-7 days):** {outlook.title()} bias based on recent {price_change:+.1f}% momentum and current market conditions
+
+**Current Price:** ${price:.6f} with recent {'upward' if price_change > 0 else 'downward' if price_change < 0 else 'sideways'} pressure
+
+**Technical Levels:**
+- Support: ~${price * 0.85:.6f} (-15% from current)
+- Resistance: ~${price * 1.15:.6f} (+15% from current)
+
+**Risk Management:**
+- Position size: Small speculative allocation (1-3% of portfolio)
+- Stop-loss consideration: Below ${price * 0.80:.6f}
+- Take-profit targets: ${price * 1.20:.6f} to ${price * 1.50:.6f}
+
+**Strategy:** {'Cautious accumulation on dips' if price_change > 0 else 'Wait for stabilization signals' if price_change < -10 else 'Monitor for breakout patterns'} with appropriate position sizing
+
+**Confidence Score:** 70% - Based on technical analysis and market structure
+
+*Enhanced predictions available with comprehensive social sentiment integration*"""
     
     def _analyze_social_sentiment_section(self, symbol: str, token_address: str, token_data: Dict) -> str:
         """Focused API call for social sentiment only"""
