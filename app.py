@@ -619,6 +619,17 @@ Premium prediction service provides:
     
     def _create_limit_reached_response(self, token_address: str, symbol: str, token_data: Dict) -> TokenAnalysis:
         """Response when daily API limit is reached"""
+        
+        # Format token data safely
+        price = token_data.get('price_usd', 'N/A')
+        price_change = token_data.get('price_change_24h', 'N/A')
+        volume = token_data.get('volume_24h', 0)
+        market_cap = token_data.get('market_cap', 0)
+        
+        # Format volume and market cap with proper formatting
+        volume_str = f"${volume:,.0f}" if volume > 0 else 'N/A'
+        market_cap_str = f"${market_cap:,.0f}" if market_cap > 0 else 'N/A'
+        
         return TokenAnalysis(
             token_address=token_address,
             token_symbol=symbol,
@@ -628,10 +639,10 @@ The premium analysis service has reached its daily API limit of {self.daily_limi
 
 **Current Token Data Available:**
 - Symbol: {symbol}
-- Price: ${token_data.get('price_usd', 'N/A')}
-- 24h Change: {token_data.get('price_change_24h', 'N/A')}%
-- Volume: ${token_data.get('volume_24h', 'N/A'):,.0f} if token_data.get('volume_24h') else 'N/A'
-- Market Cap: ${token_data.get('market_cap', 'N/A'):,.0f} if token_data.get('market_cap') else 'N/A'
+- Price: ${price}
+- 24h Change: {price_change}%
+- Volume: {volume_str}
+- Market Cap: {market_cap_str}
 
 **Service will reset at midnight UTC.** Premium social intelligence analysis will resume then.""",
             
