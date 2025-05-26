@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Crypto Dashboard - All-in-One Memecoin Intelligence Platform</title>
+    <title>Social Crypto Dashboard - Real-Time Solana Token Intelligence</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -184,7 +184,7 @@
             gap: 25px;
         }
 
-        /* Trending Tokens from X */
+        /* Trending Tokens with Tabs */
         .trending-tokens-section {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(25px);
@@ -226,6 +226,58 @@
             transform: rotate(180deg);
         }
 
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #b0b7ff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            color: #ffffff;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeInTab 0.4s ease-in;
+        }
+
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .trending-tokens-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -246,6 +298,21 @@
             transform: translateY(-2px);
             background: rgba(102, 126, 234, 0.1);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .trending-token.fresh-hype {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .trending-token.recent-trending {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .trending-token.blue-chip {
+            border-left-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
         }
 
         .trending-symbol {
@@ -278,7 +345,7 @@
 
         .analyzer-input {
             display: grid;
-            grid-template-columns: 1fr auto auto;
+            grid-template-columns: 1fr auto;
             gap: 20px;
             align-items: end;
             margin-bottom: 20px;
@@ -298,7 +365,7 @@
             letter-spacing: 0.5px;
         }
 
-        .input-group input, .input-group select {
+        .input-group input {
             width: 100%;
             padding: 15px 20px;
             border: 2px solid rgba(255, 255, 255, 0.1);
@@ -310,7 +377,7 @@
             font-weight: 500;
         }
 
-        .input-group input:focus, .input-group select:focus {
+        .input-group input:focus {
             outline: none;
             border-color: #667eea;
             background: rgba(255, 255, 255, 0.1);
@@ -342,38 +409,6 @@
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-        }
-
-        /* Token Quick Stats Row */
-        .token-quick-stats {
-            display: none;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 16px;
-            padding: 20px;
-            margin: 20px 0;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .quick-stat {
-            text-align: center;
-        }
-
-        .quick-stat-label {
-            font-size: 0.8rem;
-            color: #10b981;
-            margin-bottom: 5px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .quick-stat-value {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #ffffff;
         }
 
         /* Loading Animation */
@@ -408,13 +443,99 @@
             font-size: 1.1rem;
         }
 
+        /* DexScreener Chart */
+        .chart-container {
+            display: none;
+            margin: 25px 0;
+            position: relative;
+            width: 100%;
+            height: 600px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #1a1a2e;
+        }
+
+        /* Token Profile Section */
+        .token-profile {
+            display: none;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .token-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .token-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .token-info h2 {
+            font-family: "Lacquer", system-ui;
+            font-size: 2.2rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .token-info .token-contract {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #b0b7ff;
+            opacity: 0.8;
+        }
+
+        .token-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #b0b7ff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         /* Results Section */
         .results-section {
             display: none;
             margin-top: 25px;
         }
 
-        /* Social Momentum Dashboard */
+        /* Social Momentum Dashboard with Visual Metrics */
         .momentum-dashboard {
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
             border-radius: 24px;
@@ -487,6 +608,7 @@
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.15);
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .momentum-metric:hover {
@@ -494,14 +616,35 @@
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
 
-        .metric-value {
+        .metric-visual {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            position: relative;
+            background: conic-gradient(#667eea 0deg, #764ba2 120deg, rgba(255,255,255,0.1) 120deg, rgba(255,255,255,0.1) 360deg);
+        }
+
+        .metric-visual::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background: #1a1a2e;
+            border-radius: 50%;
+        }
+
+        .metric-value-main {
             font-size: 1.3rem;
             font-weight: 700;
             color: #ffffff;
             margin-bottom: 5px;
         }
 
-        .metric-label {
+        .metric-label-main {
             font-size: 0.75rem;
             color: #b0b7ff;
             font-weight: 600;
@@ -509,19 +652,13 @@
             letter-spacing: 0.3px;
         }
 
-        /* Live Tweets & Memes Section */
-        .tweets-memes-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 25px;
-        }
-
+        /* Live Tweets Panel */
         .live-tweets-panel {
             background: rgba(29, 161, 242, 0.1);
             border: 1px solid rgba(29, 161, 242, 0.2);
             border-radius: 20px;
             padding: 25px;
+            margin-bottom: 25px;
         }
 
         .tweets-list {
@@ -579,72 +716,6 @@
             color: #7dd3fc;
         }
 
-        /* Meme Images Panel */
-        .meme-images-panel {
-            background: rgba(240, 147, 251, 0.1);
-            border: 1px solid rgba(240, 147, 251, 0.2);
-            border-radius: 20px;
-            padding: 25px;
-        }
-
-        .meme-carousel {
-            position: relative;
-            max-height: 400px;
-            overflow: hidden;
-            border-radius: 12px;
-        }
-
-        .meme-images {
-            display: flex;
-            transition: transform 0.5s ease;
-        }
-
-        .meme-image {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 12px;
-            flex-shrink: 0;
-        }
-
-        .carousel-nav {
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-        }
-
-        .carousel-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .carousel-dot.active {
-            background: #f093fb;
-            transform: scale(1.2);
-        }
-
-        /* Expert Analysis */
-        .expert-analysis {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .analysis-content {
-            line-height: 1.8;
-            color: #e1e7ff;
-            font-size: 1.05rem;
-        }
-
         /* Analysis Grid */
         .analysis-grid {
             display: grid;
@@ -697,6 +768,21 @@
             position: absolute;
             left: 0;
             font-size: 0.9rem;
+        }
+
+        /* Expert Analysis */
+        .expert-analysis {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .analysis-content {
+            line-height: 1.8;
+            color: #e1e7ff;
+            font-size: 1.05rem;
         }
 
         /* Crypto News Sidebar */
@@ -757,7 +843,6 @@
             border-radius: 20px;
             padding: 25px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            display: none;
             min-height: 400px;
             display: flex;
             flex-direction: column;
@@ -879,10 +964,6 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .tweets-memes-section {
-                grid-template-columns: 1fr;
-            }
         }
 
         @media (max-width: 768px) {
@@ -910,9 +991,9 @@
                 gap: 20px;
             }
 
-            .token-quick-stats {
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
+            .token-metrics {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
             }
         }
 
@@ -952,73 +1033,6 @@
         .chat-messages::-webkit-scrollbar-thumb:hover {
             background: rgba(102, 126, 234, 0.7);
         }
-		/* Tab Navigation */
-.tab-navigation {
-    display: flex;
-    gap: 0;
-    margin-bottom: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.tab-btn {
-    flex: 1;
-    background: none;
-    border: none;
-    color: #b0b7ff;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.tab-btn:hover {
-    background: rgba(102, 126, 234, 0.2);
-    color: #ffffff;
-}
-
-.tab-btn.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-/* Tab Content */
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-    animation: fadeInTab 0.4s ease-in;
-}
-
-@keyframes fadeInTab {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Enhanced trending token cards for different categories */
-.trending-token.fresh-hype {
-    border-left-color: #10b981;
-    background: rgba(16, 185, 129, 0.05);
-}
-
-.trending-token.recent-trending {
-    border-left-color: #f59e0b;
-    background: rgba(245, 158, 11, 0.05);
-}
-
-.trending-token.blue-chip {
-    border-left-color: #3b82f6;
-    background: rgba(59, 130, 246, 0.05);
-}
     </style>
 </head>
 <body>
@@ -1026,7 +1040,7 @@
         <!-- Header -->
         <div class="header">
             <h1>Social Crypto Dashboard</h1>
-            <p>All-in-One Memecoin Intelligence Platform with Live Social Data</p>
+            <p>Real-Time Solana Token Intelligence with Live Social Data</p>
         </div>
 
         <!-- Market Overview Bar -->
@@ -1053,46 +1067,46 @@
         <div class="dashboard-grid">
             <!-- Main Content -->
             <div class="main-content">
-              <!-- Trending Tokens with Tabs -->
-<div class="trending-tokens-section">
-    <div class="section-header">
-        <span style="font-size: 1.5rem;">🔥</span>
-        <div class="section-title">Token Intelligence</div>
-        <button class="section-refresh" onclick="refreshCurrentTab()">🔄</button>
-    </div>
-    
-    <!-- Tab Navigation -->
-    <div class="tab-navigation">
-        <button class="tab-btn active" onclick="switchTab('fresh-hype')" data-tab="fresh-hype">
-            🚀 Fresh Hype
-        </button>
-        <button class="tab-btn" onclick="switchTab('recent-trending')" data-tab="recent-trending">
-            📈 Recent Trending
-        </button>
-        <button class="tab-btn" onclick="switchTab('blue-chips')" data-tab="blue-chips">
-            💎 Blue Chips
-        </button>
-    </div>
-    
-    <!-- Tab Content -->
-    <div class="tab-content active" id="fresh-hype">
-        <div class="trending-tokens-grid" id="freshHypeGrid">
-            <!-- Fresh hype tokens will be populated here -->
-        </div>
-    </div>
-    
-    <div class="tab-content" id="recent-trending">
-        <div class="trending-tokens-grid" id="recentTrendingGrid">
-            <!-- Recent trending tokens will be populated here -->
-        </div>
-    </div>
-    
-    <div class="tab-content" id="blue-chips">
-        <div class="trending-tokens-grid" id="blueChipsGrid">
-            <!-- Blue chip tokens will be populated here -->
-        </div>
-    </div>
-</div>
+                <!-- Trending Tokens with Tabs -->
+                <div class="trending-tokens-section">
+                    <div class="section-header">
+                        <span style="font-size: 1.5rem;">🔥</span>
+                        <div class="section-title">Token Intelligence</div>
+                        <button class="section-refresh" onclick="refreshCurrentTab()" title="Refresh current tab">🔄</button>
+                    </div>
+                    
+                    <!-- Tab Navigation -->
+                    <div class="tab-navigation">
+                        <button class="tab-btn active" onclick="switchTab('fresh-hype')" data-tab="fresh-hype">
+                            🚀 Fresh Hype
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('recent-trending')" data-tab="recent-trending">
+                            📈 Recent Trending
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('blue-chips')" data-tab="blue-chips">
+                            💎 Blue Chips
+                        </button>
+                    </div>
+                    
+                    <!-- Tab Content -->
+                    <div class="tab-content active" id="fresh-hype">
+                        <div class="trending-tokens-grid" id="freshHypeGrid">
+                            <div style="text-align: center; color: #b0b7ff; padding: 40px;">Loading fresh hype tokens...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="recent-trending">
+                        <div class="trending-tokens-grid" id="recentTrendingGrid">
+                            <div style="text-align: center; color: #b0b7ff; padding: 40px;">Loading trending tokens...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="blue-chips">
+                        <div class="trending-tokens-grid" id="blueChipsGrid">
+                            <div style="text-align: center; color: #b0b7ff; padding: 40px;">Loading blue chip tokens...</div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Token Analyzer -->
                 <div class="token-analyzer">
@@ -1111,36 +1125,9 @@
                                 value=""
                             >
                         </div>
-                        <div class="input-group">
-                            <label for="analysisMode">Analysis Mode:</label>
-                            <select id="analysisMode">
-                                <option value="degenerate">🎯 Degen Mode</option>
-                                <option value="analytical">📊 Pro Mode</option>
-                            </select>
-                        </div>
                         <button class="analyze-btn" onclick="analyzeToken()">
-                            Analyze
+                            🔍 Analyze
                         </button>
-                    </div>
-
-                    <!-- Token Quick Stats -->
-                    <div class="token-quick-stats" id="tokenQuickStats">
-                        <div class="quick-stat">
-                            <div class="quick-stat-label">Token Name</div>
-                            <div class="quick-stat-value" id="tokenName">-</div>
-                        </div>
-                        <div class="quick-stat">
-                            <div class="quick-stat-label">Market Cap</div>
-                            <div class="quick-stat-value" id="tokenMarketCap">-</div>
-                        </div>
-                        <div class="quick-stat">
-                            <div class="quick-stat-label">Holders</div>
-                            <div class="quick-stat-value" id="tokenHolders">-</div>
-                        </div>
-                        <div class="quick-stat">
-                            <div class="quick-stat-label">24h Volume</div>
-                            <div class="quick-stat-value" id="tokenVolume">-</div>
-                        </div>
                     </div>
 
                     <div class="loading-spinner" id="loadingSpinner">
@@ -1151,50 +1138,50 @@
                     <div class="error-message" id="errorMessage"></div>
                 </div>
 
+                <!-- Token Profile Section -->
+                <div class="token-profile" id="tokenProfile">
+                    <div class="token-profile-header">
+                        <img class="token-image" id="tokenImage" src="" alt="Token" onerror="this.style.display='none'">
+                        <div class="token-info">
+                            <h2 id="tokenName">Token Name</h2>
+                            <div class="token-contract" id="tokenContract">Contract Address</div>
+                        </div>
+                    </div>
+                    <div class="token-metrics" id="tokenMetrics">
+                        <!-- Token metrics will be populated here -->
+                    </div>
+                </div>
+
+                <!-- DexScreener Chart -->
+                <div class="chart-container" id="chartContainer">
+                    <iframe id="dexscreenerChart" src=""></iframe>
+                </div>
+
                 <!-- Results Section -->
                 <div class="results-section" id="resultsSection">
-                    <!-- Social Momentum Dashboard -->
+                    <!-- Social Momentum Dashboard with Visual Metrics -->
                     <div class="momentum-dashboard">
                         <div class="momentum-header">
                             <div class="momentum-score" id="momentumScore">0</div>
                             <div class="momentum-label">Social Momentum Score</div>
                             <div class="live-data-badge" id="liveDataBadge">
                                 <div class="live-dot"></div>
-                                🔴 LIVE X DATA
+                                🔴 LIVE DATA
                             </div>
                         </div>
                         <div class="momentum-grid" id="momentumMetrics">
-                            <!-- Metrics will be populated here -->
+                            <!-- Metrics with visual indicators will be populated here -->
                         </div>
                     </div>
 
-                    <!-- Live Tweets & Meme Images -->
-                    <div class="tweets-memes-section">
-                        <!-- Live Tweets Panel -->
-                        <div class="live-tweets-panel">
-                            <div class="section-header">
-                                <span style="font-size: 1.5rem;">🐦</span>
-                                <div class="section-title">Live X/Twitter Feed</div>
-                            </div>
-                            <div class="tweets-list" id="tweetsList">
-                                <!-- Tweets will be populated here -->
-                            </div>
+                    <!-- Live Tweets Panel -->
+                    <div class="live-tweets-panel">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">🐦</span>
+                            <div class="section-title">Live X/Twitter Feed</div>
                         </div>
-
-                        <!-- Meme Images Panel -->
-                        <div class="meme-images-panel">
-                            <div class="section-header">
-                                <span style="font-size: 1.5rem;">🎭</span>
-                                <div class="section-title">Token Memes</div>
-                            </div>
-                            <div class="meme-carousel" id="memeCarousel">
-                                <div class="meme-images" id="memeImages">
-                                    <!-- Meme images will be populated here -->
-                                </div>
-                                <div class="carousel-nav" id="carouselNav">
-                                    <!-- Navigation dots will be populated here -->
-                                </div>
-                            </div>
+                        <div class="tweets-list" id="tweetsList">
+                            <!-- Tweets will be populated here -->
                         </div>
                     </div>
 
@@ -1222,7 +1209,7 @@
                             </div>
                         </div>
 
-                        <!-- Influencer Network -->
+                        <!-- KOLs & Influencers -->
                         <div class="analysis-card">
                             <div class="section-header">
                                 <span style="font-size: 1.3rem;">👑</span>
@@ -1265,10 +1252,10 @@
                     <div class="section-header">
                         <span style="font-size: 1.5rem;">📰</span>
                         <div class="section-title">Crypto News</div>
-                        <button class="section-refresh" onclick="loadCryptoNews()">🔄</button>
+                        <button class="section-refresh" onclick="loadCryptoNews()" title="Refresh news">🔄</button>
                     </div>
                     <div class="news-list" id="newsList">
-                        <!-- News articles will be populated here -->
+                        <div style="text-align: center; color: #b0b7ff; padding: 40px;">Loading crypto news...</div>
                     </div>
                 </div>
 
@@ -1294,12 +1281,9 @@
         </div>
 
         <div class="powered-by">
-            <p>Powered by <a href="https://x.ai" target="_blank">GROK AI</a>, <a href="https://perplexity.ai" target="_blank">Perplexity</a>, and <a href="https://developer.twitter.com" target="_blank">X API</a></p>
+            <p>Powered by <a href="https://x.ai" target="_blank">GROK AI</a> & <a href="https://perplexity.ai" target="_blank">Perplexity</a></p>
             <p style="margin-top: 10px; font-size: 0.9rem;">
-                🚀 Revolutionary platform for <strong>memecoin research</strong> - 
-                <a href="https://dexscreener.com/solana" target="_blank">
-                    All-in-one crypto intelligence dashboard
-                </a>
+                🚀 Real-time Solana token intelligence with <strong>live social data</strong>
             </p>
         </div>
     </div>
@@ -1308,14 +1292,13 @@
         let currentAnalysis = null;
         let currentTokenAddress = '';
         let chatHistory = [];
-        let memeCarouselIndex = 0;
+        let currentTab = 'fresh-hype';
 
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadMarketOverview();
             loadTrendingTokens();
             loadCryptoNews();
-            enableChat();
             
             // Allow Enter key for inputs
             document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
@@ -1339,7 +1322,6 @@
                 console.error('Market overview error:', error);
                 // Show fallback data
                 updateMarketOverview({
-
                     bitcoin_price: 95000,
                     ethereum_price: 3500,
                     solana_price: 180,
@@ -1384,151 +1366,116 @@
         }
 
         // Trending Tokens Functions
-      // Global variable for current tab
-let currentTab = 'fresh-hype';
-
-// Replace the loadTrendingTokens function
-async function loadTrendingTokens() {
-    // Load all tabs on initial load
-    await loadFreshHype();
-    await loadRecentTrending();
-    await loadBlueChips();
-}
-
-// New tab switching function
-function switchTab(tabName) {
-    currentTab = tabName;
-    
-    // Update tab buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-    
-    // Update tab content
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-    document.getElementById(tabName).classList.add('active');
-    
-    // Load data if not already loaded
-    switch(tabName) {
-        case 'fresh-hype':
-            loadFreshHype();
-            break;
-        case 'recent-trending':
-            loadRecentTrending();
-            break;
-        case 'blue-chips':
-            loadBlueChips();
-            break;
-    }
-}
-
-// New refresh function
-function refreshCurrentTab() {
-    switch(currentTab) {
-        case 'fresh-hype':
-            loadFreshHype(true);
-            break;
-        case 'recent-trending':
-            loadRecentTrending(true);
-            break;
-        case 'blue-chips':
-            loadBlueChips(true);
-            break;
-    }
-}
-
-// Fresh Hype tokens
-async function loadFreshHype(forceRefresh = false) {
-    try {
-        const response = await fetch(`/trending-tokens?category=fresh-hype&refresh=${forceRefresh}`);
-        const data = await response.json();
-        
-        if (data.success && data.tokens) {
-            displayTokensInGrid(data.tokens, 'freshHypeGrid', 'fresh-hype');
+        async function loadTrendingTokens() {
+            // Load all tabs on initial load
+            await loadFreshHype();
+            await loadRecentTrending();
+            await loadBlueChips();
         }
-    } catch (error) {
-        console.error('Fresh hype tokens error:', error);
-        displayTokensInGrid(getFallbackTokens('fresh-hype'), 'freshHypeGrid', 'fresh-hype');
-    }
-}
 
-// Recent Trending tokens
-async function loadRecentTrending(forceRefresh = false) {
-    try {
-        const response = await fetch(`/trending-tokens?category=recent-trending&refresh=${forceRefresh}`);
-        const data = await response.json();
-        
-        if (data.success && data.tokens) {
-            displayTokensInGrid(data.tokens, 'recentTrendingGrid', 'recent-trending');
+        // Tab switching function
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
         }
-    } catch (error) {
-        console.error('Recent trending tokens error:', error);
-        displayTokensInGrid(getFallbackTokens('recent-trending'), 'recentTrendingGrid', 'recent-trending');
-    }
-}
 
-// Blue Chip tokens
-async function loadBlueChips(forceRefresh = false) {
-    try {
-        const response = await fetch(`/trending-tokens?category=blue-chips&refresh=${forceRefresh}`);
-        const data = await response.json();
-        
-        if (data.success && data.tokens) {
-            displayTokensInGrid(data.tokens, 'blueChipsGrid', 'blue-chip');
+        // Refresh current tab
+        function refreshCurrentTab() {
+            const refreshBtn = document.querySelector('.section-refresh');
+            refreshBtn.style.transform = 'rotate(180deg)';
+            setTimeout(() => {
+                refreshBtn.style.transform = '';
+            }, 500);
+            
+            switch(currentTab) {
+                case 'fresh-hype':
+                    loadFreshHype(true);
+                    break;
+                case 'recent-trending':
+                    loadRecentTrending(true);
+                    break;
+                case 'blue-chips':
+                    loadBlueChips(true);
+                    break;
+            }
         }
-    } catch (error) {
-        console.error('Blue chip tokens error:', error);
-        displayTokensInGrid(getFallbackTokens('blue-chips'), 'blueChipsGrid', 'blue-chip');
-    }
-}
 
-// Updated display function
-function displayTokensInGrid(tokens, gridId, category) {
-    let tokensHtml = '';
-    
-    tokens.slice(0, 12).forEach(token => {
-        const changeClass = token.price_change >= 0 ? 'positive' : 'negative';
-        const changeIcon = token.price_change >= 0 ? '🚀' : '📉';
-        
-        tokensHtml += `
-            <div class="trending-token ${category}" onclick="loadTokenAnalysis('${token.address}')">
-                <div class="trending-symbol">$${token.symbol}</div>
-                <div class="trending-change ${changeClass}">
-                    ${changeIcon} ${token.price_change >= 0 ? '+' : ''}${token.price_change.toFixed(1)}%
-                </div>
-                <div class="trending-mentions">${token.mentions || token.volume || 0} ${category === 'blue-chip' ? 'vol' : 'mentions'}</div>
-            </div>
-        `;
-    });
-    
-    document.getElementById(gridId).innerHTML = tokensHtml;
-}
+        // Fresh Hype tokens
+        async function loadFreshHype(forceRefresh = false) {
+            try {
+                const response = await fetch(`/trending-tokens?category=fresh-hype&refresh=${forceRefresh}`);
+                const data = await response.json();
+                
+                if (data.success && data.tokens) {
+                    displayTokensInGrid(data.tokens, 'freshHypeGrid', 'fresh-hype');
+                }
+            } catch (error) {
+                console.error('Fresh hype tokens error:', error);
+                document.getElementById('freshHypeGrid').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Error loading fresh hype tokens</div>';
+            }
+        }
 
-// Fallback data for each category
-function getFallbackTokens(category) {
-    const fallbackData = {
-        'fresh-hype': [
-            {symbol: 'NEWCOIN', address: 'ABC123...', price_change: 245.7, mentions: 1500},
-            {symbol: 'MOONCOIN', address: 'DEF456...', price_change: 89.3, mentions: 980},
-            {symbol: 'PUMPIT', address: 'GHI789...', price_change: 156.2, mentions: 2200}
-        ],
-        'recent-trending': [
-            {symbol: 'BONK', address: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', price_change: 45.3, mentions: 5500},
-            {symbol: 'WIF', address: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', price_change: 28.7, mentions: 3200},
-            {symbol: 'POPCAT', address: '7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr', price_change: 67.1, mentions: 4100}
-        ],
-        'blue-chips': [
-            {symbol: 'SOL', address: 'So11111111111111111111111111111111111111112', price_change: 5.2, volume: 2500000000},
-            {symbol: 'USDC', address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', price_change: 0.1, volume: 1800000000},
-            {symbol: 'JUP', address: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN', price_change: 8.5, volume: 180000000}
-        ]
-    };
-    
-    return fallbackData[category] || [];
-}
+        // Recent Trending tokens
+        async function loadRecentTrending(forceRefresh = false) {
+            try {
+                const response = await fetch(`/trending-tokens?category=recent-trending&refresh=${forceRefresh}`);
+                const data = await response.json();
+                
+                if (data.success && data.tokens) {
+                    displayTokensInGrid(data.tokens, 'recentTrendingGrid', 'recent-trending');
+                }
+            } catch (error) {
+                console.error('Recent trending tokens error:', error);
+                document.getElementById('recentTrendingGrid').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Error loading trending tokens</div>';
+            }
+        }
+
+        // Blue Chip tokens
+        async function loadBlueChips(forceRefresh = false) {
+            try {
+                const response = await fetch(`/trending-tokens?category=blue-chips&refresh=${forceRefresh}`);
+                const data = await response.json();
+                
+                if (data.success && data.tokens) {
+                    displayTokensInGrid(data.tokens, 'blueChipsGrid', 'blue-chip');
+                }
+            } catch (error) {
+                console.error('Blue chip tokens error:', error);
+                document.getElementById('blueChipsGrid').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Error loading blue chip tokens</div>';
+            }
+        }
+
+        function displayTokensInGrid(tokens, gridId, category) {
+            let tokensHtml = '';
+            
+            tokens.slice(0, 12).forEach(token => {
+                const changeClass = token.price_change >= 0 ? 'positive' : 'negative';
+                const changeIcon = token.price_change >= 0 ? '🚀' : '📉';
+                
+                tokensHtml += `
+                    <div class="trending-token ${category}" onclick="loadTokenAnalysis('${token.address}')">
+                        <div class="trending-symbol">$${token.symbol}</div>
+                        <div class="trending-change ${changeClass}">
+                            ${changeIcon} ${token.price_change >= 0 ? '+' : ''}${token.price_change.toFixed(1)}%
+                        </div>
+                        <div class="trending-mentions">${token.mentions || Math.floor(token.volume / 1000)} ${category === 'blue-chip' ? 'vol' : 'mentions'}</div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById(gridId).innerHTML = tokensHtml;
+        }
 
         function loadTokenAnalysis(address) {
             document.getElementById('tokenAddress').value = address;
@@ -1548,19 +1495,12 @@ function getFallbackTokens(category) {
                 
                 if (data.success && data.articles) {
                     displayCryptoNews(data.articles);
+                } else {
+                    document.getElementById('newsList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading news</div>';
                 }
             } catch (error) {
                 console.error('Crypto news error:', error);
-                // Show fallback news
-                displayCryptoNews([
-                    {
-                        headline: 'Bitcoin Surges Past $95,000 as Institutional Adoption Accelerates',
-                        summary: 'Major financial institutions continue to add Bitcoin to their portfolios.',
-                        source: 'CoinDesk',
-                        url: 'https://coindesk.com',
-                        timestamp: '2h ago'
-                    }
-                ]);
+                document.getElementById('newsList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading news</div>';
             }
         }
 
@@ -1586,7 +1526,6 @@ function getFallbackTokens(category) {
         // Token Analysis Functions
         async function analyzeToken() {
             const tokenAddress = document.getElementById('tokenAddress').value.trim();
-            const analysisMode = document.getElementById('analysisMode').value;
             
             if (!tokenAddress) {
                 showError('Please enter a token address');
@@ -1601,12 +1540,10 @@ function getFallbackTokens(category) {
             currentTokenAddress = tokenAddress;
             chatHistory = [];
 
-            // Get quick stats first
-            await loadTokenQuickStats(tokenAddress);
-
             showLoading();
             hideError();
             hideResults();
+            showChart(tokenAddress);
 
             try {
                 const response = await fetch('/analyze', {
@@ -1615,8 +1552,7 @@ function getFallbackTokens(category) {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        token_address: tokenAddress,
-                        analysis_mode: analysisMode
+                        token_address: tokenAddress
                     })
                 });
 
@@ -1661,24 +1597,6 @@ function getFallbackTokens(category) {
             }
         }
 
-        async function loadTokenQuickStats(address) {
-            try {
-                const response = await fetch(`/token-quick-stats/${address}`);
-                const data = await response.json();
-                
-                if (data.success && data.stats) {
-                    const stats = data.stats;
-                    document.getElementById('tokenQuickStats').style.display = 'grid';
-                    document.getElementById('tokenName').textContent = `$${stats.symbol || 'UNKNOWN'}`;
-                    document.getElementById('tokenMarketCap').textContent = stats.market_cap ? `$${(stats.market_cap / 1e6).toFixed(1)}M` : '-';
-                    document.getElementById('tokenHolders').textContent = stats.holders ? stats.holders.toLocaleString() : '-';
-                    document.getElementById('tokenVolume').textContent = stats.volume_24h ? `$${(stats.volume_24h / 1e6).toFixed(1)}M` : '-';
-                }
-            } catch (error) {
-                console.error('Quick stats error:', error);
-            }
-        }
-
         function handleStreamMessage(data) {
             if (data.type === 'progress') {
                 updateLoadingText(data.message);
@@ -1692,27 +1610,76 @@ function getFallbackTokens(category) {
             }
         }
 
+        function showChart(tokenAddress) {
+            const chartContainer = document.getElementById('chartContainer');
+            const iframe = document.getElementById('dexscreenerChart');
+            
+            iframe.src = `https://dexscreener.com/solana/${tokenAddress}?embed=1&loadChartSettings=0&chartLeftToolbar=0&chartTheme=dark&theme=dark&chartStyle=1&chartType=usd&interval=15`;
+            chartContainer.style.display = 'block';
+            chartContainer.classList.add('fade-in');
+        }
+
         function displayResults(data) {
+            // Show token profile
+            updateTokenProfile(data);
+            
+            // Show results section
             document.getElementById('resultsSection').style.display = 'block';
             document.getElementById('resultsSection').classList.add('fade-in');
 
-            // Update momentum dashboard
+            // Update all sections
             updateMomentumDashboard(data);
-            
-            // Update tweets and memes
-            updateTweetsAndMemes(data);
-            
-            // Update expert analysis
+            updateTweetsSection(data);
             updateExpertAnalysis(data);
-            
-            // Update analysis cards
             updateAnalysisCards(data);
-            
-            // Enable chat
             enableChatWithContext();
 
             // Scroll to results
             document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateTokenProfile(data) {
+            const profile = document.getElementById('tokenProfile');
+            
+            // Update token info
+            document.getElementById('tokenName').textContent = `$${data.token_symbol} - ${data.token_name || data.token_symbol + ' Token'}`;
+            document.getElementById('tokenContract').textContent = `${data.token_address.slice(0, 8)}...${data.token_address.slice(-8)}`;
+            
+            // Update token image if available
+            const tokenImage = document.getElementById('tokenImage');
+            if (data.token_image) {
+                tokenImage.src = data.token_image;
+                tokenImage.style.display = 'block';
+            } else {
+                tokenImage.style.display = 'none';
+            }
+            
+            // Update metrics
+            const metricsHtml = `
+                <div class="metric-card">
+                    <div class="metric-value">$${(data.price_usd || 0).toFixed(8)}</div>
+                    <div class="metric-label">Price USD</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value ${data.price_change_24h >= 0 ? 'positive' : 'negative'}">${data.price_change_24h >= 0 ? '+' : ''}${(data.price_change_24h || 0).toFixed(2)}%</div>
+                    <div class="metric-label">24h Change</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">$${((data.market_cap || 0) / 1e6).toFixed(1)}M</div>
+                    <div class="metric-label">Market Cap</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">$${((data.volume_24h || 0) / 1e6).toFixed(1)}M</div>
+                    <div class="metric-label">24h Volume</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">$${((data.liquidity || 0) / 1e6).toFixed(1)}M</div>
+                    <div class="metric-label">Liquidity</div>
+                </div>
+            `;
+            document.getElementById('tokenMetrics').innerHTML = metricsHtml;
+            
+            profile.style.display = 'block';
         }
 
         function updateMomentumDashboard(data) {
@@ -1731,39 +1698,33 @@ function getFallbackTokens(category) {
                 scoreEl.textContent = Math.round(currentScore);
             }, 25);
 
-            // Update metrics
+            // Update metrics with visual indicators
             const metrics = data.sentiment_metrics || {};
-            const metricsHtml = `
-                <div class="momentum-metric">
-                    <div class="metric-value">${metrics.bullish_percentage || 0}%</div>
-                    <div class="metric-label">Bullish</div>
-                </div>
-                <div class="momentum-metric">
-                    <div class="metric-value">${metrics.viral_potential || 0}%</div>
-                    <div class="metric-label">Viral</div>
-                </div>
-                <div class="momentum-metric">
-                    <div class="metric-value">${metrics.community_strength || 0}%</div>
-                    <div class="metric-label">Community</div>
-                </div>
-                <div class="momentum-metric">
-                    <div class="metric-value">${metrics.volume_activity || 0}%</div>
-                    <div class="metric-label">Activity</div>
-                </div>
-                <div class="momentum-metric">
-                    <div class="metric-value">${data.fomo_fear_index || 50}%</div>
-                    <div class="metric-label">FOMO</div>
-                </div>
-                <div class="momentum-metric">
-                    <div class="metric-value">${Math.round((data.confidence_score || 0.5) * 100)}%</div>
-                    <div class="metric-label">AI Score</div>
-                </div>
-            `;
+            const metricsData = [
+                { label: 'Bullish', value: Math.round(metrics.bullish_percentage || 0), unit: '%' },
+                { label: 'Viral', value: Math.round(metrics.viral_potential || 0), unit: '%' },
+                { label: 'Community', value: Math.round(metrics.community_strength || 0), unit: '%' },
+                { label: 'Activity', value: Math.round(metrics.volume_activity || 0), unit: '%' },
+                { label: 'Quality', value: Math.round(metrics.engagement_quality || 0), unit: '%' },
+                { label: 'AI Score', value: Math.round((data.confidence_score || 0.5) * 100), unit: '%' }
+            ];
+
+            let metricsHtml = '';
+            metricsData.forEach(metric => {
+                const percentage = metric.value;
+                metricsHtml += `
+                    <div class="momentum-metric">
+                        <div class="metric-visual" style="background: conic-gradient(#667eea 0deg, #764ba2 ${percentage * 3.6}deg, rgba(255,255,255,0.1) ${percentage * 3.6}deg, rgba(255,255,255,0.1) 360deg);"></div>
+                        <div class="metric-value-main">${metric.value}${metric.unit}</div>
+                        <div class="metric-label-main">${metric.label}</div>
+                    </div>
+                `;
+            });
+            
             document.getElementById('momentumMetrics').innerHTML = metricsHtml;
         }
 
-        function updateTweetsAndMemes(data) {
-            // Update tweets list
+        function updateTweetsSection(data) {
             const tweets = data.actual_tweets || [];
             let tweetsHtml = '';
             
@@ -1776,62 +1737,19 @@ function getFallbackTokens(category) {
                                 <div class="tweet-timestamp">${tweet.timestamp}</div>
                             </div>
                             <div class="tweet-content">"${tweet.text}"</div>
-                            <div class="tweet-engagement">${tweet.engagement} • ${tweet.real_source ? '🔴 LIVE' : '📊 ANALYZED'}</div>
+                            <div class="tweet-engagement">${tweet.engagement} • 🔴 LIVE</div>
                         </div>
                     `;
                 });
             } else {
-                tweetsHtml = '<div class="tweet-item"><div class="tweet-content">No live tweets found. Connect API keys for real-time X/Twitter data.</div></div>';
+                tweetsHtml = '<div class="tweet-item"><div class="tweet-content">Connect XAI API for real-time X/Twitter data feed with live social mentions and KOL activity.</div></div>';
             }
             
             document.getElementById('tweetsList').innerHTML = tweetsHtml;
-            
-            // Update meme images
-            const memeImages = data.meme_images || [];
-            if (memeImages.length > 0) {
-                updateMemeCarousel(memeImages);
-            } else {
-                document.getElementById('memeImages').innerHTML = '<div style="text-align: center; padding: 40px; color: #b0b7ff;">No meme images found.<br>Connect Twitter API for live meme extraction.</div>';
-            }
-        }
-
-        function updateMemeCarousel(images) {
-            memeCarouselIndex = 0;
-            
-            let imagesHtml = '';
-            let navHtml = '';
-            
-            images.forEach((image, index) => {
-                imagesHtml += `<img src="${image}" alt="Meme ${index + 1}" class="meme-image">`;
-                navHtml += `<div class="carousel-dot ${index === 0 ? 'active' : ''}" onclick="setMemeCarousel(${index})"></div>`;
-            });
-            
-            document.getElementById('memeImages').innerHTML = imagesHtml;
-            document.getElementById('carouselNav').innerHTML = navHtml;
-            
-            // Auto-rotate carousel
-            if (images.length > 1) {
-                setInterval(() => {
-                    memeCarouselIndex = (memeCarouselIndex + 1) % images.length;
-                    setMemeCarousel(memeCarouselIndex);
-                }, 5000);
-            }
-        }
-
-        function setMemeCarousel(index) {
-            memeCarouselIndex = index;
-            const images = document.getElementById('memeImages');
-            const dots = document.querySelectorAll('.carousel-dot');
-            
-            images.style.transform = `translateX(-${index * 100}%)`;
-            
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
         }
 
         function updateExpertAnalysis(data) {
-            const analysis = data.expert_crypto_summary || 'Connect XAI API for comprehensive expert analysis.';
+            const analysis = data.expert_analysis || 'Connect Perplexity API for comprehensive expert analysis with real-time market insights and trading perspectives.';
             document.getElementById('expertAnalysis').innerHTML = analysis;
         }
 
@@ -1849,56 +1767,41 @@ function getFallbackTokens(category) {
                     `;
                 });
             } else {
-                signalsHtml = '<p>No specific trading signals generated. Monitor for momentum changes.</p>';
+                signalsHtml = '<p>Connect APIs for real-time trading signals based on social momentum and market analysis.</p>';
             }
             document.getElementById('tradingSignals').innerHTML = signalsHtml;
             
-            // Influencer Network
+            // KOLs & Influencers
             const accounts = data.real_twitter_accounts || [];
             let influencerHtml = '<div class="content-heading">🔍 KOLs & Crypto Influencers</div>';
             if (accounts.length > 0) {
                 accounts.forEach(account => {
-                    // Extract URL and format nicely
                     const parts = account.split(' - ');
                     const accountInfo = parts[0];
                     const url = parts[1] || '#';
                     influencerHtml += `<div class="bullet-point"><a href="${url}" target="_blank" style="color: #1da1f2; text-decoration: none;">${accountInfo}</a></div>`;
                 });
             } else {
-                influencerHtml += '<p>No major crypto influencers detected discussing this token currently.</p>';
+                influencerHtml += '<p>Connect XAI API to extract real crypto KOLs and influencers discussing this token from live X/Twitter data.</p>';
             }
             document.getElementById('influencerNetwork').innerHTML = influencerHtml;
             
             // Risk Assessment
-            const riskLevel = data.risk_level || 'medium';
-            const marketCap = data.market_cap || 0;
-            let riskHtml = `
-                <div class="content-heading">⚠️ Risk Level: ${riskLevel.toUpperCase()}</div>
-                <p>Based on market cap of $${(marketCap / 1e6).toFixed(1)}M and social metrics, this token presents <strong>${riskLevel}</strong> risk.</p>
-                <div class="bullet-point">Position sizing should reflect ${riskLevel} risk profile</div>
-                <div class="bullet-point">Monitor social momentum for exit signals</div>
-                <div class="bullet-point">Set appropriate stop-losses based on volatility</div>
+            let riskHtml = data.risk_assessment || `
+                <div class="content-heading">⚠️ Risk Assessment</div>
+                <p>Connect Perplexity API for comprehensive risk analysis including market cap assessment, liquidity analysis, and volatility metrics.</p>
             `;
             document.getElementById('riskAssessment').innerHTML = riskHtml;
             
             // Market Predictions
-            const momentum = data.social_momentum_score || 0;
-            const confidence = Math.round((data.confidence_score || 0.5) * 100);
-            let predictionHtml = `
-                <div class="content-heading">🔮 Market Outlook</div>
-                <p>With ${momentum}% social momentum and ${confidence}% AI confidence, this token is in <strong>${data.momentum_phase || 'consolidation'}</strong> phase.</p>
-                <div class="bullet-point">Social momentum ${momentum > 70 ? 'accelerating' : momentum > 50 ? 'building' : 'early stage'}</div>
-                <div class="bullet-point">Estimated 30-day performance: ${data.estimated_30d_change > 0 ? '+' : ''}${(data.estimated_30d_change || 0).toFixed(1)}%</div>
-                <div class="bullet-point">Watch for increased influencer attention and volume</div>
+            let predictionHtml = data.market_predictions || `
+                <div class="content-heading">🔮 Market Predictions</div>
+                <p>Connect Perplexity API for AI-powered market predictions based on social momentum, technical analysis, and fundamental metrics.</p>
             `;
             document.getElementById('marketPredictions').innerHTML = predictionHtml;
         }
 
         // Chat Functions
-        function enableChat() {
-            document.getElementById('chatInterface').style.display = 'flex';
-        }
-
         function enableChatWithContext() {
             const chatInput = document.getElementById('chatInput');
             const chatSend = document.getElementById('chatSend');
@@ -1990,7 +1893,8 @@ function getFallbackTokens(category) {
 
         function hideResults() {
             document.getElementById('resultsSection').style.display = 'none';
-            document.getElementById('tokenQuickStats').style.display = 'none';
+            document.getElementById('chartContainer').style.display = 'none';
+            document.getElementById('tokenProfile').style.display = 'none';
         }
     </script>
 </body>
