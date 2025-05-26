@@ -1,5 +1,5 @@
 ```python
-# timeout_optimized_analyzer.py
+# app.py
 # Fully optimized with gevent, concurrent analysis phases, and SSE heartbeats
 
 from gevent import monkey, spawn, joinall
@@ -8,27 +8,27 @@ monkey.patch_all()
 from flask import Flask, render_template, request, jsonify, Response
 import requests
 import os
-from datetime import datetime, timedelta
 import json
 import re
-from dataclasses import dataclass
-from typing import List, Dict
 import logging
 import time
+from datetime import datetime, timedelta
+from dataclasses import dataclass
+from typing import List, Dict
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Flask application
-app = Flask(__name__)
+aapp = Flask(__name__)
 
 # Environment configuration
 GROK_API_KEY = os.getenv('GROK_API_KEY', 'your-grok-api-key-here')
 GROK_URL = "https://api.x.ai/v1/chat/completions"
 
-# Dataclasses for structured responses
-dataclass
+# Structured response dataclasses
+@dataclass
 class TokenAnalysis:
     token_address: str
     token_symbol: str
@@ -44,7 +44,7 @@ class TokenAnalysis:
     actual_tweets: List[Dict]
     x_citations: List[str]
 
-# Core analyzer with concurrent gevent-based phases
+# Analyzer with concurrent gevent-based phases
 dataclass
 class PremiumTokenSocialAnalyzer:
     def __init__(self):
@@ -52,7 +52,7 @@ class PremiumTokenSocialAnalyzer:
         logger.info(f"Analyzer initialized; API key set: {self.grok_api_key != 'your-grok-api-key-here'}")
 
     def _format_heartbeat(self) -> str:
-        # SSE comment resets worker idle timer
+        # SSE comment line keeps connection alive
         return ":\n\n"
 
     def _format_progress_update(self, stage: str, message: str, step: int = 0) -> str:
@@ -88,8 +88,7 @@ class PremiumTokenSocialAnalyzer:
         return f"data: {json.dumps(result)}\n\n"
 
     def stream_comprehensive_analysis(self, token_symbol: str, token_address: str, analysis_mode: str = "analytical"):
-        # Heartbeat scheduling
-        last_beat = time.time()
+        # Heartbeat timer\ n        last_beat = time.time()
         def maybe_heartbeat():
             nonlocal last_beat
             if time.time() - last_beat > 10:
@@ -102,87 +101,87 @@ class PremiumTokenSocialAnalyzer:
         hb = maybe_heartbeat()
         if hb: yield hb
 
-        # Launch concurrent X/Twitter phases
+        # Launch concurrent phases
         g_expert = spawn(self._get_expert_x_analysis, token_symbol, token_address, analysis_mode)
         g_influ = spawn(self._get_influencer_analysis, token_symbol, token_address, analysis_mode)
         g_trends = spawn(self._get_trends_analysis, token_symbol, token_address, analysis_mode)
 
-        # Wait up to 60s for all
-        joinall([g_expert, g_influ, g_trends], timeout=60)
+        # Wait up to 60s for all\ n        joinall([g_expert, g_influ, g_trends], timeout=60)
 
-        # Expert
-        expert_res = g_expert.value or {'success': False}
+        # Expert phase result
+        expert_res = g_expert.value or {'success': False, 'data': {}}
         if expert_res.get('success'):
             yield self._format_progress_update("expert_complete", "Expert analysis complete", 2)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
 
-        # Influencer
-        infl_res = g_influ.value or {'success': False}
+        # Influencer phase
+        infl_res = g_influ.value or {'success': False, 'data': {}}
         if infl_res.get('success'):
             yield self._format_progress_update("influencer_complete", "Influencer deep dive complete", 3)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
 
-        # Trends
-        trends_res = g_trends.value or {'success': False}
+        # Trends phase
+        trends_res = g_trends.value or {'success': False, 'data': {}}
         if trends_res.get('success'):
             yield self._format_progress_update("trends_complete", "Trend analysis complete", 4)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
 
-        # Phase 4: Risk & Prediction (local computations)
+        # Risk assessment & prediction
+        risk_text = self._create_x_based_risk_assessment(token_symbol, expert_res['data'], analysis_mode)
         yield self._format_progress_update("risk_complete", "Risk assessment done", 5)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
+        pred_text = self._create_x_based_prediction(token_symbol, expert_res['data'], analysis_mode)
         yield self._format_progress_update("prediction_complete", "Predictions generated", 6)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
 
-        # Construct final data - merge phase results
+        # Final aggregation
         analysis = TokenAnalysis(
             token_address=token_address,
             token_symbol=token_symbol,
-            expert_summary=expert_res.get('data', {}).get('expert_summary', ''),
-            social_sentiment=expert_res.get('data', {}).get('social_sentiment', ''),
-            key_discussions=trends_res.get('data', {}).get('topics', []),
-            influencer_mentions=infl_res.get('data', {}).get('influencers', []),
-            trend_analysis=trends_res.get('data', {}).get('trends', ''),
-            risk_assessment=self._create_x_based_risk_assessment(...),
-            prediction=self._create_x_based_prediction(...),
+            expert_summary=expert_res['data'].get('expert_summary', ''),
+            social_sentiment=expert_res['data'].get('social_sentiment', ''),
+            key_discussions=trends_res['data'].get('topics', []),
+            influencer_mentions=infl_res['data'].get('influencers', []),
+            trend_analysis=trends_res['data'].get('trends', ''),
+            risk_assessment=risk_text,
+            prediction=pred_text,
             confidence_score=0.85,
-            sentiment_metrics=expert_res.get('data', {}).get('sentiment_metrics', {}),
-            actual_tweets=expert_res.get('data', {}).get('actual_tweets', []),
-            x_citations=expert_res.get('data', {}).get('x_citations', [])
+            sentiment_metrics=expert_res['data'].get('sentiment_metrics', {}),
+            actual_tweets=expert_res['data'].get('actual_tweets', []),
+            x_citations=expert_res['data'].get('x_citations', [])
         )
 
-        # Emit final SSE
+        # Return final SSE event
         yield self._format_final_response(analysis)
 
-    # Placeholder implementations for phase methods
+    # Placeholder methods belowÑ
     def _get_expert_x_analysis(self, symbol, address, mode):
-        # Real implementation omitted for brevity
+        # Call GROK API and parse
         return {'success': True, 'data': {'expert_summary':'','social_sentiment':'','sentiment_metrics':{},'actual_tweets':[], 'x_citations':[]}}
     def _get_influencer_analysis(self, symbol, address, mode):
         return {'success': True, 'data': {'influencers':[]}}
     def _get_trends_analysis(self, symbol, address, mode):
         return {'success': True, 'data': {'trends':'','topics':[]}}
-    def _create_x_based_risk_assessment(self, *args, **kwargs):
-        return ''
-    def _create_x_based_prediction(self, *args, **kwargs):
-        return ''
+    def _create_x_based_risk_assessment(self, symbol, data, mode):
+        return ""
+    def _create_x_based_prediction(self, symbol, data, mode):
+        return ""
 
-# Instantiate
-danalyzer = PremiumTokenSocialAnalyzer()
+# Instantiate analyzer
+analyzer = PremiumTokenSocialAnalyzer()
 
 # Routes
-@app.route('/')
+aapp.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/trending-tokens')
 def trending():
-    # Omitted: use analyzer.get_trending_tokens()
     return jsonify({'success': True, 'tokens': []})
 
 @app.route('/analyze', methods=['POST'])
@@ -194,11 +193,7 @@ def analyze_token():
     return Response(
         analyzer.stream_comprehensive_analysis('', addr, data.get('analysis_mode','analytical')),
         mimetype='text/plain',
-        headers={
-            'Cache-Control':'no-cache',
-            'Connection':'keep-alive',
-            'X-Accel-Buffering':'no'
-        }
+        headers={'Cache-Control':'no-cache','Connection':'keep-alive','X-Accel-Buffering':'no'}
     )
 
 @app.route('/health')
@@ -206,5 +201,5 @@ def health():
     return jsonify({'status':'healthy','timestamp':datetime.now().isoformat()})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.getenv('PORT',5000)), debug=True)
+    aapp.run(host='0.0.0.0', port=int(os.getenv('PORT',5000)), debug=True)
 ```
