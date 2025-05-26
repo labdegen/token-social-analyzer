@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -952,6 +952,73 @@
         .chat-messages::-webkit-scrollbar-thumb:hover {
             background: rgba(102, 126, 234, 0.7);
         }
+		/* Tab Navigation */
+.tab-navigation {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #b0b7ff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tab-btn:hover {
+    background: rgba(102, 126, 234, 0.2);
+    color: #ffffff;
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeInTab 0.4s ease-in;
+}
+
+@keyframes fadeInTab {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Enhanced trending token cards for different categories */
+.trending-token.fresh-hype {
+    border-left-color: #10b981;
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.trending-token.recent-trending {
+    border-left-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.05);
+}
+
+.trending-token.blue-chip {
+    border-left-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+}
     </style>
 </head>
 <body>
@@ -986,17 +1053,46 @@
         <div class="dashboard-grid">
             <!-- Main Content -->
             <div class="main-content">
-                <!-- Trending Tokens from X -->
-                <div class="trending-tokens-section">
-                    <div class="section-header">
-                        <span style="font-size: 1.5rem;">🔥</span>
-                        <div class="section-title">Trending on X/Twitter</div>
-                        <button class="section-refresh" onclick="loadTrendingTokens()">🔄</button>
-                    </div>
-                    <div class="trending-tokens-grid" id="trendingTokensGrid">
-                        <!-- Trending tokens will be populated here -->
-                    </div>
-                </div>
+              <!-- Trending Tokens with Tabs -->
+<div class="trending-tokens-section">
+    <div class="section-header">
+        <span style="font-size: 1.5rem;">🔥</span>
+        <div class="section-title">Token Intelligence</div>
+        <button class="section-refresh" onclick="refreshCurrentTab()">🔄</button>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+        <button class="tab-btn active" onclick="switchTab('fresh-hype')" data-tab="fresh-hype">
+            🚀 Fresh Hype
+        </button>
+        <button class="tab-btn" onclick="switchTab('recent-trending')" data-tab="recent-trending">
+            📈 Recent Trending
+        </button>
+        <button class="tab-btn" onclick="switchTab('blue-chips')" data-tab="blue-chips">
+            💎 Blue Chips
+        </button>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content active" id="fresh-hype">
+        <div class="trending-tokens-grid" id="freshHypeGrid">
+            <!-- Fresh hype tokens will be populated here -->
+        </div>
+    </div>
+    
+    <div class="tab-content" id="recent-trending">
+        <div class="trending-tokens-grid" id="recentTrendingGrid">
+            <!-- Recent trending tokens will be populated here -->
+        </div>
+    </div>
+    
+    <div class="tab-content" id="blue-chips">
+        <div class="trending-tokens-grid" id="blueChipsGrid">
+            <!-- Blue chip tokens will be populated here -->
+        </div>
+    </div>
+</div>
 
                 <!-- Token Analyzer -->
                 <div class="token-analyzer">
@@ -1288,45 +1384,151 @@
         }
 
         // Trending Tokens Functions
-        async function loadTrendingTokens() {
-            try {
-                const response = await fetch('/trending-tokens');
-                const data = await response.json();
-                
-                if (data.success && data.tokens) {
-                    displayTrendingTokens(data.tokens);
-                }
-            } catch (error) {
-                console.error('Trending tokens error:', error);
-                // Show fallback tokens
-                displayTrendingTokens([
-                    {symbol: 'BONK', address: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', price_change: 15.3, mentions: 850},
-                    {symbol: 'WIF', address: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', price_change: 8.7, mentions: 650},
-                    {symbol: 'POPCAT', address: '7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr', price_change: 22.1, mentions: 1200}
-                ]);
-            }
-        }
+      // Global variable for current tab
+let currentTab = 'fresh-hype';
 
-        function displayTrendingTokens(tokens) {
-            let tokensHtml = '';
-            
-            tokens.slice(0, 12).forEach(token => {
-                const changeClass = token.price_change >= 0 ? 'positive' : 'negative';
-                const changeIcon = token.price_change >= 0 ? '🚀' : '📉';
-                
-                tokensHtml += `
-                    <div class="trending-token" onclick="loadTokenAnalysis('${token.address}')">
-                        <div class="trending-symbol">$${token.symbol}</div>
-                        <div class="trending-change ${changeClass}">
-                            ${changeIcon} ${token.price_change >= 0 ? '+' : ''}${token.price_change.toFixed(1)}%
-                        </div>
-                        <div class="trending-mentions">${token.mentions || 0} mentions</div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('trendingTokensGrid').innerHTML = tokensHtml;
+// Replace the loadTrendingTokens function
+async function loadTrendingTokens() {
+    // Load all tabs on initial load
+    await loadFreshHype();
+    await loadRecentTrending();
+    await loadBlueChips();
+}
+
+// New tab switching function
+function switchTab(tabName) {
+    currentTab = tabName;
+    
+    // Update tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(tabName).classList.add('active');
+    
+    // Load data if not already loaded
+    switch(tabName) {
+        case 'fresh-hype':
+            loadFreshHype();
+            break;
+        case 'recent-trending':
+            loadRecentTrending();
+            break;
+        case 'blue-chips':
+            loadBlueChips();
+            break;
+    }
+}
+
+// New refresh function
+function refreshCurrentTab() {
+    switch(currentTab) {
+        case 'fresh-hype':
+            loadFreshHype(true);
+            break;
+        case 'recent-trending':
+            loadRecentTrending(true);
+            break;
+        case 'blue-chips':
+            loadBlueChips(true);
+            break;
+    }
+}
+
+// Fresh Hype tokens
+async function loadFreshHype(forceRefresh = false) {
+    try {
+        const response = await fetch(`/trending-tokens?category=fresh-hype&refresh=${forceRefresh}`);
+        const data = await response.json();
+        
+        if (data.success && data.tokens) {
+            displayTokensInGrid(data.tokens, 'freshHypeGrid', 'fresh-hype');
         }
+    } catch (error) {
+        console.error('Fresh hype tokens error:', error);
+        displayTokensInGrid(getFallbackTokens('fresh-hype'), 'freshHypeGrid', 'fresh-hype');
+    }
+}
+
+// Recent Trending tokens
+async function loadRecentTrending(forceRefresh = false) {
+    try {
+        const response = await fetch(`/trending-tokens?category=recent-trending&refresh=${forceRefresh}`);
+        const data = await response.json();
+        
+        if (data.success && data.tokens) {
+            displayTokensInGrid(data.tokens, 'recentTrendingGrid', 'recent-trending');
+        }
+    } catch (error) {
+        console.error('Recent trending tokens error:', error);
+        displayTokensInGrid(getFallbackTokens('recent-trending'), 'recentTrendingGrid', 'recent-trending');
+    }
+}
+
+// Blue Chip tokens
+async function loadBlueChips(forceRefresh = false) {
+    try {
+        const response = await fetch(`/trending-tokens?category=blue-chips&refresh=${forceRefresh}`);
+        const data = await response.json();
+        
+        if (data.success && data.tokens) {
+            displayTokensInGrid(data.tokens, 'blueChipsGrid', 'blue-chip');
+        }
+    } catch (error) {
+        console.error('Blue chip tokens error:', error);
+        displayTokensInGrid(getFallbackTokens('blue-chips'), 'blueChipsGrid', 'blue-chip');
+    }
+}
+
+// Updated display function
+function displayTokensInGrid(tokens, gridId, category) {
+    let tokensHtml = '';
+    
+    tokens.slice(0, 12).forEach(token => {
+        const changeClass = token.price_change >= 0 ? 'positive' : 'negative';
+        const changeIcon = token.price_change >= 0 ? '🚀' : '📉';
+        
+        tokensHtml += `
+            <div class="trending-token ${category}" onclick="loadTokenAnalysis('${token.address}')">
+                <div class="trending-symbol">$${token.symbol}</div>
+                <div class="trending-change ${changeClass}">
+                    ${changeIcon} ${token.price_change >= 0 ? '+' : ''}${token.price_change.toFixed(1)}%
+                </div>
+                <div class="trending-mentions">${token.mentions || token.volume || 0} ${category === 'blue-chip' ? 'vol' : 'mentions'}</div>
+            </div>
+        `;
+    });
+    
+    document.getElementById(gridId).innerHTML = tokensHtml;
+}
+
+// Fallback data for each category
+function getFallbackTokens(category) {
+    const fallbackData = {
+        'fresh-hype': [
+            {symbol: 'NEWCOIN', address: 'ABC123...', price_change: 245.7, mentions: 1500},
+            {symbol: 'MOONCOIN', address: 'DEF456...', price_change: 89.3, mentions: 980},
+            {symbol: 'PUMPIT', address: 'GHI789...', price_change: 156.2, mentions: 2200}
+        ],
+        'recent-trending': [
+            {symbol: 'BONK', address: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', price_change: 45.3, mentions: 5500},
+            {symbol: 'WIF', address: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', price_change: 28.7, mentions: 3200},
+            {symbol: 'POPCAT', address: '7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr', price_change: 67.1, mentions: 4100}
+        ],
+        'blue-chips': [
+            {symbol: 'SOL', address: 'So11111111111111111111111111111111111111112', price_change: 5.2, volume: 2500000000},
+            {symbol: 'USDC', address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', price_change: 0.1, volume: 1800000000},
+            {symbol: 'JUP', address: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN', price_change: 8.5, volume: 180000000}
+        ]
+    };
+    
+    return fallbackData[category] || [];
+}
 
         function loadTokenAnalysis(address) {
             document.getElementById('tokenAddress').value = address;
