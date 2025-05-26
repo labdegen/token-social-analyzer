@@ -12,7 +12,8 @@ from datetime import datetime, timedelta
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Flask app\ napp = Flask(__name__)
+# Flask app
+app = Flask(__name__)
 
 # Config
 GROK_API_KEY = os.getenv('GROK_API_KEY', 'your-grok-api-key-here')
@@ -60,10 +61,12 @@ def analyze_token():
     system_msg = (
         f"You are a Solana token social media analyst. Provide comprehensive analysis for token {address}."
     )
-    user_msg = (
-        f"Analyze token at {address} on X/Twitter right now.\n
-1. Expert summary combining price action and social sentiment.\n2. Top influencer tweets with handles and follower counts.\n3. Viral trends and key discussion topics.\n4. Risk assessment from social data.\n5. Short-term price prediction." 
-    )
+    user_msg = f"""Analyze token at {address} on X/Twitter right now.
+1. Expert summary combining price action and social sentiment.
+2. Top influencer tweets with handles and follower counts.
+3. Viral trends and key discussion topics.
+4. Risk assessment from social data.
+5. Short-term price prediction."""
 
     payload = {
         "model": "grok-3-latest",
@@ -90,17 +93,20 @@ def analyze_token():
             r.raise_for_status()
             for line in r.iter_lines(decode_unicode=True):
                 if line:
-                    # Each line is a partial JSON with delta content
                     yield f"data: {line}\n\n"
         except Exception as e:
             err = {"type": "error", "message": str(e)}
             yield f"data: {json.dumps(err)}\n\n"
 
-    return Response(generate(), mimetype='text/event-stream', headers={
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'X-Accel-Buffering': 'no'
-    })
+    return Response(
+        generate(),
+        mimetype='text/event-stream',
+        headers={
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+            'X-Accel-Buffering': 'no'
+        }
+    )
 
 @app.route('/health')
 def health():
