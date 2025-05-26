@@ -11,7 +11,7 @@ import time
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 from typing import List, Dict
-from concurrent.futures import ThreadPoolExecutor, as_completed, wait, FIRST_COMPLETED
+from concurrent.futures import ThreadPoolExecutor, wait
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -97,44 +97,49 @@ class PremiumTokenSocialAnalyzer:
 
         # Phase 0: Initialization
         yield self._format_progress_update("initialized", "Starting analysis pipeline", 1)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
 
         # Submit concurrent API phases
-        futures = {
-            self.executor.submit(self._get_expert_x_analysis, token_symbol, token_address, analysis_mode): 'expert',
-            self.executor.submit(self._get_influencer_analysis, token_symbol, token_address, analysis_mode): 'influencer',
-            self.executor.submit(self._get_trends_analysis, token_symbol, token_address, analysis_mode): 'trends'
+        future_expert = self.executor.submit(self._get_expert_x_analysis, token_symbol, token_address, analysis_mode)
+        future_influ = self.executor.submit(self._get_influencer_analysis, token_symbol, token_address, analysis_mode)
+        future_trends = self.executor.submit(self._get_trends_analysis, token_symbol, token_address, analysis_mode)
+        futures = [future_expert, future_influ, future_trends]
+
+        # Wait up to 60s
+        done, _ = wait(futures, timeout=60)
+
+        # Collect results properly
+        results = {
+            'expert': future_expert.result() if future_expert in done else {'success': False, 'data': {}},
+            'influencer': future_influ.result() if future_influ in done else {'success': False, 'data': {}},
+            'trends': future_trends.result() if future_trends in done else {'success': False, 'data': {}}
         }
 
-        done, _ = wait(futures.keys(), timeout=60)
-
-        # Gather results and emit progress
-        results = {name: futures[future].result() if future in done and future.result() else {'success': False, 'data': {}} for future, name in futures.items()}
-
+        # Emit progress updates
         if results['expert']['success']:
             yield self._format_progress_update("expert_complete", "Expert analysis complete", 2)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
 
         if results['influencer']['success']:
             yield self._format_progress_update("influencer_complete", "Influencer deep dive complete", 3)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
 
         if results['trends']['success']:
             yield self._format_progress_update("trends_complete", "Trend analysis complete", 4)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
 
         # Risk & prediction (local)
         risk_text = self._create_x_based_risk_assessment(token_symbol, results['expert']['data'], analysis_mode)
         yield self._format_progress_update("risk_complete", "Risk assessment done", 5)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
         pred_text = self._create_x_based_prediction(token_symbol, results['expert']['data'], analysis_mode)
         yield self._format_progress_update("prediction_complete", "Predictions generated", 6)
-        hb = maybe_heartbeat();
+        hb = maybe_heartbeat()
         if hb: yield hb
 
         # Final aggregation
@@ -174,6 +179,7 @@ analyzer = PremiumTokenSocialAnalyzer()
 
 # Routes
 @app.route('/')
+
 def index():
     return render_template('index.html')
 
