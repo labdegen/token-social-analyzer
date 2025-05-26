@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revolutionary Meme Coin Intelligence Platform - LIVE X/Twitter Analysis</title>
+    <title>Social Crypto Dashboard - All-in-One Memecoin Intelligence Platform</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -19,21 +19,22 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
             min-height: 100vh;
-            padding: 20px;
             color: #ffffff;
             overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1600px;
+        .dashboard-container {
+            max-width: 1800px;
             margin: 0 auto;
+            padding: 20px;
         }
 
+        /* Header */
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             position: relative;
-            padding: 40px 0;
+            padding: 30px 0;
         }
 
         .header::before {
@@ -44,7 +45,7 @@
             transform: translateX(-50%);
             width: 300px;
             height: 300px;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.4) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
             border-radius: 50%;
             filter: blur(80px);
             z-index: -1;
@@ -52,15 +53,15 @@
 
         .header h1 {
             font-family: "Lacquer", system-ui;
-            font-size: 4.5rem;
+            font-size: 3.5rem;
             font-weight: 400;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #667eea);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: gradient-flow 3s ease infinite, glow 2s ease-in-out infinite alternate;
+            animation: gradient-flow 3s ease infinite;
         }
 
         @keyframes gradient-flow {
@@ -68,60 +69,219 @@
             50% { background-position: 100% 50%; }
         }
 
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.5)); }
-            to { filter: drop-shadow(0 0 30px rgba(118, 75, 162, 0.8)); }
-        }
-
         .header p {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             opacity: 0.9;
             color: #b0b7ff;
             font-weight: 500;
         }
 
-        .live-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(16, 185, 129, 0.2);
-            padding: 6px 12px;
+        /* Market Overview Bar */
+        .market-overview {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
             border-radius: 20px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            margin-top: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .market-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .market-title {
+            font-family: "Lacquer", system-ui;
+            font-size: 1.4rem;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .market-sentiment {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+        }
+
+        .sentiment-indicator {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sentiment-bullish { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .sentiment-bearish { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .sentiment-neutral { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+
+        .crypto-prices {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .crypto-price-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .crypto-price-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .crypto-symbol {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .crypto-price {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .crypto-change {
             font-size: 0.9rem;
             font-weight: 600;
         }
 
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: #10b981;
-            border-radius: 50%;
-            animation: pulse-green 2s infinite;
+        .crypto-change.positive { color: #10b981; }
+        .crypto-change.negative { color: #ef4444; }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+            margin-bottom: 25px;
         }
 
-        @keyframes pulse-green {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.2); }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
 
-        .analyzer-container {
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Trending Tokens from X */
+        .trending-tokens-section {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(25px);
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 40px;
+            border-radius: 20px;
+            padding: 25px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
         }
 
-        .input-section {
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-family: "Lacquer", system-ui;
+            font-size: 1.3rem;
+            color: #667eea;
+            font-weight: 400;
+        }
+
+        .section-refresh {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .section-refresh:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: rotate(180deg);
+        }
+
+        .trending-tokens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .trending-token {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border-left: 3px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .trending-token:hover {
+            transform: translateY(-2px);
+            background: rgba(102, 126, 234, 0.1);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .trending-symbol {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .trending-change {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .trending-mentions {
+            font-size: 0.7rem;
+            color: #b0b7ff;
+            opacity: 0.8;
+        }
+
+        /* Token Analyzer */
+        .token-analyzer {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .analyzer-input {
             display: grid;
             grid-template-columns: 1fr auto auto;
-            gap: 25px;
+            gap: 20px;
             align-items: end;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .input-group {
@@ -131,19 +291,19 @@
         .input-group label {
             display: block;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             color: #e1e7ff;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .input-group input, .input-group select {
             width: 100%;
-            padding: 18px 24px;
+            padding: 15px 20px;
             border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             background: rgba(255, 255, 255, 0.05);
             color: #ffffff;
             transition: all 0.3s ease;
@@ -154,47 +314,28 @@
             outline: none;
             border-color: #667eea;
             background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
-            transform: translateY(-1px);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
         .analyze-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 18px 36px;
-            border-radius: 16px;
-            font-size: 17px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: "Lacquer", system-ui;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
             text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .analyze-btn::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s;
-        }
-
-        .analyze-btn:hover::before {
-            transform: translateX(100%);
+            letter-spacing: 0.5px;
         }
 
         .analyze-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
         }
 
         .analyze-btn:disabled {
@@ -203,51 +344,57 @@
             transform: none;
         }
 
-        /* Revolutionary Loading Animation */
+        /* Token Quick Stats Row */
+        .token-quick-stats {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .quick-stat {
+            text-align: center;
+        }
+
+        .quick-stat-label {
+            font-size: 0.8rem;
+            color: #10b981;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .quick-stat-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        /* Loading Animation */
         .loading-spinner {
             display: none;
             text-align: center;
-            padding: 60px;
+            padding: 40px;
             background: rgba(102, 126, 234, 0.1);
-            border-radius: 24px;
-            margin: 40px 0;
+            border-radius: 16px;
+            margin: 20px 0;
             border: 1px solid rgba(102, 126, 234, 0.2);
         }
 
-        .revolutionary-loader {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 40px;
-        }
-
-        .loader-ring {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 4px solid transparent;
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
             border-top: 4px solid #667eea;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-        }
-
-        .loader-ring:nth-child(2) {
-            width: 80%;
-            height: 80%;
-            top: 10%;
-            left: 10%;
-            border-top-color: #764ba2;
-            animation-duration: 1.5s;
-            animation-direction: reverse;
-        }
-
-        .loader-ring:nth-child(3) {
-            width: 60%;
-            height: 60%;
-            top: 20%;
-            left: 20%;
-            border-top-color: #f093fb;
-            animation-duration: 2s;
+            margin: 0 auto 20px;
         }
 
         @keyframes spin {
@@ -255,141 +402,43 @@
             100% { transform: rotate(360deg); }
         }
 
-        .progress-container {
-            max-width: 700px;
-            margin: 0 auto;
-            text-align: left;
-        }
-
-        .progress-header {
-            text-align: center;
-            margin-bottom: 30px;
+        .loading-text {
             color: #667eea;
-            font-weight: 800;
-            font-size: 1.3rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .progress-step {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            margin: 10px 0;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border-left: 4px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .progress-step.active {
-            background: rgba(102, 126, 234, 0.2);
-            border-left-color: #667eea;
-            color: #667eea;
-            font-weight: 700;
-            animation: pulse-blue 2s infinite;
-            transform: translateX(5px);
-        }
-
-        .progress-step.complete {
-            background: rgba(16, 185, 129, 0.2);
-            border-left-color: #10b981;
-            color: #10b981;
             font-weight: 600;
+            font-size: 1.1rem;
         }
 
-        .progress-step.error {
-            background: rgba(239, 68, 68, 0.2);
-            border-left-color: #ef4444;
-            color: #ef4444;
-        }
-
-        @keyframes pulse-blue {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        .step-status {
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Chart Container */
-        .chart-container {
+        /* Results Section */
+        .results-section {
             display: none;
-            margin: 40px 0;
-            position: relative;
-            width: 100%;
-            height: 500px;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 25px;
         }
 
-        .chart-container iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-
-        /* Revolutionary Results Layout */
-        .results-container {
-            display: none;
-            margin-top: 50px;
-        }
-
-        /* Social Momentum Dashboard with Amazing Visualizations */
+        /* Social Momentum Dashboard */
         .momentum-dashboard {
-            grid-column: 1 / -1;
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-            border-radius: 28px;
-            padding: 50px;
+            border-radius: 24px;
+            padding: 40px;
             border: 1px solid rgba(102, 126, 234, 0.25);
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 40px;
-        }
-
-        .momentum-dashboard::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
-            animation: rotate 30s linear infinite;
-        }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            margin-bottom: 25px;
         }
 
         .momentum-header {
             text-align: center;
-            position: relative;
-            z-index: 1;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .momentum-score {
-            font-size: 5rem;
+            font-size: 4rem;
             font-weight: 900;
             background: linear-gradient(45deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
-            position: relative;
+            margin-bottom: 10px;
         }
 
         .momentum-label {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             color: #b0b7ff;
             margin-bottom: 10px;
             font-weight: 600;
@@ -402,335 +451,243 @@
             align-items: center;
             gap: 8px;
             background: rgba(16, 185, 129, 0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 15px;
             border: 1px solid rgba(16, 185, 129, 0.3);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* Amazing Visualizations Grid */
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
         .momentum-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
-            position: relative;
-            z-index: 1;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
         }
 
         .momentum-metric {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
-            border-radius: 20px;
-            padding: 30px 25px;
+            border-radius: 12px;
+            padding: 15px 10px;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            position: relative;
-            overflow: hidden;
             transition: all 0.3s ease;
         }
 
         .momentum-metric:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
-        }
-
-        .metric-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .metric-visual {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 20px;
-            position: relative;
-        }
-
-        /* Circular Progress Chart */
-        .circular-progress {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: conic-gradient(
-                from 0deg,
-                #667eea 0deg,
-                #667eea var(--progress, 0deg),
-                rgba(255, 255, 255, 0.1) var(--progress, 0deg),
-                rgba(255, 255, 255, 0.1) 360deg
-            );
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            animation: rotate-in 1.5s ease-out;
-        }
-
-        .circular-progress::before {
-            content: '';
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            background: rgba(26, 26, 46, 0.9);
-            position: absolute;
-        }
-
-        @keyframes rotate-in {
-            from { transform: rotate(-90deg); }
-            to { transform: rotate(0deg); }
-        }
-
-        /* Thermometer Chart */
-        .thermometer {
-            width: 30px;
-            height: 100px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            margin: 0 auto 20px;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .thermometer-fill {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background: linear-gradient(to top, #ef4444, #f59e0b, #10b981, #667eea);
-            border-radius: 15px;
-            transition: height 1.5s ease-in-out;
-            animation: fill-up 1.5s ease-out;
-        }
-
-        @keyframes fill-up {
-            from { height: 0%; }
-            to { height: var(--fill-height, 50%); }
-        }
-
-        /* Bar Chart */
-        .bar-chart {
-            width: 100px;
-            height: 100px;
-            display: flex;
-            align-items: end;
-            justify-content: center;
-            gap: 4px;
-            margin: 0 auto 20px;
-        }
-
-        .bar {
-            width: 12px;
-            background: linear-gradient(to top, #667eea, #764ba2);
-            border-radius: 6px 6px 0 0;
-            animation: bar-grow 1s ease-out;
-        }
-
-        @keyframes bar-grow {
-            from { height: 0%; }
-            to { height: var(--bar-height, 50%); }
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
 
         .metric-value {
-            font-size: 2.2rem;
-            font-weight: 800;
+            font-size: 1.3rem;
+            font-weight: 700;
             color: #ffffff;
-            margin-bottom: 8px;
-            position: relative;
-            z-index: 1;
+            margin-bottom: 5px;
         }
 
         .metric-label {
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             color: #b0b7ff;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
-        /* Meme Meta Analysis Section */
-        .meme-meta-section {
-            background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            border-radius: 24px;
-            padding: 40px;
-            margin: 40px 0;
-            border: 1px solid rgba(240, 147, 251, 0.2);
-            position: relative;
-        }
-
-        .meta-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .meta-title {
-            font-family: "Lacquer", system-ui;
-            font-size: 2.2rem;
-            background: linear-gradient(45deg, #f093fb, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        .meta-subtitle {
-            color: #c084fc;
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        .meta-content {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 30px;
-            line-height: 1.8;
-            font-size: 1.05rem;
-            color: #e1e7ff;
-        }
-
-        /* Results Grid */
-        .results-grid {
+        /* Live Tweets & Memes Section */
+        .tweets-memes-section {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
         }
 
-        /* Trading Signals with Enhanced Styling */
-        .trading-signals {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 24px;
-            padding: 35px;
+        .live-tweets-panel {
+            background: rgba(29, 161, 242, 0.1);
+            border: 1px solid rgba(29, 161, 242, 0.2);
+            border-radius: 20px;
+            padding: 25px;
         }
 
-        .signal-item {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            padding: 20px 25px;
-            margin: 15px 0;
-            border-radius: 16px;
+        .tweets-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .tweet-item {
             background: rgba(255, 255, 255, 0.05);
-            border-left: 4px solid;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 3px solid #1da1f2;
             transition: all 0.3s ease;
         }
 
-        .signal-item:hover {
-            transform: translateX(5px);
-            background: rgba(255, 255, 255, 0.1);
+        .tweet-item:hover {
+            background: rgba(29, 161, 242, 0.1);
+            transform: translateX(3px);
         }
 
-        .signal-buy { border-left-color: #10b981; }
-        .signal-sell { border-left-color: #ef4444; }
-        .signal-hold { border-left-color: #f59e0b; }
-        .signal-watch { border-left-color: #667eea; }
-
-        .signal-icon {
-            font-size: 2rem;
-            min-width: 40px;
-        }
-
-        .signal-content {
-            flex: 1;
-        }
-
-        .signal-type {
-            font-weight: 800;
+        .tweet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 8px;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .signal-reason {
-            font-size: 0.95rem;
-            color: #b0b7ff;
-            line-height: 1.5;
-        }
-
-        .signal-confidence {
+        .tweet-author {
             font-weight: 700;
-            color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-            padding: 6px 12px;
-            border-radius: 20px;
+            color: #1da1f2;
             font-size: 0.9rem;
-            min-width: 80px;
-            text-align: center;
+            text-decoration: none;
         }
 
-        /* Analysis Sections */
-        .analysis-section {
+        .tweet-author:hover {
+            text-decoration: underline;
+        }
+
+        .tweet-timestamp {
+            font-size: 0.75rem;
+            color: #7dd3fc;
+        }
+
+        .tweet-content {
+            color: #e1e7ff;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .tweet-engagement {
+            font-size: 0.75rem;
+            color: #7dd3fc;
+        }
+
+        /* Meme Images Panel */
+        .meme-images-panel {
+            background: rgba(240, 147, 251, 0.1);
+            border: 1px solid rgba(240, 147, 251, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+        }
+
+        .meme-carousel {
+            position: relative;
+            max-height: 400px;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        .meme-images {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .meme-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: #f093fb;
+            transform: scale(1.2);
+        }
+
+        /* Expert Analysis */
+        .expert-analysis {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .analysis-content {
+            line-height: 1.8;
+            color: #e1e7ff;
+            font-size: 1.05rem;
+        }
+
+        /* Analysis Grid */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .analysis-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(25px);
-            border-radius: 24px;
-            padding: 35px;
+            border-radius: 20px;
+            padding: 25px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
-        .analysis-section:hover {
+        .analysis-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
             border-color: rgba(102, 126, 234, 0.3);
         }
 
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .section-icon {
-            font-size: 2.2rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            min-width: 40px;
-        }
-
-        .section-title {
-            font-family: "Lacquer", system-ui;
-            font-size: 1.6rem;
-            font-weight: 400;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .section-content {
-            line-height: 1.8;
+        .card-content {
+            line-height: 1.7;
             color: #e1e7ff;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
-        .section-content .content-heading {
-            font-weight: 800;
-            text-decoration: underline;
+        .content-heading {
+            font-weight: 700;
             color: #667eea;
-            margin: 25px 0 15px 0;
-            font-size: 1.3rem;
+            margin: 20px 0 10px 0;
+            font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-
-        .section-content p {
-            margin-bottom: 18px;
         }
 
         .bullet-point {
             position: relative;
-            padding-left: 25px;
-            margin: 15px 0;
+            padding-left: 20px;
+            margin: 10px 0;
             color: #b0b7ff;
-            font-weight: 500;
         }
 
         .bullet-point::before {
@@ -739,111 +696,168 @@
             font-weight: bold;
             position: absolute;
             left: 0;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
-        /* Tweet Display */
-        .tweet-item {
-            background: linear-gradient(135deg, rgba(29, 161, 242, 0.15), rgba(29, 161, 242, 0.08));
-            border: 1px solid rgba(29, 161, 242, 0.25);
+        /* Crypto News Sidebar */
+        .crypto-news {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .news-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .news-item {
+            padding: 15px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border-left: 3px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(3px);
+        }
+
+        .news-headline {
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .news-summary {
+            color: #b0b7ff;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #667eea;
+        }
+
+        /* Chat Interface */
+        .chat-interface {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 0;
+            margin-bottom: 15px;
+            max-height: 300px;
+        }
+
+        .chat-message {
+            margin: 12px 0;
+            padding: 12px 16px;
             border-radius: 16px;
-            padding: 20px;
-            margin: 15px 0;
+            max-width: 85%;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .chat-message.user {
+            background: rgba(102, 126, 234, 0.2);
+            color: #e1e7ff;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.assistant {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
             transition: all 0.3s ease;
         }
 
-        .tweet-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(29, 161, 242, 0.2);
+        .chat-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
         }
 
-        .tweet-content {
-            font-style: italic;
-            margin-bottom: 12px;
-            color: #e1e7ff;
-            font-size: 1.05rem;
-            line-height: 1.6;
-        }
-
-        .tweet-meta {
-            font-size: 0.85rem;
-            color: #1da1f2;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .chat-send {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            cursor: pointer;
             font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8rem;
         }
 
-        .verified-badge {
-            color: #1da1f2;
-            margin-left: 4px;
+        .chat-send:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        /* Risk Assessment Colors */
-        .risk-high {
+        .chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Error Message */
+        .error-message {
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-
-        .risk-medium {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.08));
-            border-color: rgba(245, 158, 11, 0.3);
-        }
-
-        .risk-low {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
-            border-color: rgba(16, 185, 129, 0.3);
-        }
-
-        /* Prediction Badges */
-        .prediction-badges {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 25px 0;
-            flex-wrap: wrap;
-        }
-
-        .prediction-badge {
-            background: rgba(102, 126, 234, 0.2);
-            color: #667eea;
-            padding: 10px 18px;
-            border-radius: 25px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Data Tables */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: rgba(255, 255, 255, 0.02);
+            color: #ef4444;
+            padding: 20px;
             border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .data-table th, .data-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .data-table th {
-            background: rgba(102, 126, 234, 0.2);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 0.9rem;
+            margin: 15px 0;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            font-weight: 600;
+            display: none;
         }
 
         /* Powered By */
         .powered-by {
             text-align: center;
-            margin-top: 80px;
+            margin-top: 40px;
             color: #b0b7ff;
             font-weight: 500;
         }
@@ -861,43 +875,45 @@
         }
 
         /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 3rem;
-            }
-            
-            .input-section {
+        @media (max-width: 1200px) {
+            .dashboard-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
             }
             
-            .results-grid {
+            .tweets-memes-section {
                 grid-template-columns: 1fr;
-                gap: 25px;
-            }
-            
-            .momentum-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .analyzer-container, .momentum-dashboard {
-                padding: 30px;
-            }
-            
-            .analysis-section {
-                padding: 25px;
             }
         }
 
-        /* Error Message */
-        .error-message {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
-            color: #ef4444;
-            padding: 25px;
-            border-radius: 16px;
-            margin: 25px 0;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            font-weight: 600;
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .analyzer-input {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .crypto-prices {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .momentum-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .analysis-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .token-quick-stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
         }
 
         /* Animations */
@@ -906,223 +922,287 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .slide-up {
-            animation: slideUp 1s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Custom Scrollbar */
+        .tweets-list::-webkit-scrollbar,
+        .news-list::-webkit-scrollbar,
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
+        .tweets-list::-webkit-scrollbar-track,
+        .news-list::-webkit-scrollbar-track,
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
         }
 
-        /* Additional Chart Styles */
-        .chart-legend {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
-            flex-wrap: wrap;
+        .tweets-list::-webkit-scrollbar-thumb,
+        .news-list::-webkit-scrollbar-thumb,
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 3px;
         }
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
+        .tweets-list::-webkit-scrollbar-thumb:hover,
+        .news-list::-webkit-scrollbar-thumb:hover,
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.7);
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="dashboard-container">
+        <!-- Header -->
         <div class="header">
-            <h1>ASK DEGEN</h1>
-            <p>Revolutionary AI-powered meme coin social intelligence platform</p>
-            <div class="live-indicator">
-                <div class="live-dot"></div>
-                LIVE X/Twitter Intelligence
+            <h1>Social Crypto Dashboard</h1>
+            <p>All-in-One Memecoin Intelligence Platform with Live Social Data</p>
+        </div>
+
+        <!-- Market Overview Bar -->
+        <div class="market-overview">
+            <div class="market-header">
+                <div class="market-title">
+                    <span>📊</span>
+                    Market Overview
+                </div>
+                <div class="market-sentiment">
+                    <span>Fear & Greed Index:</span>
+                    <span id="fearGreedIndex">Loading...</span>
+                    <div class="sentiment-indicator" id="sentimentIndicator">
+                        Loading...
+                    </div>
+                </div>
+            </div>
+            <div class="crypto-prices" id="cryptoPrices">
+                <!-- Crypto prices will be populated here -->
             </div>
         </div>
 
-        <div class="analyzer-container">
-            <div class="input-section">
-                <div class="input-group">
-                    <label for="tokenAddress">🎯 Solana Token Address:</label>
-                    <input 
-                        type="text" 
-                        id="tokenAddress" 
-                        placeholder="e.g. So11111111111111111111111111111111111111112"
-                        value=""
-                    >
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Trending Tokens from X -->
+                <div class="trending-tokens-section">
+                    <div class="section-header">
+                        <span style="font-size: 1.5rem;">🔥</span>
+                        <div class="section-title">Trending on X/Twitter</div>
+                        <button class="section-refresh" onclick="loadTrendingTokens()">🔄</button>
+                    </div>
+                    <div class="trending-tokens-grid" id="trendingTokensGrid">
+                        <!-- Trending tokens will be populated here -->
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="analysisMode">🔬 Analysis Mode:</label>
-                    <select id="analysisMode">
-                        <option value="degenerate">🎯 Degen Mode</option>
-                        <option value="analytical">📊 Pro Mode</option>
-                    </select>
+
+                <!-- Token Analyzer -->
+                <div class="token-analyzer">
+                    <div class="section-header">
+                        <span style="font-size: 1.5rem;">🎯</span>
+                        <div class="section-title">Token Analyzer</div>
+                    </div>
+                    
+                    <div class="analyzer-input">
+                        <div class="input-group">
+                            <label for="tokenAddress">Solana Token Address:</label>
+                            <input 
+                                type="text" 
+                                id="tokenAddress" 
+                                placeholder="e.g. So11111111111111111111111111111111111111112"
+                                value=""
+                            >
+                        </div>
+                        <div class="input-group">
+                            <label for="analysisMode">Analysis Mode:</label>
+                            <select id="analysisMode">
+                                <option value="degenerate">🎯 Degen Mode</option>
+                                <option value="analytical">📊 Pro Mode</option>
+                            </select>
+                        </div>
+                        <button class="analyze-btn" onclick="analyzeToken()">
+                            Analyze
+                        </button>
+                    </div>
+
+                    <!-- Token Quick Stats -->
+                    <div class="token-quick-stats" id="tokenQuickStats">
+                        <div class="quick-stat">
+                            <div class="quick-stat-label">Token Name</div>
+                            <div class="quick-stat-value" id="tokenName">-</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-label">Market Cap</div>
+                            <div class="quick-stat-value" id="tokenMarketCap">-</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-label">Holders</div>
+                            <div class="quick-stat-value" id="tokenHolders">-</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="quick-stat-label">24h Volume</div>
+                            <div class="quick-stat-value" id="tokenVolume">-</div>
+                        </div>
+                    </div>
+
+                    <div class="loading-spinner" id="loadingSpinner">
+                        <div class="spinner"></div>
+                        <div class="loading-text" id="loadingText">Analyzing token social sentiment...</div>
+                    </div>
+
+                    <div class="error-message" id="errorMessage"></div>
                 </div>
-                <button class="analyze-btn" onclick="analyzeToken()">
-                    🚀 Launch Analysis
-                </button>
+
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection">
+                    <!-- Social Momentum Dashboard -->
+                    <div class="momentum-dashboard">
+                        <div class="momentum-header">
+                            <div class="momentum-score" id="momentumScore">0</div>
+                            <div class="momentum-label">Social Momentum Score</div>
+                            <div class="live-data-badge" id="liveDataBadge">
+                                <div class="live-dot"></div>
+                                🔴 LIVE X DATA
+                            </div>
+                        </div>
+                        <div class="momentum-grid" id="momentumMetrics">
+                            <!-- Metrics will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Live Tweets & Meme Images -->
+                    <div class="tweets-memes-section">
+                        <!-- Live Tweets Panel -->
+                        <div class="live-tweets-panel">
+                            <div class="section-header">
+                                <span style="font-size: 1.5rem;">🐦</span>
+                                <div class="section-title">Live X/Twitter Feed</div>
+                            </div>
+                            <div class="tweets-list" id="tweetsList">
+                                <!-- Tweets will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Meme Images Panel -->
+                        <div class="meme-images-panel">
+                            <div class="section-header">
+                                <span style="font-size: 1.5rem;">🎭</span>
+                                <div class="section-title">Token Memes</div>
+                            </div>
+                            <div class="meme-carousel" id="memeCarousel">
+                                <div class="meme-images" id="memeImages">
+                                    <!-- Meme images will be populated here -->
+                                </div>
+                                <div class="carousel-nav" id="carouselNav">
+                                    <!-- Navigation dots will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expert Analysis -->
+                    <div class="expert-analysis">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">🎯</span>
+                            <div class="section-title">Expert Analysis</div>
+                        </div>
+                        <div class="analysis-content" id="expertAnalysis">
+                            <!-- Expert analysis will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Analysis Grid -->
+                    <div class="analysis-grid">
+                        <!-- Trading Signals -->
+                        <div class="analysis-card">
+                            <div class="section-header">
+                                <span style="font-size: 1.3rem;">📈</span>
+                                <div class="section-title">Trading Signals</div>
+                            </div>
+                            <div class="card-content" id="tradingSignals">
+                                <!-- Trading signals will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Influencer Network -->
+                        <div class="analysis-card">
+                            <div class="section-header">
+                                <span style="font-size: 1.3rem;">👑</span>
+                                <div class="section-title">KOLs & Influencers</div>
+                            </div>
+                            <div class="card-content" id="influencerNetwork">
+                                <!-- Influencer data will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Risk Assessment -->
+                        <div class="analysis-card">
+                            <div class="section-header">
+                                <span style="font-size: 1.3rem;">⚠️</span>
+                                <div class="section-title">Risk Assessment</div>
+                            </div>
+                            <div class="card-content" id="riskAssessment">
+                                <!-- Risk assessment will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Market Predictions -->
+                        <div class="analysis-card">
+                            <div class="section-header">
+                                <span style="font-size: 1.3rem;">🔮</span>
+                                <div class="section-title">Market Predictions</div>
+                            </div>
+                            <div class="card-content" id="marketPredictions">
+                                <!-- Market predictions will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="loading-spinner" id="loadingSpinner">
-                <div class="revolutionary-loader">
-                    <div class="loader-ring"></div>
-                    <div class="loader-ring"></div>
-                    <div class="loader-ring"></div>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-header">🚀 Revolutionary LIVE X/Twitter Intelligence</div>
-                    <div id="progressStep1" class="progress-step">
-                        <span>📡 LIVE Social Intelligence Gathering</span>
-                        <span class="step-status">Waiting...</span>
-                    </div>
-                    <div id="progressStep2" class="progress-step">
-                        <span>🎯 Meme Meta Analysis</span>
-                        <span class="step-status">Waiting...</span>
-                    </div>
-                    <div id="progressStep3" class="progress-step">
-                        <span>📊 Trading Signal Generation</span>
-                        <span class="step-status">Waiting...</span>
-                    </div>
-                    <div id="progressStep4" class="progress-step">
-                        <span>🧠 Market Psychology Analysis</span>
-                        <span class="step-status">Waiting...</span>
-                    </div>
-                    <div id="progressStep5" class="progress-step">
-                        <span>🔮 Revolutionary Predictions</span>
-                        <span class="step-status">Waiting...</span>
-                    </div>
-                    <div style="margin-top: 25px; text-align: center; font-size: 0.95rem; color: #b0b7ff; font-weight: 500;">
-                        🔴 Real-time X/Twitter intelligence • 🧠 Advanced market psychology • 🚀 Revolutionary trading signals
-                    </div>
-                </div>
-            </div>
-
-            <div class="error-message" id="errorMessage" style="display: none;"></div>
-        </div>
-
-        <div class="chart-container" id="chartContainer">
-            <iframe id="dexscreenerChart" src=""></iframe>
-        </div>
-
-        <div class="results-container" id="resultsContainer">
-            <!-- Social Momentum Dashboard with Amazing Visualizations -->
-            <div class="momentum-dashboard">
-                <div class="momentum-header">
-                    <div class="momentum-score" id="momentumScore">0</div>
-                    <div class="momentum-label">Social Momentum Score</div>
-                    <div class="live-data-badge" id="liveDataBadge">
-                        <div class="live-dot"></div>
-                        LIVE DATA
-                    </div>
-                </div>
-                <div class="momentum-grid" id="momentumMetrics">
-                    <!-- Amazing visualizations will be populated here -->
-                </div>
-            </div>
-
-            <!-- NEW: Meme Meta Analysis Section -->
-            <div class="meme-meta-section" id="memeMetaSection">
-                <div class="meta-header">
-                    <div class="meta-title">🎯 Meme Meta Intelligence</div>
-                    <div class="meta-subtitle">Originality • Beta Play • Crypto Twitter Fit • Narrative Analysis</div>
-                </div>
-                <div class="meta-content" id="memeMetaContent">
-                    <!-- Conversational meme meta analysis will be populated here -->
-                </div>
-            </div>
-
-            <div class="results-grid">
-                <!-- Trading Signals -->
-                <div class="analysis-section trading-signals">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Crypto News -->
+                <div class="crypto-news">
                     <div class="section-header">
-                        <span class="section-icon">📈</span>
-                        <h3 class="section-title">Trading Signals</h3>
+                        <span style="font-size: 1.5rem;">📰</span>
+                        <div class="section-title">Crypto News</div>
+                        <button class="section-refresh" onclick="loadCryptoNews()">🔄</button>
                     </div>
-                    <div class="section-content" id="tradingSignals">
-                        <!-- Trading signals will be populated here -->
-                    </div>
-                </div>
-
-                <!-- Social Sentiment -->
-                <div class="analysis-section">
-                    <div class="section-header">
-                        <span class="section-icon">💭</span>
-                        <h3 class="section-title">Social Intelligence</h3>
-                    </div>
-                    <div class="section-content" id="socialSentiment">
-                        <!-- Social sentiment will be populated here -->
+                    <div class="news-list" id="newsList">
+                        <!-- News articles will be populated here -->
                     </div>
                 </div>
 
-                <!-- Influencer Network -->
-                <div class="analysis-section">
+                <!-- Chat Interface -->
+                <div class="chat-interface" id="chatInterface">
                     <div class="section-header">
-                        <span class="section-icon">👑</span>
-                        <h3 class="section-title">Influencer Network</h3>
+                        <span style="font-size: 1.5rem;">💬</span>
+                        <div class="section-title">AI Assistant</div>
                     </div>
-                    <div class="section-content" id="influencerNetwork">
-                        <!-- Influencer data will be populated here -->
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message assistant">
+                            👋 Analyze a token first, then I can chat about it with live market context!
+                        </div>
                     </div>
-                </div>
-
-                <!-- Viral Trends -->
-                <div class="analysis-section">
-                    <div class="section-header">
-                        <span class="section-icon">🔥</span>
-                        <h3 class="section-title">Viral Trends</h3>
-                    </div>
-                    <div class="section-content" id="viralTrends">
-                        <!-- Viral trends will be populated here -->
-                    </div>
-                </div>
-
-                <!-- Risk Assessment -->
-                <div class="analysis-section">
-                    <div class="section-header">
-                        <span class="section-icon">⚠️</span>
-                        <h3 class="section-title">Risk Assessment</h3>
-                    </div>
-                    <div class="section-content" id="riskAssessment">
-                        <!-- Risk assessment will be populated here -->
-                    </div>
-                </div>
-
-                <!-- Market Predictions -->
-                <div class="analysis-section">
-                    <div class="section-header">
-                        <span class="section-icon">🔮</span>
-                        <h3 class="section-title">Market Predictions</h3>
-                    </div>
-                    <div class="prediction-badges" id="predictionBadges">
-                        <!-- Prediction badges will be populated here -->
-                    </div>
-                    <div class="section-content" id="marketPredictions">
-                        <!-- Market predictions will be populated here -->
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask about the analyzed token..." disabled>
+                        <button class="chat-send" id="chatSend" onclick="sendChatMessage()" disabled>
+                            Send
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="powered-by">
-            <p>Powered by <a href="https://x.ai" target="_blank">GROK AI Live Search</a> & <a href="https://dexscreener.com" target="_blank">DexScreener</a></p>
-            <p style="margin-top: 15px; font-size: 0.9rem;">
-                🚀 Revolutionary platform enhanced by <strong>$DEGEN</strong> - 
-                <a href="https://dexscreener.com/solana/6ztpBm31cmBNPwa396ocmDfaWyKKY95Bu8T664QfCe7f" target="_blank">
-                    Advanced features for traders
+            <p>Powered by <a href="https://x.ai" target="_blank">GROK AI</a>, <a href="https://perplexity.ai" target="_blank">Perplexity</a>, and <a href="https://developer.twitter.com" target="_blank">X API</a></p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                🚀 Revolutionary platform for <strong>memecoin research</strong> - 
+                <a href="https://dexscreener.com/solana" target="_blank">
+                    All-in-one crypto intelligence dashboard
                 </a>
             </p>
         </div>
@@ -1130,8 +1210,178 @@
 
     <script>
         let currentAnalysis = null;
-        let streamReader = null;
+        let currentTokenAddress = '';
+        let chatHistory = [];
+        let memeCarouselIndex = 0;
 
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMarketOverview();
+            loadTrendingTokens();
+            loadCryptoNews();
+            enableChat();
+            
+            // Allow Enter key for inputs
+            document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') analyzeToken();
+            });
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendChatMessage();
+            });
+        });
+
+        // Market Overview Functions
+        async function loadMarketOverview() {
+            try {
+                const response = await fetch('/market-overview');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateMarketOverview(data);
+                }
+            } catch (error) {
+                console.error('Market overview error:', error);
+                // Show fallback data
+                updateMarketOverview({
+
+                    bitcoin_price: 95000,
+                    ethereum_price: 3500,
+                    solana_price: 180,
+                    market_sentiment: 'Bullish',
+                    fear_greed_index: 72
+                });
+            }
+        }
+
+        function updateMarketOverview(data) {
+            // Update Fear & Greed Index
+            document.getElementById('fearGreedIndex').textContent = data.fear_greed_index + '/100';
+            
+            const sentimentEl = document.getElementById('sentimentIndicator');
+            sentimentEl.textContent = data.market_sentiment;
+            sentimentEl.className = `sentiment-indicator sentiment-${data.market_sentiment.toLowerCase()}`;
+            
+            // Update crypto prices
+            const pricesHtml = `
+                <div class="crypto-price-card">
+                    <div class="crypto-symbol">BTC</div>
+                    <div class="crypto-price">$${data.bitcoin_price?.toLocaleString() || '95,000'}</div>
+                    <div class="crypto-change positive">+2.3%</div>
+                </div>
+                <div class="crypto-price-card">
+                    <div class="crypto-symbol">ETH</div>
+                    <div class="crypto-price">$${data.ethereum_price?.toLocaleString() || '3,500'}</div>
+                    <div class="crypto-change positive">+1.8%</div>
+                </div>
+                <div class="crypto-price-card">
+                    <div class="crypto-symbol">SOL</div>
+                    <div class="crypto-price">$${data.solana_price?.toLocaleString() || '180'}</div>
+                    <div class="crypto-change positive">+4.2%</div>
+                </div>
+                <div class="crypto-price-card">
+                    <div class="crypto-symbol">Market Cap</div>
+                    <div class="crypto-price">$${(data.total_market_cap / 1e12)?.toFixed(2) || '2.3'}T</div>
+                    <div class="crypto-change positive">+0.9%</div>
+                </div>
+            `;
+            document.getElementById('cryptoPrices').innerHTML = pricesHtml;
+        }
+
+        // Trending Tokens Functions
+        async function loadTrendingTokens() {
+            try {
+                const response = await fetch('/trending-tokens');
+                const data = await response.json();
+                
+                if (data.success && data.tokens) {
+                    displayTrendingTokens(data.tokens);
+                }
+            } catch (error) {
+                console.error('Trending tokens error:', error);
+                // Show fallback tokens
+                displayTrendingTokens([
+                    {symbol: 'BONK', address: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', price_change: 15.3, mentions: 850},
+                    {symbol: 'WIF', address: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', price_change: 8.7, mentions: 650},
+                    {symbol: 'POPCAT', address: '7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr', price_change: 22.1, mentions: 1200}
+                ]);
+            }
+        }
+
+        function displayTrendingTokens(tokens) {
+            let tokensHtml = '';
+            
+            tokens.slice(0, 12).forEach(token => {
+                const changeClass = token.price_change >= 0 ? 'positive' : 'negative';
+                const changeIcon = token.price_change >= 0 ? '🚀' : '📉';
+                
+                tokensHtml += `
+                    <div class="trending-token" onclick="loadTokenAnalysis('${token.address}')">
+                        <div class="trending-symbol">$${token.symbol}</div>
+                        <div class="trending-change ${changeClass}">
+                            ${changeIcon} ${token.price_change >= 0 ? '+' : ''}${token.price_change.toFixed(1)}%
+                        </div>
+                        <div class="trending-mentions">${token.mentions || 0} mentions</div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('trendingTokensGrid').innerHTML = tokensHtml;
+        }
+
+        function loadTokenAnalysis(address) {
+            document.getElementById('tokenAddress').value = address;
+            // Scroll to analyzer
+            document.querySelector('.token-analyzer').scrollIntoView({ behavior: 'smooth' });
+            // Auto-analyze after a short delay
+            setTimeout(() => {
+                analyzeToken();
+            }, 500);
+        }
+
+        // Crypto News Functions
+        async function loadCryptoNews() {
+            try {
+                const response = await fetch('/crypto-news');
+                const data = await response.json();
+                
+                if (data.success && data.articles) {
+                    displayCryptoNews(data.articles);
+                }
+            } catch (error) {
+                console.error('Crypto news error:', error);
+                // Show fallback news
+                displayCryptoNews([
+                    {
+                        headline: 'Bitcoin Surges Past $95,000 as Institutional Adoption Accelerates',
+                        summary: 'Major financial institutions continue to add Bitcoin to their portfolios.',
+                        source: 'CoinDesk',
+                        url: 'https://coindesk.com',
+                        timestamp: '2h ago'
+                    }
+                ]);
+            }
+        }
+
+        function displayCryptoNews(articles) {
+            let newsHtml = '';
+            
+            articles.slice(0, 8).forEach(article => {
+                newsHtml += `
+                    <div class="news-item" onclick="window.open('${article.url}', '_blank')">
+                        <div class="news-headline">${article.headline}</div>
+                        <div class="news-summary">${article.summary}</div>
+                        <div class="news-meta">
+                            <span>${article.source}</span>
+                            <span>${article.timestamp}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('newsList').innerHTML = newsHtml;
+        }
+
+        // Token Analysis Functions
         async function analyzeToken() {
             const tokenAddress = document.getElementById('tokenAddress').value.trim();
             const analysisMode = document.getElementById('analysisMode').value;
@@ -1146,10 +1396,15 @@
                 return;
             }
 
+            currentTokenAddress = tokenAddress;
+            chatHistory = [];
+
+            // Get quick stats first
+            await loadTokenQuickStats(tokenAddress);
+
             showLoading();
             hideError();
             hideResults();
-            showChart(tokenAddress);
 
             try {
                 const response = await fetch('/analyze', {
@@ -1167,22 +1422,18 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                // Handle Server-Sent Events stream
-                streamReader = response.body.getReader();
+                // Handle streaming response
+                const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = '';
 
                 while (true) {
-                    const { done, value } = await streamReader.read();
+                    const { done, value } = await reader.read();
                     
-                    if (done) {
-                        console.log('Stream completed');
-                        break;
-                    }
+                    if (done) break;
 
                     buffer += decoder.decode(value, { stream: true });
                     
-                    // Process complete SSE messages
                     const lines = buffer.split('\n');
                     buffer = lines.pop() || '';
                     
@@ -1195,7 +1446,7 @@
                                     handleStreamMessage(data);
                                 }
                             } catch (e) {
-                                console.warn('Failed to parse SSE message:', line, e);
+                                console.warn('Failed to parse SSE message:', line);
                             }
                         }
                     }
@@ -1208,77 +1459,61 @@
             }
         }
 
+        async function loadTokenQuickStats(address) {
+            try {
+                const response = await fetch(`/token-quick-stats/${address}`);
+                const data = await response.json();
+                
+                if (data.success && data.stats) {
+                    const stats = data.stats;
+                    document.getElementById('tokenQuickStats').style.display = 'grid';
+                    document.getElementById('tokenName').textContent = `$${stats.symbol || 'UNKNOWN'}`;
+                    document.getElementById('tokenMarketCap').textContent = stats.market_cap ? `$${(stats.market_cap / 1e6).toFixed(1)}M` : '-';
+                    document.getElementById('tokenHolders').textContent = stats.holders ? stats.holders.toLocaleString() : '-';
+                    document.getElementById('tokenVolume').textContent = stats.volume_24h ? `$${(stats.volume_24h / 1e6).toFixed(1)}M` : '-';
+                }
+            } catch (error) {
+                console.error('Quick stats error:', error);
+            }
+        }
+
         function handleStreamMessage(data) {
-            console.log('Received stream message:', data);
-            
             if (data.type === 'progress') {
-                updateProgressStep(data.step, data.stage, data.message);
+                updateLoadingText(data.message);
             } else if (data.type === 'complete') {
                 currentAnalysis = data;
                 hideLoading();
-                displayRevolutionaryResults(data);
+                displayResults(data);
             } else if (data.type === 'error') {
                 hideLoading();
                 showError('Analysis error: ' + data.error);
             }
         }
 
-        function updateProgressStep(step, stage, message) {
-            if (step >= 1 && step <= 6) {
-                const stepEl = document.getElementById(`progressStep${Math.min(step, 5)}`);
-                if (stepEl) {
-                    const statusEl = stepEl.querySelector('.step-status');
-                    
-                    stepEl.classList.remove('active', 'complete', 'error');
-                    
-                    if (stage.includes('started') || stage.includes('loading') || stage === 'social_intelligence' || stage === 'meme_meta' || stage === 'trading_signals' || stage === 'psychology') {
-                        stepEl.classList.add('active');
-                        statusEl.textContent = '🚀 Processing...';
-                    } else if (stage.includes('complete')) {
-                        stepEl.classList.add('complete');
-                        statusEl.textContent = '✅ Complete';
-                    } else if (stage.includes('error')) {
-                        stepEl.classList.add('error');
-                        statusEl.textContent = '❌ Error';
-                    }
-                }
-            }
-        }
+        function displayResults(data) {
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('resultsSection').classList.add('fade-in');
 
-        function displayRevolutionaryResults(data) {
-            document.getElementById('resultsContainer').style.display = 'block';
-            document.getElementById('resultsContainer').classList.add('slide-up');
-
-            // Update Social Momentum Dashboard with Amazing Visualizations
+            // Update momentum dashboard
             updateMomentumDashboard(data);
-
-            // NEW: Update Meme Meta Analysis
-            updateMemeMetaAnalysis(data);
-
-            // Update Trading Signals
-            updateTradingSignals(data.trading_signals || []);
-
-            // Update Social Intelligence
-            document.getElementById('socialSentiment').innerHTML = formatContent(data.social_sentiment || 'No social data available');
-
-            // Update Influencer Network
-            updateInfluencerNetwork(data.influencer_mentions || []);
-
-            // Update Viral Trends
-            document.getElementById('viralTrends').innerHTML = formatTrendContent(data.trend_analysis || 'No trend data available', data.key_discussions || []);
-
-            // Update Risk Assessment
-            updateRiskAssessment(data);
-
-            // Update Market Predictions
-            updateMarketPredictions(data);
+            
+            // Update tweets and memes
+            updateTweetsAndMemes(data);
+            
+            // Update expert analysis
+            updateExpertAnalysis(data);
+            
+            // Update analysis cards
+            updateAnalysisCards(data);
+            
+            // Enable chat
+            enableChatWithContext();
 
             // Scroll to results
-            document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
         }
 
         function updateMomentumDashboard(data) {
-            // Update momentum score with amazing animation
             const momentumScore = data.social_momentum_score || 50;
             const scoreEl = document.getElementById('momentumScore');
             
@@ -1294,276 +1529,251 @@
                 scoreEl.textContent = Math.round(currentScore);
             }, 25);
 
-            // Update live data badge
-            const liveDataConfidence = data.sentiment_metrics?.live_data_confidence || 0;
-            const badgeEl = document.getElementById('liveDataBadge');
-            if (liveDataConfidence > 70) {
-                badgeEl.innerHTML = '<div class="live-dot"></div>HIGH CONFIDENCE LIVE DATA';
-                badgeEl.style.background = 'rgba(16, 185, 129, 0.3)';
-            } else if (liveDataConfidence > 40) {
-                badgeEl.innerHTML = '<div class="live-dot"></div>MODERATE CONFIDENCE';
-                badgeEl.style.background = 'rgba(245, 158, 11, 0.3)';
-            }
-
-            // Update metrics grid with AMAZING visualizations
+            // Update metrics
             const metrics = data.sentiment_metrics || {};
             const metricsHtml = `
                 <div class="momentum-metric">
-                    <div class="metric-icon">📈</div>
-                    <div class="metric-visual">
-                        <div class="circular-progress" style="--progress: ${(metrics.bullish_percentage || 0) * 3.6}deg;">
-                            <div class="metric-value">${metrics.bullish_percentage || 0}%</div>
-                        </div>
-                    </div>
-                    <div class="metric-label">Bullish Sentiment</div>
+                    <div class="metric-value">${metrics.bullish_percentage || 0}%</div>
+                    <div class="metric-label">Bullish</div>
                 </div>
                 <div class="momentum-metric">
-                    <div class="metric-icon">🔥</div>
-                    <div class="metric-visual">
-                        <div class="thermometer">
-                            <div class="thermometer-fill" style="--fill-height: ${metrics.viral_potential || 0}%; height: ${metrics.viral_potential || 0}%;"></div>
-                        </div>
-                    </div>
                     <div class="metric-value">${metrics.viral_potential || 0}%</div>
-                    <div class="metric-label">Viral Potential</div>
+                    <div class="metric-label">Viral</div>
                 </div>
                 <div class="momentum-metric">
-                    <div class="metric-icon">💎</div>
-                    <div class="metric-visual">
-                        <div class="circular-progress" style="--progress: ${(metrics.community_strength || 0) * 3.6}deg;">
-                            <div class="metric-value">${metrics.community_strength || 0}%</div>
-                        </div>
-                    </div>
-                    <div class="metric-label">Community Strength</div>
+                    <div class="metric-value">${metrics.community_strength || 0}%</div>
+                    <div class="metric-label">Community</div>
                 </div>
                 <div class="momentum-metric">
-                    <div class="metric-icon">⚡</div>
-                    <div class="metric-visual">
-                        <div class="bar-chart">
-                            <div class="bar" style="--bar-height: ${(metrics.volume_activity || 0) * 0.8}%; height: ${(metrics.volume_activity || 0) * 0.8}%;"></div>
-                            <div class="bar" style="--bar-height: ${(metrics.volume_activity || 0) * 1.2}%; height: ${(metrics.volume_activity || 0) * 1.2}%;"></div>
-                            <div class="bar" style="--bar-height: ${metrics.volume_activity || 0}%; height: ${metrics.volume_activity || 0}%;"></div>
-                            <div class="bar" style="--bar-height: ${(metrics.volume_activity || 0) * 0.9}%; height: ${(metrics.volume_activity || 0) * 0.9}%;"></div>
-                        </div>
-                    </div>
                     <div class="metric-value">${metrics.volume_activity || 0}%</div>
-                    <div class="metric-label">Activity Level</div>
+                    <div class="metric-label">Activity</div>
                 </div>
                 <div class="momentum-metric">
-                    <div class="metric-icon">🎯</div>
-                    <div class="metric-visual">
-                        <div class="thermometer">
-                            <div class="thermometer-fill" style="--fill-height: ${data.fomo_fear_index || 50}%; height: ${data.fomo_fear_index || 50}%;"></div>
-                        </div>
-                    </div>
                     <div class="metric-value">${data.fomo_fear_index || 50}%</div>
-                    <div class="metric-label">FOMO Index</div>
+                    <div class="metric-label">FOMO</div>
                 </div>
                 <div class="momentum-metric">
-                    <div class="metric-icon">🤖</div>
-                    <div class="metric-visual">
-                        <div class="circular-progress" style="--progress: ${Math.round((data.confidence_score || 0.5) * 360)}deg;">
-                            <div class="metric-value">${Math.round((data.confidence_score || 0.5) * 100)}%</div>
-                        </div>
-                    </div>
-                    <div class="metric-label">AI Confidence</div>
+                    <div class="metric-value">${Math.round((data.confidence_score || 0.5) * 100)}%</div>
+                    <div class="metric-label">AI Score</div>
                 </div>
             `;
             document.getElementById('momentumMetrics').innerHTML = metricsHtml;
-
-            // Add staggered animation delay to metrics
-            const metricElements = document.querySelectorAll('.momentum-metric');
-            metricElements.forEach((el, index) => {
-                el.style.animationDelay = `${index * 0.1}s`;
-                el.classList.add('fade-in');
-            });
         }
 
-        function updateMemeMetaAnalysis(data) {
-            const metaContent = data.meme_meta_analysis || 'Connect XAI API for comprehensive meme meta analysis covering originality, beta play potential, crypto Twitter meta fit, and narrative strength assessment.';
-            document.getElementById('memeMetaContent').innerHTML = formatContent(metaContent);
-        }
-
-        function updateTradingSignals(signals) {
-            if (!signals || signals.length === 0) {
-                document.getElementById('tradingSignals').innerHTML = '<p>No trading signals available at this time.</p>';
-                return;
-            }
-
-            let signalsHtml = '';
-            signals.forEach(signal => {
-                const signalClass = `signal-${signal.signal_type.toLowerCase()}`;
-                const signalEmoji = {
-                    'BUY': '🟢',
-                    'SELL': '🔴', 
-                    'HOLD': '🟡',
-                    'WATCH': '👀'
-                }[signal.signal_type] || '⚪';
-
-                signalsHtml += `
-                    <div class="signal-item ${signalClass}">
-                        <div class="signal-icon">${signalEmoji}</div>
-                        <div class="signal-content">
-                            <div class="signal-type">${signal.signal_type}</div>
-                            <div class="signal-reason">${signal.reasoning || 'Analysis in progress'}</div>
+        function updateTweetsAndMemes(data) {
+            // Update tweets list
+            const tweets = data.actual_tweets || [];
+            let tweetsHtml = '';
+            
+            if (tweets.length > 0) {
+                tweets.forEach(tweet => {
+                    tweetsHtml += `
+                        <div class="tweet-item">
+                            <div class="tweet-header">
+                                <a href="${tweet.url || '#'}" target="_blank" class="tweet-author">@${tweet.author}</a>
+                                <div class="tweet-timestamp">${tweet.timestamp}</div>
+                            </div>
+                            <div class="tweet-content">"${tweet.text}"</div>
+                            <div class="tweet-engagement">${tweet.engagement} • ${tweet.real_source ? '🔴 LIVE' : '📊 ANALYZED'}</div>
                         </div>
-                        <div class="signal-confidence">${Math.round((signal.confidence || 0) * 100)}%</div>
-                    </div>
-                `;
-            });
-
-            document.getElementById('tradingSignals').innerHTML = signalsHtml;
-        }
-
-        function updateInfluencerNetwork(influencers) {
-            if (!influencers || influencers.length === 0) {
-                document.getElementById('influencerNetwork').innerHTML = '<p>No major influencer activity detected.</p>';
-                return;
-            }
-
-            let influencerHtml = '<div class="content-heading">🔍 Key Influencers & KOLs</div>';
-            
-            // Create table format for better organization
-            influencerHtml += `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>👤 Influencer</th>
-                            <th>📊 Followers</th>
-                            <th>🏷️ Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            influencers.slice(0, 8).forEach(influencer => {
-                const parts = influencer.split(' - ');
-                const nameAndFollowers = parts[0];
-                const type = parts[1] || 'Influencer';
-                
-                influencerHtml += `
-                    <tr>
-                        <td>${nameAndFollowers}</td>
-                        <td>-</td>
-                        <td>${type}</td>
-                    </tr>
-                `;
-            });
-            
-            influencerHtml += '</tbody></table>';
-
-            document.getElementById('influencerNetwork').innerHTML = influencerHtml;
-        }
-
-        function formatTrendContent(trendAnalysis, discussions) {
-            let content = formatContent(trendAnalysis);
-            
-            if (discussions && discussions.length > 0) {
-                content += '<div class="content-heading">🗣️ Key Discussion Topics</div>';
-                discussions.slice(0, 6).forEach(topic => {
-                    content += `<div class="bullet-point">${topic}</div>`;
+                    `;
                 });
-            }
-            
-            return content;
-        }
-
-        function updateRiskAssessment(data) {
-            const riskContent = formatContent(data.risk_assessment || 'No risk data available');
-            const riskEl = document.getElementById('riskAssessment');
-            riskEl.innerHTML = riskContent;
-            
-            // Add risk styling based on content
-            const riskText = data.risk_assessment || '';
-            if (riskText.toLowerCase().includes('high risk') || riskText.toLowerCase().includes('high')) {
-                riskEl.parentElement.classList.add('risk-high');
-            } else if (riskText.toLowerCase().includes('medium') || riskText.toLowerCase().includes('moderate')) {
-                riskEl.parentElement.classList.add('risk-medium');
-            } else if (riskText.toLowerCase().includes('low risk') || riskText.toLowerCase().includes('low')) {
-                riskEl.parentElement.classList.add('risk-low');
-            }
-        }
-
-        function updateMarketPredictions(data) {
-            // Update prediction badges
-            const badges = [];
-            const confidencePercent = Math.round((data.confidence_score || 0.5) * 100);
-            badges.push(`<div class="prediction-badge">🎯 ${confidencePercent}% Confidence</div>`);
-
-            const prediction = data.prediction || '';
-            if (prediction.toLowerCase().includes('bullish') || prediction.toLowerCase().includes('buy')) {
-                badges.push(`<div class="prediction-badge">🟢 Bullish Signal</div>`);
-            } else if (prediction.toLowerCase().includes('bearish') || prediction.toLowerCase().includes('sell')) {
-                badges.push(`<div class="prediction-badge">🔴 Bearish Signal</div>`);
             } else {
-                badges.push(`<div class="prediction-badge">🟡 Neutral Signal</div>`);
+                tweetsHtml = '<div class="tweet-item"><div class="tweet-content">No live tweets found. Connect API keys for real-time X/Twitter data.</div></div>';
             }
-
-            if (data.social_momentum_score > 75) {
-                badges.push(`<div class="prediction-badge">🚀 High Momentum</div>`);
+            
+            document.getElementById('tweetsList').innerHTML = tweetsHtml;
+            
+            // Update meme images
+            const memeImages = data.meme_images || [];
+            if (memeImages.length > 0) {
+                updateMemeCarousel(memeImages);
+            } else {
+                document.getElementById('memeImages').innerHTML = '<div style="text-align: center; padding: 40px; color: #b0b7ff;">No meme images found.<br>Connect Twitter API for live meme extraction.</div>';
             }
-
-            if (data.x_citations && data.x_citations.length > 0) {
-                badges.push(`<div class="prediction-badge">📡 ${data.x_citations.length} Live Sources</div>`);
-            }
-
-            document.getElementById('predictionBadges').innerHTML = badges.join('');
-            document.getElementById('marketPredictions').innerHTML = formatContent(prediction);
         }
 
-        function formatContent(text) {
-            if (!text || text.trim() === '') {
-                return '<p><em>No data available for this section.</em></p>';
+        function updateMemeCarousel(images) {
+            memeCarouselIndex = 0;
+            
+            let imagesHtml = '';
+            let navHtml = '';
+            
+            images.forEach((image, index) => {
+                imagesHtml += `<img src="${image}" alt="Meme ${index + 1}" class="meme-image">`;
+                navHtml += `<div class="carousel-dot ${index === 0 ? 'active' : ''}" onclick="setMemeCarousel(${index})"></div>`;
+            });
+            
+            document.getElementById('memeImages').innerHTML = imagesHtml;
+            document.getElementById('carouselNav').innerHTML = navHtml;
+            
+            // Auto-rotate carousel
+            if (images.length > 1) {
+                setInterval(() => {
+                    memeCarouselIndex = (memeCarouselIndex + 1) % images.length;
+                    setMemeCarousel(memeCarouselIndex);
+                }, 5000);
             }
-
-            return text
-                .split('\n')
-                .filter(line => line.trim())
-                .map(line => {
-                    line = line.trim();
-                    
-                    // Convert **headers** to proper HTML
-                    if (line.startsWith('**') && line.endsWith('**')) {
-                        const headerText = line.replace(/\*\*/g, '');
-                        return `<div class="content-heading">${headerText}</div>`;
-                    }
-                    
-                    // Handle bullet points
-                    if (line.startsWith('- ') || line.startsWith('• ')) {
-                        return `<div class="bullet-point">${line.substring(2)}</div>`;
-                    }
-                    
-                    // Handle inline bold text
-                    line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                    
-                    // Handle separator lines
-                    if (line.includes('═══') || line.includes('───')) {
-                        return '<hr style="margin: 25px 0; border: none; height: 1px; background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);">';
-                    }
-                    
-                    return `<p>${line}</p>`;
-                })
-                .join('');
         }
 
+        function setMemeCarousel(index) {
+            memeCarouselIndex = index;
+            const images = document.getElementById('memeImages');
+            const dots = document.querySelectorAll('.carousel-dot');
+            
+            images.style.transform = `translateX(-${index * 100}%)`;
+            
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        function updateExpertAnalysis(data) {
+            const analysis = data.expert_crypto_summary || 'Connect XAI API for comprehensive expert analysis.';
+            document.getElementById('expertAnalysis').innerHTML = analysis;
+        }
+
+        function updateAnalysisCards(data) {
+            // Trading Signals
+            const signals = data.trading_signals || [];
+            let signalsHtml = '';
+            if (signals.length > 0) {
+                signals.forEach(signal => {
+                    const emoji = {'BUY': '🟢', 'SELL': '🔴', 'HOLD': '🟡', 'WATCH': '👀'}[signal.signal_type] || '⚪';
+                    signalsHtml += `
+                        <div class="content-heading">${emoji} ${signal.signal_type}</div>
+                        <p>${signal.reasoning}</p>
+                        <p><strong>Confidence:</strong> ${Math.round(signal.confidence * 100)}%</p>
+                    `;
+                });
+            } else {
+                signalsHtml = '<p>No specific trading signals generated. Monitor for momentum changes.</p>';
+            }
+            document.getElementById('tradingSignals').innerHTML = signalsHtml;
+            
+            // Influencer Network
+            const accounts = data.real_twitter_accounts || [];
+            let influencerHtml = '<div class="content-heading">🔍 KOLs & Crypto Influencers</div>';
+            if (accounts.length > 0) {
+                accounts.forEach(account => {
+                    // Extract URL and format nicely
+                    const parts = account.split(' - ');
+                    const accountInfo = parts[0];
+                    const url = parts[1] || '#';
+                    influencerHtml += `<div class="bullet-point"><a href="${url}" target="_blank" style="color: #1da1f2; text-decoration: none;">${accountInfo}</a></div>`;
+                });
+            } else {
+                influencerHtml += '<p>No major crypto influencers detected discussing this token currently.</p>';
+            }
+            document.getElementById('influencerNetwork').innerHTML = influencerHtml;
+            
+            // Risk Assessment
+            const riskLevel = data.risk_level || 'medium';
+            const marketCap = data.market_cap || 0;
+            let riskHtml = `
+                <div class="content-heading">⚠️ Risk Level: ${riskLevel.toUpperCase()}</div>
+                <p>Based on market cap of $${(marketCap / 1e6).toFixed(1)}M and social metrics, this token presents <strong>${riskLevel}</strong> risk.</p>
+                <div class="bullet-point">Position sizing should reflect ${riskLevel} risk profile</div>
+                <div class="bullet-point">Monitor social momentum for exit signals</div>
+                <div class="bullet-point">Set appropriate stop-losses based on volatility</div>
+            `;
+            document.getElementById('riskAssessment').innerHTML = riskHtml;
+            
+            // Market Predictions
+            const momentum = data.social_momentum_score || 0;
+            const confidence = Math.round((data.confidence_score || 0.5) * 100);
+            let predictionHtml = `
+                <div class="content-heading">🔮 Market Outlook</div>
+                <p>With ${momentum}% social momentum and ${confidence}% AI confidence, this token is in <strong>${data.momentum_phase || 'consolidation'}</strong> phase.</p>
+                <div class="bullet-point">Social momentum ${momentum > 70 ? 'accelerating' : momentum > 50 ? 'building' : 'early stage'}</div>
+                <div class="bullet-point">Estimated 30-day performance: ${data.estimated_30d_change > 0 ? '+' : ''}${(data.estimated_30d_change || 0).toFixed(1)}%</div>
+                <div class="bullet-point">Watch for increased influencer attention and volume</div>
+            `;
+            document.getElementById('marketPredictions').innerHTML = predictionHtml;
+        }
+
+        // Chat Functions
+        function enableChat() {
+            document.getElementById('chatInterface').style.display = 'flex';
+        }
+
+        function enableChatWithContext() {
+            const chatInput = document.getElementById('chatInput');
+            const chatSend = document.getElementById('chatSend');
+            
+            chatInput.disabled = false;
+            chatInput.placeholder = `Ask about ${currentAnalysis?.token_symbol || 'this token'}...`;
+            chatSend.disabled = false;
+        }
+
+        async function sendChatMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            
+            if (!message || !currentTokenAddress) return;
+
+            addChatMessage(message, 'user');
+            chatInput.value = '';
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        token_address: currentTokenAddress,
+                        message: message,
+                        history: chatHistory
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.response) {
+                    addChatMessage(data.response, 'assistant');
+                } else {
+                    addChatMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                }
+                
+            } catch (error) {
+                console.error('Chat error:', error);
+                addChatMessage('Connection error. Please try again.', 'assistant');
+            }
+        }
+
+        function addChatMessage(message, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            messageDiv.textContent = message;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            chatHistory.push({
+                role: sender === 'user' ? 'user' : 'assistant',
+                content: message
+            });
+            
+            if (chatHistory.length > 20) {
+                chatHistory = chatHistory.slice(-20);
+            }
+        }
+
+        // Utility Functions
         function showLoading() {
             document.getElementById('loadingSpinner').style.display = 'block';
             document.querySelector('.analyze-btn').disabled = true;
-            
-            // Reset progress steps
-            for (let i = 1; i <= 5; i++) {
-                const stepEl = document.getElementById(`progressStep${i}`);
-                if (stepEl) {
-                    stepEl.classList.remove('active', 'complete', 'error');
-                    const statusEl = stepEl.querySelector('.step-status');
-                    statusEl.textContent = 'Waiting...';
-                }
-            }
         }
 
         function hideLoading() {
             document.getElementById('loadingSpinner').style.display = 'none';
             document.querySelector('.analyze-btn').disabled = false;
+        }
+
+        function updateLoadingText(message) {
+            document.getElementById('loadingText').textContent = message;
         }
 
         function showError(message) {
@@ -1576,33 +1786,10 @@
             document.getElementById('errorMessage').style.display = 'none';
         }
 
-        function showChart(tokenAddress) {
-            const chartContainer = document.getElementById('chartContainer');
-            const iframe = document.getElementById('dexscreenerChart');
-            
-            iframe.src = `https://dexscreener.com/solana/${tokenAddress}?embed=1&loadChartSettings=0&chartLeftToolbar=0&chartTheme=dark&theme=dark&chartStyle=0&chartType=usd&interval=15`;
-            chartContainer.style.display = 'block';
-            chartContainer.classList.add('fade-in');
-        }
-
         function hideResults() {
-            document.getElementById('resultsContainer').style.display = 'none';
-            document.getElementById('chartContainer').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('tokenQuickStats').style.display = 'none';
         }
-
-        // Allow Enter key to trigger analysis
-        document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                analyzeToken();
-            }
-        });
-
-        // Cancel stream if page is unloaded
-        window.addEventListener('beforeunload', function() {
-            if (streamReader) {
-                streamReader.cancel();
-            }
-        });
     </script>
 </body>
 </html>
