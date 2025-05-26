@@ -1,4 +1,3 @@
-```python
 # app.py
 # Fully optimized with gevent, concurrent analysis phases, and SSE heartbeats
 
@@ -21,7 +20,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Flask application
-aapp = Flask(__name__)
+app = Flask(__name__)
 
 # Environment configuration
 GROK_API_KEY = os.getenv('GROK_API_KEY', 'your-grok-api-key-here')
@@ -88,7 +87,8 @@ class PremiumTokenSocialAnalyzer:
         return f"data: {json.dumps(result)}\n\n"
 
     def stream_comprehensive_analysis(self, token_symbol: str, token_address: str, analysis_mode: str = "analytical"):
-        # Heartbeat timer\ n        last_beat = time.time()
+        # Heartbeat timer
+        last_beat = time.time()
         def maybe_heartbeat():
             nonlocal last_beat
             if time.time() - last_beat > 10:
@@ -101,14 +101,15 @@ class PremiumTokenSocialAnalyzer:
         hb = maybe_heartbeat()
         if hb: yield hb
 
-        # Launch concurrent phases
+        # Launch concurrent API phases
         g_expert = spawn(self._get_expert_x_analysis, token_symbol, token_address, analysis_mode)
         g_influ = spawn(self._get_influencer_analysis, token_symbol, token_address, analysis_mode)
         g_trends = spawn(self._get_trends_analysis, token_symbol, token_address, analysis_mode)
 
-        # Wait up to 60s for all\ n        joinall([g_expert, g_influ, g_trends], timeout=60)
+        # Wait up to 60s
+        joinall([g_expert, g_influ, g_trends], timeout=60)
 
-        # Expert phase result
+        # Expert phase
         expert_res = g_expert.value or {'success': False, 'data': {}}
         if expert_res.get('success'):
             yield self._format_progress_update("expert_complete", "Expert analysis complete", 2)
@@ -129,7 +130,7 @@ class PremiumTokenSocialAnalyzer:
         hb = maybe_heartbeat()
         if hb: yield hb
 
-        # Risk assessment & prediction
+        # Risk & prediction (local)
         risk_text = self._create_x_based_risk_assessment(token_symbol, expert_res['data'], analysis_mode)
         yield self._format_progress_update("risk_complete", "Risk assessment done", 5)
         hb = maybe_heartbeat()
@@ -156,12 +157,11 @@ class PremiumTokenSocialAnalyzer:
             x_citations=expert_res['data'].get('x_citations', [])
         )
 
-        # Return final SSE event
+        # Emit final SSE
         yield self._format_final_response(analysis)
 
-    # Placeholder methods belowÑ
+    # Placeholder methods -- implement real parsing here
     def _get_expert_x_analysis(self, symbol, address, mode):
-        # Call GROK API and parse
         return {'success': True, 'data': {'expert_summary':'','social_sentiment':'','sentiment_metrics':{},'actual_tweets':[], 'x_citations':[]}}
     def _get_influencer_analysis(self, symbol, address, mode):
         return {'success': True, 'data': {'influencers':[]}}
@@ -176,12 +176,13 @@ class PremiumTokenSocialAnalyzer:
 analyzer = PremiumTokenSocialAnalyzer()
 
 # Routes
-aapp.route('/')
+@app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/trending-tokens')
-def trending():
+def get_trending_tokens():
+    # Implement real get_trending_tokens if needed
     return jsonify({'success': True, 'tokens': []})
 
 @app.route('/analyze', methods=['POST'])
@@ -201,5 +202,4 @@ def health():
     return jsonify({'status':'healthy','timestamp':datetime.now().isoformat()})
 
 if __name__ == '__main__':
-    aapp.run(host='0.0.0.0', port=int(os.getenv('PORT',5000)), debug=True)
-```
+    app.run(host='0.0.0.0', port=int(os.getenv('PORT',5000)), debug=True)
