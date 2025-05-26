@@ -1,8 +1,5 @@
 # app.py
-# Fully optimized with gevent, concurrent analysis phases, and SSE heartbeats
-
-from gevent import monkey, spawn, joinall
-monkey.patch_all()
+# Optimized with ThreadPoolExecutor, concurrent analysis phases, and SSE heartbeats
 
 from flask import Flask, render_template, request, jsonify, Response
 import requests
@@ -14,6 +11,7 @@ import time
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 from typing import List, Dict
+from concurrent.futures import ThreadPoolExecutor, as_completed, wait, FIRST_COMPLETED
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -43,11 +41,12 @@ class TokenAnalysis:
     actual_tweets: List[Dict]
     x_citations: List[str]
 
-# Analyzer with concurrent gevent-based phases
+# Analyzer with ThreadPoolExecutor-based phases
 dataclass
 class PremiumTokenSocialAnalyzer:
     def __init__(self):
         self.grok_api_key = GROK_API_KEY
+        self.executor = ThreadPoolExecutor(max_workers=3)
         logger.info(f"Analyzer initialized; API key set: {self.grok_api_key != 'your-grok-api-key-here'}")
 
     def _format_heartbeat(self) -> str:
@@ -98,63 +97,61 @@ class PremiumTokenSocialAnalyzer:
 
         # Phase 0: Initialization
         yield self._format_progress_update("initialized", "Starting analysis pipeline", 1)
-        hb = maybe_heartbeat()
+        hb = maybe_heartbeat();
         if hb: yield hb
 
-        # Launch concurrent API phases
-        g_expert = spawn(self._get_expert_x_analysis, token_symbol, token_address, analysis_mode)
-        g_influ = spawn(self._get_influencer_analysis, token_symbol, token_address, analysis_mode)
-        g_trends = spawn(self._get_trends_analysis, token_symbol, token_address, analysis_mode)
+        # Submit concurrent API phases
+        futures = {
+            self.executor.submit(self._get_expert_x_analysis, token_symbol, token_address, analysis_mode): 'expert',
+            self.executor.submit(self._get_influencer_analysis, token_symbol, token_address, analysis_mode): 'influencer',
+            self.executor.submit(self._get_trends_analysis, token_symbol, token_address, analysis_mode): 'trends'
+        }
 
-        # Wait up to 60s
-        joinall([g_expert, g_influ, g_trends], timeout=60)
+        done, _ = wait(futures.keys(), timeout=60)
 
-        # Expert phase
-        expert_res = g_expert.value or {'success': False, 'data': {}}
-        if expert_res.get('success'):
+        # Gather results and emit progress
+        results = {name: futures[future].result() if future in done and future.result() else {'success': False, 'data': {}} for future, name in futures.items()}
+
+        if results['expert']['success']:
             yield self._format_progress_update("expert_complete", "Expert analysis complete", 2)
-        hb = maybe_heartbeat()
+        hb = maybe_heartbeat();
         if hb: yield hb
 
-        # Influencer phase
-        infl_res = g_influ.value or {'success': False, 'data': {}}
-        if infl_res.get('success'):
+        if results['influencer']['success']:
             yield self._format_progress_update("influencer_complete", "Influencer deep dive complete", 3)
-        hb = maybe_heartbeat()
+        hb = maybe_heartbeat();
         if hb: yield hb
 
-        # Trends phase
-        trends_res = g_trends.value or {'success': False, 'data': {}}
-        if trends_res.get('success'):
+        if results['trends']['success']:
             yield self._format_progress_update("trends_complete", "Trend analysis complete", 4)
-        hb = maybe_heartbeat()
+        hb = maybe_heartbeat();
         if hb: yield hb
 
         # Risk & prediction (local)
-        risk_text = self._create_x_based_risk_assessment(token_symbol, expert_res['data'], analysis_mode)
+        risk_text = self._create_x_based_risk_assessment(token_symbol, results['expert']['data'], analysis_mode)
         yield self._format_progress_update("risk_complete", "Risk assessment done", 5)
-        hb = maybe_heartbeat()
+        hb = maybe_heartbeat();
         if hb: yield hb
-        pred_text = self._create_x_based_prediction(token_symbol, expert_res['data'], analysis_mode)
+        pred_text = self._create_x_based_prediction(token_symbol, results['expert']['data'], analysis_mode)
         yield self._format_progress_update("prediction_complete", "Predictions generated", 6)
-        hb = maybe_heartbeat()
+        hb = maybe_heartbeat();
         if hb: yield hb
 
         # Final aggregation
         analysis = TokenAnalysis(
             token_address=token_address,
             token_symbol=token_symbol,
-            expert_summary=expert_res['data'].get('expert_summary', ''),
-            social_sentiment=expert_res['data'].get('social_sentiment', ''),
-            key_discussions=trends_res['data'].get('topics', []),
-            influencer_mentions=infl_res['data'].get('influencers', []),
-            trend_analysis=trends_res['data'].get('trends', ''),
+            expert_summary=results['expert']['data'].get('expert_summary', ''),
+            social_sentiment=results['expert']['data'].get('social_sentiment', ''),
+            key_discussions=results['trends']['data'].get('topics', []),
+            influencer_mentions=results['influencer']['data'].get('influencers', []),
+            trend_analysis=results['trends']['data'].get('trends', ''),
             risk_assessment=risk_text,
             prediction=pred_text,
             confidence_score=0.85,
-            sentiment_metrics=expert_res['data'].get('sentiment_metrics', {}),
-            actual_tweets=expert_res['data'].get('actual_tweets', []),
-            x_citations=expert_res['data'].get('x_citations', [])
+            sentiment_metrics=results['expert']['data'].get('sentiment_metrics', {}),
+            actual_tweets=results['expert']['data'].get('actual_tweets', []),
+            x_citations=results['expert']['data'].get('x_citations', [])
         )
 
         # Emit final SSE
@@ -182,7 +179,6 @@ def index():
 
 @app.route('/trending-tokens')
 def get_trending_tokens():
-    # Implement real get_trending_tokens if needed
     return jsonify({'success': True, 'tokens': []})
 
 @app.route('/analyze', methods=['POST'])
