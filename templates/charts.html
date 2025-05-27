@@ -8,14 +8,245 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Enhanced styling for chart analysis */
+        .chart-upload {
+            position: relative;
+            border: 2px dashed #00d4ff;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+        }
+        
+        .chart-upload:hover, .chart-upload.dragover {
+            border-color: #9333ea;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+            transform: translateY(-2px);
+        }
+        
+        .paste-btn, .upload-file-btn {
+            padding: 12px 24px;
+            border: 2px solid #00d4ff;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .paste-btn:hover, .upload-file-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%);
+            border-color: #9333ea;
+            transform: translateY(-2px);
+        }
+        
+        .paste-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .contract-input-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .contract-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .contract-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        }
+        
+        .paste-hint {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            color: #ffd700;
+        }
+        
+        /* Enhanced analysis results styling */
+        .token-info-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .token-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .metric-value.positive {
+            color: #00ff88;
+        }
+        
+        .metric-value.negative {
+            color: #ff4444;
+        }
+        
+        .analysis-heading {
+            color: #00d4ff;
+            border-bottom: 2px solid #00d4ff;
+            padding-bottom: 10px;
+            margin: 25px 0 15px 0;
+        }
+        
+        .analysis-subheading {
+            color: #9333ea;
+            margin: 20px 0 10px 0;
+        }
+        
+        .analysis-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .analysis-table th,
+        .analysis-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .analysis-table th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            font-weight: bold;
+        }
+        
+        .analysis-list {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .analysis-list li {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+        
+        .bullish-signal {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .bearish-signal {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .neutral-signal {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .analysis-footer {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 25px;
+            color: #ffd700;
+        }
+        
+        /* Pattern visualization */
+        .pattern-visualization {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .pattern-chart {
+            height: 200px;
+            margin: 15px 0;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .token-metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .analysis-table {
+                font-size: 14px;
+            }
+            
+            .analysis-table th,
+            .analysis-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Fixed Header -->
     <header class="main-header">
         <div class="header-content">
-            <a href="/" class="logo">ASK DEGEN</a>
-            <nav class="nav-links">
-                <a href="/" class="nav-link">Analyzer</a>
+           <a href="#" class="logo"><img style="max-height:60px;" src="https://jeetsvsdegens.com/ask-logo.png"></a>
+             <nav class="nav-links">
+                <a href="/" class="nav-link">Dashboard</a>
                 <a href="/resources" class="nav-link">Resources</a>
                 <a href="/dictionary" class="nav-link">Dictionary</a>
                 <a href="/charts" class="nav-link active">Chart Analysis</a>
@@ -26,22 +257,53 @@
     <div class="page-container">
         <div class="page-title">📈 AI Chart Analysis</div>
         <div class="page-description">
-            Upload any trading chart screenshot and get expert AI analysis. Plus learn to read charts yourself 
-            with our comprehensive guide to patterns, indicators, and technical analysis tools.
+            Upload any trading chart screenshot and get expert AI analysis. Add a contract address for enhanced context with real-time price and volume data.
         </div>
 
-        <!-- Chart Upload Section -->
+        <!-- Enhanced Chart Upload Section -->
         <div class="section">
             <div class="section-header">
                 <span style="font-size: 1.5rem;">🤖</span>
                 <div class="section-title">AI Chart Analyzer</div>
             </div>
             
-            <div class="chart-upload" id="chartUpload" onclick="document.getElementById('chartInput').click()">
+            <!-- Paste Button -->
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap;">
+                <button class="paste-btn" id="pasteBtn" onclick="pasteFromClipboard()">
+                    📋 Paste Image from Clipboard
+                </button>
+                <button class="upload-file-btn" onclick="document.getElementById('chartInput').click()">
+                    📁 Upload File
+                </button>
+            </div>
+
+            <div class="chart-upload" id="chartUpload">
                 <div class="upload-icon">📊</div>
-                <div class="upload-text">Click to upload or drag & drop your chart screenshot</div>
+                <div class="upload-text">Drag & drop your chart screenshot here</div>
                 <div class="upload-hint">Supports PNG, JPG, WebP • Max 10MB</div>
                 <input type="file" id="chartInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+            </div>
+
+            <div class="paste-hint">
+                💡 <strong>Pro Tip:</strong> Take a screenshot and click "Paste Image" or drag the file directly onto the area above.
+            </div>
+
+            <!-- Contract Address Input -->
+            <div class="contract-input-section">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.2rem;">🔗</span>
+                    <strong>Optional: Add Contract Address for Enhanced Analysis</strong>
+                </div>
+                <input 
+                    type="text" 
+                    id="contractInput" 
+                    class="contract-input" 
+                    placeholder="Enter Solana contract address (e.g., DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263)"
+                    maxlength="44"
+                >
+                <div style="margin-top: 10px; font-size: 14px; color: #aaa;">
+                    Adding a contract address will include real-time price, volume, and market data in the analysis.
+                </div>
             </div>
 
             <div id="chartPreviewContainer" style="display: none;">
@@ -53,7 +315,7 @@
 
             <div class="loading-spinner" id="loadingSpinner">
                 <div class="spinner"></div>
-                <div class="loading-text">AI is analyzing your chart...</div>
+                <div class="loading-text">AI is analyzing your chart with enhanced context...</div>
             </div>
 
             <div class="error-message" id="errorMessage"></div>
@@ -67,83 +329,83 @@
             </div>
         </div>
 
-        <!-- Chart Patterns Guide -->
+        <!-- Interactive Chart Patterns Guide -->
         <div class="section">
             <div class="section-header">
-                <span style="font-size: 1.5rem;">📋</span>
-                <div class="section-title">Chart Patterns Guide</div>
+                <span style="font-size: 1.5rem;">📊</span>
+                <div class="section-title">Interactive Chart Patterns</div>
             </div>
             
             <div class="pattern-grid">
                 <div class="pattern-card">
-                    <div class="pattern-name">Bull Flag</div>
-                    <div class="pattern-diagram">📈 🏳️ Bullish continuation pattern</div>
+                    <div class="pattern-name">Bull Flag 🚀</div>
+                    <div class="pattern-visualization">
+                        <canvas id="bullFlagChart" class="pattern-chart"></canvas>
+                    </div>
                     <div class="pattern-description">
-                        Strong upward move followed by consolidation. Indicates potential continuation of the uptrend.
-                        <strong>Signal:</strong> Buy when price breaks above flag.
+                        <strong>Formation:</strong> Strong upward move followed by consolidation.<br>
+                        <strong>Signal:</strong> Buy when price breaks above flag.<br>
+                        <strong>Target:</strong> Height of pole added to breakout point.
                     </div>
                 </div>
 
                 <div class="pattern-card">
-                    <div class="pattern-name">Bear Flag</div>
-                    <div class="pattern-diagram">📉 🏳️ Bearish continuation pattern</div>
+                    <div class="pattern-name">Head & Shoulders 👤</div>
+                    <div class="pattern-visualization">
+                        <canvas id="headShouldersChart" class="pattern-chart"></canvas>
+                    </div>
                     <div class="pattern-description">
-                        Strong downward move followed by small upward consolidation. Suggests further decline ahead.
-                        <strong>Signal:</strong> Sell when price breaks below flag.
+                        <strong>Formation:</strong> Three peaks with middle highest.<br>
+                        <strong>Signal:</strong> Sell when neckline breaks.<br>
+                        <strong>Target:</strong> Distance from head to neckline.
                     </div>
                 </div>
 
                 <div class="pattern-card">
-                    <div class="pattern-name">Head & Shoulders</div>
-                    <div class="pattern-diagram">👤 Classic reversal pattern</div>
+                    <div class="pattern-name">Double Bottom 📈</div>
+                    <div class="pattern-visualization">
+                        <canvas id="doubleBottomChart" class="pattern-chart"></canvas>
+                    </div>
                     <div class="pattern-description">
-                        Three peaks with the middle being highest. Strong bearish reversal signal at market tops.
-                        <strong>Signal:</strong> Sell when neckline breaks.
+                        <strong>Formation:</strong> Two lows at similar levels forming 'W'.<br>
+                        <strong>Signal:</strong> Buy on break above peak.<br>
+                        <strong>Target:</strong> Distance between lows and peak.
                     </div>
                 </div>
 
                 <div class="pattern-card">
-                    <div class="pattern-name">Double Top</div>
-                    <div class="pattern-diagram">⛰️⛰️ Bearish reversal</div>
+                    <div class="pattern-name">Ascending Triangle ⬆️</div>
+                    <div class="pattern-visualization">
+                        <canvas id="ascendingTriangleChart" class="pattern-chart"></canvas>
+                    </div>
                     <div class="pattern-description">
-                        Two peaks at similar levels. Indicates resistance and potential trend reversal.
-                        <strong>Signal:</strong> Sell on break below valley.
+                        <strong>Formation:</strong> Flat resistance, rising support.<br>
+                        <strong>Signal:</strong> Usually breaks upward.<br>
+                        <strong>Target:</strong> Height of triangle at widest point.
                     </div>
                 </div>
 
                 <div class="pattern-card">
-                    <div class="pattern-name">Double Bottom</div>
-                    <div class="pattern-diagram">🔥🔥 Bullish reversal</div>
+                    <div class="pattern-name">Cup & Handle ☕</div>
+                    <div class="pattern-visualization">
+                        <canvas id="cupHandleChart" class="pattern-chart"></canvas>
+                    </div>
                     <div class="pattern-description">
-                        Two lows at similar levels forming a 'W' shape. Strong bullish reversal signal.
-                        <strong>Signal:</strong> Buy on break above peak.
+                        <strong>Formation:</strong> Rounded bottom + small pullback.<br>
+                        <strong>Signal:</strong> Buy handle breakout.<br>
+                        <strong>Target:</strong> Depth of cup added to breakout.
                     </div>
                 </div>
 
                 <div class="pattern-card">
-                    <div class="pattern-name">Triangle</div>
-                    <div class="pattern-diagram">🔺 Consolidation pattern</div>
-                    <div class="pattern-description">
-                        Converging trend lines forming triangle. Can break either direction.
-                        <strong>Signal:</strong> Trade breakout direction.
+                    <div class="pattern-name">Falling Wedge 📉</div>
+                    <div class="pattern-visualization">
+                        <canvas id="fallingWedgeChart" class="pattern-chart"></canvas>
                     </div>
-                </div>
-
-                <div class="pattern-card">
-                    <div class="pattern-name">Cup & Handle</div>
-                    <div class="pattern-diagram">☕ Bullish continuation</div>
                     <div class="pattern-description">
-                        Rounded bottom followed by small pullback. Strong bullish pattern for continued uptrend.
-                        <strong>Signal:</strong> Buy handle breakout.
-                    </div>
-                </div>
-
-                <div class="pattern-card">
-                    <div class="pattern-name">Wedge</div>
-                    <div class="pattern-diagram">🔺 Reversal pattern</div>
-                    <div class="pattern-description">
-                        Converging lines with both trending same direction. Usually reverses main trend.
-                        <strong>Signal:</strong> Trade opposite direction.
+                        <strong>Formation:</strong> Converging lines trending down.<br>
+                        <strong>Signal:</strong> Usually bullish breakout.<br>
+                        <strong>Target:</strong> Back to start of wedge formation.
                     </div>
                 </div>
             </div>
@@ -153,7 +415,7 @@
         <div class="section">
             <div class="section-header">
                 <span style="font-size: 1.5rem;">🔧</span>
-                <div class="section-title">Technical Indicators Glossary</div>
+                <div class="section-title">Technical Indicators Guide</div>
             </div>
             
             <div class="cards-grid">
@@ -220,152 +482,11 @@
                         </ul>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <span style="font-size: 1.3rem;">📈</span>
-                        <div class="card-title">Volume Indicators</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Volume</h3>
-                        <p>Number of shares/tokens traded. Confirms price movements and breakouts.</p>
-                        
-                        <h3>Volume Profile</h3>
-                        <p>Shows volume traded at each price level. Identifies support/resistance.</p>
-                        
-                        <h3>Key Rules:</h3>
-                        <ul>
-                            <li>High volume + price move = Strong signal</li>
-                            <li>Low volume + price move = Weak signal</li>
-                            <li>Volume leads price</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <span style="font-size: 1.3rem;">🎯</span>
-                        <div class="card-title">Support & Resistance</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Support:</h3>
-                        <p>Price level where buying interest is strong enough to stop decline.</p>
-                        
-                        <h3>Resistance:</h3>
-                        <p>Price level where selling pressure stops upward movement.</p>
-                        
-                        <h3>Key Concepts:</h3>
-                        <ul>
-                            <li>Previous highs become resistance</li>
-                            <li>Previous lows become support</li>
-                            <li>Broken support becomes resistance</li>
-                            <li>Round numbers act as psychological levels</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <span style="font-size: 1.3rem;">🕯️</span>
-                        <div class="card-title">Candlestick Patterns</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Bullish Patterns:</h3>
-                        <ul>
-                            <li><strong>Hammer:</strong> Small body, long lower wick</li>
-                            <li><strong>Engulfing:</strong> Large green candle engulfs previous red</li>
-                            <li><strong>Morning Star:</strong> Three-candle reversal pattern</li>
-                        </ul>
-                        
-                        <h3>Bearish Patterns:</h3>
-                        <ul>
-                            <li><strong>Shooting Star:</strong> Small body, long upper wick</li>
-                            <li><strong>Evening Star:</strong> Three-candle reversal at top</li>
-                            <li><strong>Dark Cloud:</strong> Red candle engulfs green</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chart Reading Tips -->
-        <div class="section">
-            <div class="section-header">
-                <span style="font-size: 1.5rem;">💡</span>
-                <div class="section-title">Pro Chart Reading Tips</div>
-            </div>
-            
-            <div class="cards-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <span style="font-size: 1.3rem;">⏰</span>
-                        <div class="card-title">Timeframe Analysis</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Multiple Timeframe Rule:</h3>
-                        <p>Always check higher timeframes for overall trend direction.</p>
-                        
-                        <h3>Common Timeframes:</h3>
-                        <ul>
-                            <li><strong>1m, 5m:</strong> Scalping entries</li>
-                            <li><strong>15m, 1h:</strong> Day trading</li>
-                            <li><strong>4h, 1D:</strong> Swing trading</li>
-                            <li><strong>1W, 1M:</strong> Long-term investing</li>
-                        </ul>
-                        
-                        <p><strong>Golden Rule:</strong> Trade with the higher timeframe trend.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <span style="font-size: 1.3rem;">🎨</span>
-                        <div class="card-title">Drawing Tools</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Trend Lines:</h3>
-                        <p>Connect swing lows (uptrend) or swing highs (downtrend). Need at least 2 points.</p>
-                        
-                        <h3>Horizontal Lines:</h3>
-                        <p>Mark key support/resistance levels from previous price action.</p>
-                        
-                        <h3>Fibonacci Retracements:</h3>
-                        <p>Common retracement levels: 23.6%, 38.2%, 50%, 61.8%, 78.6%</p>
-                        
-                        <h3>Channels:</h3>
-                        <p>Parallel lines connecting highs and lows to identify trading ranges.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <span style="font-size: 1.3rem;">🚨</span>
-                        <div class="card-title">Risk Management</div>
-                    </div>
-                    <div class="card-content">
-                        <h3>Stop Loss Placement:</h3>
-                        <ul>
-                            <li>Below support (long positions)</li>
-                            <li>Above resistance (short positions)</li>
-                            <li>Beyond pattern invalidation level</li>
-                        </ul>
-                        
-                        <h3>Take Profit Levels:</h3>
-                        <ul>
-                            <li>Previous resistance/support</li>
-                            <li>Fibonacci extensions</li>
-                            <li>Pattern price targets</li>
-                        </ul>
-                        
-                        <h3>Risk-Reward Ratio:</h3>
-                        <p>Aim for minimum 1:2 risk-reward ratio. Risk $1 to make $2.</p>
-                    </div>
-                </div>
             </div>
         </div>
 
         <div class="powered-by">
-            <p>🤖 <strong>Powered by GPT-4o Vision</strong> - Advanced AI chart analysis</p>
+            <p>🤖 <strong>Powered by GPT-4o Vision + DexScreener API</strong> - Advanced AI chart analysis with real-time market data</p>
             <p style="margin-top: 10px; font-size: 0.9rem;">
                 Remember: AI analysis is for educational purposes. Always do your own research and risk management.
             </p>
@@ -375,7 +496,234 @@
     <script>
         let uploadedImage = null;
 
-        // Drag and drop functionality
+        // Initialize interactive pattern charts when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePatternCharts();
+            checkClipboardSupport();
+        });
+
+        // Check if clipboard API is supported and enable/disable paste button
+        function checkClipboardSupport() {
+            const pasteBtn = document.getElementById('pasteBtn');
+            if (!navigator.clipboard || !navigator.clipboard.read) {
+                pasteBtn.disabled = true;
+                pasteBtn.textContent = '📋 Paste Not Supported';
+                pasteBtn.title = 'Clipboard API not supported in this browser';
+            }
+        }
+
+        // Dedicated paste function
+        async function pasteFromClipboard() {
+            try {
+                const clipboardItems = await navigator.clipboard.read();
+                
+                for (const clipboardItem of clipboardItems) {
+                    for (const type of clipboardItem.types) {
+                        if (type.startsWith('image/')) {
+                            const blob = await clipboardItem.getType(type);
+                            const file = new File([blob], 'pasted-image.png', { type: type });
+                            handleFile(file);
+                            return;
+                        }
+                    }
+                }
+                
+                showError('No image found in clipboard. Please copy an image first.');
+            } catch (error) {
+                console.error('Paste error:', error);
+                showError('Failed to paste image. Please try uploading the file instead.');
+            }
+        }
+
+        // Initialize Chart.js pattern visualizations with realistic candlestick appearance
+        function initializePatternCharts() {
+            // Bull Flag Pattern with candlestick background
+            createCandlestickPatternChart('bullFlagChart', {
+                // Candlestick data (open, high, low, close for each period)
+                candlesticks: [
+                    {o: 100, h: 105, l: 98, c: 102, bullish: true},
+                    {o: 102, h: 125, l: 100, c: 120, bullish: true},
+                    {o: 120, h: 145, l: 118, c: 140, bullish: true},
+                    {o: 140, h: 165, l: 138, c: 160, bullish: true},
+                    {o: 160, h: 162, l: 150, c: 155, bullish: false},
+                    {o: 155, h: 158, l: 145, c: 150, bullish: false},
+                    {o: 150, h: 152, l: 142, c: 145, bullish: false},
+                    {o: 145, h: 170, l: 143, c: 165, bullish: true}
+                ],
+                title: 'Bull Flag - Strong rally followed by consolidation'
+            });
+
+            // Head & Shoulders with candlestick background
+            createCandlestickPatternChart('headShouldersChart', {
+                candlesticks: [
+                    {o: 100, h: 108, l: 98, c: 105, bullish: true},
+                    {o: 105, h: 125, l: 103, c: 120, bullish: true},
+                    {o: 120, h: 122, l: 108, c: 110, bullish: false},
+                    {o: 110, h: 145, l: 108, c: 140, bullish: true},
+                    {o: 140, h: 142, l: 100, c: 105, bullish: false},
+                    {o: 105, h: 120, l: 103, c: 115, bullish: true},
+                    {o: 115, h: 118, l: 88, c: 90, bullish: false}
+                ],
+                title: 'Head & Shoulders - Bearish reversal pattern'
+            });
+
+            // Double Bottom with candlestick background
+            createCandlestickPatternChart('doubleBottomChart', {
+                candlesticks: [
+                    {o: 120, h: 125, l: 118, c: 122, bullish: true},
+                    {o: 122, h: 124, l: 95, c: 100, bullish: false},
+                    {o: 100, h: 118, l: 98, c: 115, bullish: true},
+                    {o: 115, h: 118, l: 100, c: 105, bullish: false},
+                    {o: 105, h: 108, l: 98, c: 100, bullish: false},
+                    {o: 100, h: 118, l: 98, c: 115, bullish: true},
+                    {o: 115, h: 135, l: 113, c: 130, bullish: true}
+                ],
+                title: 'Double Bottom - Bullish reversal pattern'
+            });
+
+            // Ascending Triangle
+            createCandlestickPatternChart('ascendingTriangleChart', {
+                candlesticks: [
+                    {o: 100, h: 108, l: 98, c: 105, bullish: true},
+                    {o: 105, h: 115, l: 103, c: 110, bullish: true},
+                    {o: 110, h: 120, l: 108, c: 118, bullish: true},
+                    {o: 118, h: 120, l: 115, c: 119, bullish: true},
+                    {o: 119, h: 120, l: 117, c: 118, bullish: false},
+                    {o: 118, h: 128, l: 116, c: 125, bullish: true}
+                ],
+                title: 'Ascending Triangle - Bullish continuation'
+            });
+
+            // Cup & Handle
+            createCandlestickPatternChart('cupHandleChart', {
+                candlesticks: [
+                    {o: 120, h: 125, l: 118, c: 122, bullish: true},
+                    {o: 122, h: 124, l: 95, c: 100, bullish: false},
+                    {o: 100, h: 105, l: 85, c: 90, bullish: false},
+                    {o: 90, h: 105, l: 88, c: 100, bullish: true},
+                    {o: 100, h: 118, l: 98, c: 115, bullish: true},
+                    {o: 115, h: 118, l: 108, c: 110, bullish: false},
+                    {o: 110, h: 118, l: 108, c: 115, bullish: true},
+                    {o: 115, h: 130, l: 113, c: 125, bullish: true}
+                ],
+                title: 'Cup & Handle - Bullish continuation'
+            });
+
+            // Falling Wedge
+            createCandlestickPatternChart('fallingWedgeChart', {
+                candlesticks: [
+                    {o: 120, h: 125, l: 118, c: 122, bullish: true},
+                    {o: 122, h: 124, l: 105, c: 110, bullish: false},
+                    {o: 110, h: 115, l: 100, c: 105, bullish: false},
+                    {o: 105, h: 110, l: 98, c: 102, bullish: false},
+                    {o: 102, h: 108, l: 99, c: 101, bullish: false},
+                    {o: 101, h: 115, l: 99, c: 110, bullish: true}
+                ],
+                title: 'Falling Wedge - Usually bullish breakout'
+            });
+        }
+
+        function createCandlestickPatternChart(canvasId, patternData) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const candlesticks = patternData.candlesticks;
+            
+            // Create datasets for candlestick bodies and wicks
+            const bodyData = candlesticks.map((candle, index) => ({
+                x: index,
+                y: [Math.min(candle.o, candle.c), Math.max(candle.o, candle.c)]
+            }));
+            
+            const wickData = candlesticks.map((candle, index) => ({
+                x: index,
+                y: [candle.l, candle.h]
+            }));
+            
+            // Create line overlay for pattern recognition
+            const lineData = candlesticks.map(candle => candle.c);
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: candlesticks.map((_, index) => ''),
+                    datasets: [
+                        // Candlestick wicks (thin lines)
+                        {
+                            type: 'bar',
+                            label: 'Wicks',
+                            data: wickData.map(d => d.y[1] - d.y[0]),
+                            backgroundColor: candlesticks.map(c => 'rgba(255, 255, 255, 0.6)'),
+                            borderColor: candlesticks.map(c => 'rgba(255, 255, 255, 0.8)'),
+                            borderWidth: 1,
+                            barThickness: 2,
+                            order: 3
+                        },
+                        // Candlestick bodies
+                        {
+                            type: 'bar',
+                            label: 'Bodies',
+                            data: bodyData.map(d => d.y[1] - d.y[0]),
+                            backgroundColor: candlesticks.map(c => c.bullish ? 'rgba(0, 255, 136, 0.8)' : 'rgba(255, 68, 68, 0.8)'),
+                            borderColor: candlesticks.map(c => c.bullish ? '#00ff88' : '#ff4444'),
+                            borderWidth: 1,
+                            barThickness: 8,
+                            order: 2
+                        },
+                        // Pattern line overlay
+                        {
+                            type: 'line',
+                            label: 'Pattern',
+                            data: lineData,
+                            borderColor: '#00d4ff',
+                            backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: patternData.title,
+                            color: '#ffffff',
+                            font: {
+                                size: 11,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: false,
+                            stacked: false
+                        },
+                        y: {
+                            display: false,
+                            stacked: false,
+                            beginAtZero: false
+                        }
+                    },
+                    elements: {
+                        point: {
+                            radius: 0
+                        }
+                    },
+                    interaction: {
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        // Drag and drop functionality (without click handler)
         const chartUpload = document.getElementById('chartUpload');
         
         chartUpload.addEventListener('dragover', (e) => {
@@ -383,8 +731,11 @@
             chartUpload.classList.add('dragover');
         });
 
-        chartUpload.addEventListener('dragleave', () => {
-            chartUpload.classList.remove('dragover');
+        chartUpload.addEventListener('dragleave', (e) => {
+            // Only remove dragover if we're actually leaving the drop zone
+            if (!chartUpload.contains(e.relatedTarget)) {
+                chartUpload.classList.remove('dragover');
+            }
         });
 
         chartUpload.addEventListener('drop', (e) => {
@@ -442,6 +793,12 @@
             try {
                 const formData = new FormData();
                 formData.append('chart', uploadedImage);
+                
+                // Add contract address if provided
+                const contractAddress = document.getElementById('contractInput').value.trim();
+                if (contractAddress) {
+                    formData.append('contract_address', contractAddress);
+                }
 
                 const response = await fetch('/analyze-chart', {
                     method: 'POST',
@@ -498,18 +855,16 @@
         }
 
         // Add fade-in animation to cards when they come into view
-        document.addEventListener('DOMContentLoaded', function() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            document.querySelectorAll('.card, .pattern-card').forEach(item => {
-                observer.observe(item);
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
             });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.card, .pattern-card').forEach(item => {
+            observer.observe(item);
         });
     </script>
 </body>

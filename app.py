@@ -14,7 +14,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, TimeoutError, as_completed
 import random
 import base64
-from chart_analysis import handle_chart_analysis
+from chart_analysis import handle_enhanced_chart_analysis
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -1739,7 +1739,7 @@ def charts():
 
 @app.route('/analyze-chart', methods=['POST'])
 def analyze_chart():
-    return handle_chart_analysis()
+    return handle_enhanced_chart_analysis()
 
 @app.route('/market-overview', methods=['GET'])
 def market_overview():

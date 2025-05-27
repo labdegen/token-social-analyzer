@@ -1,17 +1,22 @@
 """
-Chart Analysis Module for ASK DEGEN
-Handles GPT-4o Vision API integration for chart analysis
+Enhanced Chart Analysis Module for ASK DEGEN
+Handles GPT-4o Vision API integration with DexScreener data integration
 """
 
 import os
 import base64
+import requests
 from openai import OpenAI
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
+import logging
+import json
 
-class ChartAnalyzer:
+logger = logging.getLogger(__name__)
+
+class EnhancedChartAnalyzer:
     def __init__(self):
-        """Initialize the chart analyzer with OpenAI client"""
+        """Initialize the enhanced chart analyzer with OpenAI client"""
         self.client = None
         if os.getenv('OPENAI_API_KEY'):
             self.client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
@@ -44,12 +49,57 @@ class ChartAnalyzer:
         
         return True, 'File is valid'
 
-    def analyze_chart_image(self, image_file):
+    def fetch_token_data(self, contract_address):
+        """Fetch token data from DexScreener API"""
+        try:
+            if not contract_address or len(contract_address) < 32:
+                return None
+            
+            url = f"https://api.dexscreener.com/latest/dex/tokens/{contract_address}"
+            response = requests.get(url, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if data.get('pairs') and len(data['pairs']) > 0:
+                    # Get the highest volume pair for most accurate data
+                    pairs = sorted(data['pairs'], key=lambda x: float(x.get('volume', {}).get('h24', 0)), reverse=True)
+                    pair = pairs[0]
+                    base_token = pair.get('baseToken', {})
+                    
+                    return {
+                        'symbol': base_token.get('symbol', 'UNKNOWN'),
+                        'name': base_token.get('name', 'Unknown Token'),
+                        'price_usd': float(pair.get('priceUsd', 0)),
+                        'price_change_24h': float(pair.get('priceChange', {}).get('h24', 0)),
+                        'price_change_6h': float(pair.get('priceChange', {}).get('h6', 0)),
+                        'price_change_1h': float(pair.get('priceChange', {}).get('h1', 0)),
+                        'volume_24h': float(pair.get('volume', {}).get('h24', 0)),
+                        'volume_6h': float(pair.get('volume', {}).get('h6', 0)),
+                        'market_cap': float(pair.get('marketCap', 0)),
+                        'liquidity': float(pair.get('liquidity', {}).get('usd', 0)),
+                        'fdv': float(pair.get('fdv', 0)),
+                        'dex_name': pair.get('dexId', 'Unknown DEX'),
+                        'chain': pair.get('chainId', 'Unknown Chain'),
+                        'buys_24h': pair.get('txns', {}).get('h24', {}).get('buys', 0),
+                        'sells_24h': pair.get('txns', {}).get('h24', {}).get('sells', 0),
+                        'dex_url': pair.get('url', ''),
+                        'created_at': pair.get('pairCreatedAt', None)
+                    }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error fetching token data: {e}")
+            return None
+
+    def analyze_chart_image(self, image_file, contract_address=None):
         """
-        Analyze chart image using GPT-4o Vision
+        Analyze chart image using GPT-4o Vision with optional token context
         
         Args:
             image_file: Flask uploaded file object
+            contract_address: Optional Solana contract address for additional context
             
         Returns:
             dict: Analysis result with success status and content
@@ -66,12 +116,17 @@ class ChartAnalyzer:
             if not is_valid:
                 return {'success': False, 'error': message}
 
+            # Fetch token data if contract address provided
+            token_data = None
+            if contract_address:
+                token_data = self.fetch_token_data(contract_address)
+
             # Read and encode image
             image_data = image_file.read()
             base64_image = base64.b64encode(image_data).decode('utf-8')
             
-            # Prepare prompt for chart analysis
-            prompt = self._get_analysis_prompt()
+            # Prepare enhanced prompt with token context
+            prompt = self._get_enhanced_analysis_prompt(token_data)
 
             # Call OpenAI GPT-4o Vision API
             response = self.client.chat.completions.create(
@@ -91,101 +146,200 @@ class ChartAnalyzer:
                         ]
                     }
                 ],
-                max_tokens=2000,
+                max_tokens=3000,
                 temperature=0.7
             )
 
             analysis = response.choices[0].message.content
             
-            # Format the analysis with HTML
-            formatted_analysis = self._format_analysis_html(analysis)
+            # Format the analysis with enhanced HTML
+            formatted_analysis = self._format_enhanced_analysis_html(analysis, token_data)
             
             return {
                 'success': True,
-                'analysis': formatted_analysis
+                'analysis': formatted_analysis,
+                'token_data': token_data
             }
 
         except Exception as e:
+            logger.error(f"Chart analysis error: {e}")
             return {'success': False, 'error': f'Analysis failed: {str(e)}'}
 
-    def _get_analysis_prompt(self):
-        """Get the analysis prompt for GPT-4o"""
-        return """You are an expert cryptocurrency and financial chart analyst. Analyze this trading chart image and provide a comprehensive analysis including:
+    def _get_enhanced_analysis_prompt(self, token_data=None):
+        """Get the enhanced analysis prompt for GPT-4o with token context"""
+        
+        token_context = ""
+        if token_data:
+            token_context = f"""
+ADDITIONAL TOKEN CONTEXT:
+- Token: {token_data['symbol']} ({token_data['name']})
+- Current Price: ${token_data['price_usd']:.8f}
+- 24h Change: {token_data['price_change_24h']:+.2f}%
+- 6h Change: {token_data['price_change_6h']:+.2f}%
+- 1h Change: {token_data['price_change_1h']:+.2f}%
+- 24h Volume: ${token_data['volume_24h']:,.0f}
+- Market Cap: ${token_data['market_cap']:,.0f}
+- Liquidity: ${token_data['liquidity']:,.0f}
+- Buy/Sell Ratio (24h): {token_data['buys_24h']}/{token_data['sells_24h']}
+- DEX: {token_data['dex_name']} on {token_data['chain']}
 
-1. **Technical Analysis:**
+Please incorporate this real-time data into your analysis and compare it with what you see in the chart.
+"""
+        
+        return f"""You are an expert cryptocurrency and financial chart analyst. Analyze this trading chart image and provide a comprehensive analysis.
+
+{token_context}
+
+IMPORTANT: Format your response as clean HTML with proper structure. Use the following guidelines:
+
+1. **CHART PATTERN IDENTIFICATION** - FIRST identify any specific chart patterns you see:
+   - Head and Shoulders, Inverse Head and Shoulders
+   - Bull/Bear Flags and Pennants
+   - Triangles (Ascending, Descending, Symmetrical)
+   - Double/Triple Tops and Bottoms
+   - Cup and Handle
+   - Wedges (Rising/Falling)
+   - Rectangles/Trading Ranges
+   - Channels (Upward/Downward)
+
+2. **Technical Analysis:**
    - Key support and resistance levels
-   - Chart patterns identified
    - Trend analysis (uptrend, downtrend, sideways)
    - Volume analysis if visible
+   - Breakout/breakdown scenarios
 
-2. **Technical Indicators:**
-   - Moving averages positioning
-   - RSI levels and interpretation
+3. **Technical Indicators:**
+   - Moving averages positioning and crossovers
+   - RSI levels and interpretation (overbought/oversold)
    - MACD signals if visible
    - Any other indicators present
 
-3. **Price Action:**
+4. **Price Action Analysis:**
    - Recent price movement analysis
    - Key levels to watch
-   - Breakout/breakdown scenarios
+   - Market structure analysis
 
-4. **Trading Signals:**
-   - Potential entry points
+5. **Trading Strategy:**
+   - Potential entry points with rationale
    - Stop loss recommendations
    - Take profit targets
-   - Risk assessment
+   - Risk assessment and position sizing
 
-5. **Overall Assessment:**
+6. **Overall Assessment:**
    - Bullish, bearish, or neutral outlook
-   - Confidence level in analysis
+   - Confidence level (High/Medium/Low)
+   - Time horizon for the analysis
    - Key risks and opportunities
 
-Format your response with clear headings and bullet points. Focus on actionable insights for traders. Be specific about price levels when visible on the chart."""
+FORMAT REQUIREMENTS:
+- Use HTML tables for data comparisons
+- Use proper headings (<h2>, <h3>)
+- Use bullet points (<ul><li>) for lists
+- Use <strong> for emphasis
+- Use colored text for bullish (green) and bearish (red) signals
+- Include relevant emojis for visual appeal
+- Use <div class="highlight-box"> for important alerts
+- Create summary tables where appropriate
 
-    def _format_analysis_html(self, analysis_text):
-        """Convert plain text analysis to HTML format"""
-        lines = analysis_text.split('\n')
+If you identify specific chart patterns, clearly state them at the beginning with high confidence.
+Be specific about price levels when visible on the chart.
+Make the analysis actionable for traders.
+"""
+
+    def _format_enhanced_analysis_html(self, analysis_text, token_data=None):
+        """Convert analysis to enhanced HTML format with better styling"""
+        
+        # Start with token data header if available
         html_content = []
         
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-                
-            # Handle headings (lines starting with ##, **, or numbered lists)
-            if line.startswith('##') or (line.startswith('**') and line.endswith('**')):
-                heading_text = line.replace('##', '').replace('**', '').strip()
-                html_content.append(f'<div class="content-heading">{heading_text}</div>')
-            elif line.startswith('- ') or line.startswith('• '):
-                # Handle bullet points
-                bullet_text = line[2:].strip()
-                html_content.append(f'<div class="bullet-point">{bullet_text}</div>')
-            elif line[0].isdigit() and line[1:3] == '. ':
-                # Handle numbered lists as bullet points
-                bullet_text = line[3:].strip()
-                html_content.append(f'<div class="bullet-point">{bullet_text}</div>')
-            else:
-                # Regular paragraph
-                html_content.append(f'<p>{line}</p>')
+        if token_data:
+            html_content.append(f"""
+            <div class="token-info-header">
+                <h2>📊 {token_data['symbol']} Chart Analysis</h2>
+                <div class="token-metrics-grid">
+                    <div class="metric">
+                        <span class="metric-label">Price</span>
+                        <span class="metric-value">${token_data['price_usd']:.8f}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">24h Change</span>
+                        <span class="metric-value {'positive' if token_data['price_change_24h'] > 0 else 'negative'}">
+                            {token_data['price_change_24h']:+.2f}%
+                        </span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Volume 24h</span>
+                        <span class="metric-value">${token_data['volume_24h']:,.0f}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Market Cap</span>
+                        <span class="metric-value">${token_data['market_cap']:,.0f}</span>
+                    </div>
+                </div>
+            </div>
+            """)
+        
+        # Process the analysis text - it should already be HTML formatted by GPT
+        # Just add some additional styling classes
+        processed_analysis = analysis_text
+        
+        # Add styling classes to common elements
+        processed_analysis = processed_analysis.replace('<h2>', '<h2 class="analysis-heading">')
+        processed_analysis = processed_analysis.replace('<h3>', '<h3 class="analysis-subheading">')
+        processed_analysis = processed_analysis.replace('<table>', '<table class="analysis-table">')
+        processed_analysis = processed_analysis.replace('<ul>', '<ul class="analysis-list">')
+        
+        # Add highlight boxes for important information
+        if 'BULLISH' in processed_analysis.upper():
+            processed_analysis = processed_analysis.replace('BULLISH', '<span class="bullish-signal">🟢 BULLISH</span>')
+        if 'BEARISH' in processed_analysis.upper():
+            processed_analysis = processed_analysis.replace('BEARISH', '<span class="bearish-signal">🔴 BEARISH</span>')
+        if 'NEUTRAL' in processed_analysis.upper():
+            processed_analysis = processed_analysis.replace('NEUTRAL', '<span class="neutral-signal">🟡 NEUTRAL</span>')
+        
+        html_content.append(processed_analysis)
+        
+        # Add analysis footer
+        html_content.append("""
+        <div class="analysis-footer">
+            <p><strong>⚠️ Risk Disclaimer:</strong> This analysis is for educational purposes only. 
+            Always conduct your own research and implement proper risk management strategies.</p>
+        </div>
+        """)
         
         return ''.join(html_content)
 
-# Create global instance
-chart_analyzer = ChartAnalyzer()
 
-def handle_chart_analysis():
+# Create global instance (keep both for backward compatibility)
+enhanced_chart_analyzer = EnhancedChartAnalyzer()
+chart_analyzer = enhanced_chart_analyzer  # For backward compatibility
+
+def handle_enhanced_chart_analysis():
     """
-    Flask route handler for chart analysis
-    Call this from your main Flask app
+    Enhanced Flask route handler for chart analysis with token context
     """
     try:
+        # Check for chart image
         if 'chart' not in request.files:
             return jsonify({'success': False, 'error': 'No chart image provided'})
         
         file = request.files['chart']
-        result = chart_analyzer.analyze_chart_image(file)
+        
+        # Get optional contract address
+        contract_address = request.form.get('contract_address', '').strip()
+        if contract_address and len(contract_address) < 32:
+            contract_address = None  # Invalid address, ignore
+        
+        # Analyze with enhanced features
+        result = enhanced_chart_analyzer.analyze_chart_image(file, contract_address)
         
         return jsonify(result)
 
     except Exception as e:
+        logger.error(f"Enhanced chart analysis error: {e}")
         return jsonify({'success': False, 'error': f'Analysis failed: {str(e)}'})
+
+# Also export the enhanced handler as the regular handler for backward compatibility
+def handle_chart_analysis():
+    """Backward compatibility wrapper"""
+    return handle_enhanced_chart_analysis()
