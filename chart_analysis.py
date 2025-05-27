@@ -1,12 +1,12 @@
 """
-Enhanced Chart Analysis Module for ASK DEGEN
+Safe Chart Analysis Module for ASK DEGEN - Render Compatible
 Handles GPT-4o Vision API integration with DexScreener data integration
+Uses lazy initialization to prevent deployment issues
 """
 
 import os
 import base64
 import requests
-from openai import OpenAI
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
 import logging
@@ -14,17 +14,64 @@ import json
 
 logger = logging.getLogger(__name__)
 
-class EnhancedChartAnalyzer:
+class SafeChartAnalyzer:
     def __init__(self):
-        """Initialize the enhanced chart analyzer with OpenAI client"""
-        self.client = None
-        if os.getenv('OPENAI_API_KEY'):
-            self.client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        """Initialize with lazy loading to prevent deployment issues"""
+        self._client = None
+        self._client_initialized = False
         
         # Allowed file extensions
         self.allowed_extensions = {'png', 'jpg', 'jpeg', 'webp'}
         # Max file size (10MB)
         self.max_file_size = 10 * 1024 * 1024
+        
+        logger.info("SafeChartAnalyzer initialized with lazy loading")
+
+    @property
+    def client(self):
+        """Lazy load OpenAI client only when needed"""
+        if not self._client_initialized:
+            self._initialize_openai_client()
+        return self._client
+
+    def _initialize_openai_client(self):
+        """Initialize OpenAI client with comprehensive error handling"""
+        self._client_initialized = True
+        
+        try:
+            openai_api_key = os.getenv('OPENAI_API_KEY')
+            if not openai_api_key or openai_api_key in ['your-openai-api-key-here', '']:
+                logger.warning("OpenAI API key not found or invalid")
+                self._client = None
+                return
+            
+            # Import OpenAI only when needed to avoid module-level issues
+            try:
+                from openai import OpenAI
+                self._client = OpenAI(api_key=openai_api_key)
+                logger.info("OpenAI client initialized successfully")
+            except ImportError as e:
+                logger.error(f"OpenAI package not available: {e}")
+                self._client = None
+            except Exception as e:
+                logger.error(f"Failed to initialize OpenAI client: {e}")
+                # Try alternative initialization for compatibility
+                try:
+                    from openai import OpenAI
+                    # Initialize with minimal parameters to avoid httpx conflicts
+                    self._client = OpenAI(
+                        api_key=openai_api_key,
+                        timeout=30.0,
+                        max_retries=2
+                    )
+                    logger.info("OpenAI client initialized with fallback method")
+                except Exception as e2:
+                    logger.error(f"Fallback OpenAI initialization also failed: {e2}")
+                    self._client = None
+                    
+        except Exception as e:
+            logger.error(f"Unexpected error during OpenAI initialization: {e}")
+            self._client = None
 
     def is_allowed_file(self, filename):
         """Check if uploaded file has allowed extension"""
@@ -105,10 +152,11 @@ class EnhancedChartAnalyzer:
             dict: Analysis result with success status and content
         """
         try:
+            # Check if OpenAI client is available
             if not self.client:
                 return {
                     'success': False, 
-                    'error': 'OpenAI API not configured. Please set OPENAI_API_KEY environment variable.'
+                    'error': 'Chart analysis requires OpenAI API key. Please set OPENAI_API_KEY environment variable with a valid GPT-4o API key.'
                 }
 
             # Validate file
@@ -129,28 +177,36 @@ class EnhancedChartAnalyzer:
             prompt = self._get_enhanced_analysis_prompt(token_data)
 
             # Call OpenAI GPT-4o Vision API
-            response = self.client.chat.completions.create(
-                model="chatgpt-4o-latest",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": [
-                            {"type": "text", "text": prompt},
-                            {
-                                "type": "image_url",
-                                "image_url": {
-                                    "url": f"data:image/jpeg;base64,{base64_image}",
-                                    "detail": "high"
+            try:
+                response = self.client.chat.completions.create(
+                    model="chatgpt-4o-latest",
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "text", "text": prompt},
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:image/jpeg;base64,{base64_image}",
+                                        "detail": "high"
+                                    }
                                 }
-                            }
-                        ]
-                    }
-                ],
-                max_tokens=3000,
-                temperature=0.7
-            )
-
-            analysis = response.choices[0].message.content
+                            ]
+                        }
+                    ],
+                    max_tokens=3000,
+                    temperature=0.7
+                )
+                
+                analysis = response.choices[0].message.content
+                
+            except Exception as api_error:
+                logger.error(f"OpenAI API call failed: {api_error}")
+                return {
+                    'success': False,
+                    'error': f'OpenAI API call failed: {str(api_error)}. Please check your API key and try again.'
+                }
             
             # Format the analysis with enhanced HTML
             formatted_analysis = self._format_enhanced_analysis_html(analysis, token_data)
@@ -310,13 +366,17 @@ Make the analysis actionable for traders.
         return ''.join(html_content)
 
 
-# Create global instance (keep both for backward compatibility)
-enhanced_chart_analyzer = EnhancedChartAnalyzer()
-chart_analyzer = enhanced_chart_analyzer  # For backward compatibility
+# Use lazy initialization to prevent module-level errors
+def get_chart_analyzer():
+    """Get chart analyzer instance with lazy initialization"""
+    global _chart_analyzer_instance
+    if '_chart_analyzer_instance' not in globals():
+        _chart_analyzer_instance = SafeChartAnalyzer()
+    return _chart_analyzer_instance
 
-def handle_enhanced_chart_analysis():
+def handle_chart_analysis():
     """
-    Enhanced Flask route handler for chart analysis with token context
+    Safe Flask route handler for chart analysis with token context
     """
     try:
         # Check for chart image
@@ -330,16 +390,19 @@ def handle_enhanced_chart_analysis():
         if contract_address and len(contract_address) < 32:
             contract_address = None  # Invalid address, ignore
         
+        # Get analyzer instance safely
+        analyzer = get_chart_analyzer()
+        
         # Analyze with enhanced features
-        result = enhanced_chart_analyzer.analyze_chart_image(file, contract_address)
+        result = analyzer.analyze_chart_image(file, contract_address)
         
         return jsonify(result)
 
     except Exception as e:
-        logger.error(f"Enhanced chart analysis error: {e}")
+        logger.error(f"Chart analysis handler error: {e}")
         return jsonify({'success': False, 'error': f'Analysis failed: {str(e)}'})
 
-# Also export the enhanced handler as the regular handler for backward compatibility
-def handle_chart_analysis():
+# For backward compatibility
+def handle_enhanced_chart_analysis():
     """Backward compatibility wrapper"""
-    return handle_enhanced_chart_analysis()
+    return handle_chart_analysis()
