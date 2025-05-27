@@ -20,9 +20,8 @@ from chart_analysis import handle_chart_analysis
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 
-
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 
 
 # API Keys
 XAI_API_KEY = os.getenv('XAI_API_KEY', 'your-xai-api-key-here')
@@ -1727,11 +1726,11 @@ def index():
     return render_template('index.html')
 
 @app.route('/dictionary')
-def charts():
+def dictionary():
     return render_template('dictionary.html')
 
 @app.route('/resources')
-def charts():
+def resources():
     return render_template('resources.html')
 
 @app.route('/charts')
