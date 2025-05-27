@@ -374,7 +374,7 @@
             padding: 30px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
+		h2{padding-top:35px;}
         .analyzer-input {
             display: grid;
             grid-template-columns: 1fr auto;
@@ -584,7 +584,7 @@
         .momentum-score {
             font-size: 4rem;
             font-weight: 900;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: #fff;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
@@ -1372,6 +1372,44 @@
                 display: none;
             }
         }
+		/* Accounts to Follow Styling */
+.accounts-list {
+    padding-right: 10px;
+}
+
+.account-item {
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 3px solid #1da1f2;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.account-item:hover {
+    background: rgba(29, 161, 242, 0.1);
+    transform: translateX(3px);
+}
+
+.account-username {
+    font-weight: 700;
+    color: #1da1f2;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.account-followers {
+    font-size: 0.75rem;
+    color: #7dd3fc;
+    margin-bottom: 6px;
+}
+
+.account-activity {
+    font-size: 0.8rem;
+    color: #e1e7ff;
+    line-height: 1.3;
+}
     </style>
 </head>
 <body>
@@ -1520,16 +1558,32 @@
                         </div>
                     </div>
 
-                    <!-- Live Tweets Panel -->
-                    <div class="live-tweets-panel">
-                        <div class="section-header">
-                            <span style="font-size: 1.5rem;">🐦</span>
-                            <div class="section-title">Live X Feed</div>
-                        </div>
-                        <div class="tweets-list" id="tweetsList">
-                            <!-- Tweets will be populated here -->
-                        </div>
-                    </div>
+                  <!-- Live Tweets Panel with Accounts to Follow -->
+<div class="live-tweets-panel">
+    <div class="section-header">
+        <span style="font-size: 1.5rem;">🐦</span>
+        <div class="section-title">Live Social Feed</div>
+    </div>
+    
+    <!-- Two Column Layout -->
+    <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 20px;">
+        <!-- Live Tweets (3/4 width) -->
+        <div>
+            <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.1rem;">📱 Live X Feed</h3>
+            <div class="tweets-list" id="tweetsList" style="max-height: 350px;">
+                <!-- Tweets will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Accounts to Follow (1/4 width) -->
+        <div>
+            <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.1rem;">👥 Accounts to Follow</h3>
+            <div class="tweets-list" id="contractAccountsList" style="max-height: 350px; overflow-y: auto;">
+                <!-- Contract accounts will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
 
                     <!-- Expert Analysis -->
                     <div class="expert-analysis">
@@ -2148,7 +2202,22 @@
                 const percentage = metric.value;
                 metricsHtml += `
                     <div class="momentum-metric">
-                        <div class="metric-visual" style="background: conic-gradient(#667eea 0deg, #764ba2 ${percentage * 3.6}deg, rgba(255,255,255,0.1) ${percentage * 3.6}deg, rgba(255,255,255,0.1) 360deg);"></div>
+                   <div
+  class="metric-visual"
+  style="background: conic-gradient(
+    /* cold → hot */
+    #0040ff 0deg,
+    #00e5ff 72deg,
+    #00ff00 144deg,
+    #ffff00 216deg,
+    #ff7f00 288deg,
+    /* fill up to percentage in red */
+    #ff0000 ${percentage * 3.6}deg,
+    /* fade‐out beyond percentage */
+    rgba(255,255,255,0.1) ${percentage * 3.6}deg,
+    rgba(255,255,255,0.1) 360deg
+  );"
+></div>
                         <div class="metric-value-main">${metric.value}${metric.unit}</div>
                         <div class="metric-label-main">${metric.label}</div>
                     </div>
@@ -2158,29 +2227,61 @@
             document.getElementById('momentumMetrics').innerHTML = metricsHtml;
         }
 
-        function updateTweetsSection(data) {
-            const tweets = data.actual_tweets || [];
-            let tweetsHtml = '';
-            
-            if (tweets.length > 0) {
-                tweets.forEach(tweet => {
-                    tweetsHtml += `
-                        <div class="tweet-item">
-                            <div class="tweet-header">
-                                <a href="${tweet.url || '#'}" target="_blank" class="tweet-author">@${tweet.author}</a>
-                                <div class="tweet-timestamp">${tweet.timestamp}</div>
-                            </div>
-                            <div class="tweet-content">"${tweet.text}"</div>
-                            <div class="tweet-engagement">${tweet.engagement} • 🔴 LIVE</div>
-                        </div>
-                    `;
-                });
-            } else {
-                tweetsHtml = '<div class="tweet-item"><div class="tweet-content">Connect XAI API for real-time X/Twitter data feed with live social mentions and high-follower KOL activity.</div></div>';
-            }
-            
-            document.getElementById('tweetsList').innerHTML = tweetsHtml;
-        }
+       function updateTweetsSection(data) {
+    const tweets = data.actual_tweets || [];
+    let tweetsHtml = '';
+    
+    if (tweets.length > 0) {
+        tweets.forEach(tweet => {
+            tweetsHtml += `
+                <div class="tweet-item">
+                    <div class="tweet-header">
+                        <a href="${tweet.url || '#'}" target="_blank" class="tweet-author">@${tweet.author}</a>
+                        <div class="tweet-timestamp">${tweet.timestamp}</div>
+                    </div>
+                    <div class="tweet-content">"${tweet.text}"</div>
+                    <div class="tweet-engagement">${tweet.engagement} • 🔴 LIVE</div>
+                </div>
+            `;
+        });
+    } else {
+        tweetsHtml = '<div class="tweet-item"><div class="tweet-content">Connect XAI API for real-time X/Twitter data feed with live social mentions and high-follower KOL activity.</div></div>';
+    }
+    
+    document.getElementById('tweetsList').innerHTML = tweetsHtml;
+    
+    // Update contract accounts
+    updateContractAccounts(data);
+}
+
+// Add this new function after updateTweetsSection
+function updateContractAccounts(data) {
+    const accounts = data.contract_accounts || [];
+    let accountsHtml = '';
+    
+    if (accounts.length > 0) {
+        accounts.forEach(account => {
+            accountsHtml += `
+                <div class="account-item" onclick="window.open('${account.url}', '_blank')">
+                    <div class="account-username">@${account.username}</div>
+                    <div class="account-followers">${account.followers}</div>
+                    <div class="account-activity">${account.recent_activity}</div>
+                </div>
+            `;
+        });
+    } else {
+        accountsHtml = `
+            <div class="account-item" style="text-align: center; opacity: 0.7; cursor: default;">
+                <div class="account-activity" style="font-style: italic;">
+                    No accounts to recommend at this time
+                </div>
+            </div>
+        `;
+    }
+    
+    document.getElementById('contractAccountsList').innerHTML = accountsHtml;
+}
+		
 
         function updateExpertAnalysis(data) {
             const analysis = data.expert_analysis || 'Connect XAI API for comprehensive expert analysis with real-time market insights and trading perspectives.';
