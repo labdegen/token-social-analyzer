@@ -14,10 +14,13 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, TimeoutError, as_completed
 import random
 import base64
+from chart_analysis import handle_chart_analysis
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 
 
 app = Flask(__name__)
 
@@ -1722,6 +1725,22 @@ dashboard = SocialCryptoDashboard()
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/dictionary')
+def charts():
+    return render_template('dictionary.html')
+
+@app.route('/resources')
+def charts():
+    return render_template('resources.html')
+
+@app.route('/charts')
+def charts():
+    return render_template('charts.html')
+
+@app.route('/analyze-chart', methods=['POST'])
+def analyze_chart():
+    return handle_chart_analysis()
 
 @app.route('/market-overview', methods=['GET'])
 def market_overview():

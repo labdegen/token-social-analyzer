@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary - ASK DEGEN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Fixed Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <a href="/" class="logo">ASK DEGEN</a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Analyzer</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/dictionary" class="nav-link active">Dictionary</a>
+                <a href="/charts" class="nav-link">Chart Analysis</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-container">
+        <div class="page-title">📖 Crypto Trading Dictionary</div>
+        <div class="page-description">
+            Master the language of crypto trading and meme coins. From basic terms to advanced slang, 
+            understand what traders are really saying in Discord, Telegram, and Twitter.
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search terms (e.g. 'rug', 'diamond hands', 'degen')..." onkeyup="searchTerms()">
+        </div>
+
+        <div id="termsContainer">
+            <!-- A-D Terms -->
+            <div class="section term-section" data-letter="A">
+                <div class="section-header">
+                    <span style="font-size: 1.5rem;">📘</span>
+                    <div class="section-title">A - D</div>
+                </div>
+                
+                <div class="term-item">
+                    <div class="term-name">Alpha</div>
+                    <div class="term-definition">
+                        Exclusive information or early knowledge about potential profitable trades before they become public knowledge.
+                    </div>
+                    <div class="term-example">Example: "That Discord group shares good alpha on new meme coins."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Ape / Aping</div>
+                    <div class="term-definition">
+                        Buying into a cryptocurrency without doing proper research, usually driven by FOMO or hype.
+                    </div>
+                    <div class="term-example">Example: "I aped into BONK when I saw it trending on Twitter."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">ATH (All-Time High)</div>
+                    <div class="term-definition">
+                        The highest price a cryptocurrency has ever reached in its trading history.
+                    </div>
+                    <div class="term-example">Example: "SOL just broke its previous ATH of $260."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Bag / Bagholder</div>
+                    <div class="term-definition">
+                        A position in a cryptocurrency that has lost significant value. A bagholder is someone stuck with worthless tokens.
+                    </div>
+                    <div class="term-example">Example: "I'm bagholding this meme coin that dumped 90%."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Based</div>
+                    <div class="term-definition">
+                        Expressing approval or agreement, often used to describe someone who speaks truth regardless of popular opinion.
+                    </div>
+                    <div class="term-example">Example: "That analysis about the market crash was based."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Bundle</div>
+                    <div class="term-definition">
+                        A coordinated buying strategy where multiple wallets purchase the same token simultaneously to create artificial volume and price action.
+                    </div>
+                    <div class="term-example">Example: "That token launch was clearly bundled - 20 wallets bought at the same time."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">CT (Crypto Twitter)</div>
+                    <div class="term-definition">
+                        The cryptocurrency community on Twitter/X, where traders share opinions, alpha, and market analysis.
+                    </div>
+                    <div class="term-example">Example: "CT is bearish today after the Fed announcement."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Degen</div>
+                    <div class="term-definition">
+                        Short for "degenerate gambler" - someone who makes high-risk trades, often in meme coins or extremely volatile assets.
+                    </div>
+                    <div class="term-example">Example: "Only true degens buy tokens with no utility for the memes."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Diamond Hands 💎🙌</div>
+                    <div class="term-definition">
+                        Holding onto cryptocurrency positions through extreme volatility without selling, showing strong conviction.
+                    </div>
+                    <div class="term-example">Example: "I have diamond hands on SOL, not selling until $500."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">DCA (Dollar Cost Averaging)</div>
+                    <div class="term-definition">
+                        Investment strategy of buying fixed amounts at regular intervals regardless of price, reducing average cost over time.
+                    </div>
+                    <div class="term-example">Example: "I DCA $100 into SOL every week regardless of price."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">DYOR (Do Your Own Research)</div>
+                    <div class="term-definition">
+                        A reminder that you should research investments yourself rather than blindly following others' advice.
+                    </div>
+                    <div class="term-example">Example: "This token looks promising but DYOR before investing."</div>
+                </div>
+            </div>
+
+            <!-- E-L Terms -->
+            <div class="section term-section" data-letter="E">
+                <div class="section-header">
+                    <span style="font-size: 1.5rem;">📗</span>
+                    <div class="section-title">E - L</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Exit Liquidity</div>
+                    <div class="term-definition">
+                        New buyers who provide liquidity for early investors to sell their positions at higher prices.
+                    </div>
+                    <div class="term-example">Example: "Don't become exit liquidity for those who bought the bottom."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Farming</div>
+                    <div class="term-definition">
+                        Providing liquidity to earn rewards, or creating multiple wallets to qualify for airdrops.
+                    </div>
+                    <div class="term-example">Example: "I'm farming the new DeFi protocol for their upcoming airdrop."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Flip</div>
+                    <div class="term-definition">
+                        Quick buying and selling for profit, usually referring to short-term trades or NFT trading.
+                    </div>
+                    <div class="term-example">Example: "I flipped that meme coin for a 3x in 2 hours."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">FOMO (Fear of Missing Out)</div>
+                    <div class="term-definition">
+                        The anxiety-driven urge to buy into a rising asset because you fear missing potential profits.
+                    </div>
+                    <div class="term-example">Example: "I FOMO'd into BONK at the top and lost 50%."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">FUD (Fear, Uncertainty, Doubt)</div>
+                    <div class="term-definition">
+                        Negative information or sentiment spread to influence market perception and drive prices down.
+                    </div>
+                    <div class="term-example">Example: "That article about Solana going to zero is just FUD."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Giga Chad</div>
+                    <div class="term-definition">
+                        Someone who makes extremely successful or bold trading decisions, showing supreme confidence.
+                    </div>
+                    <div class="term-example">Example: "He bought the dip at $8 and held to $180, absolute giga chad."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">HODL</div>
+                    <div class="term-definition">
+                        "Hold On for Dear Life" - Long-term holding strategy regardless of short-term price movements.
+                    </div>
+                    <div class="term-example">Example: "I'm going to HODL my SOL through this bear market."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Jeet</div>
+                    <div class="term-definition">
+                        Someone who sells too early or at the first sign of profit, often missing larger gains. Derogatory term for weak hands.
+                    </div>
+                    <div class="term-example">Example: "Stop being a jeet and hold for bigger gains."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">KOL (Key Opinion Leader)</div>
+                    <div class="term-definition">
+                        Influential figures in crypto with large followings who can impact market sentiment through their opinions.
+                    </div>
+                    <div class="term-example">Example: "That KOL's tweet about the project caused a 50% pump."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Liquidity</div>
+                    <div class="term-definition">
+                        The ease with which an asset can be bought or sold without significantly affecting its price.
+                    </div>
+                    <div class="term-example">Example: "This meme coin has low liquidity, be careful with large orders."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">LFG (Let's F*cking Go)</div>
+                    <div class="term-definition">
+                        Expression of excitement and optimism, often used when prices are rising or good news emerges.
+                    </div>
+                    <div class="term-example">Example: "SOL just broke $200! LFG!! 🚀"</div>
+                </div>
+            </div>
+
+            <!-- M-R Terms -->
+            <div class="section term-section" data-letter="M">
+                <div class="section-header">
+                    <span style="font-size: 1.5rem;">📙</span>
+                    <div class="section-title">M - R</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Meme Coin</div>
+                    <div class="term-definition">
+                        Cryptocurrencies created as jokes or based on internet memes, often with no fundamental utility.
+                    </div>
+                    <div class="term-example">Example: "DOGWIFHAT is the latest Solana meme coin everyone's talking about."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Moonboy</div>
+                    <div class="term-definition">
+                        Overly optimistic trader who believes every investment will "go to the moon" (increase dramatically).
+                    </div>
+                    <div class="term-example">Example: "He's such a moonboy, thinks every token will 100x."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">NGU (Number Go Up)</div>
+                    <div class="term-definition">
+                        Simple investing philosophy focused solely on price appreciation without considering fundamentals.
+                    </div>
+                    <div class="term-example">Example: "I don't care about the tech, I just want NGU."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Paper Hands 📄🙌</div>
+                    <div class="term-definition">
+                        Selling positions quickly at the first sign of loss or small profit, opposite of diamond hands.
+                    </div>
+                    <div class="term-example">Example: "I had paper hands and sold my SOL at $20."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">PND (Pump and Dump)</div>
+                    <div class="term-definition">
+                        Manipulation scheme where organizers artificially inflate a token's price before selling their holdings.
+                    </div>
+                    <div class="term-example">Example: "That token's chart looks like a classic PND scheme."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Rekt</div>
+                    <div class="term-definition">
+                        Severely damaged or wiped out financially from bad trades or market movements.
+                    </div>
+                    <div class="term-example">Example: "I got absolutely rekt shorting SOL during that pump."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Rotate</div>
+                    <div class="term-definition">
+                        Moving money from one investment to another, often from established coins to newer opportunities.
+                    </div>
+                    <div class="term-example">Example: "Time to rotate some profits from SOL into meme coins."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Rug / Rug Pull</div>
+                    <div class="term-definition">
+                        When developers abandon a project and remove liquidity, causing the token price to crash to near zero.
+                    </div>
+                    <div class="term-example">Example: "The dev rugged the project overnight, taking all the liquidity."</div>
+                </div>
+            </div>
+
+            <!-- S-Z Terms -->
+            <div class="section term-section" data-letter="S">
+                <div class="section-header">
+                    <span style="font-size: 1.5rem;">📕</span>
+                    <div class="section-title">S - Z</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Shill</div>
+                    <div class="term-definition">
+                        Promoting a cryptocurrency for personal gain, often without disclosing financial incentives.
+                    </div>
+                    <div class="term-example">Example: "That influencer is just shilling their bags to followers."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Side Wallet</div>
+                    <div class="term-definition">
+                        Secondary crypto wallet used for risky trades, meme coins, or experimental investments separate from main holdings.
+                    </div>
+                    <div class="term-example">Example: "I only buy meme coins with my side wallet, not my main stack."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Snipe / Sniping</div>
+                    <div class="term-definition">
+                        Using bots or quick manual trading to buy tokens immediately when they launch or become available.
+                    </div>
+                    <div class="term-example">Example: "I sniped that token at launch and got a 10x."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Stack / Stacking</div>
+                    <div class="term-definition">
+                        Accumulating more of a cryptocurrency over time, building up your position.
+                    </div>
+                    <div class="term-example">Example: "I'm stacking SOL every paycheck for the next bull run."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Take Profit</div>
+                    <div class="term-definition">
+                        Selling portions of a position to realize gains, especially during price pumps.
+                    </div>
+                    <div class="term-example">Example: "I took 50% profit when my meme coin did a 5x."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">To the Moon 🚀</div>
+                    <div class="term-definition">
+                        Expression meaning a cryptocurrency's price will increase dramatically.
+                    </div>
+                    <div class="term-example">Example: "SOL to the moon! 🚀🚀🚀"</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Wagmi (We're All Gonna Make It)</div>
+                    <div class="term-definition">
+                        Optimistic phrase expressing belief that everyone in the community will succeed financially.
+                    </div>
+                    <div class="term-example">Example: "Hold strong team, wagmi! 💪"</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Whale</div>
+                    <div class="term-definition">
+                        Individual or entity holding large amounts of cryptocurrency who can influence market prices with their trades.
+                    </div>
+                    <div class="term-example">Example: "A whale just dumped 10,000 SOL, causing the price drop."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Wen</div>
+                    <div class="term-definition">
+                        Slang for "when" - commonly used to ask about timing of events, launches, or price movements.
+                    </div>
+                    <div class="term-example">Example: "Wen moon? Wen lambo?"</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">X (Twitter)</div>
+                    <div class="term-definition">
+                        Social media platform (formerly Twitter) where most crypto community discussions, alpha sharing, and market sentiment happens.
+                    </div>
+                    <div class="term-example">Example: "Check X for the latest alpha on that new Solana project."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Yield Farming</div>
+                    <div class="term-definition">
+                        Providing liquidity to DeFi protocols in exchange for rewards, often in the form of additional tokens.
+                    </div>
+                    <div class="term-example">Example: "I'm yield farming on Raydium for extra APY on my SOL."</div>
+                </div>
+
+                <div class="term-item">
+                    <div class="term-name">Zero (Going to Zero)</div>
+                    <div class="term-definition">
+                        When a cryptocurrency's price drops to essentially worthless, often due to rug pulls or project failure.
+                    </div>
+                    <div class="term-example">Example: "That token went to zero after the rug pull."</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="powered-by">
+            <p>📚 <strong>Stay updated with crypto slang</strong> - New terms added regularly</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                Know a term we missed? <a href="mailto:hello@askdegen.com">Send it our way!</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function searchTerms() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.toLowerCase();
+            const termItems = document.querySelectorAll('.term-item');
+            const sections = document.querySelectorAll('.term-section');
+            
+            // If search is empty, show all
+            if (searchTerm === '') {
+                termItems.forEach(item => {
+                    item.style.display = 'block';
+                });
+                sections.forEach(section => {
+                    section.style.display = 'block';
+                });
+                return;
+            }
+            
+            let hasVisibleTerms = {};
+            
+            termItems.forEach(item => {
+                const termName = item.querySelector('.term-name').textContent.toLowerCase();
+                const termDefinition = item.querySelector('.term-definition').textContent.toLowerCase();
+                const termExample = item.querySelector('.term-example').textContent.toLowerCase();
+                const section = item.closest('.term-section');
+                const sectionLetter = section.getAttribute('data-letter');
+                
+                if (termName.includes(searchTerm) || 
+                    termDefinition.includes(searchTerm) || 
+                    termExample.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    hasVisibleTerms[sectionLetter] = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Hide sections with no visible terms
+            sections.forEach(section => {
+                const sectionLetter = section.getAttribute('data-letter');
+                if (hasVisibleTerms[sectionLetter]) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        // Add fade-in animation to terms when they come into view
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.term-item').forEach(item => {
+                observer.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>

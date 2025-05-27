@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Analysis - ASK DEGEN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Fixed Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <a href="/" class="logo">ASK DEGEN</a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Analyzer</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/dictionary" class="nav-link">Dictionary</a>
+                <a href="/charts" class="nav-link active">Chart Analysis</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-container">
+        <div class="page-title">📈 AI Chart Analysis</div>
+        <div class="page-description">
+            Upload any trading chart screenshot and get expert AI analysis. Plus learn to read charts yourself 
+            with our comprehensive guide to patterns, indicators, and technical analysis tools.
+        </div>
+
+        <!-- Chart Upload Section -->
+        <div class="section">
+            <div class="section-header">
+                <span style="font-size: 1.5rem;">🤖</span>
+                <div class="section-title">AI Chart Analyzer</div>
+            </div>
+            
+            <div class="chart-upload" id="chartUpload" onclick="document.getElementById('chartInput').click()">
+                <div class="upload-icon">📊</div>
+                <div class="upload-text">Click to upload or drag & drop your chart screenshot</div>
+                <div class="upload-hint">Supports PNG, JPG, WebP • Max 10MB</div>
+                <input type="file" id="chartInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+            </div>
+
+            <div id="chartPreviewContainer" style="display: none;">
+                <img id="chartPreview" class="chart-preview" alt="Chart Preview">
+                <button class="btn" onclick="analyzeChart()" id="analyzeBtn" style="margin-top: 20px;">
+                    🔍 Analyze Chart
+                </button>
+            </div>
+
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <div class="loading-text">AI is analyzing your chart...</div>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="analysis-result" id="analysisResult" style="display: none;">
+                <div class="section-header">
+                    <span style="font-size: 1.3rem;">🎯</span>
+                    <div class="section-title">AI Analysis Results</div>
+                </div>
+                <div class="analysis-content" id="analysisContent"></div>
+            </div>
+        </div>
+
+        <!-- Chart Patterns Guide -->
+        <div class="section">
+            <div class="section-header">
+                <span style="font-size: 1.5rem;">📋</span>
+                <div class="section-title">Chart Patterns Guide</div>
+            </div>
+            
+            <div class="pattern-grid">
+                <div class="pattern-card">
+                    <div class="pattern-name">Bull Flag</div>
+                    <div class="pattern-diagram">📈 🏳️ Bullish continuation pattern</div>
+                    <div class="pattern-description">
+                        Strong upward move followed by consolidation. Indicates potential continuation of the uptrend.
+                        <strong>Signal:</strong> Buy when price breaks above flag.
+                    </div>
+                </div>
+
+                <div class="pattern-card">
+                    <div class="pattern-name">Bear Flag</div>
+                    <div class="pattern-diagram">📉 🏳️ Bearish continuation pattern</div>
+                    <div class="pattern-description">
+                        Strong downward move followed by small upward consolidation. Suggests further decline ahead.
+                        <strong>Signal:</strong> Sell when price breaks below flag.
+                    </div>
+                </div>
+
+                <div class="pattern-card">
+                    <div class="pattern-name">Head & Shoulders</div>
+                    <div class="pattern-diagram">👤 Classic reversal pattern</div>
+                    <div class="pattern-description">
+                        Three peaks with the middle being highest. Strong bearish reversal signal at market tops.
+                        <strong>Signal:</strong> Sell when neckline breaks.
+                    </div>
+                </div>
+
+                <div class="pattern-card">
+                    <div class="pattern-name">Double Top</div>
+                    <div class="pattern-diagram">⛰️⛰️ Bearish reversal</div>
+                    <div class="pattern-description">
+                        Two peaks at similar levels. Indicates resistance and potential trend reversal.
+                        <strong>Signal:</strong> Sell on break below valley.
+                    </div>
+                </div>
+
+                <div class="pattern-card">
+                    <div class="pattern-name">Double Bottom</div>
+                    <div class="pattern-diagram">🔥🔥 Bullish reversal</div>
+                    <div class="pattern-description">
+                        Two lows at similar levels forming a 'W' shape. Strong bullish reversal signal.
+                        <strong>Signal:</strong> Buy on break above peak.
+                    </div>
+                </div>
+
+                <div class="pattern-card">
+                    <div class="pattern-name">Triangle</div>
+                    <div class="pattern-diagram">🔺 Consolidation pattern</div>
+                    <div class="pattern-description">
+                        Converging trend lines forming triangle. Can break either direction.
+                        <strong>Signal:</strong> Trade breakout direction.
+                    </div>
+                </div>
+
+                <div class="pattern-card">
+                    <div class="pattern-name">Cup & Handle</div>
+                    <div class="pattern-diagram">☕ Bullish continuation</div>
+                    <div class="pattern-description">
+                        Rounded bottom followed by small pullback. Strong bullish pattern for continued uptrend.
+                        <strong>Signal:</strong> Buy handle breakout.
+                    </div>
+                </div>
+
+                <div class="pattern-card">
+                    <div class="pattern-name">Wedge</div>
+                    <div class="pattern-diagram">🔺 Reversal pattern</div>
+                    <div class="pattern-description">
+                        Converging lines with both trending same direction. Usually reverses main trend.
+                        <strong>Signal:</strong> Trade opposite direction.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Indicators Guide -->
+        <div class="section">
+            <div class="section-header">
+                <span style="font-size: 1.5rem;">🔧</span>
+                <div class="section-title">Technical Indicators Glossary</div>
+            </div>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span style="font-size: 1.3rem;">📊</span>
+                        <div class="card-title">Moving Averages</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Simple Moving Average (SMA)</h3>
+                        <p>Average price over a specific period. 20 SMA, 50 SMA, 200 SMA are common.</p>
+                        
+                        <h3>Exponential Moving Average (EMA)</h3>
+                        <p>Gives more weight to recent prices. More responsive than SMA to price changes.</p>
+                        
+                        <h3>How to Use:</h3>
+                        <ul>
+                            <li>Price above MA = Bullish trend</li>
+                            <li>Price below MA = Bearish trend</li>
+                            <li>MA crossovers signal trend changes</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span style="font-size: 1.3rem;">⚡</span>
+                        <div class="card-title">RSI (Relative Strength Index)</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>What it measures:</h3>
+                        <p>Momentum oscillator (0-100) measuring speed and change of price movements.</p>
+                        
+                        <h3>Key Levels:</h3>
+                        <ul>
+                            <li>Above 70 = Overbought (potential sell)</li>
+                            <li>Below 30 = Oversold (potential buy)</li>
+                            <li>50 = Neutral momentum</li>
+                        </ul>
+                        
+                        <h3>Divergence:</h3>
+                        <p>When price and RSI move in opposite directions, often signals reversal.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span style="font-size: 1.3rem;">🌊</span>
+                        <div class="card-title">MACD</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Components:</h3>
+                        <ul>
+                            <li><strong>MACD Line:</strong> 12 EMA - 26 EMA</li>
+                            <li><strong>Signal Line:</strong> 9 EMA of MACD</li>
+                            <li><strong>Histogram:</strong> MACD - Signal Line</li>
+                        </ul>
+                        
+                        <h3>Signals:</h3>
+                        <ul>
+                            <li>MACD crosses above Signal = Buy</li>
+                            <li>MACD crosses below Signal = Sell</li>
+                            <li>Above zero = Bullish momentum</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span style="font-size: 1.3rem;">📈</span>
+                        <div class="card-title">Volume Indicators</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Volume</h3>
+                        <p>Number of shares/tokens traded. Confirms price movements and breakouts.</p>
+                        
+                        <h3>Volume Profile</h3>
+                        <p>Shows volume traded at each price level. Identifies support/resistance.</p>
+                        
+                        <h3>Key Rules:</h3>
+                        <ul>
+                            <li>High volume + price move = Strong signal</li>
+                            <li>Low volume + price move = Weak signal</li>
+                            <li>Volume leads price</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span style="font-size: 1.3rem;">🎯</span>
+                        <div class="card-title">Support & Resistance</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Support:</h3>
+                        <p>Price level where buying interest is strong enough to stop decline.</p>
+                        
+                        <h3>Resistance:</h3>
+                        <p>Price level where selling pressure stops upward movement.</p>
+                        
+                        <h3>Key Concepts:</h3>
+                        <ul>
+                            <li>Previous highs become resistance</li>
+                            <li>Previous lows become support</li>
+                            <li>Broken support becomes resistance</li>
+                            <li>Round numbers act as psychological levels</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span style="font-size: 1.3rem;">🕯️</span>
+                        <div class="card-title">Candlestick Patterns</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Bullish Patterns:</h3>
+                        <ul>
+                            <li><strong>Hammer:</strong> Small body, long lower wick</li>
+                            <li><strong>Engulfing:</strong> Large green candle engulfs previous red</li>
+                            <li><strong>Morning Star:</strong> Three-candle reversal pattern</li>
+                        </ul>
+                        
+                        <h3>Bearish Patterns:</h3>
+                        <ul>
+                            <li><strong>Shooting Star:</strong> Small body, long upper wick</li>
+                            <li><strong>Evening Star:</strong> Three-candle reversal at top</li>
+                            <li><strong>Dark Cloud:</strong> Red candle engulfs green</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Reading Tips -->
+        <div class="section">
+            <div class="section-header">
+                <span style="font-size: 1.5rem;">💡</span>
+                <div class="section-title">Pro Chart Reading Tips</div>
+            </div>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span style="font-size: 1.3rem;">⏰</span>
+                        <div class="card-title">Timeframe Analysis</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Multiple Timeframe Rule:</h3>
+                        <p>Always check higher timeframes for overall trend direction.</p>
+                        
+                        <h3>Common Timeframes:</h3>
+                        <ul>
+                            <li><strong>1m, 5m:</strong> Scalping entries</li>
+                            <li><strong>15m, 1h:</strong> Day trading</li>
+                            <li><strong>4h, 1D:</strong> Swing trading</li>
+                            <li><strong>1W, 1M:</strong> Long-term investing</li>
+                        </ul>
+                        
+                        <p><strong>Golden Rule:</strong> Trade with the higher timeframe trend.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span style="font-size: 1.3rem;">🎨</span>
+                        <div class="card-title">Drawing Tools</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Trend Lines:</h3>
+                        <p>Connect swing lows (uptrend) or swing highs (downtrend). Need at least 2 points.</p>
+                        
+                        <h3>Horizontal Lines:</h3>
+                        <p>Mark key support/resistance levels from previous price action.</p>
+                        
+                        <h3>Fibonacci Retracements:</h3>
+                        <p>Common retracement levels: 23.6%, 38.2%, 50%, 61.8%, 78.6%</p>
+                        
+                        <h3>Channels:</h3>
+                        <p>Parallel lines connecting highs and lows to identify trading ranges.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span style="font-size: 1.3rem;">🚨</span>
+                        <div class="card-title">Risk Management</div>
+                    </div>
+                    <div class="card-content">
+                        <h3>Stop Loss Placement:</h3>
+                        <ul>
+                            <li>Below support (long positions)</li>
+                            <li>Above resistance (short positions)</li>
+                            <li>Beyond pattern invalidation level</li>
+                        </ul>
+                        
+                        <h3>Take Profit Levels:</h3>
+                        <ul>
+                            <li>Previous resistance/support</li>
+                            <li>Fibonacci extensions</li>
+                            <li>Pattern price targets</li>
+                        </ul>
+                        
+                        <h3>Risk-Reward Ratio:</h3>
+                        <p>Aim for minimum 1:2 risk-reward ratio. Risk $1 to make $2.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="powered-by">
+            <p>🤖 <strong>Powered by GPT-4o Vision</strong> - Advanced AI chart analysis</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                Remember: AI analysis is for educational purposes. Always do your own research and risk management.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let uploadedImage = null;
+
+        // Drag and drop functionality
+        const chartUpload = document.getElementById('chartUpload');
+        
+        chartUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            chartUpload.classList.add('dragover');
+        });
+
+        chartUpload.addEventListener('dragleave', () => {
+            chartUpload.classList.remove('dragover');
+        });
+
+        chartUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            chartUpload.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showError('Please upload an image file (PNG, JPG, WebP)');
+                return;
+            }
+
+            // Validate file size (10MB limit)
+            if (file.size > 10 * 1024 * 1024) {
+                showError('File size too large. Please upload an image under 10MB');
+                return;
+            }
+
+            uploadedImage = file;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('chartPreview').src = e.target.result;
+                document.getElementById('chartPreviewContainer').style.display = 'block';
+                hideError();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function analyzeChart() {
+            if (!uploadedImage) {
+                showError('Please upload a chart image first');
+                return;
+            }
+
+            showLoading();
+            hideError();
+            document.getElementById('analysisResult').style.display = 'none';
+
+            try {
+                const formData = new FormData();
+                formData.append('chart', uploadedImage);
+
+                const response = await fetch('/analyze-chart', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayAnalysis(data.analysis);
+                } else {
+                    throw new Error(data.error || 'Analysis failed');
+                }
+
+            } catch (error) {
+                console.error('Chart analysis error:', error);
+                showError('Analysis failed: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayAnalysis(analysis) {
+            document.getElementById('analysisContent').innerHTML = analysis;
+            document.getElementById('analysisResult').style.display = 'block';
+            document.getElementById('analysisResult').classList.add('fade-in');
+            
+            // Scroll to results
+            document.getElementById('analysisResult').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('analyzeBtn').disabled = true;
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('analyzeBtn').disabled = false;
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        // Add fade-in animation to cards when they come into view
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.card, .pattern-card').forEach(item => {
+                observer.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>

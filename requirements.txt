@@ -2,3 +2,6 @@ Flask==3.0.0
 requests==2.31.0
 gunicorn==21.2.0
 pytrends==4.9.2
+openai==1.3.0
+Pillow==10.0.1
+Werkzeug==3.0.0
