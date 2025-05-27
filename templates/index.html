@@ -654,7 +654,15 @@
             margin: 0 auto 10px;
             border-radius: 50%;
             position: relative;
-            background: conic-gradient(#667eea 0deg, #764ba2 120deg, rgba(255,255,255,0.1) 120deg, rgba(255,255,255,0.1) 360deg);
+             background: conic-gradient(
+    from 180deg,
+    #0040ff 0deg,    /* deep blue (cold) */
+    #00e5ff 72deg,   /* cyan */
+    #00ff00 144deg,  /* green */
+    #ffff00 216deg,  /* yellow */
+    #ff7f00 288deg,  /* orange */
+    #ff0000 360deg   /* red (hot) */
+  );
         }
 
         .metric-visual::after {
