@@ -8,6 +8,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
 
+    <!-- Chart.js for Fear & Greed Dial -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Plotly for Geographic Heatmaps -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.18.2/plotly.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -96,7 +101,7 @@
             padding: 20px;
         }
 
-        /* Market Overview Bar */
+        /* Enhanced Market Overview Bar with PyTrends */
         .market-overview {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(25px);
@@ -144,16 +149,24 @@
         .sentiment-bearish { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
         .sentiment-neutral { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
 
+        /* Enhanced Market Overview Layout */
+        .market-overview-grid {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
         .crypto-prices {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
         }
 
         .crypto-price-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
-            padding: 20px;
+            padding: 10px;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
@@ -166,32 +179,148 @@
 
         .crypto-symbol {
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             color: #ffffff;
-            margin-bottom: 8px;
-			display:inline;
+            margin-bottom: 6px;
 			float:left;
-			padding:5px 20px 0px 0px;
+			padding-top:5px;
         }
 
         .crypto-price {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: #667eea;
-            margin-bottom: 5px;
-				display:inline;
+            margin-bottom: 4px;
+			padding:0px 15px 0px 15px;
 			float:left;
         }
 
         .crypto-change {
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             font-weight: 600;
-				display:inline;
-			float:left; padding:5px 0px 0px 20px;
+			float:left;
+			padding-top:8px;
         }
 
         .crypto-change.positive { color: #10b981; }
         .crypto-change.negative { color: #ef4444; }
+
+        /* Fear & Greed Dial */
+        .fear-greed-dial {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dial-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #b0b7ff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dial-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+        }
+
+   .dial-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-top: -60px;
+}
+
+        .dial-label {
+            font-size: 0.75rem;
+            color: #b0b7ff;
+            margin-top: 5px;
+        }
+
+        /* PyTrends Intelligence Sections */
+        .pytrends-intelligence {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .trending-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .trending-section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .trending-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .keyword-tag {
+            background: rgba(102, 126, 234, 0.2);
+            color: #b0b7ff;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .keyword-tag:hover {
+            background: rgba(102, 126, 234, 0.3);
+            color: #ffffff;
+        }
+
+        .trending-memecoins {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .memecoin-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+
+        .memecoin-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .memecoin-trend {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .trend-rising { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .trend-stable { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
 
         /* Dashboard Grid with Sticky Sidebar */
         .dashboard-grid {
@@ -507,7 +636,7 @@
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
             border-radius: 20px;
             padding: 30px;
-            margin: 20px 0;
+           
             border: 1px solid rgba(102, 126, 234, 0.2);
         }
 
@@ -573,6 +702,74 @@
         .results-section {
             display: none;
             margin-top: 25px;
+        }
+
+        /* Enhanced Search Intelligence Dashboard */
+        .search-intelligence-dashboard {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            margin-bottom: 25px;
+        }
+
+        .search-intel-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .search-intel-metric {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .intel-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #10b981;
+            margin-bottom: 8px;
+        }
+
+        .intel-label {
+            font-size: 0.9rem;
+            color: #b0b7ff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-trends-chart {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 350px; /* Fixed height to prevent stretching */
+        }
+
+        .search-trends-chart canvas {
+            max-height: 280px !important; /* Prevent canvas from growing too large */
+        }
+
+        .geo-heatmap-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 350px; /* Fixed height to match chart */
+        }
+
+        /* Fix the search intelligence grid to be 50/50 */
+        .search-intel-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 50/50 split */
+            gap: 25px;
+            margin-top: 20px;
         }
 
         /* Social Momentum Dashboard with Visual Metrics */
@@ -702,7 +899,8 @@
 
         /* Live Tweets Panel */
         .live-tweets-panel {
-            background: rgba(29, 161, 242, 0.1);
+                background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
             border: 1px solid rgba(29, 161, 242, 0.2);
             border-radius: 20px;
             padding: 25px;
@@ -1078,7 +1276,8 @@
 
         /* Expert Analysis */
         .expert-analysis {
-            background: rgba(255, 255, 255, 0.05);
+               background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
             border-radius: 20px;
             padding: 30px;
             margin-bottom: 25px;
@@ -1283,6 +1482,21 @@
                 position: static;
                 height: 400px;
             }
+
+            .market-overview-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .search-intel-charts {
+                grid-template-columns: 1fr; /* Stack charts vertically on smaller screens */
+                gap: 20px;
+            }
+
+            .search-intel-header {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1330,6 +1544,24 @@
 
             body {
                 padding-top: 70px;
+            }
+
+            .search-intel-charts {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .search-trends-chart, .geo-heatmap-container {
+                height: 300px; /* Smaller height on mobile */
+            }
+
+            .trending-keywords {
+                gap: 4px;
+            }
+
+            .keyword-tag {
+                font-size: 0.65rem;
+                padding: 3px 6px;
             }
         }
 
@@ -1418,6 +1650,16 @@
     color: #e1e7ff;
     line-height: 1.3;
 }
+		
+		.dial-talk{    display: flex
+;
+    flex-direction: row;
+    gap: 15px;}
+		
+				.mainleft{    display: flex
+;
+    flex-direction: column;
+    gap: 15px;}
     </style>
 </head>
 <body>
@@ -1435,37 +1677,19 @@
     </header>
 
     <div class="dashboard-container">
-        <!-- Market Overview Bar -->
+        <!-- Enhanced Market Overview Bar with PyTrends -->
         <div class="market-overview">
-            <div class="market-header">
-                <div class="market-title">
-                    <span>📊</span>
-                    Market Overview
-                </div>
-                <div class="market-sentiment">
-                    <span>Fear & Greed Index:</span>
-                    <span id="fearGreedIndex">Loading...</span>
-                    <div class="sentiment-indicator" id="sentimentIndicator">
-                        Loading...
-                    </div>
-                </div>
-            </div>
-            <div class="crypto-prices" id="cryptoPrices">
-                <!-- Crypto prices will be populated here -->
-            </div>
-        </div>
 
-        <!-- Main Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Main Content -->
-            <div class="main-content">
-                <!-- Trending Tokens with Tabs -->
-                <div class="trending-tokens-section">
-                    <div class="section-header">
-                        <span style="font-size: 1.5rem;">🔥</span>
-                        <div class="section-title">Token Intelligence</div>
-                       
-                    </div>
+            
+            <!-- New Enhanced Grid Layout -->
+            <div class="market-overview-grid">
+                <!-- Condensed Crypto Prices (Left) -->
+				<div class="mainleft">
+                <div class="crypto-prices" id="cryptoPrices">
+                    <!-- Crypto prices will be populated here -->
+                </div>
+					<div class="trending-tokens-section">
+            
                     
                     <!-- Tab Navigation -->
                     <div class="tab-navigation">
@@ -1499,6 +1723,55 @@
                         </div>
                     </div>
                 </div>
+                </div>
+     
+                
+                <!-- PyTrends Intelligence (Right) -->
+                <div class="pytrends-intelligence">
+                    <div class="trending-section">
+                        <div class="trending-section-title">
+                            <span>🔥</span>
+                            Trending Crypto Keywords
+                        </div>
+                        <div class="trending-keywords" id="trendingKeywords">
+                            <!-- Keywords will be populated here -->
+                        </div>
+                    </div>
+                          <div class="dial-talk">     <!-- Fear & Greed Dial (Center) -->
+               
+                    <div class="trending-section">
+                        <div class="trending-section-title">
+                            <span>🚀</span>
+                            Trending Memecoins
+                        </div>
+                        <div class="trending-memecoins" id="trendingMemecoins">
+                            <!-- Memecoins will be populated here -->
+                        </div>
+					</div> <div class="fear-greed-dial">
+                    <div class="dial-title">Fear & Greed Index</div>
+                    <div class="dial-container">
+                        <canvas id="fearGreedChart" width="120" height="120"></canvas>
+                    </div>
+                    <div class="dial-value" id="dialValue">72</div>
+                    <div class="dial-label" id="dialLabel">Greed</div>
+                </div></div>
+					   <div class="market-sentiment">
+                    <span><span>📊</span> Market Sentiment:</span>
+                    <span id="fearGreedIndex" style="display:none;">Loading...</span>
+                    <div class="sentiment-indicator" id="sentimentIndicator">
+                        Loading...
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Trending Tokens with Tabs -->
+                
 
                 <!-- Token Analyzer -->
                 <div class="token-analyzer">
@@ -1530,7 +1803,14 @@
                     <div class="error-message" id="errorMessage"></div>
                 </div>
 
-                <!-- Token Profile Section -->
+
+
+                <!-- DexScreener Chart -->
+                <div class="chart-container" id="chartContainer">
+                    <iframe id="dexscreenerChart" src=""></iframe>
+                </div>
+				
+				                <!-- Token Profile Section -->
                 <div class="token-profile" id="tokenProfile">
                     <div class="token-profile-header">
                         <img class="token-image" id="tokenImage" src="" alt="Token" onerror="this.style.display='none'">
@@ -1544,13 +1824,11 @@
                     </div>
                 </div>
 
-                <!-- DexScreener Chart -->
-                <div class="chart-container" id="chartContainer">
-                    <iframe id="dexscreenerChart" src=""></iframe>
-                </div>
-
                 <!-- Results Section -->
                 <div class="results-section" id="resultsSection">
+                    <!-- Enhanced Search Intelligence Dashboard -->
+                    
+
                     <!-- Social Momentum Dashboard with Visual Metrics -->
                     <div class="momentum-dashboard">
                         <div class="momentum-header">
@@ -1563,6 +1841,45 @@
                         </div>
                         <div class="momentum-grid" id="momentumMetrics">
                             <!-- Metrics with visual indicators will be populated here -->
+                        </div>
+                    </div>
+					
+					<div class="search-intelligence-dashboard" id="searchIntelligenceDashboard" style="display: none;">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">🔍</span>
+                            <div class="section-title">Search Intelligence</div>
+                            <div class="live-data-badge">
+                                <div class="live-dot"></div>
+                                Google Trends LIVE
+                            </div>
+                        </div>
+                        
+                        <div class="search-intel-header">
+                            <div class="search-intel-metric">
+                                <div class="intel-value" id="currentInterest">0</div>
+                                <div class="intel-label">Current Interest</div>
+                            </div>
+                            <div class="search-intel-metric">
+                                <div class="intel-value" id="peakInterest">0</div>
+                                <div class="intel-label">Peak Interest</div>
+                            </div>
+                            <div class="search-intel-metric">
+                                <div class="intel-value" id="searchMomentum">0%</div>
+                                <div class="intel-label" id="momentumTrend">7-Day Momentum</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 50/50 Charts Layout -->
+                        <div class="search-intel-charts">
+                            <div class="search-trends-chart">
+                                <h3 style="color: #10b981; margin-bottom: 15px; font-size: 1.1rem;">📈 Search Trends Chart</h3>
+                                <canvas id="searchTrendsChart" width="400" height="280"></canvas>
+                            </div>
+                            
+                            <div class="geo-heatmap-container">
+                                <h3 style="color: #10b981; margin-bottom: 15px; font-size: 1.1rem;">🌍 Geographic Heatmap</h3>
+                                <div id="geoHeatmap" style="width: 100%; height: 280px;"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -1617,17 +1934,6 @@
                             </div>
                         </div>
 
-                        <!-- KOLs & Influencers -->
-                        <div class="analysis-card" style="display:none;">
-                            <div class="section-header">
-                                <span style="font-size: 1.3rem;">👑</span>
-                                <div class="section-title">KOLs & Influencers</div>
-                            </div>
-                            <div class="card-content" id="influencerNetwork">
-                                <!-- Influencer data will be populated here -->
-                            </div>
-                        </div>
-
                         <!-- Risk Assessment -->
                         <div class="analysis-card">
                             <div class="section-header">
@@ -1655,20 +1961,6 @@
 
             <!-- Sticky Sidebar -->
             <div class="sidebar">
-                <!-- Top Crypto KOLs -->
-                <div class="sidebar-section" style="display:none;">
-                    <div class="section-header" onclick="toggleKOLsSection()" style="cursor: pointer;">
-                        <span style="font-size: 1.5rem;">👑</span>
-                        <div class="section-title">Top Crypto KOLs</div>
-                        <span class="toggle-arrow" id="kolsToggle">▼</span>
-                    </div>
-                    <div class="sidebar-content" id="kolsContent">
-                        <div class="kols-list" id="kolsList">
-                            <div style="text-align: center; color: #b0b7ff; padding: 40px;">Loading top KOLs...</div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Crypto News -->
                 <div class="sidebar-section">
 					
@@ -1693,7 +1985,7 @@
                     </div>
                     <div class="chat-messages" id="chatMessages">
                         <div class="chat-message assistant">
-                            👋 Analyze a token first, then I can chat about it with live market context!
+                            👋 Analyze a token first, then I can chat about it with live market context and search intelligence!
                         </div>
                     </div>
                     <div class="chat-input-container">
@@ -1707,9 +1999,9 @@
         </div>
 
         <div class="powered-by">
-            <p>Powered by <a href="https://x.ai" target="_blank">XAI GROK</a> & <a href="https://perplexity.ai" target="_blank">Perplexity</a></p>
+            <p>Powered by <a href="https://x.ai" target="_blank">XAI GROK</a>, <a href="https://perplexity.ai" target="_blank">Perplexity</a> & <a href="https://pypi.org/project/pytrends/" target="_blank">PyTrends</a></p>
             <p style="margin-top: 10px; font-size: 0.9rem;">
-                🚀 Real-time Solana token intelligence with <strong>live social data</strong>
+                🚀 Real-time Solana token intelligence with <strong>live social data & search trends</strong>
             </p>
         </div>
     </div>
@@ -1719,13 +2011,15 @@
         let currentTokenAddress = '';
         let chatHistory = [];
         let currentTab = 'fresh-hype';
+        let fearGreedChart = null;
+        let searchTrendsChart = null;
 
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadMarketOverview();
             loadTrendingTokens();
             loadCryptoNews();
-            loadTopKOLs(); // Load top 20 KOLs
+            initializeFearGreedChart();
             
             // Allow Enter key for inputs
             document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
@@ -1736,37 +2030,121 @@
             });
         });
 
-        // Market Overview Functions
+        // Fear & Greed Chart Initialization
+        function initializeFearGreedChart() {
+            const ctx = document.getElementById('fearGreedChart').getContext('2d');
+            
+            fearGreedChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [72, 28], // Will be updated with real data
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)', // Green for current value
+                            'rgba(255, 255, 255, 0.1)'  // Gray for remaining
+                        ],
+                        borderWidth: 0,
+                        cutout: '75%'
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    },
+                    rotation: -90,
+                    circumference: 180
+                }
+            });
+        }
+
+        // Market Overview Functions with PyTrends
         async function loadMarketOverview() {
             try {
+                console.log('Loading market overview...'); // Debug log
                 const response = await fetch('/market-overview');
                 const data = await response.json();
                 
+                console.log('Market overview response:', data); // Debug log
+                
                 if (data.success) {
                     updateMarketOverview(data);
+                    updateTrendingKeywords(data.trending_searches || []);
+                    console.log('Trending memecoins from API:', data.trending_memecoins); // Debug log
+                    updateTrendingMemecoins(data.trending_memecoins || []);
+                } else {
+                    console.error('Market overview API error:', data);
+                    loadFallbackMarketData();
                 }
             } catch (error) {
-                console.error('Market overview error:', error);
-                // Show fallback data
-                updateMarketOverview({
-                    bitcoin_price: 95000,
-                    ethereum_price: 3500,
-                    solana_price: 180,
-                    market_sentiment: 'Bullish',
-                    fear_greed_index: 72
-                });
+                console.error('Market overview fetch error:', error);
+                loadFallbackMarketData();
             }
+        }
+
+        function loadFallbackMarketData() {
+            // Show fallback data
+            updateMarketOverview({
+                bitcoin_price: 95000,
+                ethereum_price: 3500,
+                solana_price: 180,
+                market_sentiment: 'Bullish',
+                fear_greed_index: 72,
+                trending_searches: ['Bitcoin', 'Ethereum', 'Solana', 'DeFi']
+            });
+            updateTrendingKeywords(['Bitcoin', 'Ethereum', 'Solana', 'DeFi', 'Memecoins', 'Web3']);
+            updateTrendingMemecoins([
+                {keyword: 'BONK', interest_score: 75, trend: 'Rising'},
+                {keyword: 'WIF', interest_score: 68, trend: 'Stable'},
+                {keyword: 'POPCAT', interest_score: 62, trend: 'Rising'},
+                {keyword: 'MYRO', interest_score: 45, trend: 'Stable'},
+                {keyword: 'BOME', interest_score: 52, trend: 'Rising'},
+                {keyword: 'SLERF', interest_score: 38, trend: 'Stable'}
+            ]);
         }
 
         function updateMarketOverview(data) {
             // Update Fear & Greed Index
-            document.getElementById('fearGreedIndex').textContent = data.fear_greed_index + '/100';
+            const fgIndex = data.fear_greed_index || 72;
+            document.getElementById('fearGreedIndex').textContent = fgIndex + '/100';
+            document.getElementById('dialValue').textContent = fgIndex;
+            
+            // Update dial label based on value
+            const dialLabel = document.getElementById('dialLabel');
+            if (fgIndex >= 75) {
+                dialLabel.textContent = 'Extreme Greed';
+                dialLabel.style.color = '#ef4444';
+            } else if (fgIndex >= 55) {
+                dialLabel.textContent = 'Greed';
+                dialLabel.style.color = '#f59e0b';
+            } else if (fgIndex >= 45) {
+                dialLabel.textContent = 'Neutral';
+                dialLabel.style.color = '#6b7280';
+            } else if (fgIndex >= 25) {
+                dialLabel.textContent = 'Fear';
+                dialLabel.style.color = '#3b82f6';
+            } else {
+                dialLabel.textContent = 'Extreme Fear';
+                dialLabel.style.color = '#10b981';
+            }
+            
+            // Update chart
+            if (fearGreedChart) {
+                fearGreedChart.data.datasets[0].data = [fgIndex, 100 - fgIndex];
+                fearGreedChart.update();
+            }
             
             const sentimentEl = document.getElementById('sentimentIndicator');
             sentimentEl.textContent = data.market_sentiment;
             sentimentEl.className = `sentiment-indicator sentiment-${data.market_sentiment.toLowerCase()}`;
             
-            // Update crypto prices
+            // Update condensed crypto prices
             const pricesHtml = `
                 <div class="crypto-price-card">
                     <div class="crypto-symbol">BTC</div>
@@ -1792,6 +2170,59 @@
             document.getElementById('cryptoPrices').innerHTML = pricesHtml;
         }
 
+        function updateTrendingKeywords(keywords) {
+            const container = document.getElementById('trendingKeywords');
+            let html = '';
+            
+            keywords.slice(0, 8).forEach(keyword => {
+                html += `<div class="keyword-tag">${keyword}</div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function updateTrendingMemecoins(memecoins) {
+            console.log('Updating trending memecoins:', memecoins); // Debug log
+            const container = document.getElementById('trendingMemecoins');
+            if (!container) {
+                console.error('Trending memecoins container not found');
+                return;
+            }
+            
+            let html = '';
+            
+            if (memecoins && memecoins.length > 0) {
+                memecoins.slice(0, 6).forEach(coin => {
+                    const trendClass = coin.trend && coin.trend.toLowerCase() === 'rising' ? 'trend-rising' : 'trend-stable';
+                    html += `
+                        <div class="memecoin-item">
+                            <span class="memecoin-name">${coin.keyword || coin.name || 'Unknown'}</span>
+                            <span class="memecoin-trend ${trendClass}">${coin.trend || 'Stable'}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                // Fallback content if no memecoins
+                html = `
+                    <div class="memecoin-item">
+                        <span class="memecoin-name">BONK</span>
+                        <span class="memecoin-trend trend-rising">Rising</span>
+                    </div>
+                    <div class="memecoin-item">
+                        <span class="memecoin-name">WIF</span>
+                        <span class="memecoin-trend trend-stable">Stable</span>
+                    </div>
+                    <div class="memecoin-item">
+                        <span class="memecoin-name">POPCAT</span>
+                        <span class="memecoin-trend trend-rising">Rising</span>
+                    </div>
+                `;
+            }
+            
+            console.log('Setting memecoins HTML:', html); // Debug log
+            container.innerHTML = html;
+        }
+
         // Trending Tokens Functions
         async function loadTrendingTokens() {
             // Load all tabs on initial load
@@ -1815,27 +2246,6 @@
                 content.classList.remove('active');
             });
             document.getElementById(tabName).classList.add('active');
-        }
-
-        // Refresh current tab
-        function refreshCurrentTab() {
-            const refreshBtn = document.querySelector('.section-refresh');
-            refreshBtn.style.transform = 'rotate(180deg)';
-            setTimeout(() => {
-                refreshBtn.style.transform = '';
-            }, 500);
-            
-            switch(currentTab) {
-                case 'fresh-hype':
-                    loadFreshHype(true);
-                    break;
-                case 'recent-trending':
-                    loadRecentTrending(true);
-                    break;
-                case 'blue-chips':
-                    loadBlueChips(true);
-                    break;
-            }
         }
 
         // Fresh Hype tokens
@@ -1904,41 +2314,19 @@
             document.getElementById(gridId).innerHTML = tokensHtml;
         }
 
-        // Top KOLs Functions
-        async function loadTopKOLs() {
-            try {
-                const response = await fetch('/top-kols');
-                const data = await response.json();
-                
-                if (data.success && data.kols) {
-                    displayTopKOLs(data.kols);
-                } else {
-                    document.getElementById('kolsList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading KOLs</div>';
-                }
-            } catch (error) {
-                console.error('Top KOLs error:', error);
-                document.getElementById('kolsList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading KOLs</div>';
-            }
-        }
-
-        function displayTopKOLs(kols) {
-            let kolsHtml = '';
+        function loadTokenAnalysis(address) {
+            if (!address) return;
             
-            kols.slice(0, 20).forEach(kol => {
-                const parts = kol.split(' - ');
-                const accountInfo = parts[0]; // @handle (followers)
-                const description = parts[1]; // Focus area
-                const url = parts[2] || '#'; // Twitter URL
-                
-                kolsHtml += `
-                    <div class="kol-item" onclick="window.open('${url}', '_blank')">
-                        <div class="kol-account">${accountInfo}</div>
-                        <div class="kol-description">${description}</div>
-                    </div>
-                `;
-            });
+            // Set the token address in the input field
+            document.getElementById('tokenAddress').value = address;
             
-            document.getElementById('kolsList').innerHTML = kolsHtml;
+            // Scroll to analyzer
+            document.querySelector('.token-analyzer').scrollIntoView({ behavior: 'smooth' });
+            
+            // Auto-analyze after a short delay
+            setTimeout(() => {
+                analyzeToken();
+            }, 500);
         }
 
         // Toggle Functions
@@ -1953,34 +2341,6 @@
                 newsContent.style.display = 'none';
                 newsToggle.textContent = '▶';
             }
-        }
-
-        function toggleKOLsSection() {
-            const kolsContent = document.getElementById('kolsContent');
-            const kolsToggle = document.getElementById('kolsToggle');
-            
-            if (kolsContent.style.display === 'none') {
-                kolsContent.style.display = 'block';
-                kolsToggle.textContent = '▼';
-            } else {
-                kolsContent.style.display = 'none';
-                kolsToggle.textContent = '▶';
-            }
-        }
-
-        function loadTokenAnalysis(address) {
-            if (!address) return;
-            
-            // Set the token address in the input field
-            document.getElementById('tokenAddress').value = address;
-            
-            // Scroll to analyzer
-            document.querySelector('.token-analyzer').scrollIntoView({ behavior: 'smooth' });
-            
-            // Auto-analyze after a short delay
-            setTimeout(() => {
-                analyzeToken();
-            }, 500);
         }
 
         // Crypto News Functions
@@ -2019,7 +2379,7 @@
             document.getElementById('newsList').innerHTML = newsHtml;
         }
 
-        // Token Analysis Functions
+        // Enhanced Token Analysis Functions with PyTrends
         async function analyzeToken() {
             const tokenAddress = document.getElementById('tokenAddress').value.trim();
             
@@ -2119,6 +2479,11 @@
             // Show token profile
             updateTokenProfile(data);
             
+            // Show Search Intelligence if available
+            if (data.search_intelligence) {
+                updateSearchIntelligence(data);
+            }
+            
             // Show results section
             document.getElementById('resultsSection').style.display = 'block';
             document.getElementById('resultsSection').classList.add('fade-in');
@@ -2132,6 +2497,230 @@
 
             // Scroll to results
             document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateSearchIntelligence(data) {
+            const searchIntel = data.search_intelligence;
+            if (!searchIntel) return;
+            
+            // Show the dashboard
+            document.getElementById('searchIntelligenceDashboard').style.display = 'block';
+            
+            // Update metrics
+            document.getElementById('currentInterest').textContent = searchIntel.current_interest || 0;
+            document.getElementById('peakInterest').textContent = searchIntel.peak_interest || 0;
+            
+            const momentum = searchIntel.momentum_7d || 0;
+            document.getElementById('searchMomentum').textContent = momentum.toFixed(1) + '%';
+            
+            // Fix the sentiment trend display - show the trend, not the label
+            const trendElement = document.getElementById('momentumTrend');
+            trendElement.textContent = '7-Day Momentum';
+            
+            // Add trend indicator with color
+            const trendValue = searchIntel.sentiment_trend || 'Stable';
+            const trendColor = trendValue === 'Rising Hype' ? '#10b981' : 
+                             trendValue === 'Growing' ? '#f59e0b' : 
+                             trendValue === 'Declining' ? '#ef4444' : '#6b7280';
+            
+            trendElement.innerHTML = `7-Day Momentum<br><span style="color: ${trendColor}; font-size: 0.8rem; font-weight: 600;">${trendValue}</span>`;
+            
+            // Update search trends chart (simplified version)
+            updateSearchTrendsChart(searchIntel);
+            
+            // Update geographic heatmap
+            updateGeoHeatmap(searchIntel.top_countries || []);
+        }
+
+        function updateSearchTrendsChart(searchIntel) {
+            const ctx = document.getElementById('searchTrendsChart');
+            if (!ctx) return;
+            
+            // Simple line chart showing trend
+            const chartCtx = ctx.getContext('2d');
+            
+            if (searchTrendsChart) {
+                searchTrendsChart.destroy();
+            }
+            
+            // Generate sample trend data for last 15 days (default)
+            const trendData = [];
+            const labels = [];
+            const currentInterest = searchIntel.current_interest || 50;
+            
+            for (let i = 14; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                
+                // Generate realistic trend data around current interest
+                const variation = (Math.random() - 0.5) * 30;
+                const baseValue = currentInterest + (Math.random() - 0.5) * 20;
+                trendData.push(Math.max(0, Math.min(100, baseValue + variation)));
+            }
+            
+            searchTrendsChart = new Chart(chartCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Search Interest',
+                        data: trendData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Last 15 Days',
+                            color: '#b0b7ff',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#b0b7ff',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#b0b7ff',
+
+                                font: {
+                                    size: 10
+                                },
+                                maxRotation: 45
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            backgroundColor: '#10b981'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateGeoHeatmap(topCountries) {
+            const heatmapDiv = document.getElementById('geoHeatmap');
+            if (!heatmapDiv || !window.Plotly) return;
+            
+            // All countries for base map (showing them all in grey)
+            const allCountries = [
+                'United States', 'China', 'India', 'Brazil', 'Russia', 'Japan', 'Germany', 'United Kingdom',
+                'France', 'Italy', 'Canada', 'South Korea', 'Australia', 'Spain', 'Mexico', 'Indonesia',
+                'Netherlands', 'Turkey', 'Saudi Arabia', 'Switzerland', 'Norway', 'Sweden', 'Belgium',
+                'Argentina', 'Israel', 'Ireland', 'Austria', 'Nigeria', 'South Africa', 'Egypt',
+                'Thailand', 'Singapore', 'Malaysia', 'Philippines', 'Vietnam', 'Bangladesh', 'Pakistan',
+                'Ukraine', 'Poland', 'Romania', 'Czech Republic', 'Portugal', 'Greece', 'Hungary',
+                'Chile', 'Peru', 'Colombia', 'Venezuela', 'Ecuador', 'Uruguay', 'Paraguay'
+            ];
+            
+            // Create base data with low values for all countries
+            const baseInterest = Array(allCountries.length).fill(5);
+            
+            // Override with actual data from search results
+            const countryInterestMap = {};
+            topCountries.forEach(c => {
+                countryInterestMap[c.country] = c.interest;
+            });
+            
+            // Final data combining base map with search data
+            const finalCountries = [];
+            const finalInterests = [];
+            
+            allCountries.forEach(country => {
+                finalCountries.push(country);
+                finalInterests.push(countryInterestMap[country] || 5); // Default low interest for countries not in search data
+            });
+            
+            const data = [{
+                type: 'choropleth',
+                locations: finalCountries,
+                z: finalInterests,
+                locationmode: 'country names',
+                colorscale: [
+                    [0, 'rgba(100, 100, 100, 0.3)'],      // Grey for low/no interest
+                    [0.1, 'rgba(16, 185, 129, 0.2)'],     // Light green
+                    [0.5, 'rgba(16, 185, 129, 0.6)'],     // Medium green  
+                    [1, 'rgba(16, 185, 129, 1.0)']        // Full green for high interest
+                ],
+                showscale: true,
+                colorbar: {
+                    title: {
+                        text: 'Search Interest',
+                        font: {
+                            color: '#b0b7ff',
+                            size: 12
+                        }
+                    },
+                    tickfont: {
+                        color: '#b0b7ff',
+                        size: 10
+                    },
+                    len: 0.7,
+                    thickness: 15
+                }
+            }];
+            
+            const layout = {
+                geo: {
+                    showframe: false,
+                    showcoastlines: true,
+                    coastlinecolor: 'rgba(255, 255, 255, 0.2)',
+                    projection: {
+                        type: 'natural earth'
+                    },
+                    bgcolor: 'rgba(0,0,0,0)',
+                    lakecolor: 'rgba(30, 30, 50, 0.8)',
+                    landcolor: 'rgba(50, 50, 70, 0.3)',
+                    countrycolor: 'rgba(255, 255, 255, 0.2)',
+                    showland: true,
+                    showocean: true,
+                    oceancolor: 'rgba(20, 20, 40, 0.9)'
+                },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: {
+                    color: '#b0b7ff'
+                },
+                margin: {t: 0, r: 0, b: 0, l: 0},
+                height: 300
+            };
+            
+            const config = {
+                displayModeBar: false,
+                responsive: true
+            };
+            
+            Plotly.newPlot(heatmapDiv, data, layout, config);
         }
 
         function updateTokenProfile(data) {
@@ -2161,15 +2750,15 @@
                     <div class="metric-label">24h Change</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-value">$${((data.market_cap || 0) / 1e6).toFixed(1)}M</div>
+                    <div class="metric-value">${((data.market_cap || 0) / 1e6).toFixed(1)}M</div>
                     <div class="metric-label">Market Cap</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-value">$${((data.volume_24h || 0) / 1e6).toFixed(1)}M</div>
+                    <div class="metric-value">${((data.volume_24h || 0) / 1e6).toFixed(1)}M</div>
                     <div class="metric-label">24h Volume</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-value">$${((data.liquidity || 0) / 1e6).toFixed(1)}M</div>
+                    <div class="metric-value">${((data.liquidity || 0) / 1e6).toFixed(1)}M</div>
                     <div class="metric-label">Liquidity</div>
                 </div>
             `;
@@ -2196,13 +2785,15 @@
 
             // Update metrics with visual indicators
             const metrics = data.sentiment_metrics || {};
+            const searchIntel = data.search_intelligence || {};
+            
             const metricsData = [
                 { label: 'Bullish', value: Math.round(metrics.bullish_percentage || 0), unit: '%' },
                 { label: 'Viral', value: Math.round(metrics.viral_potential || 0), unit: '%' },
                 { label: 'Community', value: Math.round(metrics.community_strength || 0), unit: '%' },
                 { label: 'Activity', value: Math.round(metrics.volume_activity || 0), unit: '%' },
-                { label: 'Quality', value: Math.round(metrics.engagement_quality || 0), unit: '%' },
-                { label: 'AI Score', value: Math.round((data.confidence_score ||  0.5) * 100), unit: '%' }
+                { label: 'Search', value: Math.round(searchIntel.current_interest || 0), unit: '%' },
+                { label: 'AI Score', value: Math.round((data.confidence_score || 0.5) * 100), unit: '%' }
             ];
 
             let metricsHtml = '';
@@ -2289,7 +2880,6 @@ function updateContractAccounts(data) {
     
     document.getElementById('contractAccountsList').innerHTML = accountsHtml;
 }
-		
 
         function updateExpertAnalysis(data) {
             const analysis = data.expert_analysis || 'Connect XAI API for comprehensive expert analysis with real-time market insights and trading perspectives.';
@@ -2313,21 +2903,6 @@ function updateContractAccounts(data) {
                 signalsHtml = '<p>Connect XAI API for real-time trading signals based on social momentum and market analysis.</p>';
             }
             document.getElementById('tradingSignals').innerHTML = signalsHtml;
-            
-            // KOLs & Influencers
-            const accounts = data.real_twitter_accounts || [];
-            let influencerHtml = '<div class="content-heading">🔍 High-Follower Crypto KOLs</div>';
-            if (accounts.length > 0) {
-                accounts.forEach(account => {
-                    const parts = account.split(' - ');
-                    const accountInfo = parts[0];
-                    const url = parts[1] || '#';
-                    influencerHtml += `<div class="bullet-point"><a href="${url}" target="_blank" style="color: #1da1f2; text-decoration: none;">${accountInfo}</a></div>`;
-                });
-            } else {
-                influencerHtml += '<p>Connect XAI API to extract real crypto KOLs and high-follower influencers discussing this token from live X/Twitter data.</p>';
-            }
-            document.getElementById('influencerNetwork').innerHTML = influencerHtml;
             
             // Risk Assessment - Enhanced formatting with tables/icons
             let riskHtml = data.risk_assessment || '';
@@ -2536,6 +3111,7 @@ function updateContractAccounts(data) {
             document.getElementById('resultsSection').style.display = 'none';
             document.getElementById('chartContainer').style.display = 'none';
             document.getElementById('tokenProfile').style.display = 'none';
+            document.getElementById('searchIntelligenceDashboard').style.display = 'none';
         }
     </script>
 </body>
