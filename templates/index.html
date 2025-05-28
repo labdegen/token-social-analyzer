@@ -101,7 +101,7 @@
             padding: 20px;
         }
 
-        /* Enhanced Market Overview Bar with PyTrends */
+        /* Enhanced Market Overview Bar with CoinGecko/DexScreener */
         .market-overview {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(25px);
@@ -243,21 +243,21 @@
             margin-top: 5px;
         }
 
-        /* PyTrends Intelligence Sections */
-        .pytrends-intelligence {
+        /* Market Intelligence Sections - Updated for CoinGecko data */
+        .market-intelligence {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        .trending-section {
+        .intelligence-section {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
             padding: 15px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .trending-section-title {
+        .intelligence-section-title {
             font-size: 0.85rem;
             font-weight: 600;
             color: #667eea;
@@ -269,58 +269,65 @@
             gap: 8px;
         }
 
-        .trending-keywords {
+        .market-insights {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
         }
 
-        .keyword-tag {
-            background: rgba(102, 126, 234, 0.2);
-            color: #b0b7ff;
+        .insight-tag {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
             padding: 4px 8px;
             border-radius: 12px;
             font-size: 0.7rem;
             font-weight: 600;
-            border: 1px solid rgba(102, 126, 234, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.3);
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        .keyword-tag:hover {
-            background: rgba(102, 126, 234, 0.3);
+        .insight-tag:hover {
+            background: rgba(16, 185, 129, 0.3);
             color: #ffffff;
         }
 
-        .trending-memecoins {
+        .trending-searches {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .memecoin-item {
+        .search-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 6px;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .memecoin-name {
+        .search-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(3px);
+        }
+
+        .search-name {
             font-size: 0.75rem;
             font-weight: 600;
             color: #ffffff;
         }
 
-        .memecoin-trend {
+        .search-rank {
             font-size: 0.65rem;
             padding: 2px 6px;
             border-radius: 8px;
             font-weight: 600;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
         }
-
-        .trend-rising { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .trend-stable { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
 
         /* Dashboard Grid with Sticky Sidebar */
         .dashboard-grid {
@@ -347,7 +354,7 @@
             overflow-y: auto;
         }
 
-        /* Trending Tokens with Tabs */
+        /* Trending Tokens with Enhanced Tabs - FIXED */
         .trending-tokens-section {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(25px);
@@ -391,7 +398,7 @@
             transform: rotate(180deg);
         }
 
-        /* Tab Navigation */
+        /* Enhanced Tab Navigation */
         .tab-navigation {
             display: flex;
             gap: 0;
@@ -457,6 +464,7 @@
             border-left: 3px solid #667eea;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .trending-token:hover {
@@ -497,6 +505,21 @@
             font-size: 0.7rem;
             color: #b0b7ff;
             opacity: 0.8;
+        }
+
+        /* Loading and Error States */
+        .loading-state {
+            text-align: center;
+            color: #b0b7ff;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .error-state {
+            text-align: center;
+            color: #ef4444;
+            padding: 40px;
+            font-style: italic;
         }
 
         /* Token Analyzer */
@@ -869,6 +892,8 @@
     #ff0000 360deg   /* red (hot) */
   );
         }
+		
+		.news-summary img{display:none;}
 
         .metric-visual::after {
             content: '';
@@ -1313,6 +1338,7 @@
             border-left: 3px solid #667eea;
             transition: all 0.3s ease;
             cursor: pointer;
+			min-height:150px;
         }
 
         .news-item:hover {
@@ -1555,11 +1581,11 @@
                 height: 300px; /* Smaller height on mobile */
             }
 
-            .trending-keywords {
+            .market-insights {
                 gap: 4px;
             }
 
-            .keyword-tag {
+            .insight-tag {
                 font-size: 0.65rem;
                 padding: 3px 6px;
             }
@@ -1677,7 +1703,7 @@
     </header>
 
     <div class="dashboard-container">
-        <!-- Enhanced Market Overview Bar with PyTrends -->
+        <!-- Enhanced Market Overview Bar with CoinGecko/DexScreener -->
         <div class="market-overview">
 
             
@@ -1694,7 +1720,7 @@
                     <!-- Tab Navigation -->
                     <div class="tab-navigation">
                         <button class="tab-btn active" onclick="switchTab('fresh-hype')" data-tab="fresh-hype">
-                            🚀 Fresh Hype
+                            🚀 Dex Boosted
                         </button>
                         <button class="tab-btn" onclick="switchTab('recent-trending')" data-tab="recent-trending">
                             📈 Recent Trending
@@ -1707,45 +1733,45 @@
                     <!-- Tab Content -->
                     <div class="tab-content active" id="fresh-hype">
                         <div class="trending-tokens-grid" id="freshHypeGrid">
-                            <div style="text-align: center; color: #b0b7ff; padding: 40px;">Loading fresh hype tokens...</div>
+                            <div class="loading-state">Loading fresh hype tokens...</div>
                         </div>
                     </div>
                     
                     <div class="tab-content" id="recent-trending">
                         <div class="trending-tokens-grid" id="recentTrendingGrid">
-                            <div style="text-align: center; color: #b0b7ff; padding: 40px;">Loading trending tokens...</div>
+                            <div class="loading-state">Loading trending tokens...</div>
                         </div>
                     </div>
                     
                     <div class="tab-content" id="blue-chips">
                         <div class="trending-tokens-grid" id="blueChipsGrid">
-                            <div style="text-align: center; color: #b0b7ff; padding: 40px;">Loading blue chip tokens...</div>
+                            <div class="loading-state">Loading blue chip tokens...</div>
                         </div>
                     </div>
                 </div>
                 </div>
      
                 
-                <!-- PyTrends Intelligence (Right) -->
-                <div class="pytrends-intelligence">
-                    <div class="trending-section">
-                        <div class="trending-section-title">
+                <!-- Market Intelligence (Right) -->
+                <div class="market-intelligence">
+                    <div class="intelligence-section" style="display:none;">
+                        <div class="intelligence-section-title">
                             <span>🔥</span>
-                            Trending Crypto Keywords
+                            Live Market Insights
                         </div>
-                        <div class="trending-keywords" id="trendingKeywords">
-                            <!-- Keywords will be populated here -->
+                        <div class="market-insights" id="marketInsights">
+                            <!-- Market insights will be populated here -->
                         </div>
                     </div>
                           <div class="dial-talk">     <!-- Fear & Greed Dial (Center) -->
                
-                    <div class="trending-section">
-                        <div class="trending-section-title">
+                    <div class="intelligence-section">
+                        <div class="intelligence-section-title">
                             <span>🚀</span>
-                            Trending Memecoins
+                            Trending Searches
                         </div>
-                        <div class="trending-memecoins" id="trendingMemecoins">
-                            <!-- Memecoins will be populated here -->
+                        <div class="trending-searches" id="trendingSearches">
+                            <!-- Trending searches will be populated here -->
                         </div>
 					</div> <div class="fear-greed-dial">
                     <div class="dial-title">Fear & Greed Index</div>
@@ -1972,7 +1998,7 @@
                     </div>
                     <div class="sidebar-content" id="newsContent" style="display:none;">
                         <div class="news-list" id="newsList">
-                            <div style="text-align: center; color: #b0b7ff; padding: 40px;">Loading crypto news...</div>
+                            <div class="loading-state">Loading crypto news...</div>
                         </div>
                     </div>
                 </div>
@@ -1999,9 +2025,9 @@
         </div>
 
         <div class="powered-by">
-            <p>Powered by <a href="https://x.ai" target="_blank">XAI GROK</a>, <a href="https://perplexity.ai" target="_blank">Perplexity</a> & <a href="https://pypi.org/project/pytrends/" target="_blank">PyTrends</a></p>
+            <p>Powered by <a href="https://x.ai" target="_blank">XAI GROK</a>, <a href="https://coingecko.com" target="_blank">CoinGecko</a> & <a href="https://dexscreener.com" target="_blank">DexScreener</a></p>
             <p style="margin-top: 10px; font-size: 0.9rem;">
-                🚀 Real-time Solana token intelligence with <strong>live social data & search trends</strong>
+                🚀 Real-time Solana token intelligence with <strong>CoinGecko trending data & RSS news feeds</strong>
             </p>
         </div>
     </div>
@@ -2064,7 +2090,7 @@
             });
         }
 
-        // Market Overview Functions with PyTrends
+        // Market Overview Functions with CoinGecko/DexScreener
         async function loadMarketOverview() {
             try {
                 console.log('Loading market overview...'); // Debug log
@@ -2075,9 +2101,9 @@
                 
                 if (data.success) {
                     updateMarketOverview(data);
-                    updateTrendingKeywords(data.trending_searches || []);
-                    console.log('Trending memecoins from API:', data.trending_memecoins); // Debug log
-                    updateTrendingMemecoins(data.trending_memecoins || []);
+                    updateMarketInsights(data.market_insights || []);
+                    console.log('Trending searches from API:', data.trending_searches); // Debug log
+                    updateTrendingSearches(data.trending_searches || []);
                 } else {
                     console.error('Market overview API error:', data);
                     loadFallbackMarketData();
@@ -2096,17 +2122,10 @@
                 solana_price: 180,
                 market_sentiment: 'Bullish',
                 fear_greed_index: 72,
-                trending_searches: ['Bitcoin', 'Ethereum', 'Solana', 'DeFi']
+                trending_searches: []
             });
-            updateTrendingKeywords(['Bitcoin', 'Ethereum', 'Solana', 'DeFi', 'Memecoins', 'Web3']);
-            updateTrendingMemecoins([
-                {keyword: 'BONK', interest_score: 75, trend: 'Rising'},
-                {keyword: 'WIF', interest_score: 68, trend: 'Stable'},
-                {keyword: 'POPCAT', interest_score: 62, trend: 'Rising'},
-                {keyword: 'MYRO', interest_score: 45, trend: 'Stable'},
-                {keyword: 'BOME', interest_score: 52, trend: 'Rising'},
-                {keyword: 'SLERF', interest_score: 38, trend: 'Stable'}
-            ]);
+            updateMarketInsights(['🔥 Connect to CoinGecko for live insights', '📈 Market data available', '💎 Real-time analytics ready']);
+            updateTrendingSearches([]);
         }
 
         function updateMarketOverview(data) {
@@ -2170,60 +2189,67 @@
             document.getElementById('cryptoPrices').innerHTML = pricesHtml;
         }
 
-        function updateTrendingKeywords(keywords) {
-            const container = document.getElementById('trendingKeywords');
+        function updateMarketInsights(insights) {
+            const container = document.getElementById('marketInsights');
             let html = '';
             
-            keywords.slice(0, 8).forEach(keyword => {
-                html += `<div class="keyword-tag">${keyword}</div>`;
+            insights.slice(0, 12).forEach(insight => {
+                html += `<div class="insight-tag">${insight}</div>`;
             });
+            
+            if (html === '') {
+                html = '<div class="insight-tag">Connect to CoinGecko</div><div class="insight-tag">Live market data</div>';
+            }
             
             container.innerHTML = html;
         }
 
-        function updateTrendingMemecoins(memecoins) {
-            console.log('Updating trending memecoins:', memecoins); // Debug log
-            const container = document.getElementById('trendingMemecoins');
+        function updateTrendingSearches(searches) {
+            console.log('Updating trending searches:', searches); // Debug log
+            const container = document.getElementById('trendingSearches');
             if (!container) {
-                console.error('Trending memecoins container not found');
+                console.error('Trending searches container not found');
                 return;
             }
             
             let html = '';
             
-            if (memecoins && memecoins.length > 0) {
-                memecoins.slice(0, 6).forEach(coin => {
-                    const trendClass = coin.trend && coin.trend.toLowerCase() === 'rising' ? 'trend-rising' : 'trend-stable';
+            if (searches && searches.length > 0) {
+                searches.slice(0, 6).forEach(search => {
+                    const searchName = search.name || search;
+                    const marketCapRank = search.market_cap_rank || 999;
+                    const trendingUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(searchName)}`;
+                    
                     html += `
-                        <div class="memecoin-item">
-                            <span class="memecoin-name">${coin.keyword || coin.name || 'Unknown'}</span>
-                            <span class="memecoin-trend ${trendClass}">${coin.trend || 'Stable'}</span>
+                        <div class="search-item" onclick="window.open('${trendingUrl}', '_blank')">
+                            <span class="search-name">${searchName}</span>
+                            <span class="search-rank">${marketCapRank < 100 ? '#' + marketCapRank : 'NEW'}</span>
                         </div>
                     `;
                 });
             } else {
-                // Fallback content if no memecoins
+                // Fallback content if no searches
                 html = `
-                    <div class="memecoin-item">
-                        <span class="memecoin-name">BONK</span>
-                        <span class="memecoin-trend trend-rising">Rising</span>
+                    <div class="search-item">
+                        <span class="search-name">Bitcoin</span>
+                        <span class="search-rank">#1</span>
                     </div>
-                    <div class="memecoin-item">
-                        <span class="memecoin-name">WIF</span>
-                        <span class="memecoin-trend trend-stable">Stable</span>
+                    <div class="search-item">
+                        <span class="search-name">Ethereum</span>
+                        <span class="search-rank">#2</span>
                     </div>
-                    <div class="memecoin-item">
-                        <span class="memecoin-name">POPCAT</span>
-                        <span class="memecoin-trend trend-rising">Rising</span>
+                    <div class="search-item">
+                        <span class="search-name">Solana</span>
+                        <span class="search-rank">#5</span>
                     </div>
                 `;
             }
             
-            console.log('Setting memecoins HTML:', html); // Debug log
+            console.log('Setting searches HTML:', html); // Debug log
             container.innerHTML = html;
         }
 
-        // Trending Tokens Functions
+        // Trending Tokens Functions - FIXED
         async function loadTrendingTokens() {
             // Load all tabs on initial load
             await loadFreshHype();
@@ -2231,7 +2257,7 @@
             await loadBlueChips();
         }
 
-        // Tab switching function
+        // Tab switching function - FIXED
         function switchTab(tabName) {
             currentTab = tabName;
             
@@ -2248,48 +2274,63 @@
             document.getElementById(tabName).classList.add('active');
         }
 
-        // Fresh Hype tokens
+        // Fresh Hype tokens using DexScreener
         async function loadFreshHype(forceRefresh = false) {
             try {
+                const gridElement = document.getElementById('freshHypeGrid');
+                gridElement.innerHTML = '<div class="loading-state">Loading fresh hype tokens from DexScreener...</div>';
+                
                 const response = await fetch(`/trending-tokens?category=fresh-hype&refresh=${forceRefresh}`);
                 const data = await response.json();
                 
                 if (data.success && data.tokens) {
                     displayTokensInGrid(data.tokens, 'freshHypeGrid', 'fresh-hype');
+                } else {
+                    gridElement.innerHTML = '<div class="error-state">Error loading fresh hype tokens</div>';
                 }
             } catch (error) {
                 console.error('Fresh hype tokens error:', error);
-                document.getElementById('freshHypeGrid').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Error loading fresh hype tokens</div>';
+                document.getElementById('freshHypeGrid').innerHTML = '<div class="error-state">Error loading fresh hype tokens</div>';
             }
         }
 
-        // Recent Trending tokens
+        // Recent Trending tokens using CoinGecko
         async function loadRecentTrending(forceRefresh = false) {
             try {
+                const gridElement = document.getElementById('recentTrendingGrid');
+                gridElement.innerHTML = '<div class="loading-state">Loading trending tokens from CoinGecko...</div>';
+                
                 const response = await fetch(`/trending-tokens?category=recent-trending&refresh=${forceRefresh}`);
                 const data = await response.json();
                 
                 if (data.success && data.tokens) {
                     displayTokensInGrid(data.tokens, 'recentTrendingGrid', 'recent-trending');
+                } else {
+                    gridElement.innerHTML = '<div class="error-state">Error loading trending tokens</div>';
                 }
             } catch (error) {
                 console.error('Recent trending tokens error:', error);
-                document.getElementById('recentTrendingGrid').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Error loading trending tokens</div>';
+                document.getElementById('recentTrendingGrid').innerHTML = '<div class="error-state">Error loading trending tokens</div>';
             }
         }
 
-        // Blue Chip tokens
+        // Blue Chip tokens using CoinGecko
         async function loadBlueChips(forceRefresh = false) {
             try {
+                const gridElement = document.getElementById('blueChipsGrid');
+                gridElement.innerHTML = '<div class="loading-state">Loading blue chip tokens from CoinGecko...</div>';
+                
                 const response = await fetch(`/trending-tokens?category=blue-chips&refresh=${forceRefresh}`);
                 const data = await response.json();
                 
                 if (data.success && data.tokens) {
                     displayTokensInGrid(data.tokens, 'blueChipsGrid', 'blue-chip');
+                } else {
+                    gridElement.innerHTML = '<div class="error-state">Error loading blue chip tokens</div>';
                 }
             } catch (error) {
                 console.error('Blue chip tokens error:', error);
-                document.getElementById('blueChipsGrid').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Error loading blue chip tokens</div>';
+                document.getElementById('blueChipsGrid').innerHTML = '<div class="error-state">Error loading blue chip tokens</div>';
             }
         }
 
@@ -2300,13 +2341,19 @@
                 const changeClass = token.price_change >= 0 ? 'positive' : 'negative';
                 const changeIcon = token.price_change >= 0 ? '🚀' : '📉';
                 
+                // Only allow clicks on valid Solana addresses
+                const isClickable = token.address && token.address.length >= 32 && !token.address.startsWith('PLACEHOLDER') && !token.address.startsWith('TRENDING') && !token.address.startsWith('BLUECHIP');
+                const clickHandler = isClickable ? `onclick="loadTokenAnalysis('${token.address}')"` : '';
+                const cursorStyle = isClickable ? 'cursor: pointer;' : 'cursor: default; opacity: 0.7;';
+                
                 tokensHtml += `
-                    <div class="trending-token ${category}" onclick="loadTokenAnalysis('${token.address}')">
+                    <div class="trending-token ${category}" ${clickHandler} style="${cursorStyle}">
                         <div class="trending-symbol">${token.symbol}</div>
                         <div class="trending-change ${changeClass}">
                             ${changeIcon} ${token.price_change >= 0 ? '+' : ''}${token.price_change.toFixed(1)}%
                         </div>
                         <div class="trending-mentions">${token.mentions || Math.floor(token.volume / 1000)} ${category === 'blue-chip' ? 'vol' : 'mentions'}</div>
+                        ${!isClickable ? '<div style="font-size: 0.6rem; color: #888; margin-top: 5px;">View only</div>' : ''}
                     </div>
                 `;
             });
@@ -2343,7 +2390,7 @@
             }
         }
 
-        // Crypto News Functions
+        // Crypto News Functions with RSS
         async function loadCryptoNews() {
             try {
                 const response = await fetch('/crypto-news');
@@ -2352,11 +2399,11 @@
                 if (data.success && data.articles) {
                     displayCryptoNews(data.articles);
                 } else {
-                    document.getElementById('newsList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading news</div>';
+                    document.getElementById('newsList').innerHTML = '<div class="error-state">Error loading news</div>';
                 }
             } catch (error) {
                 console.error('Crypto news error:', error);
-                document.getElementById('newsList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading news</div>';
+                document.getElementById('newsList').innerHTML = '<div class="error-state">Error loading news</div>';
             }
         }
 
@@ -2611,7 +2658,6 @@
                             },
                             ticks: {
                                 color: '#b0b7ff',
-
                                 font: {
                                     size: 10
                                 },
@@ -2727,7 +2773,7 @@
             const profile = document.getElementById('tokenProfile');
             
             // Update token info
-            document.getElementById('tokenName').textContent = `$${data.token_symbol} - ${data.token_name || data.token_symbol + ' Token'}`;
+            document.getElementById('tokenName').textContent = `${data.token_symbol} - ${data.token_name || data.token_symbol + ' Token'}`;
             document.getElementById('tokenContract').textContent = `${data.token_address.slice(0, 8)}...${data.token_address.slice(-8)}`;
             
             // Update token image if available
@@ -2742,7 +2788,7 @@
             // Update metrics
             const metricsHtml = `
                 <div class="metric-card">
-                    <div class="metric-value">$${(data.price_usd || 0).toFixed(8)}</div>
+                    <div class="metric-value">${(data.price_usd || 0).toFixed(8)}</div>
                     <div class="metric-label">Price USD</div>
                 </div>
                 <div class="metric-card">

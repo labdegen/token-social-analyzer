@@ -7,3 +7,4 @@ pandas==2.0.3
 openai==1.51.0
 Pillow==10.0.1
 Werkzeug==3.0.0
+feedparser==6.0.10
