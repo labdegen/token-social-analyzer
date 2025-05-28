@@ -2,6 +2,7 @@ Flask==3.0.0
 requests==2.31.0
 gunicorn==21.2.0
 pytrends==4.9.2
+numpy==1.25.3
 pandas==2.0.3
 openai==1.51.0
 Pillow==10.0.1
