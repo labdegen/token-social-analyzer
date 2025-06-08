@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - ASK DEGEN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: url('https://jeetsvsdegens.com/newbg.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        /* Fixed Header */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 15px 0;
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: "Lacquer", system-ui;
+            font-size: 2rem;
+            font-weight: 400;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s ease infinite;
+            text-decoration: none;
+        }
+
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #b0b7ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s ease infinite;
+        }
+
+        .page-description {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #b0b7ff;
+            margin-bottom: 50px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Timeline Styles */
+        .timeline-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #667eea, #764ba2, #f093fb);
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 50px 0;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .timeline-item:nth-child(odd) {
+            animation-delay: 0.1s;
+        }
+
+        .timeline-item:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            width: 45%;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: 55%;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-right: 55%;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 30px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            border: 4px solid rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+
+        .timeline-year {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .timeline-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .timeline-summary {
+            font-size: 0.95rem;
+            color: #b0b7ff;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .timeline-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .timeline-content.expanded .timeline-details {
+            max-height: 1000px;
+        }
+
+        .timeline-details-content {
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 15px;
+        }
+
+        .timeline-image {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .timeline-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #b0b7ff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .expand-indicator {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 0.8rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .timeline-content.expanded .expand-indicator {
+            transform: rotate(180deg);
+        }
+
+        .significance-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .key-figures {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .key-figures h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .figures-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .figure-tag {
+            background: rgba(102, 126, 234, 0.2);
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .timeline-line {
+                left: 30px;
+                transform: none;
+            }
+
+            .timeline-content {
+                width: calc(100% - 80px);
+                margin-left: 80px !important;
+                margin-right: 0 !important;
+            }
+
+            .timeline-dot {
+                left: 30px;
+                transform: translateX(-50%);
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .header-content {
+                padding: 0 15px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+
+            .timeline-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-container {
+                padding: 15px;
+            }
+
+            .timeline-content {
+                padding: 20px;
+                width: calc(100% - 60px);
+                margin-left: 60px !important;
+            }
+
+            .timeline-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .powered-by {
+            text-align: center;
+            margin-top: 50px;
+            color: #b0b7ff;
+            font-weight: 500;
+        }
+
+        .powered-by a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .powered-by a:hover {
+            color: #764ba2;
+            text-shadow: 0 0 15px rgba(102, 126, 234, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <a href="#" class="logo"><img style="max-height:60px;" src="https://jeetsvsdegens.com/ask-logo.png"></a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/dictionary" class="nav-link">Dictionary</a>
+                <a href="/charts" class="nav-link">Chart Analysis</a>
+                <a href="/history" class="nav-link active">History</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-container">
+        <div class="page-title">📜 The History of Crypto & Meme Coins</div>
+        <div class="page-description">
+            From Bitcoin's revolutionary genesis to the pump.fun era of billion-dollar meme coins. 
+            Explore the complete timeline of how cryptocurrency evolved from serious monetary innovation 
+            to today's cultural token phenomenon on Solana. Click any event to dive deeper into the story.
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+
+            <!-- 2009 - Bitcoin Genesis -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content" onclick="toggleDetails(this)">
+                    <div class="timeline-year">2009</div>
+                    <div class="significance-badge">🏛️ FOUNDATION</div>
+                    <div class="timeline-title">Bitcoin Genesis Block</div>
+                    <div class="timeline-summary">
+                        Satoshi Nakamoto mines the first Bitcoin block, embedding a message about bank bailouts and launching the cryptocurrency revolution.
+                        <span class="expand-indicator">▼</span>
+                    </div>
+                    <div class="timeline-details">
+                        <div class="timeline-details-content">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg" alt="Bitcoin Logo" class="timeline-image">
+                            <p>On January 3, 2009, Satoshi Nakamoto mined the genesis block containing the famous message: "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks." This marked the birth of decentralized digital money and established Bitcoin as an alternative to traditional financial systems.</p>
+                            
+                            <div class="timeline-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">$0</div>
+                                    <div class="stat-label">Initial Price</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">50 BTC</div>
+                                    <div class="stat-label">Block Reward</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">10 min</div>
+                                    <div class="stat-label">Block Time</div>
+                                </div>
+                            </div>
+
+                            <div class="key-figures">
+                                <h4>Key Figures</h4>
+                                <div class="figures-list">
+                                    <span class="figure-tag">Satoshi Nakamoto</span>
+                                    <span class="figure-tag">Hal Finney</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2013 - Dogecoin Launch -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content" onclick="toggleDetails(this)">
+                    <div class="timeline-year">2013</div>
+                    <div class="significance-badge">🐕 MEME BIRTH</div>
+                    <div class="timeline-title">Dogecoin: The First Meme Coin</div>
+                    <div class="timeline-summary">
+                        Billy Markus and Jackson Palmer create Dogecoin as a satirical response to crypto speculation, accidentally launching the meme coin revolution.
+                        <span class="expand-indicator">▼</span>
+                    </div>
+                    <div class="timeline-details">
+                        <div class="timeline-details-content">
+                            <img src="https://upload.wikimedia.org/wikipedia/en/d/d0/Dogecoin_Logo.png" alt="Dogecoin Logo" class="timeline-image">
+                            <p>Created on December 6, 2013, Dogecoin began as a joke but quickly attracted over 1 million visitors within 30 days. The project pioneered community-driven crypto culture, raising $50,000 for the Jamaican Bobsled Team and establishing the template for all future meme coins.</p>
+                            
+                            <div class="timeline-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">1M+</div>
+                                    <div class="stat-label">Visitors (30 days)</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">100B</div>
+                                    <div class="stat-label">Token Supply</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">1 min</div>
+                                    <div class="stat-label">Block Time</div>
+                                </div>
+                            </div>
+
+                            <div class="key-figures">
+                                <h4>Key Figures</h4>
+                                <div class="figures-list">
+                                    <span class="figure-tag">Billy Markus</span>
+                                    <span class="figure-tag">Jackson Palmer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2015 - Ethereum Launch -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content" onclick="toggleDetails(this)">
+                    <div class="timeline-year">2015</div>
+                    <div class="significance-badge">🔗 SMART CONTRACTS</div>
+                    <div class="timeline-title">Ethereum Enables Programmable Money</div>
+                    <div class="timeline-summary">
+                        Vitalik Buterin launches Ethereum, introducing smart contracts and the ERC-20 standard that would enable easy token creation.
+                        <span class="expand-indicator">▼</span>
+                    </div>
+                    <div class="timeline-details">
+                        <div class="timeline-details-content">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Ethereum_logo_2014.svg" alt="Ethereum Logo" class="timeline-image">
+                            <p>Launched on July 30, 2015, Ethereum introduced programmable money through smart contracts. The ERC-20 token standard made it simple for anyone to create new cryptocurrencies, laying the foundation for the token explosion that would follow.</p>
+                            
+                            <div class="timeline-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">19</div>
+                                    <div class="stat-label">Vitalik's Age</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">15 sec</div>
+                                    <div class="stat-label">Block Time</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">∞</div>
+                                    <div class="stat-label">Possibilities</div>
+                                </div>
+                            </div>
+
+                            <div class="key-figures">
+                                <h4>Key Figures</h4>
+                                <div class="figures-list">
+                                    <span class="figure-tag">Vitalik Buterin</span>
+                                    <span class="figure-tag">Gavin Wood</span>
+                                    <span class="figure-tag">Joseph Lubin</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2017 - Solana Founded -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content" onclick="toggleDetails(this)">
+                    <div class="timeline-year">2017</div>
+                    <div class="significance-badge">⚡ INNOVATION</div>
+                    <div class="timeline-title">Solana Founded: Proof of History</div>
+                    <div class="timeline-summary">
+                        Anatoly Yakovenko invents Proof of History, solving blockchain scalability with a cryptographic innovation that enables parallel processing.
+                        <span class="expand-indicator">▼</span>
+                    </div>
+                    <div class="timeline-details">
+                        <div class="timeline-details-content">
+                            <img src="https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png" alt="Solana Logo" class="timeline-image">
+                            <p>Former Qualcomm engineer Anatoly Yakovenko revolutionized blockchain architecture with Proof of History (PoH), creating verifiable timestamps without node communication. This breakthrough would later enable the low-cost, high-speed trading perfect for meme coins.</p>
+                            
+                            <div class="timeline-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">50,000+</div>
+                                    <div class="stat-label">TPS Capacity</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">400ms</div>
+                                    <div class="stat-label">Block Time</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">$0.00025</div>
+                                    <div class="stat-label">Avg Tx Cost</div>
+                                </div>
+                            </div>
+
+                            <div class="key-figures">
+                                <h4>Key Figures</h4>
+                                <div class="figures-list">
+                                    <span class="figure-tag">Anatoly Yakovenko</span>
+                                    <span class="figure-tag">Raj Gokal</span>
+                                    <span class="figure-tag">Austin Federa</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2021 - Meme Stock Mania -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content" onclick="toggleDetails(this)">
+                    <div class="timeline-year">2021</div>
+                    <div class="significance-badge">🚀 MAINSTREAM</div>
+                    <div class="timeline-title">GameStop & Meme Stock Revolution</div>
+                    <div class="timeline-summary">
+                        WallStreetBets drives GameStop to $400+, introducing "diamond hands" culture and directing retail attention to crypto meme coins.
+                        <span class="expand-indicator">▼</span>
+                    </div>
+                    <div class="timeline-details">
+                        <div class="timeline-details-content">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/1/1d/GameStop_logo.svg" alt="GameStop Logo" class="timeline-image">
+                            <p>The r/WallStreetBets GameStop squeeze demonstrated retail coordination power, gaining 3 million subscribers in weeks. When trading platforms restricted meme stocks, retail attention shifted to crypto, bringing "apes" and "diamond hands" terminology into meme coin culture.</p>
+                            
+                            <div class="timeline-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">3M+</div>
+                                    <div class="stat-label">New WSB Members</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">$483</div>
+                                    <div class="stat-label">GME Peak Price</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">$0.74</div>
+                                    <div class="stat-label">DOGE ATH</div>
+                                </div>
+                            </div>
+
+                            <div class="key-figures">
+                                <h4>Key Figures</h4>
+                                <div class="figures-list">
+                                    <span class="figure-tag">Elon Musk</span>
+                                    <span class="figure-tag">Keith Gill (DFV)</span>
+                                    <span class="figure-tag">r/WallStreetBets</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2022 - BONK Launch -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content" onclick="toggleDetails(this)">
+                    <div class="timeline-year">2022</div>
+                    <div class="significance-badge">🎁 RENAISSANCE</div>
+                    <div class="timeline-title">BONK: Solana's Christmas Miracle</div>
+                    <div class="timeline-summary">
+                        BONK launches on Christmas Day as a gift to Solana community, kickstarting the ecosystem's recovery after FTX collapse with a massive airdrop.
+                        <span class="expand-indicator">▼</span>
+                    </div>
+                    <div class="timeline-details">
+                        <div class="timeline-details-content">
+                            <img src="https://via.placeholder.com/300x200/667eea/ffffff?text=BONK" alt="BONK Token" class="timeline-image">
+                            <p>Launched December 25, 2022, BONK airdropped 50% of its 100 trillion token supply to Solana users as an antidote to "toxic Alameda tokenomics." The community-owned meme coin generated $20M volume on day one and helped drive SOL's recovery from $8 to $34+.</p>
+                            
+                            <div class="timeline-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">50%</div>
+                                    <div class="stat-label">Airdropped</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">$20M</div>
+                                    <div class="stat-label">Day 1 Volume</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">$2.7B</div>
+                                    <div class="stat-label">Peak Market Cap</div>
+                                </div>
+                            </div>
+
+                            <div class="key-figures">
+                                <h4>Key Features</h4>
+                                <div class="figures-list">
+                                    <span class="figure-tag">Community Owned</span>
+                                    <span class="figure-tag">Fair Launch</span>
+                                    <span class="figure-tag">Anti-Alameda</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2023 - WIF Success -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content" onclick="toggleDetails(this)">
+                    <div class="timeline-year">2023</div>
+                    <div class="significance-badge">🧢 VIRAL</div>
+                    <div class="timeline-title">dogwifhat: The Hat Stays On</div>
+                    <div class="timeline-summary">
+                        WIF becomes the first meme coin to cross $1, reaching $4.83 with a viral dog-with-hat meme and Ansem's advocacy, proving pure cultural appeal.
+                        <span class="expand-indicator">▼</span>
+                    </div>
+                    <div class="timeline-details">
+                        <div class="timeline-details-content">
+                            <img src="https://via.placeholder.com/300x200/f59e0b/ffffff?text=WIF" alt="Dogwifhat" class="timeline-image">
+                            <p>Launched in November 2023 featuring Achi, a Shiba Inu from Japan wearing a knitted hat, WIF achieved a 2,000x price increase by December. With no utility beyond memetic value, it reached $4.83 and a $4.58B market cap, establishing "The hat stays on" as a rallying cry.</p>
+                            
+                            <div class="timeline-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">2,000x</div>
+                                    <div class="stat-label">Price Increase</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">$4.83</div>
+                                    <div class="stat-label">All-Time High</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">$4.58B</div>
+                                    <div class="stat-label">Peak Market Cap</div>
+                                </div>
+                            </div>
+
+                            <div class="key-figures">
+                                <h4>Cultural Impact</h4>
+                                <div class="figures-list">
+                                    <span class="figure-tag">Ansem Advocacy</span>
+                                    <span class="figure-tag">Viral Meme</span>
+                                    <span class="figure-tag">Hat Culture</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2024 - Pump.fun Launch -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content" onclick="toggleDetails(this)">
+                    <div class="timeline-year">2024</div>
+                    <div class="significance-badge">🏭 REVOLUTION</div>
+                    <div class="timeline-title">Pump.fun: The Meme Coin Factory</div>
+                    <div class="timeline-summary">
+                        Pump.fun launches with bonding curves and fair launch mechanics, democratizing token creation and generating 6+ million tokens in its first year.
+                        <span class="expand-indicator">▼</span>
+                    </div>
+                    <div class="timeline-details">
+                        <div class="timeline-details-content">
+                            <img src="https://via.placeholder.com/300x200/9333ea/ffffff?text=PUMP.FUN" alt="Pump.fun Platform" class="timeline-image">
+                            <p>Launched January 19, 2024, pump.fun revolutionized meme coin creation with bonding curves that enable instant trading from $4,000 market cap, automatically graduating successful tokens to Raydium at $100K with $17K liquidity. The platform handled 52.8% of Solana DEX transactions at peak.</p>
+                            
+                            <div class="timeline-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">6M+</div>
+                                    <div class="stat-label">Tokens Created</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">$500M+</div>
+                                    <div class="stat-label">Revenue Generated</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">52.8%</div>
+                                    <div class="stat-label">Peak SOL DEX Share</div>
+                                </div>
+                            </div>
+
+                            <div class="key-figures">
+                                <h4>Innovations</h4>
+                                <div class="figures-list">
+                                    <span class="figure-tag">Bonding Curves</span>
+                                    <span class="figure-tag">Fair Launch</span>
+                                    <span class="figure-tag">Auto Graduation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2025 - TRUMP Controversy -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content" onclick="toggleDetails(this)">
+                    <div class="timeline-year">2025</div>
+                    <div class="significance-badge">⚠️ CONTROVERSY</div>
+                    <div class="timeline-title">TRUMP Token & Kelsier Scandal</div>
+                    <div class="timeline-summary">
+                        Trump launches TRUMP token 3 days before inauguration, sparking ethics concerns. Kelsier Ventures exposed for $320M+ market manipulation schemes.
+                        <span class="expand-indicator">▼</span>
+                    </div>
+                    <div class="timeline-details">
+                        <div class="timeline-details-content">
+                            <img src="https://via.placeholder.com/300x200/ef4444/ffffff?text=TRUMP" alt="TRUMP Token Controversy" class="timeline-image">
+                            <p>The January 17, 2025 TRUMP token launch raised unprecedented ethical concerns about presidential conflicts of interest. With 80% insider control and Trump's potential $20B+ paper wealth, the controversy intensified when Kelsier Ventures was exposed for systematic market manipulation across TRUMP, MELANIA, and LIBRA tokens.</p>
+                            
+                            <div class="timeline-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">$15B+</div>
+                                    <div class="stat-label">Peak Market Cap</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">80%</div>
+                                    <div class="stat-label">Insider Control</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">$320M+</div>
+                                    <div class="stat-label">Kelsier Profits</div>
+                                </div>
+                            </div>
+
+                            <div class="key-figures">
+                                <h4>Key Issues</h4>
+                                <div class="figures-list">
+                                    <span class="figure-tag">Ethics Violations</span>
+                                    <span class="figure-tag">Market Manipulation</span>
+                                    <span class="figure-tag">Regulatory Gaps</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="powered-by">
+            <p>📚 <strong>Educational Timeline of Crypto History</strong> - From serious money to meme culture</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                The complete journey from Bitcoin's genesis to pump.fun's cultural revolution
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function toggleDetails(element) {
+            element.classList.toggle('expanded');
+        }
+
+        // Add intersection observer for scroll animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            timelineItems.forEach(item => {
+                observer.observe(item);
+            });
+
+            // Add hover effects for better interactivity
+            const contentElements = document.querySelectorAll('.timeline-content');
+            contentElements.forEach(content => {
+                content.addEventListener('mouseenter', function() {
+                    this.style.borderColor = 'rgba(102, 126, 234, 0.5)';
+                });
+                
+                content.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('expanded')) {
+                        this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    }
+                });
+            });
+        });
+
+        // Add click sound effect (optional)
+        function playClickSound() {
+            // You can add a subtle click sound here if desired
+        }
+
+        // Enhanced expand/collapse with smooth animations
+        document.querySelectorAll('.timeline-content').forEach(content => {
+            content.addEventListener('click', function() {
+                playClickSound();
+                
+                // Close other expanded items for better UX
+                document.querySelectorAll('.timeline-content.expanded').forEach(other => {
+                    if (other !== this) {
+                        other.classList.remove('expanded');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

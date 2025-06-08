@@ -1,0 +1,26 @@
+{
+  "type": "module",
+  "name": "token-social-analyzer",
+  "version": "1.0.0",
+  "description": "AI-powered social sentiment analysis for Solana tokens using GROK Live Search API.",
+  "main": "get_jwt.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@solana/web3.js": "^1.98.2",
+    "bs58": "^6.0.0",
+    "node-fetch": "^2.7.0",
+    "tweetnacl": "^1.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/labdegen/token-social-analyzer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/labdegen/token-social-analyzer/issues"
+  },
+  "homepage": "https://github.com/labdegen/token-social-analyzer#readme"
+}

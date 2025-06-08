@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASK DEGEN - ACCURATE Social Intelligence Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js for Revolutionary Charts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: url('https://jeetsvsdegens.com/newbg.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        /* Fixed Header */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 15px 0;
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: "Lacquer", system-ui;
+            font-size: 2rem;
+            font-weight: 400;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s ease infinite;
+            text-decoration: none;
+        }
+
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #b0b7ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link:hover {
+            background: rgba(102, 126, 234, 0.2);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .dashboard-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ACCURATE Social Warning Banner */
+        .accurate-banner {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .accurate-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            animation: pulse-wave 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-wave {
+            0%, 100% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .accurate-banner h2 {
+            font-family: "Titillium Web", sans-serif;
+            font-size: 1.5rem;
+            color: #10b981;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .accurate-banner p {
+            color: #e1e7ff;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .accurate-features {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .accurate-feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Market Overview */
+        .market-overview {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+            margin-bottom: 25px;
+            align-items: start;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        /* Token Analyzer with Enhanced UI */
+        .token-analyzer {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .analyzer-input {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            min-width: 0;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #e1e7ff;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "Titillium Web", sans-serif;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        /* ACCURATE Social Intelligence Dashboard */
+        .accurate-social-dashboard {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            position: relative;
+        }
+
+        .accurate-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .accurate-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #10b981, #34d399, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .data-quality-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .quality-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse-quality 2s infinite;
+        }
+
+        .quality-high { background: #10b981; }
+        .quality-medium { background: #f59e0b; }
+        .quality-low { background: #ef4444; }
+
+        @keyframes pulse-quality {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        /* ACCURATE Metrics Grid */
+        .accurate-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .accurate-metric-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .accurate-metric-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #10b981, transparent, #10b981);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+            border-radius: 16px;
+        }
+
+        .accurate-metric-card:hover::before {
+            opacity: 1;
+        }
+
+        .accurate-metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .metric-icon-large {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .metric-value-large {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #10b981;
+            margin-bottom: 8px;
+        }
+
+        .metric-label-accurate {
+            font-size: 0.9rem;
+            color: #b0b7ff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-subtitle {
+            font-size: 0.75rem;
+            color: #7dd3fc;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* Narrative Intelligence Panel */
+        .narrative-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .narrative-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .narrative-icon {
+            font-size: 2rem;
+        }
+
+        .narrative-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .narrative-summary {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .narrative-summary p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e1e7ff;
+        }
+
+        .key-phrases {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .phrase-tag {
+            background: rgba(102, 126, 234, 0.2);
+            color: #a5b4fc;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .phrase-tag:hover {
+            background: rgba(102, 126, 234, 0.3);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* Influencer Activity Dashboard */
+        .influencer-dashboard {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(29, 161, 242, 0.3);
+        }
+
+        .influencer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .influencer-card {
+            background: rgba(29, 161, 242, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(29, 161, 242, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .influencer-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(29, 161, 242, 0.2);
+            background: rgba(29, 161, 242, 0.15);
+        }
+
+        .influencer-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .influencer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1da1f2, #0e7490);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .influencer-info {
+            flex: 1;
+        }
+
+        .influencer-name {
+            font-weight: 700;
+            color: #1da1f2;
+            font-size: 1.1rem;
+            margin-bottom: 3px;
+        }
+
+        .influencer-followers {
+            font-size: 0.85rem;
+            color: #7dd3fc;
+        }
+
+        .influencer-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            font-style: italic;
+            color: #e1e7ff;
+            line-height: 1.5;
+        }
+
+        .influencer-engagement {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #7dd3fc;
+        }
+
+        /* Coordination Detection Alert */
+        .coordination-alert {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .coordination-alert.active {
+            display: block;
+            animation: alert-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes alert-pulse {
+            0%, 100% { border-color: rgba(239, 68, 68, 0.3); }
+            50% { border-color: rgba(239, 68, 68, 0.6); }
+        }
+
+        .coordination-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .alert-icon {
+            font-size: 2rem;
+            color: #ef4444;
+            animation: shake 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(-2px); }
+            100% { transform: translateX(2px); }
+        }
+
+        .coordination-content {
+            color: #fca5a5;
+            line-height: 1.6;
+        }
+
+        .coordination-evidence {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Real-Time Momentum Tracker */
+        .momentum-tracker {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .momentum-visual {
+            position: relative;
+            height: 200px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .momentum-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, #ef4444, #f59e0b, #10b981);
+            transition: height 1s ease-in-out;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .momentum-labels {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #b0b7ff;
+        }
+
+        .momentum-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+
+        .momentum-stat {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .momentum-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 5px;
+        }
+
+        .momentum-stat-label {
+            font-size: 0.75rem;
+            color: #b0b7ff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Enhanced Token Psychology Metrics */
+        .psychology-dashboard {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05));
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .psychology-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .psychology-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+        }
+
+        .psychology-score {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .psychology-label {
+            font-size: 1rem;
+            color: #c4b5fd;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .psychology-insight {
+            font-size: 0.85rem;
+            color: #e1e7ff;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        /* Exit Strategy Alert */
+        .exit-strategy {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .exit-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .exit-signals {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .exit-signal {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .signal-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .signal-indicator.warning { background: #f59e0b; }
+        .signal-indicator.danger { background: #ef4444; }
+
+        .signal-text {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #e1e7ff;
+        }
+
+        /* Loading and Error States */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 16px;
+            margin: 20px 0;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .accurate-metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .psychology-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .analyzer-input {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .accurate-metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .influencer-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                padding-top: 70px;
+            }
+        }
+
+        /* Chat Interface */
+        .chat-interface {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 120px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 0;
+            margin-bottom: 15px;
+            max-height: 280px;
+        }
+
+        .chat-message {
+            margin: 12px 0;
+            padding: 12px 16px;
+            border-radius: 16px;
+            max-width: 85%;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .chat-message.user {
+            background: rgba(102, 126, 234, 0.2);
+            color: #e1e7ff;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.assistant {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <a href="#" class="logo"><img style="max-height:60px;" src="https://jeetsvsdegens.com/ask-logo.png"></a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link active">Dashboard</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/dictionary" class="nav-link">Dictionary</a>
+                <a href="/charts" class="nav-link">Chart Analysis</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- ACCURATE Social Intelligence Banner -->
+        <div class="accurate-banner">
+            <h2>🎯 ACCURATE Social Intelligence System Active</h2>
+            <p>Powered by GROK AI Live Search • No Fake Data • Real X/Twitter Analysis • Age-Aware Metrics</p>
+            <div class="accurate-features">
+                <div class="accurate-feature">✅ Live Social Data</div>
+                <div class="accurate-feature">✅ Real Influencer Tracking</div>
+                <div class="accurate-feature">✅ Coordination Detection</div>
+                <div class="accurate-feature">✅ Narrative Intelligence</div>
+                <div class="accurate-feature">✅ Token Age Awareness</div>
+            </div>
+        </div>
+
+        <!-- Market Overview (keep existing) -->
+        <div class="market-overview" id="marketOverview">
+            <!-- Market overview content -->
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Token Analyzer -->
+                <div class="token-analyzer">
+                    <div class="section-header">
+                        <span style="font-size: 1.5rem;">🎯</span>
+                        <div class="section-title">ACCURATE Token Analyzer</div>
+                    </div>
+                    
+                    <div class="analyzer-input">
+                        <div class="input-group">
+                            <label for="tokenAddress">Solana Token Address:</label>
+                            <input 
+                                type="text" 
+                                id="tokenAddress" 
+                                placeholder="Enter Solana token address..."
+                                value=""
+                            >
+                        </div>
+                        <div class="input-group">
+                            <label for="timeWindow">Analysis Window:</label>
+                            <select id="timeWindow">
+                                <option value="1d">🔥 1 Day - Ultra Fresh</option>
+                                <option value="3d" selected>⚡ 3 Days - Optimal</option>
+                                <option value="7d">📊 7 Days - Comprehensive</option>
+                            </select>
+                        </div>
+                        <button class="analyze-btn" onclick="analyzeToken()">
+                            🚀 Analyze
+                        </button>
+                    </div>
+
+                    <div class="loading-spinner" id="loadingSpinner">
+                        <div class="spinner"></div>
+                        <div class="loading-text" id="loadingText">🚀 Fetching ACCURATE social data...</div>
+                    </div>
+
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection" style="display: none;">
+                    <!-- ACCURATE Social Intelligence Dashboard -->
+                    <div class="accurate-social-dashboard" id="accurateSocialDashboard">
+                        <div class="accurate-header">
+                            <h2 class="accurate-title">ACCURATE SOCIAL METRICS</h2>
+                            <div class="data-quality-badge">
+                                <div class="quality-indicator" id="qualityIndicator"></div>
+                                <span id="dataQualityText">Loading...</span>
+                            </div>
+                            <p id="timeWindowUsed" style="color: #10b981; font-weight: 600;"></p>
+                        </div>
+
+                        <!-- ACCURATE Metrics Grid -->
+                        <div class="accurate-metrics-grid">
+                            <div class="accurate-metric-card">
+                                <div class="metric-icon-large">📢</div>
+                                <div class="metric-value-large" id="totalMentions">0</div>
+                                <div class="metric-label-accurate">Total Mentions</div>
+                                <div class="metric-subtitle" id="mentionsSubtitle">In analysis window</div>
+                            </div>
+
+                            <div class="accurate-metric-card">
+                                <div class="metric-icon-large">⚡</div>
+                                <div class="metric-value-large" id="mentionsPerHour">0</div>
+                                <div class="metric-label-accurate">Mentions/Hour</div>
+                                <div class="metric-subtitle">Real velocity</div>
+                            </div>
+
+                            <div class="accurate-metric-card">
+                                <div class="metric-icon-large">📈</div>
+                                <div class="metric-value-large" id="momentumChange">0%</div>
+                                <div class="metric-label-accurate">Momentum</div>
+                                <div class="metric-subtitle" id="momentumTrend">Calculating...</div>
+                            </div>
+
+                            <div class="accurate-metric-card">
+                                <div class="metric-icon-large">💎</div>
+                                <div class="metric-value-large" id="sentimentScore">0%</div>
+                                <div class="metric-label-accurate">Positive Sentiment</div>
+                                <div class="metric-subtitle">From real posts</div>
+                            </div>
+                        </div>
+
+                        <!-- Sentiment Distribution -->
+                        <div style="margin-top: 30px;">
+                            <h3 style="color: #10b981; margin-bottom: 15px;">Sentiment Distribution</h3>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                                <div style="background: rgba(16, 185, 129, 0.2); padding: 15px; border-radius: 12px; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;" id="positiveSentiment">0%</div>
+                                    <div style="font-size: 0.8rem; color: #86efac;">Bullish</div>
+                                </div>
+                                <div style="background: rgba(239, 68, 68, 0.2); padding: 15px; border-radius: 12px; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;" id="negativeSentiment">0%</div>
+                                    <div style="font-size: 0.8rem; color: #fca5a5;">Bearish</div>
+                                </div>
+                                <div style="background: rgba(107, 114, 128, 0.2); padding: 15px; border-radius: 12px; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #6b7280;" id="neutralSentiment">0%</div>
+                                    <div style="font-size: 0.8rem; color: #9ca3af;">Neutral</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Narrative Intelligence Panel -->
+                    <div class="narrative-panel" id="narrativePanel">
+                        <div class="narrative-header">
+                            <div class="narrative-icon">🧠</div>
+                            <h3 class="narrative-title">Narrative Intelligence</h3>
+                        </div>
+                        <div class="narrative-summary">
+                            <p id="narrativeSummary">Loading narrative analysis...</p>
+                        </div>
+                        <div class="key-phrases" id="keyPhrases">
+                            <!-- Key phrases will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Influencer Activity Dashboard -->
+                    <div class="influencer-dashboard" id="influencerDashboard">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">🐋</span>
+                            <div class="section-title">Real Influencer Activity</div>
+                        </div>
+                        <div class="influencer-grid" id="influencerGrid">
+                            <!-- Influencers will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Coordination Detection Alert -->
+                    <div class="coordination-alert" id="coordinationAlert">
+                        <div class="coordination-header">
+                            <div class="alert-icon">⚠️</div>
+                            <h3 style="color: #ef4444; font-size: 1.5rem;">Coordination Detected</h3>
+                        </div>
+                        <div class="coordination-content">
+                            <p id="coordinationMessage">Analyzing coordination patterns...</p>
+                            <div class="coordination-evidence" id="coordinationEvidence"></div>
+                        </div>
+                    </div>
+
+                    <!-- Real-Time Momentum Tracker -->
+                    <div class="momentum-tracker" id="momentumTracker">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">📊</span>
+                            <div class="section-title">Real-Time Momentum</div>
+                        </div>
+                        <div class="momentum-visual">
+                            <div class="momentum-bar" id="momentumBar" style="height: 0%;"></div>
+                            <div class="momentum-labels">
+                                <span>🔥 HOT</span>
+                                <span>⚡ ACTIVE</span>
+                                <span>💤 QUIET</span>
+                            </div>
+                        </div>
+                        <div class="momentum-stats">
+                            <div class="momentum-stat">
+                                <div class="momentum-stat-value" id="hourlyGrowth">0%</div>
+                                <div class="momentum-stat-label">Hourly Growth</div>
+                            </div>
+                            <div class="momentum-stat">
+                                <div class="momentum-stat-value" id="viralScore">0</div>
+                                <div class="momentum-stat-label">Viral Score</div>
+                            </div>
+                            <div class="momentum-stat">
+                                <div class="momentum-stat-value" id="fomoLevel">0%</div>
+                                <div class="momentum-stat-label">FOMO Level</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Token Psychology Dashboard -->
+                    <div class="psychology-dashboard" id="psychologyDashboard">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">🧠</span>
+                            <div class="section-title">Meme Coin Psychology</div>
+                        </div>
+                        <div class="psychology-grid">
+                            <div class="psychology-card">
+                                <div class="psychology-score" id="greedScore">0</div>
+                                <div class="psychology-label">Greed Index</div>
+                                <div class="psychology-insight" id="greedInsight">Analyzing market greed...</div>
+                            </div>
+                            <div class="psychology-card">
+                                <div class="psychology-score" id="euphoriaMeter">0</div>
+                                <div class="psychology-label">Euphoria Meter</div>
+                                <div class="psychology-insight" id="euphoriaInsight">Measuring peak excitement...</div>
+                            </div>
+                            <div class="psychology-card">
+                                <div class="psychology-score" id="diamondHands">0%</div>
+                                <div class="psychology-label">Diamond Hands</div>
+                                <div class="psychology-insight" id="diamondInsight">Holder strength analysis...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exit Strategy Alert -->
+                    <div class="exit-strategy" id="exitStrategy">
+                        <div class="exit-header">
+                            <span style="font-size: 1.5rem;">🚪</span>
+                            <h3 style="color: #f59e0b; font-size: 1.3rem;">Exit Strategy Signals</h3>
+                        </div>
+                        <div class="exit-signals" id="exitSignals">
+                            <!-- Exit signals will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Chat Interface -->
+                <div class="chat-interface" id="chatInterface">
+                    <div class="section-header">
+                        <span style="font-size: 1.5rem;">💬</span>
+                        <div class="section-title">AI Assistant</div>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message assistant">
+                            👋 Analyze a token to unlock ACCURATE social intelligence chat!
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask about social metrics..." disabled>
+                        <button class="chat-send" id="chatSend" onclick="sendChatMessage()" disabled>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAnalysis = null;
+        let currentTokenAddress = '';
+        let chatHistory = [];
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup event listeners
+            document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') analyzeToken();
+            });
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendChatMessage();
+            });
+        });
+
+        // Enhanced Token Analysis
+        async function analyzeToken() {
+            const tokenAddress = document.getElementById('tokenAddress').value.trim();
+            const timeWindow = document.getElementById('timeWindow').value;
+            
+            if (!tokenAddress) {
+                showError('Please enter a token address');
+                return;
+            }
+
+            if (tokenAddress.length < 32 || tokenAddress.length > 44) {
+                showError('Invalid Solana token address format');
+                return;
+            }
+
+            currentTokenAddress = tokenAddress;
+            chatHistory = [];
+
+            showLoading();
+            hideError();
+            hideResults();
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        token_address: tokenAddress,
+                        time_window: timeWindow
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Handle streaming response
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const jsonData = line.substring(6);
+                                if (jsonData.trim()) {
+                                    const data = JSON.parse(jsonData);
+                                    handleStreamMessage(data);
+                                }
+                            } catch (e) {
+                                console.warn('Failed to parse SSE message:', line);
+                            }
+                        }
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Analysis error:', error);
+                hideLoading();
+                showError('Analysis failed: ' + error.message);
+            }
+        }
+
+        function handleStreamMessage(data) {
+            if (data.type === 'progress') {
+                updateLoadingText(data.message);
+            } else if (data.type === 'complete') {
+                currentAnalysis = data;
+                hideLoading();
+                displayAccurateResults(data);
+            } else if (data.type === 'error') {
+                hideLoading();
+                showError('Analysis error: ' + data.error);
+            }
+        }
+
+        // Display ACCURATE Results
+        function displayAccurateResults(data) {
+            // Show results section
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // Update ACCURATE Social Metrics
+            updateAccurateSocialMetrics(data);
+            
+            // Update Narrative Intelligence
+            updateNarrativeIntelligence(data);
+            
+            // Update Influencer Dashboard
+            updateInfluencerDashboard(data);
+            
+            // Update Coordination Detection
+            updateCoordinationDetection(data);
+            
+            // Update Momentum Tracker
+            updateMomentumTracker(data);
+            
+            // Update Psychology Dashboard
+            updatePsychologyDashboard(data);
+            
+            // Update Exit Strategy
+            updateExitStrategy(data);
+            
+            // Enable chat
+            enableChatWithContext();
+            
+            // Scroll to results
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateAccurateSocialMetrics(data) {
+            const socialMetrics = data.social_metrics || {};
+            const tokenAge = data.token_age || {};
+            
+            // Update data quality indicator
+            const qualityIndicator = document.getElementById('qualityIndicator');
+            const qualityText = document.getElementById('dataQualityText');
+            
+            if (socialMetrics.data_quality === 'high') {
+                qualityIndicator.className = 'quality-indicator quality-high';
+                qualityText.textContent = 'High Quality Data';
+            } else if (socialMetrics.data_quality === 'insufficient_history') {
+                qualityIndicator.className = 'quality-indicator quality-low';
+                qualityText.textContent = 'Token Too New for Full Analysis';
+            } else {
+                qualityIndicator.className = 'quality-indicator quality-medium';
+                qualityText.textContent = 'Limited Data Available';
+            }
+            
+            // Update time window used
+            document.getElementById('timeWindowUsed').textContent = 
+                `Analyzing ${socialMetrics.time_window_used || 'N/A'} of data for ${tokenAge.hours_old?.toFixed(1) || 0} hour old token`;
+            
+            // Update metrics
+            document.getElementById('totalMentions').textContent = socialMetrics.total_mentions || 0;
+            document.getElementById('mentionsSubtitle').textContent = 
+                socialMetrics.total_mentions === 0 ? 'No mentions detected' : `In ${socialMetrics.time_window_used}`;
+            
+            document.getElementById('mentionsPerHour').textContent = 
+                (socialMetrics.mentions_per_hour || 0).toFixed(1);
+            
+            const momentumChange = socialMetrics.momentum_change || 0;
+            document.getElementById('momentumChange').textContent = 
+                momentumChange >= 0 ? `+${momentumChange.toFixed(1)}%` : `${momentumChange.toFixed(1)}%`;
+            
+            const momentumTrend = document.getElementById('momentumTrend');
+            if (momentumChange > 20) {
+                momentumTrend.textContent = '🚀 Exploding';
+                momentumTrend.style.color = '#10b981';
+            } else if (momentumChange > 0) {
+                momentumTrend.textContent = '📈 Rising';
+                momentumTrend.style.color = '#34d399';
+            } else if (momentumChange > -20) {
+                momentumTrend.textContent = '📉 Falling';
+                momentumTrend.style.color = '#f59e0b';
+            } else {
+                momentumTrend.textContent = '💥 Dumping';
+                momentumTrend.style.color = '#ef4444';
+            }
+            
+            // Update sentiment
+            document.getElementById('sentimentScore').textContent = 
+                `${(socialMetrics.sentiment_positive || 0).toFixed(1)}%`;
+            document.getElementById('positiveSentiment').textContent = 
+                `${(socialMetrics.sentiment_positive || 0).toFixed(1)}%`;
+            document.getElementById('negativeSentiment').textContent = 
+                `${(socialMetrics.sentiment_negative || 0).toFixed(1)}%`;
+            document.getElementById('neutralSentiment').textContent = 
+                `${(socialMetrics.sentiment_neutral || 0).toFixed(1)}%`;
+        }
+
+        function updateNarrativeIntelligence(data) {
+            const socialMetrics = data.social_metrics || {};
+            const narrativeSummary = socialMetrics.narrative_summary || 
+                'No clear narrative detected in social discussions';
+            
+            document.getElementById('narrativeSummary').textContent = narrativeSummary;
+            
+            // Update key phrases (if available from backend)
+            const keyPhrasesContainer = document.getElementById('keyPhrases');
+            keyPhrasesContainer.innerHTML = '';
+            
+            // Extract phrases from narrative or use defaults
+            const phrases = extractKeyPhrases(narrativeSummary);
+            phrases.forEach(phrase => {
+                const tag = document.createElement('div');
+                tag.className = 'phrase-tag';
+                tag.textContent = phrase;
+                keyPhrasesContainer.appendChild(tag);
+            });
+        }
+
+        function extractKeyPhrases(narrative) {
+            // Simple extraction - in real implementation, this would come from backend
+            const commonPhrases = ['moon', 'gem', 'bullish', 'community', 'hodl', 'pump', 'dyor'];
+            const found = [];
+            
+            commonPhrases.forEach(phrase => {
+                if (narrative.toLowerCase().includes(phrase)) {
+                    found.push(phrase.toUpperCase());
+                }
+            });
+            
+            return found.length > 0 ? found : ['No trending phrases detected'];
+        }
+
+        function updateInfluencerDashboard(data) {
+            const influencers = data.social_metrics?.top_influencers || data.contract_accounts || [];
+            const grid = document.getElementById('influencerGrid');
+            
+            if (influencers.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #7dd3fc;">
+                        No major influencer activity detected yet
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = influencers.slice(0, 6).map(influencer => `
+                <div class="influencer-card" onclick="window.open('${influencer.url}', '_blank')">
+                    <div class="influencer-header">
+                        <div class="influencer-avatar">
+                            ${influencer.username ? influencer.username[0].toUpperCase() : '?'}
+                        </div>
+                        <div class="influencer-info">
+                            <div class="influencer-name">@${influencer.username || 'unknown'}</div>
+                            <div class="influencer-followers">${influencer.followers || 'Followers unknown'}</div>
+                        </div>
+                    </div>
+                    <div class="influencer-content">
+                        "${influencer.content || influencer.recent_activity || 'Posted about this token'}"
+                    </div>
+                    <div class="influencer-engagement">
+                        <span>💬 Recent Activity</span>
+                        <span>🔥 High Influence</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateCoordinationDetection(data) {
+            const socialMetrics = data.social_metrics || {};
+            const coordinationDetected = socialMetrics.coordination_detected || false;
+            
+            const alert = document.getElementById('coordinationAlert');
+            
+            if (coordinationDetected) {
+                alert.classList.add('active');
+                document.getElementById('coordinationMessage').textContent = 
+                    'Warning: Potential coordinated promotion detected. Multiple accounts posting similar content in short timeframe.';
+                document.getElementById('coordinationEvidence').textContent = 
+                    'Evidence: Identical messages, bot-like behavior, suspicious timing patterns';
+            } else {
+                alert.classList.remove('active');
+            }
+        }
+
+        function updateMomentumTracker(data) {
+            const socialMetrics = data.social_metrics || {};
+            const momentum = socialMetrics.momentum_change || 0;
+            const mentions = socialMetrics.mentions_per_hour || 0;
+            
+            // Update momentum bar height
+            const barHeight = Math.min(Math.abs(momentum), 100);
+            document.getElementById('momentumBar').style.height = `${barHeight}%`;
+            
+            // Update stats
+            document.getElementById('hourlyGrowth').textContent = 
+                momentum >= 0 ? `+${momentum.toFixed(1)}%` : `${momentum.toFixed(1)}%`;
+            
+            const viralScore = Math.min(100, mentions * 2);
+            document.getElementById('viralScore').textContent = Math.round(viralScore);
+            
+            const fomoLevel = calculateFomoLevel(momentum, mentions, socialMetrics.sentiment_positive || 0);
+            document.getElementById('fomoLevel').textContent = `${fomoLevel}%`;
+        }
+
+        function calculateFomoLevel(momentum, velocity, sentiment) {
+            // FOMO calculation based on multiple factors
+            const momentumFactor = Math.min(momentum / 100, 1) * 40;
+            const velocityFactor = Math.min(velocity / 50, 1) * 30;
+            const sentimentFactor = (sentiment / 100) * 30;
+            
+            return Math.round(momentumFactor + velocityFactor + sentimentFactor);
+        }
+
+        function updatePsychologyDashboard(data) {
+            const socialMetrics = data.social_metrics || {};
+            const tokenAge = data.token_age || {};
+            
+            // Calculate psychology metrics
+            const greed = calculateGreedIndex(socialMetrics, data.price_change_24h || 0);
+            const euphoria = calculateEuphoria(socialMetrics, tokenAge);
+            const diamondHands = calculateDiamondHands(socialMetrics, data.volume_24h || 0);
+            
+            document.getElementById('greedScore').textContent = greed;
+            document.getElementById('greedInsight').textContent = getGreedInsight(greed);
+            
+            document.getElementById('euphoriaMeter').textContent = euphoria;
+            document.getElementById('euphoriaInsight').textContent = getEuphoriaInsight(euphoria);
+            
+            document.getElementById('diamondHands').textContent = `${diamondHands}%`;
+            document.getElementById('diamondInsight').textContent = getDiamondInsight(diamondHands);
+        }
+
+        function calculateGreedIndex(metrics, priceChange) {
+            const sentiment = metrics.sentiment_positive || 0;
+            const momentum = metrics.momentum_change || 0;
+            const priceImpact = Math.min(Math.abs(priceChange) / 50, 1) * 30;
+            
+            return Math.round((sentiment * 0.4) + (momentum * 0.3) + priceImpact);
+        }
+
+        function calculateEuphoria(metrics, tokenAge) {
+            const ageMultiplier = tokenAge.hours_old < 24 ? 1.5 : 1;
+            const hype = metrics.hype_score || 50;
+            const viral = metrics.viral_potential || 50;
+            
+            return Math.round(((hype + viral) / 2) * ageMultiplier);
+        }
+
+        function calculateDiamondHands(metrics, volume) {
+            const sentiment = metrics.sentiment_positive || 0;
+            const coordination = metrics.coordination_detected ? -20 : 0;
+            const volumeStability = volume > 1000000 ? 20 : 0;
+            
+            return Math.max(0, Math.round(sentiment * 0.7 + volumeStability + coordination));
+        }
+
+        function getGreedInsight(score) {
+            if (score >= 80) return "Extreme greed detected - potential top signal";
+            if (score >= 60) return "High greed - market getting heated";
+            if (score >= 40) return "Moderate greed - healthy momentum";
+            return "Low greed - potential accumulation phase";
+        }
+
+        function getEuphoriaInsight(score) {
+            if (score >= 80) return "Peak euphoria - caution advised";
+            if (score >= 60) return "Building excitement - monitor closely";
+            if (score >= 40) return "Growing interest - early stage";
+            return "Minimal euphoria - under the radar";
+        }
+
+        function getDiamondInsight(score) {
+            if (score >= 70) return "Strong holder base detected";
+            if (score >= 50) return "Decent holder conviction";
+            if (score >= 30) return "Mixed holder sentiment";
+            return "Weak hands present - volatility expected";
+        }
+
+        function updateExitStrategy(data) {
+            const signals = [];
+            const socialMetrics = data.social_metrics || {};
+            const momentum = socialMetrics.momentum_change || 0;
+            const coordination = socialMetrics.coordination_detected || false;
+            
+            // Check exit signals
+            if (momentum < -30) {
+                signals.push({
+                    type: 'danger',
+                    text: 'Momentum dropping rapidly - consider exit'
+                });
+            }
+            
+            if (coordination) {
+                signals.push({
+                    type: 'warning',
+                    text: 'Coordinated pump detected - high risk'
+                });
+            }
+            
+            if (socialMetrics.sentiment_negative > 40) {
+                signals.push({
+                    type: 'warning',
+                    text: 'Negative sentiment rising - monitor closely'
+                });
+            }
+            
+            if (data.token_age?.hours_old < 24) {
+                signals.push({
+                    type: 'warning',
+                    text: 'Very new token - extreme volatility expected'
+                });
+            }
+            
+            // Display signals
+            const container = document.getElementById('exitSignals');
+            container.innerHTML = signals.map(signal => `
+                <div class="exit-signal">
+                    <div class="signal-indicator ${signal.type}"></div>
+                    <div class="signal-text">${signal.text}</div>
+                </div>
+            `).join('');
+            
+            if (signals.length === 0) {
+                container.innerHTML = `
+                    <div class="exit-signal">
+                        <div class="signal-indicator"></div>
+                        <div class="signal-text">No immediate exit signals detected</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Chat Functions
+        function enableChatWithContext() {
+            const chatInput = document.getElementById('chatInput');
+            const chatSend = document.getElementById('chatSend');
+            
+            chatInput.disabled = false;
+            chatInput.placeholder = `Ask about ${currentAnalysis?.token_symbol || 'this token'}'s social metrics...`;
+            chatSend.disabled = false;
+        }
+
+        async function sendChatMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            
+            if (!message || !currentTokenAddress) return;
+
+            addChatMessage(message, 'user');
+            chatInput.value = '';
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        token_address: currentTokenAddress,
+                        message: message,
+                        history: chatHistory
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.response) {
+                    addChatMessage(data.response, 'assistant');
+                } else {
+                    addChatMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                }
+                
+            } catch (error) {
+                console.error('Chat error:', error);
+                addChatMessage('Connection error. Please try again.', 'assistant');
+            }
+        }
+
+        function addChatMessage(message, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            messageDiv.textContent = message;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            chatHistory.push({
+                role: sender === 'user' ? 'user' : 'assistant',
+                content: message
+            });
+            
+            if (chatHistory.length > 10) {
+                chatHistory = chatHistory.slice(-10);
+            }
+        }
+
+        // Utility Functions
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.querySelector('.analyze-btn').disabled = true;
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.querySelector('.analyze-btn').disabled = false;
+        }
+
+        function updateLoadingText(message) {
+            document.getElementById('loadingText').textContent = message;
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideResults() {
+            document.getElementById('resultsSection').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

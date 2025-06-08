@@ -1,0 +1,12 @@
+{
+  "message": {
+    "message": "Sign-in to Rugcheck.xyz",
+    "publicKey": "D8pQJGkZZjTSgnVqmUygdUkTYsVtyJxFZXmEvdcVXuxs",
+    "timestamp": 1748827666
+  },
+  "signature": {
+    "data": [62,47,7,101,34,247,51,61,105,5,121,243,71,55,222,241,176,49,57,234,77,68,237,21,22,3,17,173,21,225,120,226,239,131,36,98,251,126,233,75,35,90,99,167,45,235,245,164,153,141,196,210,134,174,250,97,116,238,67,173,230,26,73,3],
+    "type": "ed25519"
+  },
+  "wallet": "D8pQJGkZZjTSgnVqmUygdUkTYsVtyJxFZXmEvdcVXuxs"
+}

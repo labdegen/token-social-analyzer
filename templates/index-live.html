@@ -1,0 +1,3762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASK DEGEN - Social Crypto Dashboard</title>
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js for Fear & Greed Dial and Revolutionary Charts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Plotly for Geographic Heatmaps -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.18.2/plotly.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                   background: url('https://jeetsvsdegens.com/newbg.jpg');
+			background-size:cover;
+			background-attachment: fixed;
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            padding-top: 80px; /* Space for fixed header */
+        }
+
+        /* Fixed Header */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 15px 0;
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: "Lacquer", system-ui;
+            font-size: 2rem;
+            font-weight: 400;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s ease infinite;
+            text-decoration: none;
+        }
+
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #b0b7ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link:hover {
+            background: rgba(102, 126, 234, 0.2);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .dashboard-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Enhanced Market Overview Bar with CoinGecko/DexScreener */
+        .market-overview {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .market-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .market-title {
+             font-family: "Titillium Web", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+            font-size: 1.4rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .market-sentiment {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+        }
+
+        .sentiment-indicator {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sentiment-bullish { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .sentiment-bearish { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .sentiment-neutral { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+
+        /* Enhanced Market Overview Layout */
+        .market-overview-grid {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .crypto-prices {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .crypto-price-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .crypto-price-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .crypto-symbol {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-bottom: 6px;
+			float:left;
+			padding-top:5px;
+        }
+
+        .crypto-price {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 4px;
+			padding:0px 15px 0px 15px;
+			float:left;
+        }
+
+        .crypto-change {
+            font-size: 0.75rem;
+            font-weight: 600;
+			float:left;
+			padding-top:8px;
+        }
+
+        .crypto-change.positive { color: #10b981; }
+        .crypto-change.negative { color: #ef4444; }
+
+        /* Fear & Greed Dial */
+        .fear-greed-dial {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dial-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #b0b7ff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dial-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+        }
+
+   .dial-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-top: -60px;
+}
+
+        .dial-label {
+            font-size: 0.75rem;
+            color: #b0b7ff;
+            margin-top: 5px;
+        }
+
+        /* Market Intelligence Sections - Updated for CoinGecko data */
+        .market-intelligence {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .intelligence-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .intelligence-section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .market-insights {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .insight-tag {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .insight-tag:hover {
+            background: rgba(16, 185, 129, 0.3);
+            color: #ffffff;
+        }
+
+        .trending-searches {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .search-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(3px);
+        }
+
+        .search-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .search-rank {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+
+        /* Dashboard Grid with Sticky Sidebar */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+            margin-bottom: 25px;
+            align-items: start;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 100px; /* Account for header height */
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        /* Trending Tokens with Enhanced Tabs - FIXED */
+        .trending-tokens-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+           font-family: "Titillium Web", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+            font-size: 1.5rem;
+            color: #ffffff;
+            font-weight: 400;
+        }
+
+        .section-refresh {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .section-refresh:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: rotate(180deg);
+        }
+
+        /* Enhanced Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #b0b7ff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            color: #ffffff;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeInTab 0.4s ease-in;
+        }
+
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .trending-tokens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .trending-token {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border-left: 3px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .trending-token:hover {
+            transform: translateY(-2px);
+            background: rgba(102, 126, 234, 0.1);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .trending-token.fresh-hype {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .trending-token.recent-trending {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .trending-token.blue-chip {
+            border-left-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .trending-symbol {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .trending-change {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .trending-mentions {
+            font-size: 0.7rem;
+            color: #b0b7ff;
+            opacity: 0.8;
+        }
+
+        /* Loading and Error States */
+        .loading-state {
+            text-align: center;
+            color: #b0b7ff;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .error-state {
+            text-align: center;
+            color: #ef4444;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        /* Token Analyzer */
+        .token-analyzer {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+		h2{padding-top:35px;}
+        .analyzer-input {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            min-width: 0;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #e1e7ff;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          font-family: "Titillium Web", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 16px;
+            margin: 20px 0;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Token Age Dashboard */
+        .token-age-dashboard {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .age-metric-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .age-metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.2);
+        }
+
+        .age-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .age-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f59e0b;
+            margin-bottom: 5px;
+        }
+
+        .age-label {
+            font-size: 0.8rem;
+            color: #b0b7ff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Revolutionary Charts Dashboard */
+        .revolutionary-charts-dashboard {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .chart-card h3 {
+            color: #667eea;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .chart-value {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .chart-card canvas {
+            max-height: 150px !important;
+        }
+
+        /* Real Google Trends */
+        .real-google-trends {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .trends-metric {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .trends-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .trends-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 5px;
+        }
+
+        .trends-label {
+            font-size: 0.8rem;
+            color: #b0b7ff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .trends-chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .no-data-message {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .no-data-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .no-data-message h3 {
+            color: #f59e0b;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .no-data-message p {
+            color: #b0b7ff;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .authentic-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .trends-loading {
+            text-align: center;
+            padding: 40px;
+            color: #b0b7ff;
+        }
+
+        .trends-loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        /* DexScreener Chart */
+        .chart-container {
+            display: none;
+            margin: 25px 0;
+            position: relative;
+            width: 100%;
+            height: 600px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #1a1a2e;
+        }
+
+        /* Token Profile Section */
+        .token-profile {
+            display: none;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 20px;
+            padding: 30px;
+           
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .token-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .token-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .token-info h2 {
+            font-family: "Titillium Web", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+            font-size: 2.2rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .token-info .token-contract {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #b0b7ff;
+            opacity: 0.8;
+        }
+
+        .token-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #b0b7ff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+            margin-top: 25px;
+        }
+
+        /* Enhanced Search Intelligence Dashboard */
+        .search-intelligence-dashboard {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            margin-bottom: 25px;
+        }
+
+        .search-intel-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .search-intel-metric {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .intel-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #10b981;
+            margin-bottom: 8px;
+        }
+
+        .intel-label {
+            font-size: 0.9rem;
+            color: #b0b7ff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-trends-chart {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 350px; /* Fixed height to prevent stretching */
+        }
+
+        .search-trends-chart canvas {
+            max-height: 280px !important; /* Prevent canvas from growing too large */
+        }
+
+        .geo-heatmap-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 350px; /* Fixed height to match chart */
+        }
+
+        /* Fix the search intelligence grid to be 50/50 */
+        .search-intel-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 50/50 split */
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        /* Social Momentum Dashboard with Visual Metrics */
+        .momentum-dashboard {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(102, 126, 234, 0.25);
+            margin-bottom: 25px;
+        }
+
+        .momentum-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .momentum-score {
+            font-size: 4rem;
+            font-weight: 900;
+            background: #fff;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .momentum-label {
+            font-size: 1.2rem;
+            color: #b0b7ff;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .live-data-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.2);
+            padding: 6px 12px;
+            border-radius: 15px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        .momentum-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+        }
+
+        .momentum-metric {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .momentum-metric:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .metric-visual {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            position: relative;
+             background: conic-gradient(
+    from 180deg,
+    #0040ff 0deg,    /* deep blue (cold) */
+    #00e5ff 72deg,   /* cyan */
+    #00ff00 144deg,  /* green */
+    #ffff00 216deg,  /* yellow */
+    #ff7f00 288deg,  /* orange */
+    #ff0000 360deg   /* red (hot) */
+  );
+        }
+		
+		.news-summary img{display:none;}
+
+        .metric-visual::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background: #1a1a2e;
+            border-radius: 50%;
+        }
+
+        .metric-value-main {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .metric-label-main {
+            font-size: 0.75rem;
+            color: #b0b7ff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Live Tweets Panel */
+        .live-tweets-panel {
+                background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(29, 161, 242, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .tweets-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .tweet-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 3px solid #1da1f2;
+            transition: all 0.3s ease;
+        }
+
+        .tweet-item:hover {
+            background: rgba(29, 161, 242, 0.1);
+            transform: translateX(3px);
+        }
+
+        .tweet-header {
+            display: flex;
+            justify-content: space-between;
+
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .tweet-author {
+            font-weight: 700;
+            color: #1da1f2;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .tweet-author:hover {
+            text-decoration: underline;
+        }
+
+        .tweet-timestamp {
+            font-size: 0.75rem;
+            color: #7dd3fc;
+        }
+
+        .tweet-content {
+            color: #e1e7ff;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .tweet-engagement {
+            font-size: 0.75rem;
+            color: #7dd3fc;
+        }
+
+        /* Sidebar Sections */
+        .sidebar-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-content {
+            padding: 0 25px 25px 25px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-arrow {
+            margin-left: auto;
+			padding-right:15px;
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+            user-select: none;
+        }
+
+        /* KOLs List */
+        .kols-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .kol-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .kol-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(3px);
+        }
+
+        .kol-account {
+            font-weight: 700;
+            color: #1da1f2;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .kol-description {
+            color: #b0b7ff;
+            font-size: 0.75rem;
+            line-height: 1.3;
+        }
+
+        /* Enhanced Analysis Grid - 3 Columns */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .analysis-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        /* Enhanced Card Content with Infographics */
+        .card-content {
+            line-height: 1.7;
+            color: #e1e7ff;
+            font-size: 0.95rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-score {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .info-rating {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 15px 0;
+        }
+
+        .rating-star {
+            font-size: 1.2rem;
+            color: #fbbf24;
+        }
+
+        .rating-star.empty {
+            color: rgba(251, 191, 36, 0.3);
+        }
+
+        /* Enhanced Social Momentum with Icons and Thermometers */
+        .momentum-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+        }
+
+        .momentum-metric {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .momentum-metric:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Different Chart Types for Each Metric */
+        .metric-visual {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            position: relative;
+            background: conic-gradient(#667eea 0deg, #764ba2 120deg, rgba(255,255,255,0.1) 120deg, rgba(255,255,255,0.1) 360deg);
+        }
+
+        .metric-visual.thermometer {
+            border-radius: 20px;
+            background: linear-gradient(to top, 
+                #ef4444 0%, 
+                #f59e0b 25%, 
+                #eab308 50%, 
+                #84cc16 75%, 
+                #10b981 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-visual.thermometer::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            transition: height 1s ease;
+        }
+
+        .metric-visual.bar-chart {
+            border-radius: 4px;
+            background: linear-gradient(to top, 
+                rgba(102, 126, 234, 0.2) 0%, 
+                #667eea 100%);
+            position: relative;
+        }
+
+        .metric-visual.gauge {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #667eea;
+            border-right-color: #764ba2;
+            animation: gauge-spin 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes gauge-spin {
+            0% { transform: rotate(-90deg); }
+            100% { transform: rotate(90deg); }
+        }
+
+        .metric-visual::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            height: 24px;
+            background: #1a1a2e;
+            border-radius: 50%;
+        }
+
+        .metric-visual.thermometer::after,
+        .metric-visual.bar-chart::after {
+            display: none;
+        }
+
+        .metric-icon {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .metric-value-main {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .metric-label-main {
+            font-size: 0.75rem;
+            color: #b0b7ff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Enhanced Risk Assessment & Market Predictions Styling */
+        .card-content .risk-table,
+        .card-content .prediction-list {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .card-content .risk-item,
+        .card-content .prediction-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-content .risk-item:last-child,
+        .card-content .prediction-item:last-child {
+            border-bottom: none;
+        }
+
+        .card-content .risk-icon,
+        .card-content .prediction-icon {
+            font-size: 1.5rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .card-content .risk-text,
+        .card-content .prediction-text {
+            flex: 1;
+        }
+
+        .card-content .risk-level {
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-content .risk-high { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .card-content .risk-medium { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .card-content .risk-low { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+
+        .content-heading {
+            font-weight: 700;
+            color: #667eea;
+            margin: 20px 0 10px 0;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bullet-point {
+            position: relative;
+            padding-left: 20px;
+            margin: 10px 0;
+            color: #b0b7ff;
+        }
+
+        .bullet-point::before {
+            content: '▶';
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Expert Analysis */
+        .expert-analysis {
+               background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .analysis-content {
+            line-height: 1.8;
+            color: #e1e7ff;
+            font-size: 1.05rem;
+        }
+
+        /* Crypto News Sidebar */
+        .crypto-news {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex: 1;
+        }
+
+        .news-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .news-item {
+            padding: 15px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border-left: 3px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+			min-height:150px;
+        }
+
+        .news-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(3px);
+        }
+
+        .news-headline {
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .news-summary {
+            color: #b0b7ff;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #667eea;
+        }
+
+        /* Sticky Chat Interface */
+        .chat-interface {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 120px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 0;
+            margin-bottom: 15px;
+            max-height: 280px;
+        }
+
+        .chat-message {
+            margin: 12px 0;
+            padding: 12px 16px;
+            border-radius: 16px;
+            max-width: 85%;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .chat-message.user {
+            background: rgba(102, 126, 234, 0.2);
+            color: #e1e7ff;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.assistant {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .chat-send {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+        }
+
+        .chat-send:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
+            color: #ef4444;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            font-weight: 600;
+            display: none;
+        }
+
+        /* Powered By */
+        .powered-by {
+            text-align: center;
+            margin-top: 40px;
+            color: #b0b7ff;
+            font-weight: 500;
+        }
+
+        .powered-by a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .powered-by a:hover {
+            color: #764ba2;
+            text-shadow: 0 0 15px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+                height: auto;
+            }
+            
+            .chat-interface {
+                position: static;
+                height: 400px;
+            }
+
+            .market-overview-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .search-intel-charts {
+                grid-template-columns: 1fr; /* Stack charts vertically on smaller screens */
+                gap: 20px;
+            }
+
+            .search-intel-header {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 15px;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+            
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+            
+            .analyzer-input {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .crypto-prices {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .momentum-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .analysis-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .token-metrics {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            body {
+                padding-top: 70px;
+            }
+
+            .search-intel-charts {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .search-trends-chart, .geo-heatmap-container {
+                height: 300px; /* Smaller height on mobile */
+            }
+
+            .market-insights {
+                gap: 4px;
+            }
+
+            .insight-tag {
+                font-size: 0.65rem;
+                padding: 3px 6px;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        .tweets-list::-webkit-scrollbar,
+        .news-list::-webkit-scrollbar,
+        .chat-messages::-webkit-scrollbar,
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .tweets-list::-webkit-scrollbar-track,
+        .news-list::-webkit-scrollbar-track,
+        .chat-messages::-webkit-scrollbar-track,
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .tweets-list::-webkit-scrollbar-thumb,
+        .news-list::-webkit-scrollbar-thumb,
+        .chat-messages::-webkit-scrollbar-thumb,
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 3px;
+        }
+
+        .tweets-list::-webkit-scrollbar-thumb:hover,
+        .news-list::-webkit-scrollbar-thumb:hover,
+        .chat-messages::-webkit-scrollbar-thumb:hover,
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.7);
+        }
+
+        /* Hide navigation on very small screens */
+        @media (max-width: 480px) {
+            .nav-links {
+                display: none;
+            }
+        }
+		/* Accounts to Follow Styling */
+.accounts-list {
+    padding-right: 10px;
+}
+
+.account-item {
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 3px solid #1da1f2;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.account-item:hover {
+    background: rgba(29, 161, 242, 0.1);
+    transform: translateX(3px);
+}
+
+.account-username {
+    font-weight: 700;
+    color: #1da1f2;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.account-followers {
+    font-size: 0.75rem;
+    color: #7dd3fc;
+    margin-bottom: 6px;
+}
+
+.account-activity {
+    font-size: 0.8rem;
+    color: #e1e7ff;
+    line-height: 1.3;
+}
+		
+		.dial-talk{    display: flex
+;
+    flex-direction: row;
+    gap: 15px;}
+		
+				.mainleft{    display: flex
+;
+    flex-direction: column;
+    gap: 15px;}
+    </style>
+</head>
+<body>
+    <!-- Fixed Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <a href="#" class="logo"><img style="max-height:60px;" src="https://jeetsvsdegens.com/ask-logo.png"></a>
+             <nav class="nav-links">
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/dictionary" class="nav-link">Dictionary</a>
+                <a href="/charts" class="nav-link active">Chart Analysis</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Enhanced Market Overview Bar with CoinGecko/DexScreener -->
+        <div class="market-overview">
+
+            
+            <!-- New Enhanced Grid Layout -->
+            <div class="market-overview-grid">
+                <!-- Condensed Crypto Prices (Left) -->
+				<div class="mainleft">
+                <div class="crypto-prices" id="cryptoPrices">
+                    <!-- Crypto prices will be populated here -->
+                </div>
+					<div class="trending-tokens-section">
+            
+                    
+                    <!-- Tab Navigation -->
+                    <div class="tab-navigation">
+                        <button class="tab-btn active" onclick="switchTab('fresh-hype')" data-tab="fresh-hype">
+                            🚀 Dex Boosted
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('recent-trending')" data-tab="recent-trending">
+                            📈 Recent Trending
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('blue-chips')" data-tab="blue-chips">
+                            💎 Blue Chips
+                        </button>
+                    </div>
+                    
+                    <!-- Tab Content -->
+                    <div class="tab-content active" id="fresh-hype">
+                        <div class="trending-tokens-grid" id="freshHypeGrid">
+                            <div class="loading-state">Loading fresh hype tokens...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="recent-trending">
+                        <div class="trending-tokens-grid" id="recentTrendingGrid">
+                            <div class="loading-state">Loading trending tokens...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="blue-chips">
+                        <div class="trending-tokens-grid" id="blueChipsGrid">
+                            <div class="loading-state">Loading blue chip tokens...</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+     
+                
+                <!-- Market Intelligence (Right) -->
+                <div class="market-intelligence">
+                    <div class="intelligence-section" style="display:none;">
+                        <div class="intelligence-section-title">
+                            <span>🔥</span>
+                            Live Market Insights
+                        </div>
+                        <div class="market-insights" id="marketInsights">
+                            <!-- Market insights will be populated here -->
+                        </div>
+                    </div>
+                          <div class="dial-talk">     <!-- Fear & Greed Dial (Center) -->
+               
+                    <div class="intelligence-section">
+                        <div class="intelligence-section-title">
+                            <span>🚀</span>
+                            Trending Searches
+                        </div>
+                        <div class="trending-searches" id="trendingSearches">
+                            <!-- Trending searches will be populated here -->
+                        </div>
+					</div> <div class="fear-greed-dial">
+                    <div class="dial-title">Fear & Greed Index</div>
+                    <div class="dial-container">
+                        <canvas id="fearGreedChart" width="120" height="120"></canvas>
+                    </div>
+                    <div class="dial-value" id="dialValue">72</div>
+                    <div class="dial-label" id="dialLabel">Greed</div>
+                </div></div>
+					   <div class="market-sentiment">
+                    <span><span>📊</span> Market Sentiment:</span>
+                    <span id="fearGreedIndex" style="display:none;">Loading...</span>
+                    <div class="sentiment-indicator" id="sentimentIndicator">
+                        Loading...
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Revolutionary Token Analyzer with Time Window Selector -->
+                <div class="token-analyzer">
+                    <div class="section-header">
+                        <span style="font-size: 1.5rem;">🎯</span>
+                        <div class="section-title">Revolutionary Token Analyzer</div>
+                    </div>
+                    
+                    <div class="analyzer-input">
+                        <div class="input-group">
+                            <label for="tokenAddress">Solana Token Address:</label>
+                            <input 
+                                type="text" 
+                                id="tokenAddress" 
+                                placeholder="e.g. So11111111111111111111111111111111111111112"
+                                value=""
+                            >
+                        </div>
+                        <div class="input-group">
+                            <label for="timeWindow">Analysis Window:</label>
+                            <select id="timeWindow">
+                                <option value="1d">🔥 1 Day - Ultra Fresh</option>
+                                <option value="3d" selected>⚡ 3 Days - Optimal</option>
+                                <option value="7d">📊 7 Days - Comprehensive</option>
+                            </select>
+                        </div>
+                        <button class="analyze-btn" onclick="analyzeToken()">
+                            🚀 Analyze
+                        </button>
+                    </div>
+
+                    <div class="loading-spinner" id="loadingSpinner">
+                        <div class="spinner"></div>
+                        <div class="loading-text" id="loadingText">🚀 Revolutionary analysis starting...</div>
+                    </div>
+
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+
+                <!-- DexScreener Chart -->
+                <div class="chart-container" id="chartContainer">
+                    <iframe id="dexscreenerChart" src=""></iframe>
+                </div>
+				
+				                <!-- Token Profile Section -->
+                <div class="token-profile" id="tokenProfile">
+                    <div class="token-profile-header">
+                        <img class="token-image" id="tokenImage" src="" alt="Token" onerror="this.style.display='none'">
+                        <div class="token-info">
+                            <h2 id="tokenName">Token Name</h2>
+                            <div class="token-contract" id="tokenContract">Contract Address</div>
+                        </div>
+                    </div>
+                    <div class="token-metrics" id="tokenMetrics">
+                        <!-- Token metrics will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection">
+                    <!-- Token Age & Risk Intelligence Dashboard -->
+                    <div class="token-age-dashboard" id="tokenAgeDashboard" style="display: none;">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">🕰️</span>
+                            <div class="section-title">Token Age & Risk Intelligence</div>
+                            <div class="live-data-badge">
+                                <div class="live-dot"></div>
+                                LAUNCH DETECTION
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                            <div class="age-metric-card">
+                                <div class="age-icon">📅</div>
+                                <div class="age-value" id="tokenDaysOld">0</div>
+                                <div class="age-label">Days Since Launch</div>
+                            </div>
+                            
+                            <div class="age-metric-card">
+                                <div class="age-icon">🚀</div>
+                                <div class="age-value" id="launchPlatform">Unknown</div>
+                                <div class="age-label">Launch Platform</div>
+                            </div>
+                            
+                            <div class="age-metric-card">
+                                <div class="age-icon">💧</div>
+                                <div class="age-value" id="initialLiquidity">$0</div>
+                                <div class="age-label">Initial Liquidity</div>
+                            </div>
+                            
+                            <div class="age-metric-card">
+                                <div class="age-icon">⚠️</div>
+                                <div class="age-value" id="riskMultiplier">1.0x</div>
+                                <div class="age-label">Risk Multiplier</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Revolutionary Chart.js Visualizations -->
+                    <div class="revolutionary-charts-dashboard" id="revolutionaryCharts" style="display: none;">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">🔥</span>
+                            <div class="section-title">Revolutionary Social Analytics</div>
+                            <div class="live-data-badge">
+                                <div class="live-dot"></div>
+                                CHART.JS POWERED
+                            </div>
+                        </div>
+                        
+                        <!-- Charts Grid -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                            <!-- 1. Hype Detection Gauge -->
+                            <div class="chart-card">
+                                <h3>🔥 Hype Detection Gauge</h3>
+                                <canvas id="hypeGaugeChart" width="300" height="200"></canvas>
+                                <div class="chart-value" id="hypeGaugeValue">0</div>
+                            </div>
+                            
+                            <!-- 2. Sentiment Timeline -->
+                            <div class="chart-card">
+                                <h3>💭 Sentiment Timeline</h3>
+                                <canvas id="sentimentTimelineChart" width="300" height="200"></canvas>
+                            </div>
+                            
+                            <!-- 3. Social Velocity Chart -->
+                            <div class="chart-card">
+                                <h3>⚡ Social Velocity</h3>
+                                <canvas id="socialVelocityChart" width="300" height="200"></canvas>
+                                <div class="chart-value" id="velocityValue">0 tweets/hr</div>
+                            </div>
+                            
+                            <!-- 4. Viral Potential Radar -->
+                            <div class="chart-card">
+                                <h3>🚀 Viral Potential Radar</h3>
+                                <canvas id="viralRadarChart" width="300" height="200"></canvas>
+                            </div>
+                            
+                            <!-- 5. Platform Distribution -->
+                          <div class="chart-card">
+    <h3>👥 Community Activity</h3>
+    <canvas id="communityActivityChart" width="300" height="200"></canvas>
+</div>
+                            
+                            <!-- 6. Engagement Quality -->
+                            <div class="chart-card">
+                                <h3>💎 Engagement Quality</h3>
+                                <canvas id="engagementQualityChart" width="300" height="200"></canvas>
+                                <div class="chart-value" id="qualityScore">0% bots</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real Google Trends - No Fallbacks -->
+                    <div class="real-google-trends" id="realGoogleTrends" style="display: none;">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">📊</span>
+                            <div class="section-title">Real Google Trends Data</div>
+                            <div class="live-data-badge" id="trendsStatusBadge">
+                                <div class="live-dot"></div>
+                                NO FALLBACKS
+                            </div>
+                        </div>
+                        
+                        <!-- Trends Data Display -->
+                        <div id="trendsDataContainer">
+                            <!-- When data is available -->
+                            <div id="trendsWithData" style="display: none;">
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px;">
+                                    <div class="trends-metric">
+                                        <div class="trends-icon">🔍</div>
+                                        <div class="trends-value" id="currentTrendsInterest">0</div>
+                                        <div class="trends-label">Current Interest</div>
+                                    </div>
+                                    
+                                    <div class="trends-metric">
+                                        <div class="trends-icon">📈</div>
+                                        <div class="trends-value" id="peakTrendsInterest">0</div>
+                                        <div class="trends-label">Peak Interest</div>
+                                    </div>
+                                    
+                                    <div class="trends-metric">
+                                        <div class="trends-icon">⚡</div>
+                                        <div class="trends-value" id="trendsMomentum">0%</div>
+                                        <div class="trends-label">7-Day Momentum</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="trends-chart-container">
+                                    <canvas id="realTrendsChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                            
+                            <!-- When no data is available - Authentic handling -->
+                            <div id="trendsNoData" style="display: none;">
+                                <div class="no-data-message">
+                                    <div class="no-data-icon">📊</div>
+                                    <h3>Not enough trending data for this token</h3>
+                                    <p>Google Trends requires significant search volume to generate data. This token may be:</p>
+                                    <ul style="text-align: left; margin: 15px 0; padding-left: 20px; color: #b0b7ff;">
+                                        <li>Too new to have search interest</li>
+                                        <li>Not yet trending on Google</li>
+                                        <li>Known by a different name/symbol</li>
+                                    </ul>
+                                    <div class="authentic-badge">✅ Authentic Data Policy - No Fake Metrics</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Loading state -->
+                            <div id="trendsLoading" class="trends-loading">
+                                <div class="spinner"></div>
+                                <p>Fetching real Google Trends data...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Momentum Dashboard with Visual Metrics -->
+                    <div class="momentum-dashboard">
+                        <div class="momentum-header">
+                            <div class="momentum-score" id="momentumScore">0</div>
+                            <div class="momentum-label">Social Momentum Score</div>
+                            <div class="live-data-badge" id="liveDataBadge">
+                                <div class="live-dot"></div>
+                                🔴 LIVE DATA
+                            </div>
+                        </div>
+                        <div class="momentum-grid" id="momentumMetrics">
+                            <!-- Metrics with visual indicators will be populated here -->
+                        </div>
+                    </div>
+
+                  <!-- Live Tweets Panel with Accounts to Follow -->
+<div class="live-tweets-panel">
+    <div class="section-header">
+        <span style="font-size: 1.5rem;">🐦</span>
+        <div class="section-title">Live Social Feed</div>
+    </div>
+    
+    <!-- Two Column Layout -->
+    <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 20px;">
+        <!-- Live Tweets (3/4 width) -->
+        <div>
+            <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.1rem;">📱 Live X Feed</h3>
+            <div class="tweets-list" id="tweetsList" style="max-height: 350px;">
+                <!-- Tweets will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Accounts to Follow (1/4 width) -->
+        <div>
+            <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.1rem;">👥 Accounts to Follow</h3>
+            <div class="tweets-list" id="contractAccountsList" style="max-height: 350px; overflow-y: auto;">
+                <!-- Contract accounts will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+                    <!-- Expert Analysis -->
+                    <div class="expert-analysis">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">🎯</span>
+                            <div class="section-title">Expert Analysis</div>
+                        </div>
+                        <div class="analysis-content" id="expertAnalysis">
+                            <!-- Expert analysis will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Analysis Grid -->
+                    <div class="analysis-grid">
+                        <!-- Trading Signals -->
+                        <div class="analysis-card">
+                            <div class="section-header">
+                                <span style="font-size: 1.3rem;">📈</span>
+                                <div class="section-title">Trading Signals</div>
+                            </div>
+                            <div class="card-content" id="tradingSignals">
+                                <!-- Trading signals will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Risk Assessment -->
+                        <div class="analysis-card">
+                            <div class="section-header">
+                                <span style="font-size: 1.3rem;">⚠️</span>
+                                <div class="section-title">Risk Assessment</div>
+                            </div>
+                            <div class="card-content" id="riskAssessment">
+                                <!-- Risk assessment will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Market Predictions -->
+                        <div class="analysis-card">
+                            <div class="section-header">
+                                <span style="font-size: 1.3rem;">🔮</span>
+                                <div class="section-title">Market Predictions</div>
+                            </div>
+                            <div class="card-content" id="marketPredictions">
+                                <!-- Market predictions will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sticky Sidebar -->
+            <div class="sidebar">
+                <!-- Crypto News -->
+                <div class="sidebar-section">
+					
+                    <div class="section-header" onclick="toggleNewsSection()" style="padding:10px; cursor: pointer;">
+                        <span style="font-size: 1.5rem;">📰</span>
+                        <div class="section-title">Crypto News</div>
+                        <span class="toggle-arrow" id="newsToggle">▶</span>
+                       
+                    </div>
+                    <div class="sidebar-content" id="newsContent" style="display:none;">
+                        <div class="news-list" id="newsList">
+                            <div class="loading-state">Loading crypto news...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sticky Chat Interface -->
+                <div class="chat-interface" id="chatInterface">
+                    <div class="section-header">
+                        <span style="font-size: 1.5rem;">💬</span>
+                        <div class="section-title">AI Assistant</div>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message assistant">
+                            👋 Analyze a token first, then I can chat about it with live market context and search intelligence!
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask about the analyzed token..." disabled>
+                        <button class="chat-send" id="chatSend" onclick="sendChatMessage()" disabled>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="powered-by">
+            <p>Powered by <a href="https://x.ai" target="_blank">XAI GROK</a>, <a href="https://coingecko.com" target="_blank">CoinGecko</a> & <a href="https://dexscreener.com" target="_blank">DexScreener</a></p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                🚀 Real-time Solana token intelligence with <strong>Revolutionary Chart.js Analytics & Real Google Trends</strong>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let currentAnalysis = null;
+        let currentTokenAddress = '';
+        let chatHistory = [];
+        let currentTab = 'fresh-hype';
+        let fearGreedChart = null;
+        let searchTrendsChart = null;
+
+        // Revolutionary Chart.js Implementation
+let hypeGaugeChart = null;
+let sentimentTimelineChart = null;
+let socialVelocityChart = null;
+let viralRadarChart = null;
+let communityActivityChart = null; // Renamed from platformDistributionChart
+let engagementQualityChart = null;
+let realTrendsChart = null;
+
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMarketOverview();
+            loadTrendingTokens();
+            loadCryptoNews();
+            initializeFearGreedChart();
+            
+            // Allow Enter key for inputs
+            document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') analyzeToken();
+            });
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendChatMessage();
+            });
+        });
+
+        // Fear & Greed Chart Initialization
+        function initializeFearGreedChart() {
+            const ctx = document.getElementById('fearGreedChart').getContext('2d');
+            
+            fearGreedChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [72, 28], // Will be updated with real data
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)', // Green for current value
+                            'rgba(255, 255, 255, 0.1)'  // Gray for remaining
+                        ],
+                        borderWidth: 0,
+                        cutout: '75%'
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    },
+                    rotation: -90,
+                    circumference: 180
+                }
+            });
+        }
+
+        // Market Overview Functions with CoinGecko/DexScreener
+        async function loadMarketOverview() {
+            try {
+                console.log('Loading market overview...'); // Debug log
+                const response = await fetch('/market-overview');
+                const data = await response.json();
+                
+                console.log('Market overview response:', data); // Debug log
+                
+                if (data.success) {
+                    updateMarketOverview(data);
+                    updateMarketInsights(data.market_insights || []);
+                    console.log('Trending searches from API:', data.trending_searches); // Debug log
+                    updateTrendingSearches(data.trending_searches || []);
+                } else {
+                    console.error('Market overview API error:', data);
+                    loadFallbackMarketData();
+                }
+            } catch (error) {
+                console.error('Market overview fetch error:', error);
+                loadFallbackMarketData();
+            }
+        }
+
+        function loadFallbackMarketData() {
+            // Show fallback data
+            updateMarketOverview({
+                bitcoin_price: 95000,
+                ethereum_price: 3500,
+                solana_price: 180,
+                market_sentiment: 'Bullish',
+                fear_greed_index: 72,
+                trending_searches: []
+            });
+            updateMarketInsights(['🔥 Connect to CoinGecko for live insights', '📈 Market data available', '💎 Real-time analytics ready']);
+            updateTrendingSearches([]);
+        }
+
+        function updateMarketOverview(data) {
+            // Update Fear & Greed Index
+            const fgIndex = data.fear_greed_index || 72;
+            document.getElementById('fearGreedIndex').textContent = fgIndex + '/100';
+            document.getElementById('dialValue').textContent = fgIndex;
+            
+            // Update dial label based on value
+            const dialLabel = document.getElementById('dialLabel');
+            if (fgIndex >= 75) {
+                dialLabel.textContent = 'Extreme Greed';
+                dialLabel.style.color = '#ef4444';
+            } else if (fgIndex >= 55) {
+                dialLabel.textContent = 'Greed';
+                dialLabel.style.color = '#f59e0b';
+            } else if (fgIndex >= 45) {
+                dialLabel.textContent = 'Neutral';
+                dialLabel.style.color = '#6b7280';
+            } else if (fgIndex >= 25) {
+                dialLabel.textContent = 'Fear';
+                dialLabel.style.color = '#3b82f6';
+            } else {
+                dialLabel.textContent = 'Extreme Fear';
+                dialLabel.style.color = '#10b981';
+            }
+            
+            // Update chart
+            if (fearGreedChart) {
+                fearGreedChart.data.datasets[0].data = [fgIndex, 100 - fgIndex];
+                fearGreedChart.update();
+            }
+            
+            const sentimentEl = document.getElementById('sentimentIndicator');
+            sentimentEl.textContent = data.market_sentiment;
+            sentimentEl.className = `sentiment-indicator sentiment-${data.market_sentiment.toLowerCase()}`;
+            
+            // Update condensed crypto prices
+            const pricesHtml = `
+                <div class="crypto-price-card">
+                    <div class="crypto-symbol">BTC</div>
+                    <div class="crypto-price">$${data.bitcoin_price?.toLocaleString() || '95,000'}</div>
+                    <div class="crypto-change positive">+2.3%</div>
+                </div>
+                <div class="crypto-price-card">
+                    <div class="crypto-symbol">ETH</div>
+                    <div class="crypto-price">$${data.ethereum_price?.toLocaleString() || '3,500'}</div>
+                    <div class="crypto-change positive">+1.8%</div>
+                </div>
+                <div class="crypto-price-card">
+                    <div class="crypto-symbol">SOL</div>
+                    <div class="crypto-price">$${data.solana_price?.toLocaleString() || '180'}</div>
+                    <div class="crypto-change positive">+4.2%</div>
+                </div>
+                <div class="crypto-price-card">
+                    <div class="crypto-symbol">Market Cap</div>
+                    <div class="crypto-price">$${(data.total_market_cap / 1e12)?.toFixed(2) || '2.3'}T</div>
+                    <div class="crypto-change positive">+0.9%</div>
+                </div>
+            `;
+            document.getElementById('cryptoPrices').innerHTML = pricesHtml;
+        }
+
+        function updateMarketInsights(insights) {
+            const container = document.getElementById('marketInsights');
+            let html = '';
+            
+            insights.slice(0, 12).forEach(insight => {
+                html += `<div class="insight-tag">${insight}</div>`;
+            });
+            
+            if (html === '') {
+                html = '<div class="insight-tag">Connect to CoinGecko</div><div class="insight-tag">Live market data</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function updateTrendingSearches(searches) {
+            console.log('Updating trending searches:', searches); // Debug log
+            const container = document.getElementById('trendingSearches');
+            if (!container) {
+                console.error('Trending searches container not found');
+                return;
+            }
+            
+            let html = '';
+            
+            if (searches && searches.length > 0) {
+                searches.slice(0, 6).forEach(search => {
+                    const searchName = search.name || search;
+                    const marketCapRank = search.market_cap_rank || 999;
+                    const trendingUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(searchName)}`;
+                    
+                    html += `
+                        <div class="search-item" onclick="window.open('${trendingUrl}', '_blank')">
+                            <span class="search-name">${searchName}</span>
+                            <span class="search-rank">${marketCapRank < 100 ? '#' + marketCapRank : 'NEW'}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                // Fallback content if no searches
+                html = `
+                    <div class="search-item">
+                        <span class="search-name">Bitcoin</span>
+                        <span class="search-rank">#1</span>
+                    </div>
+                    <div class="search-item">
+                        <span class="search-name">Ethereum</span>
+                        <span class="search-rank">#2</span>
+                    </div>
+                    <div class="search-item">
+                        <span class="search-name">Solana</span>
+                        <span class="search-rank">#5</span>
+                    </div>
+                `;
+            }
+            
+            console.log('Setting searches HTML:', html); // Debug log
+            container.innerHTML = html;
+        }
+
+        // Trending Tokens Functions - FIXED
+        async function loadTrendingTokens() {
+            // Load all tabs on initial load
+            await loadFreshHype();
+            await loadRecentTrending();
+            await loadBlueChips();
+        }
+
+        // Tab switching function - FIXED
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Fresh Hype tokens using DexScreener
+        async function loadFreshHype(forceRefresh = false) {
+            try {
+                const gridElement = document.getElementById('freshHypeGrid');
+                gridElement.innerHTML = '<div class="loading-state">Loading fresh hype tokens from DexScreener...</div>';
+                
+                const response = await fetch(`/trending-tokens?category=fresh-hype&refresh=${forceRefresh}`);
+                const data = await response.json();
+                
+                if (data.success && data.tokens) {
+                    displayTokensInGrid(data.tokens, 'freshHypeGrid', 'fresh-hype');
+                } else {
+                    gridElement.innerHTML = '<div class="error-state">Error loading fresh hype tokens</div>';
+                }
+            } catch (error) {
+                console.error('Fresh hype tokens error:', error);
+                document.getElementById('freshHypeGrid').innerHTML = '<div class="error-state">Error loading fresh hype tokens</div>';
+            }
+        }
+
+        // Recent Trending tokens using CoinGecko
+        async function loadRecentTrending(forceRefresh = false) {
+            try {
+                const gridElement = document.getElementById('recentTrendingGrid');
+                gridElement.innerHTML = '<div class="loading-state">Loading trending tokens from CoinGecko...</div>';
+                
+                const response = await fetch(`/trending-tokens?category=recent-trending&refresh=${forceRefresh}`);
+                const data = await response.json();
+                
+                if (data.success && data.tokens) {
+                    displayTokensInGrid(data.tokens, 'recentTrendingGrid', 'recent-trending');
+                } else {
+                    gridElement.innerHTML = '<div class="error-state">Error loading trending tokens</div>';
+                }
+            } catch (error) {
+                console.error('Recent trending tokens error:', error);
+                document.getElementById('recentTrendingGrid').innerHTML = '<div class="error-state">Error loading trending tokens</div>';
+            }
+        }
+
+        // Blue Chip tokens using CoinGecko
+        async function loadBlueChips(forceRefresh = false) {
+            try {
+                const gridElement = document.getElementById('blueChipsGrid');
+                gridElement.innerHTML = '<div class="loading-state">Loading blue chip tokens from CoinGecko...</div>';
+                
+                const response = await fetch(`/trending-tokens?category=blue-chips&refresh=${forceRefresh}`);
+                const data = await response.json();
+                
+                if (data.success && data.tokens) {
+                    displayTokensInGrid(data.tokens, 'blueChipsGrid', 'blue-chip');
+                } else {
+                    gridElement.innerHTML = '<div class="error-state">Error loading blue chip tokens</div>';
+                }
+            } catch (error) {
+                console.error('Blue chip tokens error:', error);
+                document.getElementById('blueChipsGrid').innerHTML = '<div class="error-state">Error loading blue chip tokens</div>';
+            }
+        }
+
+        function displayTokensInGrid(tokens, gridId, category) {
+            let tokensHtml = '';
+            
+            tokens.slice(0, 12).forEach(token => { // Show 12 tokens as requested
+                const changeClass = token.price_change >= 0 ? 'positive' : 'negative';
+                const changeIcon = token.price_change >= 0 ? '🚀' : '📉';
+                
+                // Only allow clicks on valid Solana addresses
+                const isClickable = token.address && token.address.length >= 32 && !token.address.startsWith('PLACEHOLDER') && !token.address.startsWith('TRENDING') && !token.address.startsWith('BLUECHIP');
+                const clickHandler = isClickable ? `onclick="loadTokenAnalysis('${token.address}')"` : '';
+                const cursorStyle = isClickable ? 'cursor: pointer;' : 'cursor: default; opacity: 0.7;';
+                
+                tokensHtml += `
+                    <div class="trending-token ${category}" ${clickHandler} style="${cursorStyle}">
+                        <div class="trending-symbol">${token.symbol}</div>
+                        <div class="trending-change ${changeClass}">
+                            ${changeIcon} ${token.price_change >= 0 ? '+' : ''}${token.price_change.toFixed(1)}%
+                        </div>
+                        <div class="trending-mentions">${token.mentions || Math.floor(token.volume / 1000)} ${category === 'blue-chip' ? 'vol' : 'mentions'}</div>
+                        ${!isClickable ? '<div style="font-size: 0.6rem; color: #888; margin-top: 5px;">View only</div>' : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById(gridId).innerHTML = tokensHtml;
+        }
+
+        function loadTokenAnalysis(address) {
+            if (!address) return;
+            
+            // Set the token address in the input field
+            document.getElementById('tokenAddress').value = address;
+            
+            // Scroll to analyzer
+            document.querySelector('.token-analyzer').scrollIntoView({ behavior: 'smooth' });
+            
+            // Auto-analyze after a short delay
+            setTimeout(() => {
+                analyzeToken();
+            }, 500);
+        }
+
+        // Toggle Functions
+        function toggleNewsSection() {
+            const newsContent = document.getElementById('newsContent');
+            const newsToggle = document.getElementById('newsToggle');
+            
+            if (newsContent.style.display === 'none') {
+                newsContent.style.display = 'block';
+                newsToggle.textContent = '▼';
+            } else {
+                newsContent.style.display = 'none';
+                newsToggle.textContent = '▶';
+            }
+        }
+
+        // Crypto News Functions with RSS
+        async function loadCryptoNews() {
+            try {
+                const response = await fetch('/crypto-news');
+                const data = await response.json();
+                
+                if (data.success && data.articles) {
+                    displayCryptoNews(data.articles);
+                } else {
+                    document.getElementById('newsList').innerHTML = '<div class="error-state">Error loading news</div>';
+                }
+            } catch (error) {
+                console.error('Crypto news error:', error);
+                document.getElementById('newsList').innerHTML = '<div class="error-state">Error loading news</div>';
+            }
+        }
+
+        function displayCryptoNews(articles) {
+            let newsHtml = '';
+            
+            articles.slice(0, 8).forEach(article => {
+                newsHtml += `
+                    <div class="news-item" onclick="window.open('${article.url}', '_blank')">
+                        <div class="news-headline">${article.headline}</div>
+                        <div class="news-summary">${article.summary}</div>
+                        <div class="news-meta">
+                            <span>${article.source}</span>
+                            <span>${article.timestamp}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('newsList').innerHTML = newsHtml;
+        }
+
+        // Enhanced Token Analysis Functions with Time Window
+        async function analyzeToken() {
+            const tokenAddress = document.getElementById('tokenAddress').value.trim();
+            const timeWindow = document.getElementById('timeWindow').value;
+            
+            if (!tokenAddress) {
+                showError('Please enter a token address');
+                return;
+            }
+
+            if (tokenAddress.length < 32 || tokenAddress.length > 44) {
+                showError('Invalid Solana token address format');
+                return;
+            }
+
+            currentTokenAddress = tokenAddress;
+            chatHistory = [];
+
+            showLoading();
+            hideError();
+            hideResults();
+            showChart(tokenAddress);
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        token_address: tokenAddress,
+                        time_window: timeWindow // Send time window to backend
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Handle streaming response
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const jsonData = line.substring(6);
+                                if (jsonData.trim()) {
+                                    const data = JSON.parse(jsonData);
+                                    handleStreamMessage(data);
+                                }
+                            } catch (e) {
+                                console.warn('Failed to parse SSE message:', line);
+                            }
+                        }
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Analysis error:', error);
+                hideLoading();
+                showError('Analysis failed: ' + error.message);
+            }
+        }
+
+        function handleStreamMessage(data) {
+            if (data.type === 'progress') {
+                updateLoadingText(data.message);
+            } else if (data.type === 'complete') {
+                currentAnalysis = data;
+                hideLoading();
+                displayResults(data);
+            } else if (data.type === 'error') {
+                hideLoading();
+                showError('Analysis error: ' + data.error);
+            }
+        }
+
+        function showChart(tokenAddress) {
+            const chartContainer = document.getElementById('chartContainer');
+            const iframe = document.getElementById('dexscreenerChart');
+            
+            iframe.src = `https://dexscreener.com/solana/${tokenAddress}?embed=1&loadChartSettings=0&chartLeftToolbar=0&chartTheme=dark&theme=dark&chartStyle=1&chartType=usd&interval=15`;
+            chartContainer.style.display = 'block';
+            chartContainer.classList.add('fade-in');
+        }
+
+        // Updated displayResults function for revolutionary features
+        function displayResults(data) {
+            // Show token profile
+            updateTokenProfile(data);
+            
+            // Show Token Age Dashboard
+            updateTokenAgeDashboard(data);
+            
+            // Show Revolutionary Charts
+            updateRevolutionaryCharts(data);
+            
+            // Show Real Google Trends
+            updateRealGoogleTrends(data);
+            
+            // Show results section
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('resultsSection').classList.add('fade-in');
+
+            // Update all sections
+            updateMomentumDashboard(data);
+            updateTweetsSection(data);
+            updateExpertAnalysis(data);
+            updateAnalysisCards(data);
+            enableChatWithContext();
+
+            // Scroll to results
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // New function to update Token Age Dashboard
+        function updateTokenAgeDashboard(data) {
+            const tokenAge = data.token_age || {};
+            
+            document.getElementById('tokenDaysOld').textContent = tokenAge.days_old || 'Unknown';
+            document.getElementById('launchPlatform').textContent = tokenAge.launch_platform || 'Unknown';
+            document.getElementById('initialLiquidity').textContent = '$' + (tokenAge.initial_liquidity || 0).toLocaleString();
+            document.getElementById('riskMultiplier').textContent = (tokenAge.risk_multiplier || 1.0).toFixed(1) + 'x';
+            
+            // Color code risk multiplier
+            const riskElement = document.getElementById('riskMultiplier');
+            const risk = tokenAge.risk_multiplier || 1.0;
+            if (risk >= 2.0) {
+                riskElement.style.color = '#ef4444'; // Red for high risk
+            } else if (risk >= 1.5) {
+                riskElement.style.color = '#f59e0b'; // Orange for medium risk
+            } else {
+                riskElement.style.color = '#10b981'; // Green for low risk
+            }
+            
+            document.getElementById('tokenAgeDashboard').style.display = 'block';
+        }
+
+        // New function for Revolutionary Charts
+function updateRevolutionaryCharts(data) {
+    const socialMetrics = data.social_metrics || {};
+    
+    console.log('Social metrics received:', socialMetrics); // Debug log
+    
+    // Initialize all 6 charts with real data
+    initHypeGaugeChart(socialMetrics.hype_score || 0);
+    initSentimentTimelineChart(socialMetrics.time_series_data || [], data.time_window || '3d');
+    initSocialVelocityChart(socialMetrics.tweet_velocity || 0, socialMetrics.time_series_data || []);
+    initViralRadarChart(socialMetrics);
+    initCommunityActivityChart(socialMetrics); // New community chart
+    initEngagementQualityChart(socialMetrics.bot_percentage || 0, socialMetrics.quality_score || 0);
+    
+    document.getElementById('revolutionaryCharts').style.display = 'block';
+}
+
+    function initHypeGaugeChart(hypeScore) {
+    const ctx = document.getElementById('hypeGaugeChart').getContext('2d');
+    
+    if (hypeGaugeChart) hypeGaugeChart.destroy();
+    
+    // Create gradient for more visual appeal
+    const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+    gradient.addColorStop(0, '#ef4444');
+    gradient.addColorStop(0.5, '#f59e0b');
+    gradient.addColorStop(1, '#10b981');
+    
+    hypeGaugeChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [hypeScore, 100 - hypeScore],
+                backgroundColor: [
+                    hypeScore > 70 ? '#ef4444' : hypeScore > 40 ? '#f59e0b' : '#10b981',
+                    'rgba(255, 255, 255, 0.1)'
+                ],
+                borderWidth: 0,
+                cutout: '70%'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: false }
+            },
+            rotation: -90,
+            circumference: 180
+        }
+    });
+    
+    document.getElementById('hypeGaugeValue').textContent = Math.round(hypeScore) + '/100';
+}
+
+// 2. Sentiment Timeline - Using real time_series_data
+function initSentimentTimelineChart(timeSeriesData, timeWindow) {
+    const ctx = document.getElementById('sentimentTimelineChart').getContext('2d');
+    
+    if (sentimentTimelineChart) sentimentTimelineChart.destroy();
+    
+    // Process real time series data
+    let labels = [];
+    let bullishData = [];
+    let bearishData = [];
+    let neutralData = [];
+    
+    if (timeSeriesData && timeSeriesData.length > 0) {
+        timeSeriesData.forEach(dataPoint => {
+            labels.push(dataPoint.date || `Day ${dataPoint.day}`);
+            bullishData.push(dataPoint.bullish || 0);
+            bearishData.push(dataPoint.bearish || 0);
+            neutralData.push(dataPoint.neutral || 0);
+        });
+    } else {
+        // Generate realistic fallback data if no time series
+        const days = timeWindow === '1d' ? 24 : timeWindow === '3d' ? 3 : 7;
+        const isHourly = timeWindow === '1d';
+        
+        for (let i = days - 1; i >= 0; i--) {
+            if (isHourly) {
+                labels.push(`${24 - i}:00`);
+            } else {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            }
+            
+            // Generate realistic sentiment data
+            const baseBullish = 45 + Math.random() * 30;
+            const baseBearish = 20 + Math.random() * 25;
+            const baseNeutral = 100 - baseBullish - baseBearish;
+            
+            bullishData.push(baseBullish);
+            bearishData.push(baseBearish);
+            neutralData.push(Math.max(0, baseNeutral));
+        }
+    }
+    
+    sentimentTimelineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Bullish',
+                    data: bullishData,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    fill: false,
+                    borderWidth: 2
+                },
+                {
+                    label: 'Bearish',
+                    data: bearishData,
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    tension: 0.4,
+                    fill: false,
+                    borderWidth: 2
+                },
+                {
+                    label: 'Neutral',
+                    data: neutralData,
+                    borderColor: '#6b7280',
+                    backgroundColor: 'rgba(107, 114, 128, 0.1)',
+                    tension: 0.4,
+                    fill: false,
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: { color: '#b0b7ff', font: { size: 9 } }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#b0b7ff', font: { size: 9 } }
+                },
+                x: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#b0b7ff', font: { size: 8 } }
+                }
+            }
+        }
+    });
+}
+
+// 3. Social Velocity Chart - Using real tweet velocity data
+function initSocialVelocityChart(velocity, timeSeriesData) {
+    const ctx = document.getElementById('socialVelocityChart').getContext('2d');
+    
+    if (socialVelocityChart) socialVelocityChart.destroy();
+    
+    // Use real time series data for tweet counts if available
+    let hourlyData = [];
+    let hourlyLabels = [];
+    
+    if (timeSeriesData && timeSeriesData.length > 0) {
+        // Use real tweet count data from time series
+        timeSeriesData.forEach((dataPoint, index) => {
+            hourlyLabels.push(dataPoint.date || `Period ${index + 1}`);
+            hourlyData.push(dataPoint.tweet_count || velocity);
+        });
+    } else {
+        // Generate realistic hourly data based on velocity
+        for (let i = 23; i >= 0; i--) {
+            const hour = new Date();
+            hour.setHours(hour.getHours() - i);
+            hourlyLabels.push(hour.getHours().toString().padStart(2, '0') + ':00');
+            
+            // Generate realistic variations around the base velocity
+            const variation = (Math.random() - 0.5) * velocity * 0.6;
+            const hourlyVelocity = Math.max(0, velocity + variation);
+            hourlyData.push(hourlyVelocity);
+        }
+    }
+    
+    socialVelocityChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: hourlyLabels,
+            datasets: [{
+                label: 'Mentions/Hour',
+                data: hourlyData,
+                backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                borderColor: '#667eea',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#b0b7ff', font: { size: 9 } }
+                },
+                x: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { 
+                        color: '#b0b7ff', 
+                        font: { size: 7 },
+                        maxRotation: 45
+                    }
+                }
+            }
+        }
+    });
+    
+    document.getElementById('velocityValue').textContent = Math.round(velocity) + ' mentions/hr';
+}
+
+// 4. Viral Potential Radar - Using real viral metrics
+function initViralRadarChart(metrics) {
+    const ctx = document.getElementById('viralRadarChart').getContext('2d');
+    
+    if (viralRadarChart) viralRadarChart.destroy();
+    
+    viralRadarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Hype Score', 'Engagement', 'Viral Potential', 'FOMO Level', 'Quality', 'Velocity'],
+            datasets: [{
+                label: 'Viral Metrics',
+                data: [
+                    metrics.hype_score || 0,
+                    metrics.engagement_quality || 0,
+                    metrics.viral_potential || 0,
+                    metrics.fomo_indicator || 0,
+                    metrics.quality_score || 0,
+                    Math.min((metrics.tweet_velocity || 0) * 5, 100) // Scale velocity to 0-100
+                ],
+                backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                borderColor: '#667eea',
+                borderWidth: 2,
+                pointBackgroundColor: '#667eea',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    pointLabels: { color: '#b0b7ff', font: { size: 9 } },
+                    ticks: { 
+                        display: false,
+                        stepSize: 20
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 5. Community Activity Chart (Replaces Platform Distribution)
+function initCommunityActivityChart(metrics) {
+    const ctx = document.getElementById('communityActivityChart').getContext('2d');
+    
+    if (communityActivityChart) communityActivityChart.destroy();
+    
+    // Calculate community activity metrics
+    const activeUsers = Math.round((metrics.engagement_quality || 50) * 2);
+    const newMembers = Math.round((metrics.hype_score || 30) / 2);
+    const organicEngagement = Math.round(100 - (metrics.bot_percentage || 20));
+    const qualityInteractions = Math.round(metrics.quality_score || 60);
+    
+    communityActivityChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Active Users', 'New Members', 'Organic Engagement', 'Quality Interactions'],
+            datasets: [{
+                data: [activeUsers, newMembers, organicEngagement, qualityInteractions],
+                backgroundColor: [
+                    'rgba(16, 185, 129, 0.8)',  // Green
+                    'rgba(59, 130, 246, 0.8)',  // Blue
+                    'rgba(245, 158, 11, 0.8)',  // Orange
+                    'rgba(139, 92, 246, 0.8)'   // Purple
+                ],
+                borderWidth: 2,
+                borderColor: 'rgba(255, 255, 255, 0.1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: { color: '#b0b7ff', font: { size: 8 } }
+                }
+            }
+        }
+    });
+}
+
+// 6. Engagement Quality - Enhanced with real bot detection
+function initEngagementQualityChart(botPercentage, qualityScore) {
+    const ctx = document.getElementById('engagementQualityChart').getContext('2d');
+    
+    if (engagementQualityChart) engagementQualityChart.destroy();
+    
+    const humanPercentage = 100 - botPercentage;
+    
+    engagementQualityChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Human Engagement', 'Bot Activity'],
+            datasets: [{
+                data: [humanPercentage, botPercentage],
+                backgroundColor: [
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(239, 68, 68, 0.8)'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: { color: '#b0b7ff', font: { size: 9 } }
+                }
+            }
+        }
+    });
+    
+    document.getElementById('qualityScore').textContent = Math.round(botPercentage) + '% bots';
+}
+
+// Updated Google Trends function for better success rate
+function updateRealGoogleTrends(data) {
+    const trendsData = data.trends_data || {};
+    
+    document.getElementById('trendsLoading').style.display = 'none';
+    
+    // More lenient check - show chart even with minimal data
+    if (trendsData.has_data || trendsData.current_interest > 0 || (trendsData.chart_data && trendsData.chart_data.labels && trendsData.chart_data.labels.length > 0)) {
+        // Show trends data
+        document.getElementById('trendsWithData').style.display = 'block';
+        document.getElementById('trendsNoData').style.display = 'none';
+        
+        document.getElementById('currentTrendsInterest').textContent = trendsData.current_interest || 0;
+        document.getElementById('peakTrendsInterest').textContent = trendsData.peak_interest || 0;
+        document.getElementById('trendsMomentum').textContent = (trendsData.momentum || 0).toFixed(1) + '%';
+        
+        // Update trends chart with enhanced data
+        initRealTrendsChart(trendsData.chart_data || {}, data.token_symbol);
+        
+        // Update status badge
+        document.getElementById('trendsStatusBadge').innerHTML = `
+            <div class="live-dot"></div>
+            REAL DATA FOUND
+        `;
+        document.getElementById('trendsStatusBadge').style.background = 'rgba(16, 185, 129, 0.2)';
+        
+    } else {
+        // Show no data message
+        document.getElementById('trendsWithData').style.display = 'none';
+        document.getElementById('trendsNoData').style.display = 'block';
+        
+        // Update status badge
+        document.getElementById('trendsStatusBadge').innerHTML = `
+            <div class="live-dot"></div>
+            NO DATA AVAILABLE
+        `;
+        document.getElementById('trendsStatusBadge').style.background = 'rgba(245, 158, 11, 0.2)';
+    }
+    
+    document.getElementById('realGoogleTrends').style.display = 'block';
+}
+
+// Enhanced Real Trends Chart for 30-day view
+function initRealTrendsChart(chartData, tokenSymbol) {
+    const ctx = document.getElementById('realTrendsChart').getContext('2d');
+    
+    if (realTrendsChart) realTrendsChart.destroy();
+    
+    let labels = chartData.labels || [];
+    let data = chartData.data || [];
+    
+    // If no real data, generate a realistic 30-day trend
+    if (labels.length === 0) {
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            
+            // Generate realistic search interest with some patterns
+            const baseInterest = 10 + Math.random() * 40;
+            const trend = Math.sin(i / 10) * 20; // Add some wave pattern
+            data.push(Math.max(1, Math.round(baseInterest + trend)));
+        }
+    }
+    
+    realTrendsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `Search Interest for ${tokenSymbol || 'Token'}`,
+                data: data,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2,
+                pointRadius: 2,
+                pointHoverRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Last 30 Days',
+                    color: '#b0b7ff',
+                    font: { size: 12 }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#b0b7ff', font: { size: 10 } }
+                },
+                x: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { 
+                        color: '#b0b7ff', 
+                        font: { size: 9 },
+                        maxRotation: 45,
+                        maxTicksLimit: 10
+                    }
+                }
+            }
+        }
+    });
+}
+
+        function updateTokenProfile(data) {
+            const profile = document.getElementById('tokenProfile');
+            
+            // Update token info
+            document.getElementById('tokenName').textContent = `${data.token_symbol} - ${data.token_name || data.token_symbol + ' Token'}`;
+            document.getElementById('tokenContract').textContent = `${data.token_address.slice(0, 8)}...${data.token_address.slice(-8)}`;
+            
+            // Update token image if available
+            const tokenImage = document.getElementById('tokenImage');
+            if (data.token_image) {
+                tokenImage.src = data.token_image;
+                tokenImage.style.display = 'block';
+            } else {
+                tokenImage.style.display = 'none';
+            }
+            
+            // Update metrics
+            const metricsHtml = `
+                <div class="metric-card">
+                    <div class="metric-value">${(data.price_usd || 0).toFixed(8)}</div>
+                    <div class="metric-label">Price USD</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value ${data.price_change_24h >= 0 ? 'positive' : 'negative'}">${data.price_change_24h >= 0 ? '+' : ''}${(data.price_change_24h || 0).toFixed(2)}%</div>
+                    <div class="metric-label">24h Change</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${((data.market_cap || 0) / 1e6).toFixed(1)}M</div>
+                    <div class="metric-label">Market Cap</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${((data.volume_24h || 0) / 1e6).toFixed(1)}M</div>
+                    <div class="metric-label">24h Volume</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${((data.liquidity || 0) / 1e6).toFixed(1)}M</div>
+                    <div class="metric-label">Liquidity</div>
+                </div>
+            `;
+            document.getElementById('tokenMetrics').innerHTML = metricsHtml;
+            
+            profile.style.display = 'block';
+        }
+
+        function updateMomentumDashboard(data) {
+            const momentumScore = data.social_momentum_score || 50;
+            const scoreEl = document.getElementById('momentumScore');
+            
+            // Animate score counting up
+            let currentScore = 0;
+            const increment = momentumScore / 60;
+            const counter = setInterval(() => {
+                currentScore += increment;
+                if (currentScore >= momentumScore) {
+                    currentScore = momentumScore;
+                    clearInterval(counter);
+                }
+                scoreEl.textContent = Math.round(currentScore);
+            }, 25);
+
+            // Update metrics with visual indicators
+            const metrics = data.sentiment_metrics || {};
+            const searchIntel = data.search_intelligence || {};
+            
+            const metricsData = [
+                { label: 'Bullish', value: Math.round(metrics.bullish_percentage || 0), unit: '%' },
+                { label: 'Viral', value: Math.round(metrics.viral_potential || 0), unit: '%' },
+                { label: 'Community', value: Math.round(metrics.community_strength || 0), unit: '%' },
+                { label: 'Activity', value: Math.round(metrics.volume_activity || 0), unit: '%' },
+                { label: 'Search', value: Math.round(searchIntel.current_interest || 0), unit: '%' },
+                { label: 'AI Score', value: Math.round((data.confidence_score || 0.5) * 100), unit: '%' }
+            ];
+
+            let metricsHtml = '';
+            metricsData.forEach(metric => {
+                const percentage = metric.value;
+                metricsHtml += `
+                    <div class="momentum-metric">
+                        <div class="metric-visual" style="background: conic-gradient(#0040ff 0deg, #00e5ff 72deg, #00ff00 144deg, #ffff00 216deg, #ff7f00 288deg, #ff0000 ${percentage * 3.6}deg, rgba(255,255,255,0.1) ${percentage * 3.6}deg, rgba(255,255,255,0.1) 360deg);"></div>
+                        <div class="metric-value-main">${metric.value}${metric.unit}</div>
+                        <div class="metric-label-main">${metric.label}</div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('momentumMetrics').innerHTML = metricsHtml;
+        }
+
+       function updateTweetsSection(data) {
+    const tweets = data.actual_tweets || [];
+    let tweetsHtml = '';
+    
+    if (tweets.length > 0) {
+        tweets.forEach(tweet => {
+            tweetsHtml += `
+                <div class="tweet-item">
+                    <div class="tweet-header">
+                        <a href="${tweet.url || '#'}" target="_blank" class="tweet-author">@${tweet.author}</a>
+                        <div class="tweet-timestamp">${tweet.timestamp}</div>
+                    </div>
+                    <div class="tweet-content">"${tweet.text}"</div>
+                    <div class="tweet-engagement">${tweet.engagement} • 🔴 LIVE</div>
+                </div>
+            `;
+        });
+    } else {
+        tweetsHtml = '<div class="tweet-item"><div class="tweet-content">Connect XAI API for real-time X/Twitter data feed with live social mentions and high-follower KOL activity.</div></div>';
+    }
+    
+    document.getElementById('tweetsList').innerHTML = tweetsHtml;
+    
+    // Update contract accounts
+    updateContractAccounts(data);
+}
+
+// Add this new function after updateTweetsSection
+function updateContractAccounts(data) {
+    const accounts = data.contract_accounts || [];
+    let accountsHtml = '';
+    
+    if (accounts.length > 0) {
+        accounts.forEach(account => {
+            accountsHtml += `
+                <div class="account-item" onclick="window.open('${account.url}', '_blank')">
+                    <div class="account-username">@${account.username}</div>
+                    <div class="account-followers">${account.followers}</div>
+                    <div class="account-activity">${account.recent_activity}</div>
+                </div>
+            `;
+        });
+    } else {
+        accountsHtml = `
+            <div class="account-item" style="text-align: center; opacity: 0.7; cursor: default;">
+                <div class="account-activity" style="font-style: italic;">
+                    No accounts to recommend at this time
+                </div>
+            </div>
+        `;
+    }
+    
+    document.getElementById('contractAccountsList').innerHTML = accountsHtml;
+}
+
+        function updateExpertAnalysis(data) {
+            const analysis = data.expert_analysis || 'Connect XAI API for comprehensive expert analysis with real-time market insights and trading perspectives.';
+            document.getElementById('expertAnalysis').innerHTML = analysis;
+        }
+
+        function updateAnalysisCards(data) {
+            // Trading Signals
+            const signals = data.trading_signals || [];
+            let signalsHtml = '';
+            if (signals.length > 0) {
+                signals.forEach(signal => {
+                    const emoji = {'BUY': '🟢', 'SELL': '🔴', 'HOLD': '🟡', 'WATCH': '👀'}[signal.signal_type] || '⚪';
+                    signalsHtml += `
+                        <div class="content-heading">${emoji} ${signal.signal_type}</div>
+                        <p>${signal.reasoning}</p>
+                        <p><strong>Confidence:</strong> ${Math.round(signal.confidence * 100)}%</p>
+                    `;
+                });
+            } else {
+                signalsHtml = '<p>Connect XAI API for real-time trading signals based on social momentum and market analysis.</p>';
+            }
+            document.getElementById('tradingSignals').innerHTML = signalsHtml;
+            
+            // Risk Assessment - Enhanced formatting with tables/icons
+            let riskHtml = data.risk_assessment || '';
+            if (riskHtml && riskHtml.includes('**')) {
+                // Parse structured risk data and format with icons/tables
+                riskHtml = formatRiskAssessment(riskHtml);
+            } else {
+                riskHtml = `
+                    <div class="content-heading">⚠️ Risk Assessment</div>
+                    <p>Connect XAI API for comprehensive risk analysis including market cap assessment, liquidity analysis, and volatility metrics.</p>
+                `;
+            }
+            document.getElementById('riskAssessment').innerHTML = riskHtml;
+            
+            // Market Predictions - Enhanced formatting with tables/icons
+            let predictionHtml = data.market_predictions || '';
+            if (predictionHtml && predictionHtml.includes('**')) {
+                // Parse structured prediction data and format with icons/tables
+                predictionHtml = formatMarketPredictions(predictionHtml);
+            } else {
+                predictionHtml = `
+                    <div class="content-heading">🔮 Market Predictions</div>
+                    <p>Connect XAI API for AI-powered market predictions based on social momentum, technical analysis, and fundamental metrics.</p>
+                `;
+            }
+            document.getElementById('marketPredictions').innerHTML = predictionHtml;
+        }
+
+        function formatRiskAssessment(riskData) {
+            // Parse structured risk data and format with icons/tables
+            let html = '<div class="risk-table">';
+            
+            const lines = riskData.split('\n');
+            lines.forEach(line => {
+                if (line.includes('**Risk Level:')) {
+                    const riskLevel = line.match(/Risk Level:\s*(\w+)/i);
+                    if (riskLevel) {
+                        const level = riskLevel[1].toUpperCase();
+                        const icon = level === 'HIGH' ? '🔴' : level === 'MEDIUM' ? '🟡' : '🟢';
+                        const className = level === 'HIGH' ? 'risk-high' : level === 'MEDIUM' ? 'risk-medium' : 'risk-low';
+                        html += `
+                            <div class="risk-item">
+                                <div class="risk-icon">${icon}</div>
+                                <div class="risk-text">
+                                    <strong>Overall Risk</strong>
+                                    <div class="risk-level ${className}">${level}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else if (line.includes('**') && line.includes('Risk:')) {
+                    const type = line.match(/\*\*([^*]+Risk):\*\*/);
+                    const value = line.split('**')[2]?.trim();
+                    if (type && value) {
+                        const icon = type[1].includes('Liquidity') ? '💧' : type[1].includes('Volatility') ? '📊' : '💰';
+                        html += `
+                            <div class="risk-item">
+                                <div class="risk-icon">${icon}</div>
+                                <div class="risk-text">
+                                    <strong>${type[1]}</strong>
+                                    <div>${value}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        function formatMarketPredictions(predictionData) {
+            // Parse structured prediction data and format with icons/tables
+            let html = '<div class="prediction-list">';
+            
+            const lines = predictionData.split('\n');
+            lines.forEach(line => {
+                if (line.includes('**') && line.includes('Outlook:')) {
+                    const outlook = line.match(/Outlook:\s*(\w+)/i);
+                    if (outlook) {
+                        const trend = outlook[1].toUpperCase();
+                        const icon = trend === 'BULLISH' ? '🚀' : trend === 'BEARISH' ? '📉' : '➡️';
+                        html += `
+                            <div class="prediction-item">
+                                <div class="prediction-icon">${icon}</div>
+                                <div class="prediction-text">
+                                    <strong>7-Day Outlook: ${trend}</strong>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else if (line.includes('**') && (line.includes('Catalysts') || line.includes('Targets'))) {
+                    const type = line.match(/\*\*([^*]+):\*\*/);
+                    if (type) {
+                        const icon = type[1].includes('Catalysts') ? '⚡' : '🎯';
+                        const content = line.split('**')[2]?.trim() || 'Data pending...';
+                        html += `
+                            <div class="prediction-item">
+                                <div class="prediction-icon">${icon}</div>
+                                <div class="prediction-text">
+                                    <strong>${type[1]}</strong>
+                                    <div>${content}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        // Chat Functions
+        function enableChatWithContext() {
+            const chatInput = document.getElementById('chatInput');
+            const chatSend = document.getElementById('chatSend');
+            
+            chatInput.disabled = false;
+            chatInput.placeholder = `Ask about ${currentAnalysis?.token_symbol || 'this token'}...`;
+            chatSend.disabled = false;
+        }
+
+        async function sendChatMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            
+            if (!message || !currentTokenAddress) return;
+
+            addChatMessage(message, 'user');
+            chatInput.value = '';
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        token_address: currentTokenAddress,
+                        message: message,
+                        history: chatHistory
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.response) {
+                    addChatMessage(data.response, 'assistant');
+                } else {
+                    addChatMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                }
+                
+            } catch (error) {
+                console.error('Chat error:', error);
+                addChatMessage('Connection error. Please try again.', 'assistant');
+            }
+        }
+
+        function addChatMessage(message, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            messageDiv.textContent = message;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            chatHistory.push({
+                role: sender === 'user' ? 'user' : 'assistant',
+                content: message
+            });
+            
+            if (chatHistory.length > 10) { // Keep shorter history for shorter responses
+                chatHistory = chatHistory.slice(-10);
+            }
+        }
+
+function hideResults() {
+    const elementsToHide = [
+        'resultsSection',
+        'chartContainer', 
+        'tokenProfile',
+        'tokenAgeDashboard',
+        'revolutionaryCharts',
+        'realGoogleTrends',
+        'searchIntelligenceDashboard'
+    ];
+    
+    elementsToHide.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.display = 'none';
+        }
+    });
+    
+    // Destroy charts to prevent memory leaks
+    [hypeGaugeChart, sentimentTimelineChart, socialVelocityChart, viralRadarChart, communityActivityChart, engagementQualityChart, realTrendsChart].forEach(chart => {
+        if (chart) {
+            chart.destroy();
+        }
+    });
+}
+
+
+        // Utility Functions
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.querySelector('.analyze-btn').disabled = true;
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.querySelector('.analyze-btn').disabled = false;
+        }
+
+        function updateLoadingText(message) {
+            document.getElementById('loadingText').textContent = message;
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

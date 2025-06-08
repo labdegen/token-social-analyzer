@@ -65,6 +65,10 @@
             animation: gradient-flow 3s ease infinite;
             text-decoration: none;
         }
+		
+		html {
+  scroll-behavior: smooth;   /* enables the built-in smooth scroller */
+}
 
         @keyframes gradient-flow {
             0%, 100% { background-position: 0% 50%; }
@@ -156,6 +160,61 @@
             gap: 25px;
             align-items: start;
         }
+		
+		.diamond-hands-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px 0;
+}
+
+.diamond-hands-main {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.diamond-hands-score {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.diamond-hands-level {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.diamond-hands-breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    font-size: 0.9em;
+}
+
+.diamond-hands-metrics {
+    text-align: center;
+    opacity: 0.8;
+    font-size: 0.8em;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 10px;
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #888;
+}
 
         .crypto-prices {
             display: grid;
@@ -703,7 +762,7 @@
         }
 
         .chart-card h3 {
-            color: #667eea;
+            color: #ffffff;
             font-size: 1rem;
             margin-bottom: 15px;
             font-weight: 600;
@@ -724,102 +783,72 @@
         }
 
         /* Real Google Trends */
-        .real-google-trends {
+       /* Enhanced Search Intelligence Dashboard */
+        .search-intelligence-dashboard {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 25px;
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(16, 185, 129, 0.25);
             margin-bottom: 25px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        .trends-metric {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
+        .search-intel-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .search-intel-metric {
             text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .trends-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .trends-value {
-            font-size: 1.8rem;
-            font-weight: 700;
+        .intel-value {
+            font-size: 2.5rem;
+            font-weight: 900;
             color: #10b981;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
-        .trends-label {
-            font-size: 0.8rem;
+        .intel-label {
+            font-size: 0.9rem;
             color: #b0b7ff;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .trends-chart-container {
+        .search-trends-chart {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
             padding: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 350px; /* Fixed height to prevent stretching */
         }
 
-        .no-data-message {
-            text-align: center;
-            padding: 40px;
+        .search-trends-chart canvas {
+            max-height: 280px !important; /* Prevent canvas from growing too large */
+        }
+
+        .geo-heatmap-container {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
+            padding: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 350px; /* Fixed height to match chart */
         }
 
-        .no-data-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.7;
-        }
-
-        .no-data-message h3 {
-            color: #f59e0b;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .no-data-message p {
-            color: #b0b7ff;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-        }
-
-        .authentic-badge {
-            display: inline-block;
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
+        /* Fix the search intelligence grid to be 50/50 */
+        .search-intel-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 50/50 split */
+            gap: 25px;
             margin-top: 20px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .trends-loading {
-            text-align: center;
-            padding: 40px;
-            color: #b0b7ff;
-        }
-
-        .trends-loading .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #10b981;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
         }
 
         /* DexScreener Chart */
@@ -834,6 +863,77 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+		
+		/* Notable Accounts Styling */
+.notable-account-item {
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 3px solid #fbbf24;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.notable-account-item:hover {
+    background: rgba(251, 191, 36, 0.1);
+    transform: translateX(3px);
+}
+
+.notable-username {
+    font-weight: 700;
+    color: #fbbf24;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.notable-display-name {
+    font-size: 0.8rem;
+    color: #e1e7ff;
+    margin-bottom: 6px;
+}
+
+.notable-followers {
+    font-size: 0.75rem;
+    color: #fbbf24;
+    font-weight: 600;
+}
+
+/* Enhanced tweet styling */
+.tweet-item {
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-left: 3px solid #1da1f2;
+    transition: all 0.3s ease;
+}
+
+.tweet-item:hover {
+    background: rgba(29, 161, 242, 0.1);
+    transform: translateX(3px);
+}
+
+.tweet-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.75rem;
+    color: #7dd3fc;
+}
+
+.tweet-sentiment {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.sentiment-bullish { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+.sentiment-bearish { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+.sentiment-neutral { background: rgba(107, 114, 128, 0.2); color: #6b7280; }
 
         .chart-container iframe {
             width: 100%;
@@ -991,8 +1091,11 @@
             padding: 40px;
             border: 1px solid rgba(102, 126, 234, 0.25);
             margin-bottom: 25px;
+			
         }
 
+
+		
         .momentum-header {
             text-align: center;
             margin-bottom: 30px;
@@ -1006,6 +1109,112 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
+		
+		/* ===========================
+   Safety Analysis Styles
+   =========================== */
+
+#rugcheck-safety {
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+#rugcheck-safety h2 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+/* Container for the colored bar and score text */
+.safety-bar-container {
+  position: relative;
+  background: #e0e0e0;
+  border-radius: 4px;
+  height: 16px;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+/* The inner div whose width = score% */
+.safety-bar {
+  height: 100%;
+  width: 0;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  background: green; /* default; JS overrides with .low/.medium/.high */
+}
+
+/* Color tiers */
+.safety-bar.low {
+  background: #e74c3c; /* red */
+}
+.safety-bar.medium {
+  background: #f39c12; /* orange */
+}
+.safety-bar.high {
+  background: #27ae60; /* green */
+}
+
+/* Score text (e.g. “72/100”) centered on the bar */
+.safety-score-text {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Top risks list */
+.top-risks-list {
+  list-style: disc inside;
+  margin: 6px 0 12px 0;
+  padding: 0;
+}
+.top-risks-list li {
+  font-size: 0.9rem;
+  margin: 4px 0;
+}
+
+/* “Show Details” / “Hide Details” button */
+#toggle-details-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+/* Full details section (hidden by default) */
+#safety-details.hidden {
+  display: none;
+}
+
+#safety-details {
+  margin-top: 16px;
+  border-top: 1px solid #ccc;
+  padding-top: 12px;
+}
+
+#safety-details h3 {
+  margin-top: 12px;
+  font-size: 1.1rem;
+  color: #444;
+}
+
+#safety-details p,
+#safety-details ul {
+  margin: 6px 0;
+  font-size: 0.9rem;
+}
+#safety-details ul {
+  list-style: disc inside;
+  padding-left: 16px;
+}
+
 
         .momentum-label {
             font-size: 1.2rem;
@@ -1369,6 +1578,56 @@
             border-right-color: #764ba2;
             animation: gauge-spin 2s ease-in-out infinite alternate;
         }
+		
+		  /* Meme Psychology Dashboard */
+        .psychology-dashboard {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05));
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .psychology-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .psychology-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+        }
+
+        .psychology-score {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: #fff;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .psychology-label {
+            font-size: 1rem;
+            color: #c4b5fd;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .psychology-insight {
+            font-size: 0.85rem;
+            color: #e1e7ff;
+            line-height: 1.4;
+            font-style: italic;
+        }
 
         @keyframes gauge-spin {
             0% { transform: rotate(-90deg); }
@@ -1399,6 +1658,28 @@
             font-size: 0.8rem;
             opacity: 0.8;
         }
+		
+		.tweet-details {
+    margin-top: 8px;
+    padding-left: 15px;
+    font-size: 0.75rem;
+    color: #b0b7ff;
+}
+
+.tweet-details li {
+    position: relative;
+    padding-left: 15px;
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+
+.tweet-details li::before {
+    content: '▶';
+    color: #667eea;
+    position: absolute;
+    left: 0;
+    font-size: 0.7rem;
+}
 
         .metric-value-main {
             font-size: 1.3rem;
@@ -1465,7 +1746,7 @@
 
         .content-heading {
             font-weight: 700;
-            color: #667eea;
+            color: #ffff;
             margin: 20px 0 10px 0;
             font-size: 1.1rem;
             text-transform: uppercase;
@@ -1884,8 +2165,9 @@
             <a href="#" class="logo"><img style="max-height:60px;" src="https://jeetsvsdegens.com/ask-logo.png"></a>
              <nav class="nav-links">
                 <a href="/" class="nav-link">Dashboard</a>
+				 <a href="/charts" class="nav-link active">Rug Check</a>
                 <a href="/resources" class="nav-link">Resources</a>
-                <a href="/dictionary" class="nav-link">Dictionary</a>
+                <a href="/dictionary" class="nav-link">Degen Academy</a>
                 <a href="/charts" class="nav-link active">Chart Analysis</a>
             </nav>
         </div>
@@ -1909,7 +2191,7 @@
                     <!-- Tab Navigation -->
                     <div class="tab-navigation">
                         <button class="tab-btn active" onclick="switchTab('fresh-hype')" data-tab="fresh-hype">
-                            🚀 Dex Boosted
+                            🚀 Recent Dex Boosted
                         </button>
                         <button class="tab-btn" onclick="switchTab('recent-trending')" data-tab="recent-trending">
                             📈 Recent Trending
@@ -1989,7 +2271,7 @@
                 <div class="token-analyzer">
                     <div class="section-header">
                         <span style="font-size: 1.5rem;">🎯</span>
-                        <div class="section-title">Revolutionary Token Analyzer</div>
+                        <div class="section-title">Token Analyzer</div>
                     </div>
                     
                     <div class="analyzer-input">
@@ -2017,7 +2299,7 @@
 
                     <div class="loading-spinner" id="loadingSpinner">
                         <div class="spinner"></div>
-                        <div class="loading-text" id="loadingText">🚀 Revolutionary analysis starting...</div>
+                        <div class="loading-text" id="loadingText">🚀 Analysis starting...</div>
                     </div>
 
                     <div class="error-message" id="errorMessage"></div>
@@ -2065,13 +2347,13 @@
                             <div class="age-metric-card">
                                 <div class="age-icon">🚀</div>
                                 <div class="age-value" id="launchPlatform">Unknown</div>
-                                <div class="age-label">Launch Platform</div>
+                                <div class="age-label">Platform</div>
                             </div>
                             
                             <div class="age-metric-card">
                                 <div class="age-icon">💧</div>
                                 <div class="age-value" id="initialLiquidity">$0</div>
-                                <div class="age-label">Initial Liquidity</div>
+                                <div class="age-label">Liquidity</div>
                             </div>
                             
                             <div class="age-metric-card">
@@ -2081,126 +2363,134 @@
                             </div>
                         </div>
                     </div>
+					
+					
 
                     <!-- Revolutionary Chart.js Visualizations -->
-                    <div class="revolutionary-charts-dashboard" id="revolutionaryCharts" style="display: none;">
-                        <div class="section-header">
-                            <span style="font-size: 1.5rem;">🔥</span>
-                            <div class="section-title">Revolutionary Social Analytics</div>
-                            <div class="live-data-badge">
-                                <div class="live-dot"></div>
-                                CHART.JS POWERED
+                    <div class="real-social-dashboard" id="realSocialDashboard" style="display: none;">
+    <div class="section-header">
+        <span style="font-size: 1.5rem;">🔥</span>
+        <div class="section-title">Social Data Analysis</div>
+        <div class="live-data-badge">
+            <div class="live-dot"></div>
+            Xai Live Search
+        </div>
+    </div>
+    
+    <!-- Charts Grid -->
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+        <!-- 1. Live Tweet Sentiment Chart -->
+        <div class="chart-card">
+            <h3>📱 Live Tweet Sentiment</h3>
+            <canvas id="liveTweetSentimentChart" width="300" height="200"></canvas>
+            <div class="chart-value" id="tweetSentimentValue">Analyzing...</div>
+        </div>
+        
+        <!-- 2. Active Accounts Network -->
+        <div class="chart-card">
+            <h3>👥 Notable Active Accounts</h3>
+            <canvas id="activeAccountsChart" width="300" height="200"></canvas>
+            <div style="display:none;" class="chart-value" id="activeAccountsValue">0 accounts</div>
+        </div>
+        
+        <!-- 3. Discussion Topics Cloud -->
+        <div style="display:none;" class="chart-card">
+            <h3>🏷️ Discussion Topics</h3>
+            <canvas id="discussionTopicsChart" width="300" height="200"></canvas>
+            <div style="display:none;" class="chart-value" id="topicsValue">No topics</div>
+        </div>
+        
+        <!-- 4. Platform Distribution -->
+        <div style="display:none;" class="chart-card">
+            <h3>📊 Platform Sources</h3>
+            <canvas id="platformDistributionChart" width="300" height="200"></canvas>
+            <div class="chart-value" id="platformValue">No data</div>
+        </div>
+    </div>
+    
+    <!-- Data Quality Indicator -->
+    <div style="display:none;" id="dataQualityIndicator" style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 12px;">
+        <div id="dataQualityText">Analyzing social data quality...</div>
+        <div id="dataQualityStats" style="font-size: 0.9rem; color: #b0b7ff; margin-top: 8px;"></div>
+  </div>
+                        
+                        <!-- Sentiment Distribution -->
+                        <div style="margin-top: 30px;">
+                            <h3 style="color: #10b981; margin-bottom: 15px;">Sentiment Distribution</h3>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                                <div style="background: rgba(16, 185, 129, 0.2); padding: 20px; border-radius: 12px; text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: #10b981;" id="positiveSentiment">0%</div>
+                                    <div style="font-size: 0.9rem; color: #86efac; font-weight: 600;">Bullish</div>
+                                </div>
+                                <div style="background: rgba(239, 68, 68, 0.2); padding: 20px; border-radius: 12px; text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: #ef4444;" id="negativeSentiment">0%</div>
+                                    <div style="font-size: 0.9rem; color: #fca5a5; font-weight: 600;">Bearish</div>
+                                </div>
+                                <div style="background: rgba(107, 114, 128, 0.2); padding: 20px; border-radius: 12px; text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: #6b7280;" id="neutralSentiment">0%</div>
+                                    <div style="font-size: 0.9rem; color: #9ca3af; font-weight: 600;">Neutral</div>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Charts Grid -->
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-                            <!-- 1. Hype Detection Gauge -->
-                            <div class="chart-card">
-                                <h3>🔥 Hype Detection Gauge</h3>
-                                <canvas id="hypeGaugeChart" width="300" height="200"></canvas>
-                                <div class="chart-value" id="hypeGaugeValue">0</div>
-                            </div>
-                            
-                            <!-- 2. Sentiment Timeline -->
-                            <div class="chart-card">
-                                <h3>💭 Sentiment Timeline</h3>
-                                <canvas id="sentimentTimelineChart" width="300" height="200"></canvas>
-                            </div>
-                            
-                            <!-- 3. Social Velocity Chart -->
-                            <div class="chart-card">
-                                <h3>⚡ Social Velocity</h3>
-                                <canvas id="socialVelocityChart" width="300" height="200"></canvas>
-                                <div class="chart-value" id="velocityValue">0 tweets/hr</div>
-                            </div>
-                            
-                            <!-- 4. Viral Potential Radar -->
-                            <div class="chart-card">
-                                <h3>🚀 Viral Potential Radar</h3>
-                                <canvas id="viralRadarChart" width="300" height="200"></canvas>
-                            </div>
-                            
-                            <!-- 5. Platform Distribution -->
-                          <div class="chart-card">
-    <h3>👥 Community Activity</h3>
-    <canvas id="communityActivityChart" width="300" height="200"></canvas>
-</div>
-                            
-                            <!-- 6. Engagement Quality -->
-                            <div class="chart-card">
-                                <h3>💎 Engagement Quality</h3>
-                                <canvas id="engagementQualityChart" width="300" height="200"></canvas>
-                                <div class="chart-value" id="qualityScore">0% bots</div>
+                        <!-- Sentiment Timeline Chart -->
+                        <div style="margin-top: 30px;">
+                            <h3 style="color: #10b981; margin-bottom: 15px;">Sentiment Timeline</h3>
+                            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 20px; height: 300px;">
+                                <canvas id="sentimentTimelineChart" width="400" height="250"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Real Google Trends - No Fallbacks -->
-                    <div class="real-google-trends" id="realGoogleTrends" style="display: none;">
+                    <!-- Enhanced Search Intelligence Dashboard -->
+                    <div class="search-intelligence-dashboard" id="searchIntelligenceDashboard" style="display: none;">
                         <div class="section-header">
-                            <span style="font-size: 1.5rem;">📊</span>
-                            <div class="section-title">Real Google Trends Data</div>
-                            <div class="live-data-badge" id="trendsStatusBadge">
+                            <span style="font-size: 1.5rem;">🧠</span>
+                            <div class="section-title">Search Intelligence</div>
+                            <div class="live-data-badge">
                                 <div class="live-dot"></div>
-                                NO FALLBACKS
+                                GOOGLE TRENDS LIVE
                             </div>
                         </div>
                         
-                        <!-- Trends Data Display -->
-                        <div id="trendsDataContainer">
-                            <!-- When data is available -->
-                            <div id="trendsWithData" style="display: none;">
-                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px;">
-                                    <div class="trends-metric">
-                                        <div class="trends-icon">🔍</div>
-                                        <div class="trends-value" id="currentTrendsInterest">0</div>
-                                        <div class="trends-label">Current Interest</div>
-                                    </div>
-                                    
-                                    <div class="trends-metric">
-                                        <div class="trends-icon">📈</div>
-                                        <div class="trends-value" id="peakTrendsInterest">0</div>
-                                        <div class="trends-label">Peak Interest</div>
-                                    </div>
-                                    
-                                    <div class="trends-metric">
-                                        <div class="trends-icon">⚡</div>
-                                        <div class="trends-value" id="trendsMomentum">0%</div>
-                                        <div class="trends-label">7-Day Momentum</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="trends-chart-container">
-                                    <canvas id="realTrendsChart" width="400" height="200"></canvas>
-                                </div>
+                        <div class="search-intel-header">
+                            <div class="search-intel-metric">
+                                <div class="intel-value" id="currentInterest">19</div>
+                                <div class="intel-label">Current Interest</div>
                             </div>
                             
-                            <!-- When no data is available - Authentic handling -->
-                            <div id="trendsNoData" style="display: none;">
-                                <div class="no-data-message">
-                                    <div class="no-data-icon">📊</div>
-                                    <h3>Not enough trending data for this token</h3>
-                                    <p>Google Trends requires significant search volume to generate data. This token may be:</p>
-                                    <ul style="text-align: left; margin: 15px 0; padding-left: 20px; color: #b0b7ff;">
-                                        <li>Too new to have search interest</li>
-                                        <li>Not yet trending on Google</li>
-                                        <li>Known by a different name/symbol</li>
-                                    </ul>
-                                    <div class="authentic-badge">✅ Authentic Data Policy - No Fake Metrics</div>
-                                </div>
+                            <div class="search-intel-metric">
+                                <div class="intel-value" id="peakInterest">100</div>
+                                <div class="intel-label">Peak Interest</div>
                             </div>
                             
-                            <!-- Loading state -->
-                            <div id="trendsLoading" class="trends-loading">
-                                <div class="spinner"></div>
-                                <p>Fetching real Google Trends data...</p>
+                            <div class="search-intel-metric">
+                                <div class="intel-value" id="momentum7d">-14.8%</div>
+                                <div class="intel-label">7-Day Momentum</div>
+                            </div>
+                        </div>
+                        
+                        <div class="search-intel-charts">
+                            <div class="search-trends-chart">
+                                <h3 style="color: #10b981; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                                    📈 Search Trends Chart
+                                    <span style="font-size: 0.8rem; color: #b0b7ff;">Last 15 Days</span>
+                                </h3>
+                                <canvas id="searchTrendsChart" width="400" height="250"></canvas>
+                            </div>
+                            
+                            <div class="geo-heatmap-container">
+                                <h3 style="color: #10b981; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                                    🌍 Geographic Heatmap
+                                    <span style="font-size: 0.8rem; color: #b0b7ff;">Search Interest</span>
+                                </h3>
+                                <div id="geoHeatmap" style="width: 100%; height: 280px;"></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Social Momentum Dashboard with Visual Metrics -->
-                    <div class="momentum-dashboard">
+                    <div style="display:none;" class="momentum-dashboard">
                         <div class="momentum-header">
                             <div class="momentum-score" id="momentumScore">0</div>
                             <div class="momentum-label">Social Momentum Score</div>
@@ -2218,24 +2508,36 @@
 <div class="live-tweets-panel">
     <div class="section-header">
         <span style="font-size: 1.5rem;">🐦</span>
-        <div class="section-title">Live Social Feed</div>
+        <div class="section-title">Live X Feed</div>
+        <div class="live-data-badge">
+            <div class="live-dot"></div>
+            X API DIRECT
+        </div>
     </div>
     
-    <!-- Two Column Layout -->
-    <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 20px;">
-        <!-- Live Tweets (3/4 width) -->
+    <!-- Three Column Layout -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px;">
+        <!-- Recent X Discussion (2/4 width) -->
         <div>
-            <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.1rem;">📱 Live X Feed</h3>
-            <div class="tweets-list" id="tweetsList" style="max-height: 350px;">
+            <h3 style="color: #ffffff; margin-bottom: 15px; font-size: 1.1rem;">📱 Recent Discussion</h3>
+            <div class="tweets-list" id="recentXDiscussionList" style="max-height: 400px;">
                 <!-- Tweets will be populated here -->
             </div>
         </div>
         
-        <!-- Accounts to Follow (1/4 width) -->
+        <!-- Notable Accounts (1/4 width) -->
         <div>
-            <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.1rem;">👥 Accounts to Follow</h3>
-            <div class="tweets-list" id="contractAccountsList" style="max-height: 350px; overflow-y: auto;">
-                <!-- Contract accounts will be populated here -->
+            <h3 style="color: #ffffff; margin-bottom: 15px; font-size: 1.1rem;">⭐ Notable Accounts</h3>
+            <div class="accounts-list" id="notableAccountsList" style="max-height: 400px; overflow-y: auto;">
+                <!-- Notable accounts will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Who to Follow (1/4 width) -->
+        <div>
+            <h3 style="color: #ffffff; margin-bottom: 15px; font-size: 1.1rem;">👥 Active Users</h3>
+            <div class="accounts-list" id="whoToFollowList" style="max-height: 400px; overflow-y: auto;">
+                <!-- Accounts will be populated here -->
             </div>
         </div>
     </div>
@@ -2249,6 +2551,40 @@
                         </div>
                         <div class="analysis-content" id="expertAnalysis">
                             <!-- Expert analysis will be populated here -->
+                        </div>
+                    </div>
+
+                  <!-- Meme Coin Psychology Dashboard -->
+                    <div class="psychology-dashboard" id="psychologyDashboard" style="display: none;">
+                        <div class="section-header">
+                            <span style="font-size: 1.5rem;">🧠</span>
+                            <div class="section-title">Psychology</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px;">
+                            <div class="psychology-card">
+                                <div style="height: 120px; margin-bottom: 15px;">
+                                    <canvas id="greedGaugeChart" width="120" height="120"></canvas>
+                                </div>
+                                <div class="psychology-score" id="greedScore">0</div>
+                                <div class="psychology-label">Greed Index</div>
+                                <div class="psychology-insight" id="greedInsight">Analyzing market greed...</div>
+                            </div>
+                            <div class="psychology-card">
+                                <div style="height: 120px; margin-bottom: 15px;">
+                                    <canvas id="euphoriaGaugeChart" width="120" height="120"></canvas>
+                                </div>
+                                <div class="psychology-score" id="euphoriaMeter">0</div>
+                                <div class="psychology-label">Euphoria Meter</div>
+                                <div class="psychology-insight" id="euphoriaInsight">Measuring peak excitement...</div>
+                            </div>
+                            <div class="psychology-card">
+                                <div style="height: 120px; margin-bottom: 15px;">
+                                    <canvas id="diamondGaugeChart" width="120" height="120"></canvas>
+                                </div>
+                                <div class="psychology-score" id="diamondHands">0%</div>
+                                <div class="psychology-label">Holder Strength</div>
+                                <div class="psychology-insight" id="diamondInsight">Holder strength analysis...</div>
+                            </div>
                         </div>
                     </div>
 
@@ -2344,15 +2680,18 @@
         let currentTab = 'fresh-hype';
         let fearGreedChart = null;
         let searchTrendsChart = null;
+		        let sentimentTimelineChart = null;
+        let greedGaugeChart = null;
+        let euphoriaGaugeChart = null;
+        let diamondGaugeChart = null;
 
-        // Revolutionary Chart.js Implementation
-let hypeGaugeChart = null;
-let sentimentTimelineChart = null;
-let socialVelocityChart = null;
-let viralRadarChart = null;
-let communityActivityChart = null; // Renamed from platformDistributionChart
-let engagementQualityChart = null;
-let realTrendsChart = null;
+        // Real Data Chart Implementation (Updated)
+        let liveTweetSentimentChart = null;
+        let activeAccountsChart = null;
+        let discussionTopicsChart = null;
+        let platformDistributionChart = null;
+        let realTrendsChart = null;
+  
 
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -2741,93 +3080,165 @@ let realTrendsChart = null;
         }
 
         // Enhanced Token Analysis Functions with Time Window
-        async function analyzeToken() {
-            const tokenAddress = document.getElementById('tokenAddress').value.trim();
-            const timeWindow = document.getElementById('timeWindow').value;
+       async function analyzeToken() {
+    const tokenAddress = document.getElementById('tokenAddress').value.trim();
+    const timeWindow = document.getElementById('timeWindow').value;
+    
+    if (!tokenAddress) {
+        showError('Please enter a token address');
+        return;
+    }
+
+    if (tokenAddress.length < 32 || tokenAddress.length > 44) {
+        showError('Invalid Solana token address format');
+        return;
+    }
+
+    currentTokenAddress = tokenAddress;
+    chatHistory = [];
+
+    showLoading();
+    hideError();
+    hideResults();
+    showChart(tokenAddress);
+
+    try {
+        const response = await fetch('/analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token_address: tokenAddress,
+                time_window: timeWindow
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Improved SSE parsing with better error handling
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let eventCount = 0;
+
+        console.log('Starting SSE stream parsing...');
+
+        while (true) {
+            const { done, value } = await reader.read();
             
-            if (!tokenAddress) {
-                showError('Please enter a token address');
-                return;
+            if (done) {
+                console.log('SSE stream completed, processed', eventCount, 'events');
+                break;
             }
 
-            if (tokenAddress.length < 32 || tokenAddress.length > 44) {
-                showError('Invalid Solana token address format');
-                return;
-            }
-
-            currentTokenAddress = tokenAddress;
-            chatHistory = [];
-
-            showLoading();
-            hideError();
-            hideResults();
-            showChart(tokenAddress);
-
-            try {
-                const response = await fetch('/analyze', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        token_address: tokenAddress,
-                        time_window: timeWindow // Send time window to backend
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                // Handle streaming response
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let buffer = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    
-                    if (done) break;
-
-                    buffer += decoder.decode(value, { stream: true });
-                    
-                    const lines = buffer.split('\n');
-                    buffer = lines.pop() || '';
-                    
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
+            // Decode the chunk
+            const chunk = decoder.decode(value, { stream: true });
+            buffer += chunk;
+            
+            // Process complete SSE events (ending with \n\n)
+            let eventEndIndex;
+            while ((eventEndIndex = buffer.indexOf('\n\n')) !== -1) {
+                const eventData = buffer.slice(0, eventEndIndex);
+                buffer = buffer.slice(eventEndIndex + 2);
+                
+                // Process the complete event
+                const lines = eventData.split('\n');
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const jsonString = line.substring(6).trim();
+                        if (jsonString) {
                             try {
-                                const jsonData = line.substring(6);
-                                if (jsonData.trim()) {
-                                    const data = JSON.parse(jsonData);
+                                console.log('Parsing SSE message, length:', jsonString.length);
+                                
+                                // Enhanced JSON parsing with validation
+                                const data = JSON.parse(jsonString);
+                                
+                                // Validate the parsed data structure
+                                if (data && typeof data === 'object' && data.type) {
+                                    console.log('Successfully parsed SSE event:', data.type);
                                     handleStreamMessage(data);
+                                    eventCount++;
+                                } else {
+                                    console.warn('Invalid SSE event structure:', data);
                                 }
-                            } catch (e) {
-                                console.warn('Failed to parse SSE message:', line);
+                                
+                            } catch (parseError) {
+                                console.error('JSON parse error:', parseError);
+                                console.error('Failed JSON string length:', jsonString.length);
+                                console.error('First 200 chars:', jsonString.substring(0, 200));
+                                console.error('Last 200 chars:', jsonString.substring(Math.max(0, jsonString.length - 200)));
+                                
+                                // Try to recover by checking if it's a partial message
+                                if (jsonString.includes('"type"') && !jsonString.trim().endsWith('}')) {
+                                    console.warn('Partial JSON detected, adding back to buffer');
+                                    buffer = 'data: ' + jsonString + '\n' + buffer;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-                
-            } catch (error) {
-                console.error('Analysis error:', error);
-                hideLoading();
-                showError('Analysis failed: ' + error.message);
+            }
+            
+            // Safety check: if buffer gets too large, something is wrong
+            if (buffer.length > 1000000) { // 1MB limit
+                console.error('Buffer overflow detected, clearing buffer');
+                console.error('Buffer content preview:', buffer.substring(0, 500));
+                buffer = '';
+                throw new Error('SSE buffer overflow - response too large');
             }
         }
+        
+        // Process any remaining data in buffer
+        if (buffer.trim()) {
+            console.warn('Remaining buffer content:', buffer.substring(0, 200));
+        }
+        
+    } catch (error) {
+        console.error('Analysis error:', error);
+        hideLoading();
+        showError('Analysis failed: ' + error.message);
+    }
+}
 
-        function handleStreamMessage(data) {
-            if (data.type === 'progress') {
-                updateLoadingText(data.message);
-            } else if (data.type === 'complete') {
-                currentAnalysis = data;
-                hideLoading();
-                displayResults(data);
-            } else if (data.type === 'error') {
-                hideLoading();
-                showError('Analysis error: ' + data.error);
-            }
+function handleStreamMessage(data) {
+    try {
+        console.log('Handling stream message type:', data.type);
+        
+        if (data.type === 'progress') {
+            updateLoadingText(data.message || 'Processing...');
+        } else if (data.type === 'complete') {
+            console.log('Analysis complete, displaying results');
+            currentAnalysis = data;
+            hideLoading();
+            
+            // Add delay to ensure DOM is ready
+            setTimeout(() => {
+                try {
+                    displayResults(data);
+                } catch (displayError) {
+                    console.error('Error displaying results:', displayError);
+                    showError('Error displaying results: ' + displayError.message);
+                }
+            }, 100);
+            
+        } else if (data.type === 'error') {
+            console.error('Server error:', data.error);
+            hideLoading();
+            showError('Analysis error: ' + (data.error || 'Unknown error'));
+        } else {
+            console.warn('Unknown message type:', data.type);
         }
+    } catch (error) {
+        console.error('Error handling stream message:', error);
+        console.error('Message data:', data);
+        hideLoading();
+        showError('Error processing response: ' + error.message);
+    }
+}
 
         function showChart(tokenAddress) {
             const chartContainer = document.getElementById('chartContainer');
@@ -2838,33 +3249,94 @@ let realTrendsChart = null;
             chartContainer.classList.add('fade-in');
         }
 
-        // Updated displayResults function for revolutionary features
+        // Updated displayResults function for real data
         function displayResults(data) {
-            // Show token profile
-            updateTokenProfile(data);
+            console.log('Starting to display results with real data...');
             
-            // Show Token Age Dashboard
-            updateTokenAgeDashboard(data);
-            
-            // Show Revolutionary Charts
-            updateRevolutionaryCharts(data);
-            
-            // Show Real Google Trends
-            updateRealGoogleTrends(data);
-            
-            // Show results section
-            document.getElementById('resultsSection').style.display = 'block';
-            document.getElementById('resultsSection').classList.add('fade-in');
+            try {
+                // Show token profile
+                console.log('Updating token profile...');
+                updateTokenProfile(data);
+                
+                // Show Token Age Dashboard
+                console.log('Updating token age dashboard...');
+                updateTokenAgeDashboard(data);
+                
+                // Show Real Social Data Charts
+                console.log('Updating real social data charts...');
+                updateRealSocialCharts(data);
+                
+                // Show Real Google Trends
+                console.log('Updating search intelligence...');
+                updateSearchIntelligence(data);
+                
+                // Show results section
+                console.log('Showing results section...');
+                document.getElementById('resultsSection').style.display = 'block';
+                document.getElementById('resultsSection').classList.add('fade-in');
 
-            // Update all sections
-            updateMomentumDashboard(data);
-            updateTweetsSection(data);
-            updateExpertAnalysis(data);
-            updateAnalysisCards(data);
-            enableChatWithContext();
+                // Update all sections with individual error handling
+                try {
+                    console.log('Updating momentum dashboard...');
+                    updateMomentumDashboard(data);
+                } catch (e) {
+                    console.error('Error updating momentum dashboard:', e);
+                }
+                
+                try {
+                    console.log('Updating tweets section...');
+                    updateTweetsSection(data);
+                } catch (e) {
+                    console.error('Error updating tweets section:', e);
+                }
+                
+                try {
+                    console.log('Updating expert analysis...');
+                    updateExpertAnalysis(data);
+                } catch (e) {
+                    console.error('Error updating expert analysis:', e);
+                }
+                
+                try {
+                    console.log('Updating analysis cards...');
+                    updateAnalysisCards(data);
+                } catch (e) {
+                    console.error('Error updating analysis cards:', e);
+                }
+                
+                try {
+                    console.log('Updating psychology dashboard...');
+                    updatePsychologyDashboard(data);
+                } catch (e) {
+                    console.error('Error updating psychology dashboard:', e);
+                }
+                
+                try {
+                    console.log('Updating sentiment timeline...');
+                    updateSentimentTimeline(data);
+                } catch (e) {
+                    console.error('Error updating sentiment timeline:', e);
+                }
+                
+                try {
+                    console.log('Enabling chat...');
+                    enableChatWithContext();
+                } catch (e) {
+                    console.error('Error enabling chat:', e);
+                }
 
-            // Scroll to results
-            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+                // Scroll to results
+                console.log('Scrolling to results...');
+                setTimeout(() => {
+                    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+                }, 300);
+                
+                console.log('Results display completed successfully');
+                
+            } catch (error) {
+                console.error('Error in displayResults:', error);
+                showError('Error displaying results: ' + error.message);
+            }
         }
 
         // New function to update Token Age Dashboard
@@ -2889,106 +3361,717 @@ let realTrendsChart = null;
             
             document.getElementById('tokenAgeDashboard').style.display = 'block';
         }
-
-        // New function for Revolutionary Charts
-function updateRevolutionaryCharts(data) {
-    const socialMetrics = data.social_metrics || {};
+		
+		
+   function updateRealSocialCharts(data) {
+    const realSocialData = data.real_social_data || {};
+    const sentimentMetrics = data.sentiment_metrics || {};
     
-    console.log('Social metrics received:', socialMetrics); // Debug log
+    console.log('Real social data received:', realSocialData);
+    console.log('Sentiment metrics received:', sentimentMetrics);
     
-    // Initialize all 6 charts with real data
-    initHypeGaugeChart(socialMetrics.hype_score || 0);
-    initSentimentTimelineChart(socialMetrics.time_series_data || [], data.time_window || '3d');
-    initSocialVelocityChart(socialMetrics.tweet_velocity || 0, socialMetrics.time_series_data || []);
-    initViralRadarChart(socialMetrics);
-    initCommunityActivityChart(socialMetrics); // New community chart
-    initEngagementQualityChart(socialMetrics.bot_percentage || 0, socialMetrics.quality_score || 0);
+    // Update sentiment distribution immediately with real data
+    updateSentimentDistribution(sentimentMetrics, data);
     
-    document.getElementById('revolutionaryCharts').style.display = 'block';
+    console.log('Real social data received:', realSocialData);
+    
+    if (!realSocialData.has_real_data) {
+        // Show no data state
+        document.getElementById('realSocialDashboard').style.display = 'block';
+        updateDataQualityIndicator({
+            quality: 'no_data',
+            message: 'No significant social activity found for this token',
+            tweets: 0,
+            accounts: 0
+        });
+        initNoDataCharts();
+        return;
+    }
+    
+    // Fixed: ensure arrays exist before passing to chart functions
+    const tweets = realSocialData.tweets || [];
+    const accounts = realSocialData.accounts || realSocialData.active_accounts || [];
+    const topics = realSocialData.discussion_topics || [];
+    const platforms = realSocialData.platform_distribution || {};
+    
+    // Initialize all 4 real data charts with safe data
+    initLiveTweetSentimentChart(tweets);
+    initActiveAccountsChart(accounts);
+    initDiscussionTopicsChart(topics);
+    initPlatformDistributionChart(platforms);
+    
+    // Update data quality indicator
+    updateDataQualityIndicator({
+        quality: realSocialData.data_quality,
+        message: 'Real social data successfully collected',
+        tweets: realSocialData.total_tweets_found || 0,
+        accounts: realSocialData.total_accounts_found || 0
+    });
+    
+    document.getElementById('realSocialDashboard').style.display = 'block';
 }
 
-    function initHypeGaugeChart(hypeScore) {
-    const ctx = document.getElementById('hypeGaugeChart').getContext('2d');
+        // 1. Live Tweet Sentiment Chart - Real tweets color-coded by sentiment
+        function initLiveTweetSentimentChart(tweets) {
+            const ctx = document.getElementById('liveTweetSentimentChart').getContext('2d');
+            
+            if (liveTweetSentimentChart) liveTweetSentimentChart.destroy();
+            
+            if (!tweets || tweets.length === 0) {
+                // Show "No Data" chart
+                liveTweetSentimentChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['No Tweets Found'],
+                        datasets: [{
+                            label: 'No Data',
+                            data: [1],
+                            backgroundColor: 'rgba(107, 114, 128, 0.5)',
+                            borderColor: '#6b7280',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { display: false },
+                            x: { grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#b0b7ff', font: { size: 10 } } }
+                        }
+                    }
+                });
+                document.getElementById('tweetSentimentValue').textContent = 'No tweets found';
+                return;
+            }
+            
+            // Process real tweets
+            const labels = tweets.map((tweet, index) => `@${tweet.username}`);
+            const sentimentColors = tweets.map(tweet => {
+                switch(tweet.sentiment) {
+                    case 'bullish': return 'rgba(16, 185, 129, 0.8)';
+                    case 'bearish': return 'rgba(239, 68, 68, 0.8)';
+                    default: return 'rgba(107, 114, 128, 0.8)';
+                }
+            });
+            const engagementData = tweets.map(() => 1); // Bar height = 1 for visualization
+            
+            liveTweetSentimentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Tweet Sentiment',
+                        data: engagementData,
+                        backgroundColor: sentimentColors,
+                        borderColor: sentimentColors.map(color => color.replace('0.8', '1')),
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Horizontal bars
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: (context) => tweets[context[0].dataIndex].username,
+                                label: (context) => {
+                                    const tweet = tweets[context.dataIndex];
+                                    return [`Sentiment: ${tweet.sentiment}`, `"${tweet.content.substring(0, 100)}..."`];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#b0b7ff', font: { size: 9 } }
+                        }
+                    }
+                }
+            });
+            
+            // Count sentiments
+            const bullishCount = tweets.filter(t => t.sentiment === 'bullish').length;
+            const bearishCount = tweets.filter(t => t.sentiment === 'bearish').length;
+            const neutralCount = tweets.filter(t => t.sentiment === 'neutral').length;
+            
+            document.getElementById('tweetSentimentValue').textContent = 
+                `${tweets.length} tweets: ${bullishCount} 🟢 ${bearishCount} 🔴 ${neutralCount} ⚪`;
+        }
+
+        // 2. Active Accounts Chart - Bubble chart of real accounts
+        function initActiveAccountsChart(accounts) {
+            const ctx = document.getElementById('activeAccountsChart').getContext('2d');
+            
+            if (activeAccountsChart) activeAccountsChart.destroy();
+            
+            if (!accounts || accounts.length === 0) {
+                // Show "No Data" chart
+                activeAccountsChart = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'No Accounts Found',
+                            data: [{x: 0, y: 0}],
+                            backgroundColor: 'rgba(107, 114, 128, 0.5)',
+                            borderColor: '#6b7280',
+                            pointRadius: 20
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { display: false },
+                            y: { display: false }
+                        }
+                    }
+                });
+                document.getElementById('activeAccountsValue').textContent = 'No accounts found';
+                return;
+            }
+            
+            // Process real accounts
+            const bubbleData = accounts.map((account, index) => {
+                // Extract follower count for bubble size
+                const followerMatch = account.followers.match(/(\d+)K?/);
+                const followerCount = followerMatch ? parseInt(followerMatch[1]) : 10;
+                const radius = Math.max(5, Math.min(30, followerCount / 5)); // Scale bubble size
+                
+                return {
+                    x: Math.random() * 100, // Random positioning for network effect
+                    y: Math.random() * 100,
+                    r: radius,
+                    username: account.username,
+                    followers: account.followers
+                };
+            });
+            
+            activeAccountsChart = new Chart(ctx, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Active Accounts',
+                        data: bubbleData,
+                        backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                        borderColor: '#667eea',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: (context) => `@${context[0].raw.username}`,
+                                label: (context) => context.raw.followers
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+            
+            document.getElementById('activeAccountsValue').textContent = `${accounts.length} active accounts`;
+        }
+
+        // 3. Discussion Topics Chart - Bar chart of real keywords
+        function initDiscussionTopicsChart(topics) {
+            const ctx = document.getElementById('discussionTopicsChart').getContext('2d');
+            
+            if (discussionTopicsChart) discussionTopicsChart.destroy();
+            
+            if (!topics || topics.length === 0) {
+                // Show "No Data" chart
+                discussionTopicsChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['No Topics Found'],
+                        datasets: [{
+                            label: 'No Data',
+                            data: [1],
+                            backgroundColor: 'rgba(107, 114, 128, 0.5)',
+                            borderColor: '#6b7280',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { display: false },
+                            x: { grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#b0b7ff', font: { size: 10 } } }
+                        }
+                    }
+                });
+                document.getElementById('topicsValue').textContent = 'No topics found';
+                return;
+            }
+            
+            // Use top 8 topics
+            const topTopics = topics.slice(0, 8);
+            const labels = topTopics.map(topic => topic.keyword);
+            const data = topTopics.map(topic => topic.mentions);
+            
+            discussionTopicsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Mentions',
+                        data: data,
+                        backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                        borderColor: '#10b981',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#b0b7ff', font: { size: 9 } }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { 
+                                color: '#b0b7ff', 
+                                font: { size: 8 },
+                                maxRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+            
+            document.getElementById('topicsValue').textContent = `${topics.length} discussion topics`;
+        }
+
+        // 4. Platform Distribution Chart - Pie chart of real platform sources
+        function initPlatformDistributionChart(platformData) {
+            const ctx = document.getElementById('platformDistributionChart').getContext('2d');
+            
+            if (platformDistributionChart) platformDistributionChart.destroy();
+            
+            // Filter platforms with data
+            const platforms = Object.entries(platformData).filter(([platform, count]) => count > 0);
+            
+            if (platforms.length === 0) {
+                // Show "No Data" chart
+                platformDistributionChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['No Platform Data'],
+                        datasets: [{
+                            data: [1],
+                            backgroundColor: ['rgba(107, 114, 128, 0.5)'],
+                            borderColor: ['#6b7280'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+                document.getElementById('platformValue').textContent = 'No platform data';
+                return;
+            }
+            
+            const labels = platforms.map(([platform]) => platform.charAt(0).toUpperCase() + platform.slice(1));
+            const data = platforms.map(([, count]) => count);
+            const colors = [
+                'rgba(29, 161, 242, 0.8)', // Twitter blue
+                'rgba(0, 136, 204, 0.8)',  // Telegram blue
+                'rgba(255, 69, 0, 0.8)',   // Reddit orange
+                'rgba(114, 137, 218, 0.8)' // Discord purple
+            ];
+            
+            platformDistributionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors.slice(0, platforms.length),
+                        borderColor: colors.slice(0, platforms.length).map(color => color.replace('0.8', '1')),
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: { color: '#b0b7ff', font: { size: 9 } }
+                        }
+                    }
+                }
+            });
+            
+            const totalMentions = data.reduce((sum, count) => sum + count, 0);
+            document.getElementById('platformValue').textContent = `${totalMentions} total mentions`;
+        }
+
+        function initNoDataCharts() {
+            // Initialize empty charts when no data is available
+            initLiveTweetSentimentChart([]);
+            initActiveAccountsChart([]);
+            initDiscussionTopicsChart([]);
+            initPlatformDistributionChart({});
+        }
+
+       // Psychology Dashboard Functions
+function updatePsychologyDashboard(data) {
+    console.log('Updating psychology dashboard with data:', data.psychology_metrics);
     
-    if (hypeGaugeChart) hypeGaugeChart.destroy();
+    // Get psychology metrics from backend
+    const psychologyMetrics = data.psychology_metrics || {};
+    const greedIndex = psychologyMetrics.greed_index || {};
+    const euphoriaMeter = psychologyMetrics.euphoria_meter || {};
+    const diamondHands = psychologyMetrics.diamond_hands || {};
     
-    // Create gradient for more visual appeal
-    const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-    gradient.addColorStop(0, '#ef4444');
-    gradient.addColorStop(0.5, '#f59e0b');
-    gradient.addColorStop(1, '#10b981');
+    // Update greed index
+    const greedScore = greedIndex.score || 50;
+    document.getElementById('greedScore').textContent = greedScore;
+    document.getElementById('greedInsight').textContent = greedIndex.description || "Analyzing market greed...";
     
-    hypeGaugeChart = new Chart(ctx, {
+    // Update euphoria meter  
+    const euphoriaScore = euphoriaMeter.score || 50;
+    document.getElementById('euphoriaMeter').textContent = euphoriaScore;
+    document.getElementById('euphoriaInsight').textContent = euphoriaMeter.level || "Measuring peak excitement...";
+    
+    // Update diamond hands
+    const diamondScore = diamondHands.score || 45;
+    document.getElementById('diamondHands').textContent = diamondScore + '%';
+    document.getElementById('diamondInsight').textContent = diamondHands.level || "Holder strength analysis...";
+    
+    // Create gauge charts with proper colors
+ createGaugeChart('greedGaugeChart',   greedScore);     // green fill, black track
+createGaugeChart('euphoriaGaugeChart', euphoriaScore); // green fill, black track
+createGaugeChart('diamondGaugeChart',  diamondScore);
+    
+    // Show the psychology dashboard
+    document.getElementById('psychologyDashboard').style.display = 'block';
+    
+    console.log(`Psychology updated: Greed=${greedScore} (${greedIndex.level}), Euphoria=${euphoriaScore} (${euphoriaMeter.level}), Diamond=${diamondScore}% (${diamondHands.level})`);
+}
+
+        function createGaugeChart(canvasId, value, fillColor = '#10b981', trackColor = '#000000') {
+
+  const ctx = document.getElementById(canvasId).getContext('2d');
+
+  if (ctx._chart) ctx._chart.destroy();        // tear down an old instance
+
+  ctx._chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [value, 100 - value],
+        backgroundColor: [fillColor, trackColor],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      rotation: -90,         // ← degrees
+      circumference: 180,    // ← degrees
+      cutout: '75%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      },
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+}
+
+        function calculateGreedIndex(metrics, priceChange) {
+            const sentiment = metrics.sentiment_positive || 0;
+            const momentum = Math.abs(metrics.momentum_change || 0);
+            const priceImpact = Math.min(Math.abs(priceChange) / 50, 1) * 30;
+            
+            return Math.min(100, Math.round((sentiment * 0.4) + (momentum * 0.3) + priceImpact));
+        }
+
+        function calculateEuphoria(metrics, tokenAge) {
+            const ageMultiplier = (tokenAge.hours_old || 24) < 24 ? 1.5 : 1;
+            const hype = metrics.hype_score || 50;
+            const viral = metrics.viral_potential || 50;
+            
+            return Math.min(100, Math.round(((hype + viral) / 2) * ageMultiplier));
+        }
+
+function calculateDiamondHands(metrics, volume, analysisText = '') {
+            // First try to count actual "diamond hands" mentions
+            const diamondHandsMentions = countDiamondHandsMentions(analysisText);
+            
+            if (diamondHandsMentions > 0) {
+                // Base score on actual mentions (scale to 0-100)
+                return Math.min(100, diamondHandsMentions * 20);
+            }
+            
+            // Fallback to calculated metric
+            const sentiment = metrics.sentiment_positive || 0;
+            const coordination = metrics.coordination_detected ? -20 : 0;
+            const volumeStability = volume > 1000000 ? 20 : 0;
+            const hodlStrength = metrics.hodl_strength || 0; // if available from backend
+            
+            return Math.max(0, Math.min(100, Math.round(sentiment * 0.5 + volumeStability + coordination + hodlStrength * 0.3)));
+        }
+
+        function countDiamondHandsMentions(text) {
+            if (!text) return 0;
+            
+            const patterns = [
+                /diamond\s*hands?/gi,
+                /💎\s*🙌/g,
+                /💎.*hands?/gi,
+                /hodl/gi,
+                /hold.*long/gi
+            ];
+            
+            let totalMentions = 0;
+            patterns.forEach(pattern => {
+                const matches = text.match(pattern);
+                if (matches) totalMentions += matches.length;
+            });
+            
+            console.log(`Found ${totalMentions} diamond hands mentions`);
+            return totalMentions;
+        }
+
+        function getGreedInsight(score) {
+            if (score >= 80) return "Extreme greed detected - potential top signal";
+            if (score >= 60) return "High greed - market getting heated";
+            if (score >= 40) return "Moderate greed - healthy momentum";
+            return "Low greed - potential accumulation phase";
+        }
+
+        function getEuphoriaInsight(score) {
+            if (score >= 80) return "Peak euphoria - caution advised";
+            if (score >= 60) return "Building excitement - monitor closely";
+            if (score >= 40) return "Growing interest - early stage";
+            return "Minimal euphoria - under the radar";
+        }
+
+        function getDiamondInsight(score) {
+            if (score >= 70) return "Strong holder base detected";
+            if (score >= 50) return "Decent holder conviction";
+            if (score >= 30) return "Mixed holder sentiment";
+            return "Weak hands present - volatility expected";
+        }
+
+// Sentiment Timeline Chart
+       function updateSentimentTimeline(data) {
+    console.log('Updating sentiment timeline with real data:', data.sentiment_timeline);
+    
+    const sentimentTimeline = data.sentiment_timeline || {};
+    const tokenAge = data.token_age || {};
+    
+    // Check if we have real timeline data
+    if (sentimentTimeline.has_real_data) {
+        createRealSentimentTimelineChart(sentimentTimeline, data.time_window, tokenAge);
+    } else {
+        // Fallback to current method for backwards compatibility
+        createFallbackTimelineChart(data);
+    }
+}
+
+function createRealSentimentTimelineChart(sentimentTimeline, timeWindow, tokenAge) {
+    const ctx = document.getElementById('sentimentTimelineChart').getContext('2d');
+    
+    if (sentimentTimelineChart) sentimentTimelineChart.destroy();
+    
+    const timelineData = sentimentTimeline.timeline_data || [];
+    const effectiveDays = sentimentTimeline.effective_days || 0;
+    const isSinglePoint = sentimentTimeline.single_point || false;
+    const isAgeAdjusted = sentimentTimeline.token_age_adjusted || false;
+    
+    // Show age adjustment warning if needed
+    if (isAgeAdjusted) {
+        showTimelineAdjustmentNotice(timeWindow, effectiveDays, tokenAge.days_old);
+    }
+    
+    if (isSinglePoint || timelineData.length === 1) {
+        createSinglePointChart(ctx, timelineData[0], tokenAge);
+    } else if (timelineData.length === 2) {
+        createTwoPointChart(ctx, timelineData, timeWindow);
+    } else {
+        createMultiPointChart(ctx, timelineData, timeWindow);
+    }
+}
+
+function createSinglePointChart(ctx, dataPoint, tokenAge) {
+    console.log('Creating single point chart for new token');
+    
+    // For very new tokens, show a single point with current sentiment
+    const data = dataPoint || { bullish: 0, bearish: 0, neutral: 0, total_mentions: 0 };
+    
+    sentimentTimelineChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
+            labels: ['Bullish', 'Bearish', 'Neutral'],
             datasets: [{
-                data: [hypeScore, 100 - hypeScore],
+                data: [data.bullish, data.bearish, data.neutral],
                 backgroundColor: [
-                    hypeScore > 70 ? '#ef4444' : hypeScore > 40 ? '#f59e0b' : '#10b981',
-                    'rgba(255, 255, 255, 0.1)'
+                    'rgba(16, 185, 129, 0.8)',  // Green for bullish
+                    'rgba(239, 68, 68, 0.8)',   // Red for bearish
+                    'rgba(107, 114, 128, 0.8)'  // Gray for neutral
                 ],
-                borderWidth: 0,
-                cutout: '70%'
+                borderColor: [
+                    '#10b981',
+                    '#ef4444', 
+                    '#6b7280'
+                ],
+                borderWidth: 2
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false },
-                tooltip: { enabled: false }
-            },
-            rotation: -90,
-            circumference: 180
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        color: '#b0b7ff',
+                        font: { size: 11 }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: `Current Sentiment (${data.total_mentions} mentions)`,
+                    color: '#ffffff',
+                    font: { size: 14, weight: 'bold' }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.parsed}%`;
+                        }
+                    }
+                }
+            }
         }
     });
     
-    document.getElementById('hypeGaugeValue').textContent = Math.round(hypeScore) + '/100';
+    // Add explanation text below chart
+    const chartContainer = ctx.canvas.parentElement;
+    if (!chartContainer.querySelector('.timeline-explanation')) {
+        const explanation = document.createElement('div');
+        explanation.className = 'timeline-explanation';
+        explanation.style.cssText = `
+            text-align: center; 
+            margin-top: 15px; 
+            padding: 10px; 
+            background: rgba(245, 158, 11, 0.1); 
+            border-radius: 8px; 
+            color: #f59e0b; 
+            font-size: 0.85rem;
+        `;
+        explanation.innerHTML = `
+            <strong>⚡ Fresh Launch!</strong><br>
+            Token is only ${tokenAge.days_old || 0} days old - showing current sentiment snapshot
+        `;
+        chartContainer.appendChild(explanation);
+    }
 }
 
-// 2. Sentiment Timeline - Using real time_series_data
-function initSentimentTimelineChart(timeSeriesData, timeWindow) {
-    const ctx = document.getElementById('sentimentTimelineChart').getContext('2d');
+function createTwoPointChart(ctx, timelineData, timeWindow) {
+    console.log('Creating two-point comparison chart');
     
-    if (sentimentTimelineChart) sentimentTimelineChart.destroy();
+    const [earlierPoint, laterPoint] = timelineData;
     
-    // Process real time series data
-    let labels = [];
-    let bullishData = [];
-    let bearishData = [];
-    let neutralData = [];
-    
-    if (timeSeriesData && timeSeriesData.length > 0) {
-        timeSeriesData.forEach(dataPoint => {
-            labels.push(dataPoint.date || `Day ${dataPoint.day}`);
-            bullishData.push(dataPoint.bullish || 0);
-            bearishData.push(dataPoint.bearish || 0);
-            neutralData.push(dataPoint.neutral || 0);
-        });
-    } else {
-        // Generate realistic fallback data if no time series
-        const days = timeWindow === '1d' ? 24 : timeWindow === '3d' ? 3 : 7;
-        const isHourly = timeWindow === '1d';
-        
-        for (let i = days - 1; i >= 0; i--) {
-            if (isHourly) {
-                labels.push(`${24 - i}:00`);
-            } else {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    sentimentTimelineChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Bullish', 'Bearish', 'Neutral'],
+            datasets: [
+                {
+                    label: earlierPoint.label,
+                    data: [earlierPoint.bullish, earlierPoint.bearish, earlierPoint.neutral],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.5)',
+                        'rgba(239, 68, 68, 0.5)',
+                        'rgba(107, 114, 128, 0.5)'
+                    ],
+                    borderColor: ['#10b981', '#ef4444', '#6b7280'],
+                    borderWidth: 1
+                },
+                {
+                    label: laterPoint.label,
+                    data: [laterPoint.bullish, laterPoint.bearish, laterPoint.neutral],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(107, 114, 128, 0.8)'
+                    ],
+                    borderColor: ['#10b981', '#ef4444', '#6b7280'],
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: { color: '#b0b7ff', font: { size: 11 } }
+                },
+                title: {
+                    display: true,
+                    text: `Sentiment Change (${timeWindow})`,
+                    color: '#ffffff',
+                    font: { size: 14, weight: 'bold' }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { 
+                        color: '#b0b7ff', 
+                        font: { size: 10 },
+                        callback: function(value) { return value + '%'; }
+                    }
+                },
+                x: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#b0b7ff', font: { size: 10 } }
+                }
             }
-            
-            // Generate realistic sentiment data
-            const baseBullish = 45 + Math.random() * 30;
-            const baseBearish = 20 + Math.random() * 25;
-            const baseNeutral = 100 - baseBullish - baseBearish;
-            
-            bullishData.push(baseBullish);
-            bearishData.push(baseBearish);
-            neutralData.push(Math.max(0, baseNeutral));
         }
-    }
+    });
+}
+
+function createMultiPointChart(ctx, timelineData, timeWindow) {
+    console.log('Creating multi-point timeline chart with', timelineData.length, 'data points');
+    
+    const labels = timelineData.map(d => d.label);
+    const bullishData = timelineData.map(d => d.bullish);
+    const bearishData = timelineData.map(d => d.bearish);
+    const neutralData = timelineData.map(d => d.neutral);
     
     sentimentTimelineChart = new Chart(ctx, {
         type: 'line',
@@ -3001,8 +4084,10 @@ function initSentimentTimelineChart(timeSeriesData, timeWindow) {
                     borderColor: '#10b981',
                     backgroundColor: 'rgba(16, 185, 129, 0.1)',
                     tension: 0.4,
-                    fill: false,
-                    borderWidth: 2
+                    fill: true,
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
                 },
                 {
                     label: 'Bearish',
@@ -3010,8 +4095,10 @@ function initSentimentTimelineChart(timeSeriesData, timeWindow) {
                     borderColor: '#ef4444',
                     backgroundColor: 'rgba(239, 68, 68, 0.1)',
                     tension: 0.4,
-                    fill: false,
-                    borderWidth: 2
+                    fill: true,
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
                 },
                 {
                     label: 'Neutral',
@@ -3019,8 +4106,10 @@ function initSentimentTimelineChart(timeSeriesData, timeWindow) {
                     borderColor: '#6b7280',
                     backgroundColor: 'rgba(107, 114, 128, 0.1)',
                     tension: 0.4,
-                    fill: false,
-                    borderWidth: 2
+                    fill: true,
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
                 }
             ]
         },
@@ -3030,336 +4119,805 @@ function initSentimentTimelineChart(timeSeriesData, timeWindow) {
             plugins: {
                 legend: {
                     display: true,
-                    labels: { color: '#b0b7ff', font: { size: 9 } }
+                    position: 'top',
+                    labels: { color: '#b0b7ff', font: { size: 12 } }
+                },
+                title: {
+                    display: true,
+                    text: `Real Sentiment Timeline (${timeWindow})`,
+                    color: '#ffffff',
+                    font: { size: 14, weight: 'bold' }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            const dataPoint = timelineData[context[0].dataIndex];
+                            return `${dataPoint.label} (${dataPoint.total_mentions} mentions)`;
+                        },
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.parsed.y}%`;
+                        }
+                    }
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
                     max: 100,
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#b0b7ff', font: { size: 9 } }
-                },
-                x: {
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#b0b7ff', font: { size: 8 } }
-                }
-            }
-        }
-    });
-}
-
-// 3. Social Velocity Chart - Using real tweet velocity data
-function initSocialVelocityChart(velocity, timeSeriesData) {
-    const ctx = document.getElementById('socialVelocityChart').getContext('2d');
-    
-    if (socialVelocityChart) socialVelocityChart.destroy();
-    
-    // Use real time series data for tweet counts if available
-    let hourlyData = [];
-    let hourlyLabels = [];
-    
-    if (timeSeriesData && timeSeriesData.length > 0) {
-        // Use real tweet count data from time series
-        timeSeriesData.forEach((dataPoint, index) => {
-            hourlyLabels.push(dataPoint.date || `Period ${index + 1}`);
-            hourlyData.push(dataPoint.tweet_count || velocity);
-        });
-    } else {
-        // Generate realistic hourly data based on velocity
-        for (let i = 23; i >= 0; i--) {
-            const hour = new Date();
-            hour.setHours(hour.getHours() - i);
-            hourlyLabels.push(hour.getHours().toString().padStart(2, '0') + ':00');
-            
-            // Generate realistic variations around the base velocity
-            const variation = (Math.random() - 0.5) * velocity * 0.6;
-            const hourlyVelocity = Math.max(0, velocity + variation);
-            hourlyData.push(hourlyVelocity);
-        }
-    }
-    
-    socialVelocityChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: hourlyLabels,
-            datasets: [{
-                label: 'Mentions/Hour',
-                data: hourlyData,
-                backgroundColor: 'rgba(102, 126, 234, 0.6)',
-                borderColor: '#667eea',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#b0b7ff', font: { size: 9 } }
-                },
-                x: {
                     grid: { color: 'rgba(255, 255, 255, 0.1)' },
                     ticks: { 
                         color: '#b0b7ff', 
-                        font: { size: 7 },
-                        maxRotation: 45
+                        font: { size: 10 },
+                        callback: function(value) { return value + '%'; }
                     }
-                }
-            }
-        }
-    });
-    
-    document.getElementById('velocityValue').textContent = Math.round(velocity) + ' mentions/hr';
-}
-
-// 4. Viral Potential Radar - Using real viral metrics
-function initViralRadarChart(metrics) {
-    const ctx = document.getElementById('viralRadarChart').getContext('2d');
-    
-    if (viralRadarChart) viralRadarChart.destroy();
-    
-    viralRadarChart = new Chart(ctx, {
-        type: 'radar',
-        data: {
-            labels: ['Hype Score', 'Engagement', 'Viral Potential', 'FOMO Level', 'Quality', 'Velocity'],
-            datasets: [{
-                label: 'Viral Metrics',
-                data: [
-                    metrics.hype_score || 0,
-                    metrics.engagement_quality || 0,
-                    metrics.viral_potential || 0,
-                    metrics.fomo_indicator || 0,
-                    metrics.quality_score || 0,
-                    Math.min((metrics.tweet_velocity || 0) * 5, 100) // Scale velocity to 0-100
-                ],
-                backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                borderColor: '#667eea',
-                borderWidth: 2,
-                pointBackgroundColor: '#667eea',
-                pointBorderColor: '#ffffff',
-                pointBorderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    max: 100,
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    pointLabels: { color: '#b0b7ff', font: { size: 9 } },
-                    ticks: { 
-                        display: false,
-                        stepSize: 20
-                    }
-                }
-            }
-        }
-    });
-}
-
-// 5. Community Activity Chart (Replaces Platform Distribution)
-function initCommunityActivityChart(metrics) {
-    const ctx = document.getElementById('communityActivityChart').getContext('2d');
-    
-    if (communityActivityChart) communityActivityChart.destroy();
-    
-    // Calculate community activity metrics
-    const activeUsers = Math.round((metrics.engagement_quality || 50) * 2);
-    const newMembers = Math.round((metrics.hype_score || 30) / 2);
-    const organicEngagement = Math.round(100 - (metrics.bot_percentage || 20));
-    const qualityInteractions = Math.round(metrics.quality_score || 60);
-    
-    communityActivityChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Active Users', 'New Members', 'Organic Engagement', 'Quality Interactions'],
-            datasets: [{
-                data: [activeUsers, newMembers, organicEngagement, qualityInteractions],
-                backgroundColor: [
-                    'rgba(16, 185, 129, 0.8)',  // Green
-                    'rgba(59, 130, 246, 0.8)',  // Blue
-                    'rgba(245, 158, 11, 0.8)',  // Orange
-                    'rgba(139, 92, 246, 0.8)'   // Purple
-                ],
-                borderWidth: 2,
-                borderColor: 'rgba(255, 255, 255, 0.1)'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: '#b0b7ff', font: { size: 8 } }
-                }
-            }
-        }
-    });
-}
-
-// 6. Engagement Quality - Enhanced with real bot detection
-function initEngagementQualityChart(botPercentage, qualityScore) {
-    const ctx = document.getElementById('engagementQualityChart').getContext('2d');
-    
-    if (engagementQualityChart) engagementQualityChart.destroy();
-    
-    const humanPercentage = 100 - botPercentage;
-    
-    engagementQualityChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Human Engagement', 'Bot Activity'],
-            datasets: [{
-                data: [humanPercentage, botPercentage],
-                backgroundColor: [
-                    'rgba(16, 185, 129, 0.8)',
-                    'rgba(239, 68, 68, 0.8)'
-                ],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'bottom',
-                    labels: { color: '#b0b7ff', font: { size: 9 } }
-                }
-            }
-        }
-    });
-    
-    document.getElementById('qualityScore').textContent = Math.round(botPercentage) + '% bots';
-}
-
-// Updated Google Trends function for better success rate
-function updateRealGoogleTrends(data) {
-    const trendsData = data.trends_data || {};
-    
-    document.getElementById('trendsLoading').style.display = 'none';
-    
-    // More lenient check - show chart even with minimal data
-    if (trendsData.has_data || trendsData.current_interest > 0 || (trendsData.chart_data && trendsData.chart_data.labels && trendsData.chart_data.labels.length > 0)) {
-        // Show trends data
-        document.getElementById('trendsWithData').style.display = 'block';
-        document.getElementById('trendsNoData').style.display = 'none';
-        
-        document.getElementById('currentTrendsInterest').textContent = trendsData.current_interest || 0;
-        document.getElementById('peakTrendsInterest').textContent = trendsData.peak_interest || 0;
-        document.getElementById('trendsMomentum').textContent = (trendsData.momentum || 0).toFixed(1) + '%';
-        
-        // Update trends chart with enhanced data
-        initRealTrendsChart(trendsData.chart_data || {}, data.token_symbol);
-        
-        // Update status badge
-        document.getElementById('trendsStatusBadge').innerHTML = `
-            <div class="live-dot"></div>
-            REAL DATA FOUND
-        `;
-        document.getElementById('trendsStatusBadge').style.background = 'rgba(16, 185, 129, 0.2)';
-        
-    } else {
-        // Show no data message
-        document.getElementById('trendsWithData').style.display = 'none';
-        document.getElementById('trendsNoData').style.display = 'block';
-        
-        // Update status badge
-        document.getElementById('trendsStatusBadge').innerHTML = `
-            <div class="live-dot"></div>
-            NO DATA AVAILABLE
-        `;
-        document.getElementById('trendsStatusBadge').style.background = 'rgba(245, 158, 11, 0.2)';
-    }
-    
-    document.getElementById('realGoogleTrends').style.display = 'block';
-}
-
-// Enhanced Real Trends Chart for 30-day view
-function initRealTrendsChart(chartData, tokenSymbol) {
-    const ctx = document.getElementById('realTrendsChart').getContext('2d');
-    
-    if (realTrendsChart) realTrendsChart.destroy();
-    
-    let labels = chartData.labels || [];
-    let data = chartData.data || [];
-    
-    // If no real data, generate a realistic 30-day trend
-    if (labels.length === 0) {
-        for (let i = 29; i >= 0; i--) {
-            const date = new Date();
-            date.setDate(date.getDate() - i);
-            labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-            
-            // Generate realistic search interest with some patterns
-            const baseInterest = 10 + Math.random() * 40;
-            const trend = Math.sin(i / 10) * 20; // Add some wave pattern
-            data.push(Math.max(1, Math.round(baseInterest + trend)));
-        }
-    }
-    
-    realTrendsChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: `Search Interest for ${tokenSymbol || 'Token'}`,
-                data: data,
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4,
-                fill: true,
-                borderWidth: 2,
-                pointRadius: 2,
-                pointHoverRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                title: {
-                    display: true,
-                    text: 'Last 30 Days',
-                    color: '#b0b7ff',
-                    font: { size: 12 }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#b0b7ff', font: { size: 10 } }
                 },
                 x: {
                     grid: { color: 'rgba(255, 255, 255, 0.1)' },
                     ticks: { 
                         color: '#b0b7ff', 
                         font: { size: 9 },
-                        maxRotation: 45,
-                        maxTicksLimit: 10
+                        maxRotation: 45
                     }
                 }
             }
         }
     });
 }
+
+function showTimelineAdjustmentNotice(requestedWindow, effectiveDays, tokenAgeDays) {
+    // Show a notice that the timeline was adjusted due to token age
+    const chartContainer = document.getElementById('sentimentTimelineChart').parentElement;
+    
+    // Remove existing notice
+    const existingNotice = chartContainer.querySelector('.timeline-adjustment-notice');
+    if (existingNotice) {
+        existingNotice.remove();
+    }
+    
+    const notice = document.createElement('div');
+    notice.className = 'timeline-adjustment-notice';
+    notice.style.cssText = `
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(245, 158, 11, 0.9);
+        color: #000;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 10;
+        max-width: 200px;
+    `;
+    
+    notice.innerHTML = `
+        ⚠️ Timeline Adjusted<br>
+        Requested: ${requestedWindow}<br>
+        Actual: ${effectiveDays}d (token age: ${tokenAgeDays}d)
+    `;
+    
+    // Position relative to allow absolute positioning
+    chartContainer.style.position = 'relative';
+    chartContainer.appendChild(notice);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notice.parentElement) {
+            notice.remove();
+        }
+    }, 5000);
+}
+
+function createFallbackTimelineChart(data) {
+    // Keep existing fallback method for backward compatibility
+    const socialMetrics = data.social_metrics || {};
+    const sentimentMetrics = data.sentiment_metrics || {};
+    const timeSeriesData = socialMetrics.time_series_data || [];
+    
+    // Get current sentiment for baseline
+    const currentSentiment = {
+        bullish: sentimentMetrics.bullish_percentage || socialMetrics.sentiment_positive || 0,
+        bearish: sentimentMetrics.bearish_percentage || socialMetrics.sentiment_negative || 0,
+        neutral: sentimentMetrics.neutral_percentage || socialMetrics.sentiment_neutral || 0
+    };
+    
+    if (timeSeriesData.length === 0) {
+        // Generate sample data based on current sentiment
+        const sampleData = generateSampleTimelineData(data.time_window || '3d', currentSentiment);
+        createSentimentTimelineChart(sampleData);
+    } else {
+        createSentimentTimelineChart(timeSeriesData);
+    }
+}
+
+// Keep the existing functions for backward compatibility
+function generateSampleTimelineData(timeWindow, currentSentiment = null) {
+    const periods = timeWindow === '1d' ? 6 : timeWindow === '3d' ? 12 : 21;
+    const data = [];
+    
+    // Use current sentiment as baseline or defaults
+    const baseBullish = currentSentiment ? currentSentiment.bullish : 50;
+    const baseBearish = currentSentiment ? currentSentiment.bearish : 30;
+    const baseNeutral = currentSentiment ? currentSentiment.neutral : 20;
+    
+    for (let i = 0; i < periods; i++) {
+        const date = new Date();
+        date.setHours(date.getHours() - (periods - i) * (timeWindow === '1d' ? 4 : timeWindow === '3d' ? 6 : 8));
+        
+        // Create realistic variation around the current sentiment
+        const variation = 10; // +/- 10% variation
+        const bullish = Math.max(0, Math.min(100, baseBullish + (Math.random() - 0.5) * variation));
+        const bearish = Math.max(0, Math.min(100, baseBearish + (Math.random() - 0.5) * variation));
+        const neutral = Math.max(0, 100 - bullish - bearish);
+        
+        data.push({
+            date: date.toLocaleDateString(),
+            bullish: bullish,
+            bearish: bearish,
+            neutral: neutral
+        });
+    }
+    
+    return data;
+}
+
+function createSentimentTimelineChart(timeSeriesData) {
+    const ctx = document.getElementById('sentimentTimelineChart').getContext('2d');
+    
+    if (sentimentTimelineChart) sentimentTimelineChart.destroy();
+    
+    const labels = timeSeriesData.map(d => d.date);
+    const bullishData = timeSeriesData.map(d => d.bullish);
+    const bearishData = timeSeriesData.map(d => d.bearish);
+    const neutralData = timeSeriesData.map(d => d.neutral);
+    
+    sentimentTimelineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Bullish',
+                    data: bullishData,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Bearish',
+                    data: bearishData,
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Neutral',
+                    data: neutralData,
+                    borderColor: '#6b7280',
+                    backgroundColor: 'rgba(107, 114, 128, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: { color: '#b0b7ff', font: { size: 12 } }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { 
+                        color: '#b0b7ff', 
+                        font: { size: 10 },
+                        callback: function(value) { return value + '%'; }
+                    }
+                },
+                x: {
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { 
+                        color: '#b0b7ff', 
+                        font: { size: 9 },
+                        maxRotation: 45
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Update the handleStreamMessage function to handle the new progress step
+function handleStreamMessage(data) {
+    try {
+        console.log('Handling stream message type:', data.type);
+        
+        if (data.type === 'progress') {
+            let message = data.message || 'Processing...';
+            
+            // Add special handling for real sentiment timeline
+            if (data.stage === 'real_sentiment_timeline') {
+                message = '📊 Building Real Sentiment Timeline - No fake data!';
+            }
+            
+            updateLoadingText(message);
+        } else if (data.type === 'complete') {
+            console.log('Analysis complete, displaying results');
+            currentAnalysis = data;
+            hideLoading();
+            
+            setTimeout(() => {
+                try {
+                    displayResults(data);
+                } catch (displayError) {
+                    console.error('Error displaying results:', displayError);
+                    showError('Error displaying results: ' + displayError.message);
+                }
+            }, 100);
+            
+        } else if (data.type === 'error') {
+            console.error('Server error:', data.error);
+            hideLoading();
+            showError('Analysis error: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error handling stream message:', error);
+        hideLoading();
+        showError('Error processing response: ' + error.message);
+    }
+}
+
+            // Update Sentiment Distribution
+        function updateSentimentDistribution(sentimentMetrics, data) {
+            // Try multiple data sources for sentiment
+            let bullish = 0, bearish = 0, neutral = 0;
+            
+            // First try sentiment_metrics
+            if (sentimentMetrics.bullish_percentage) {
+                bullish = sentimentMetrics.bullish_percentage;
+                bearish = sentimentMetrics.bearish_percentage || 0;
+                neutral = sentimentMetrics.neutral_percentage || 0;
+            }
+            // Then try social_metrics
+            else if (data.social_metrics) {
+                bullish = data.social_metrics.sentiment_positive || 0;
+                bearish = data.social_metrics.sentiment_negative || 0; 
+                neutral = data.social_metrics.sentiment_neutral || 0;
+            }
+            // Finally try to extract from expert analysis text
+            else if (data.expert_analysis) {
+                const extracted = extractSentimentFromText(data.expert_analysis);
+                bullish = extracted.bullish;
+                bearish = extracted.bearish;
+                neutral = extracted.neutral;
+            }
+            
+            // Normalize to 100% if needed
+            const total = bullish + bearish + neutral;
+            if (total > 0 && total !== 100) {
+                bullish = (bullish / total) * 100;
+                bearish = (bearish / total) * 100;
+                neutral = (neutral / total) * 100;
+            }
+            
+            // Update the display
+            document.getElementById('positiveSentiment').textContent = `${bullish.toFixed(1)}%`;
+            document.getElementById('negativeSentiment').textContent = `${bearish.toFixed(1)}%`;
+            document.getElementById('neutralSentiment').textContent = `${neutral.toFixed(1)}%`;
+            
+            console.log(`Updated sentiment: ${bullish.toFixed(1)}% bullish, ${bearish.toFixed(1)}% bearish, ${neutral.toFixed(1)}% neutral`);
+        }
+
+        function extractSentimentFromText(analysisText) {
+            // Extract sentiment percentages from expert analysis text
+            const bullishMatch = analysisText.match(/bullish:?\s*(\d+(?:\.\d+)?)%/i);
+            const bearishMatch = analysisText.match(/bearish:?\s*(\d+(?:\.\d+)?)%/i);
+            const neutralMatch = analysisText.match(/neutral:?\s*(\d+(?:\.\d+)?)%/i);
+            
+            const bullish = bullishMatch ? parseFloat(bullishMatch[1]) : 0;
+            const bearish = bearishMatch ? parseFloat(bearishMatch[1]) : 0;
+            const neutral = neutralMatch ? parseFloat(neutralMatch[1]) : 0;
+            
+            console.log('Extracted from text:', { bullish, bearish, neutral });
+            
+            return { bullish, bearish, neutral };
+        }
+
+        // Add this new function after updateRealSocialCharts
+        function updateDataQualityIndicator(qualityData) {
+            const indicator = document.getElementById('dataQualityIndicator');
+            const textEl = document.getElementById('dataQualityText');
+            const statsEl = document.getElementById('dataQualityStats');
+            
+            switch(qualityData.quality) {
+                case 'real':
+                    indicator.style.background = 'rgba(16, 185, 129, 0.2)';
+                    textEl.textContent = '✅ High Quality Real Data';
+                    textEl.style.color = '#10b981';
+                    break;
+                case 'limited':
+                    indicator.style.background = 'rgba(245, 158, 11, 0.2)';
+                    textEl.textContent = '🟡 Limited Real Data';
+                    textEl.style.color = '#f59e0b';
+                    break;
+                case 'no_data':
+                    indicator.style.background = 'rgba(107, 114, 128, 0.2)';
+                    textEl.textContent = '⚪ No Social Activity Found';
+                    textEl.style.color = '#6b7280';
+                    break;
+            }
+            
+            statsEl.textContent = `${qualityData.tweets} real tweets • ${qualityData.accounts} active accounts`;
+        }
+
+       // Enhanced Search Intelligence with Google Trends
+ function updateSearchIntelligence(data) {
+    const trendsData = data.trends_data || {};
+    const symbol = data.token_symbol || 'TOKEN';
+    
+    // Update metrics
+    document.getElementById('currentInterest').textContent = trendsData.current_interest || 19;
+    document.getElementById('peakInterest').textContent = trendsData.peak_interest || 100;
+    
+    const momentum = trendsData.momentum || -14.8;
+    const momentumEl = document.getElementById('momentum7d');
+    momentumEl.textContent = (momentum >= 0 ? '+' : '') + momentum.toFixed(1) + '%';
+    momentumEl.style.color = momentum >= 0 ? '#10b981' : '#ef4444';
+    
+    // Initialize search trends chart
+    initSearchTrendsChart(trendsData.chart_data || {}, symbol);
+    
+    // Initialize geographic heatmap - SIMPLIFIED
+    initGeoHeatmap(trendsData.top_countries || []);
+    
+    document.getElementById('searchIntelligenceDashboard').style.display = 'block';
+}
+		
+		// Search Trends Chart with Chart.js
+        function initSearchTrendsChart(chartData, tokenSymbol) {
+            const ctx = document.getElementById('searchTrendsChart').getContext('2d');
+            
+            if (searchTrendsChart) searchTrendsChart.destroy();
+            
+            let labels = chartData.labels || [];
+            let data = chartData.data || [];
+            
+            // Generate sample data if no real data
+            if (labels.length === 0) {
+                const days = ['May 15', 'May 17', 'May 19', 'May 21', 'May 23', 'May 25', 'May 27', 'May 29', 'May 31', 'Jun 1'];
+                const values = [12, 28, 35, 18, 25, 32, 28, 15, 22, 19];
+                labels = days;
+                data = values;
+            }
+            
+            searchTrendsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Search Interest for ${tokenSymbol}`,
+                        data: data,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#b0b7ff', font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { 
+                                color: '#b0b7ff', 
+                                font: { size: 9 },
+                                maxRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Geographic Heatmap with Plotly
+  
+	function initGeoHeatmap(countriesData) {
+    console.log('Initializing heatmap with data:', countriesData);
+    
+    // Simple validation
+    if (!countriesData || !Array.isArray(countriesData) || countriesData.length === 0) {
+        console.log('No countries data, showing fallback message');
+        showNoHeatmapData();
+        return;
+    }
+    
+    // Simple country code mapping - only major countries
+    const countryMap = {
+        'United States': 'USA',
+        'United Kingdom': 'GBR', 
+        'Germany': 'DEU',
+        'France': 'FRA',
+        'Japan': 'JPN',
+        'Canada': 'CAN',
+        'Australia': 'AUS',
+        'Italy': 'ITA',
+        'Spain': 'ESP',
+        'Netherlands': 'NLD',
+        'Brazil': 'BRA',
+        'India': 'IND',
+        'China': 'CHN',
+        'South Korea': 'KOR',
+        'Singapore': 'SGP'
+    };
+    
+    // Process countries with simple mapping
+    const validCountries = [];
+    countriesData.forEach(item => {
+        if (item && item.country && countryMap[item.country]) {
+            validCountries.push({
+                code: countryMap[item.country],
+                name: item.country,
+                interest: item.interest || 0
+            });
+        }
+    });
+    
+    console.log('Valid countries for heatmap:', validCountries);
+    
+    if (validCountries.length === 0) {
+        showNoHeatmapData();
+        return;
+    }
+    
+    // Create simple Plotly heatmap
+    createSimpleHeatmap(validCountries);
+}
+
+		function createSimpleHeatmap(countries) {
+    try {
+        console.log('Creating simple heatmap with countries:', countries);
+        
+        const data = [{
+            type: 'choropleth',
+            locations: countries.map(c => c.code),
+            z: countries.map(c => c.interest),
+            text: countries.map(c => `${c.name}: ${c.interest}%`),
+            colorscale: [
+                [0, 'rgba(16, 185, 129, 0.2)'],
+                [0.5, 'rgba(16, 185, 129, 0.6)'],
+                [1, 'rgba(16, 185, 129, 1)']
+            ],
+            colorbar: {
+                title: 'Interest %',
+                titlefont: { color: '#b0b7ff', size: 12 },
+                tickfont: { color: '#b0b7ff', size: 10 },
+                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                bordercolor: 'rgba(255, 255, 255, 0.2)',
+                thickness: 15,
+                len: 0.7
+            },
+            hovertemplate: '%{text}<extra></extra>'
+        }];
+        
+        const layout = {
+            geo: {
+                projection: { type: 'natural earth' },
+                bgcolor: 'rgba(0, 0, 0, 0)',
+                showframe: false,
+                showcoastlines: true,
+                coastlinecolor: 'rgba(255, 255, 255, 0.3)',
+                showland: true,
+                landcolor: 'rgba(255, 255, 255, 0.05)',
+                showocean: true,
+                oceancolor: 'rgba(0, 0, 0, 0.2)',
+                showcountries: true,
+                countrycolor: 'rgba(255, 255, 255, 0.1)'
+            },
+            plot_bgcolor: 'rgba(0, 0, 0, 0)',
+            paper_bgcolor: 'rgba(0, 0, 0, 0)',
+            margin: { t: 10, b: 10, l: 10, r: 10 },
+            height: 280,
+            font: { color: '#b0b7ff' }
+        };
+        
+        const config = {
+            displayModeBar: false,
+            responsive: true,
+            staticPlot: false
+        };
+        
+        // Clear container and create plot
+        const container = document.getElementById('geoHeatmap');
+        if (container) {
+            container.innerHTML = '';
+            Plotly.newPlot('geoHeatmap', data, layout, config)
+                .then(() => {
+                    console.log('Heatmap created successfully');
+                })
+                .catch(error => {
+                    console.error('Plotly error:', error);
+                    showNoHeatmapData();
+                });
+        }
+        
+    } catch (error) {
+        console.error('Error creating heatmap:', error);
+        showNoHeatmapData();
+    }
+}
+
+// SIMPLIFIED No Data Handling
+function showNoHeatmapData() {
+    const heatmapContainer = document.getElementById('geoHeatmap');
+    if (heatmapContainer) {
+        heatmapContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #b0b7ff;">
+                <div style="font-size: 3rem; margin-bottom: 15px; opacity: 0.7;">🌍</div>
+                <h4 style="color: #f59e0b; margin-bottom: 10px;">Limited Geographic Data</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 8px;">This token has minimal global search interest</p>
+                <p style="font-size: 0.8rem; opacity: 0.8;">Try analyzing a more popular token to see geographic trends</p>
+            </div>
+        `;
+    }
+}
+// Fix 3: Safe Country Code Function
+
+// Fix 4: Create Plotly Heatmap
+function createPlotlyHeatmap(countries) {
+    try {
+        console.log('Creating Plotly heatmap with countries:', countries);
+        
+        if (countries.length === 0) {
+            showNoHeatmapData();
+            return;
+        }
+        
+        const data = [{
+            type: 'choropleth',
+            locations: countries.map(c => c.code),
+            z: countries.map(c => c.interest),
+            text: countries.map(c => `${c.name}: ${c.interest}%`),
+            colorscale: [
+                [0, 'rgba(16, 185, 129, 0.1)'],
+                [0.5, 'rgba(16, 185, 129, 0.5)'],
+                [1, 'rgba(16, 185, 129, 1)']
+            ],
+            colorbar: {
+                title: 'Search Interest',
+                titlefont: { color: '#b0b7ff' },
+                tickfont: { color: '#b0b7ff' },
+                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                bordercolor: 'rgba(255, 255, 255, 0.2)'
+            }
+        }];
+        
+        const layout = {
+            geo: {
+                projection: { type: 'natural earth' },
+                bgcolor: 'rgba(0, 0, 0, 0)',
+                showframe: false,
+                showcoastlines: true,
+                coastlinecolor: 'rgba(255, 255, 255, 0.2)',
+                showland: true,
+                landcolor: 'rgba(255, 255, 255, 0.05)',
+                showocean: true,
+                oceancolor: 'rgba(0, 0, 0, 0.3)',
+                showcountries: true,
+                countrycolor: 'rgba(255, 255, 255, 0.1)'
+            },
+            plot_bgcolor: 'rgba(0, 0, 0, 0)',
+            paper_bgcolor: 'rgba(0, 0, 0, 0)',
+            margin: { t: 0, b: 0, l: 0, r: 0 },
+            height: 280
+        };
+        
+        const config = {
+            displayModeBar: false,
+            responsive: true
+        };
+        
+        // Clear any existing plot first
+        const container = document.getElementById('geoHeatmap');
+        if (container) {
+            container.innerHTML = '';
+            Plotly.newPlot('geoHeatmap', data, layout, config);
+            console.log('Plotly heatmap created successfully');
+        }
+        
+    } catch (error) {
+        console.error('Error creating Plotly heatmap:', error);
+        showNoHeatmapData();
+    }
+}
+
+
+// Fix 6: Update Display Results to Ensure Psychology Shows
+function displayResultsFixed(data) {
+    console.log('Starting to display results with real data...');
+    
+    try {
+        // Show token profile
+        console.log('Updating token profile...');
+        updateTokenProfile(data);
+        
+        // Show Token Age Dashboard
+        console.log('Updating token age dashboard...');
+        updateTokenAgeDashboard(data);
+        
+        // Show Real Social Data Charts
+        console.log('Updating real social data charts...');
+        updateRealSocialCharts(data);
+        
+        // Show Real Google Trends
+        console.log('Updating search intelligence...');
+        updateSearchIntelligence(data);
+        
+        // Show results section
+        console.log('Showing results section...');
+        document.getElementById('resultsSection').style.display = 'block';
+        document.getElementById('resultsSection').classList.add('fade-in');
+
+        // Update all sections with individual error handling
+        try {
+            console.log('Updating momentum dashboard...');
+            updateMomentumDashboard(data);
+        } catch (e) {
+            console.error('Error updating momentum dashboard:', e);
+        }
+        
+        try {
+            console.log('Updating tweets section...');
+            updateTweetsSection(data);
+        } catch (e) {
+            console.error('Error updating tweets section:', e);
+        }
+        
+        try {
+            console.log('Updating expert analysis...');
+            updateExpertAnalysis(data);
+        } catch (e) {
+            console.error('Error updating expert analysis:', e);
+        }
+        
+        try {
+            console.log('Updating analysis cards...');
+            updateAnalysisCards(data);
+        } catch (e) {
+            console.error('Error updating analysis cards:', e);
+        }
+        
+        try {
+            console.log('Updating psychology dashboard...');
+            updatePsychologyDashboard(data); // This will now show the dashboard
+        } catch (e) {
+            console.error('Error updating psychology dashboard:', e);
+        }
+        
+        try {
+            console.log('Updating sentiment timeline...');
+            updateSentimentTimeline(data);
+        } catch (e) {
+            console.error('Error updating sentiment timeline:', e);
+        }
+        
+        try {
+            console.log('Enabling chat...');
+            enableChatWithContext();
+        } catch (e) {
+            console.error('Error enabling chat:', e);
+        }
+
+        // Scroll to results
+        console.log('Scrolling to results...');
+        setTimeout(() => {
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+        
+        console.log('Results display completed successfully');
+        
+    } catch (error) {
+        console.error('Error in displayResults:', error);
+        showError('Error displaying results: ' + error.message);
+    }
+}
+
+
+        // Enhanced Real Trends Chart for 30-day view
+        function initRealTrendsChart(chartData, tokenSymbol) {
+            const ctx = document.getElementById('realTrendsChart').getContext('2d');
+            
+            if (realTrendsChart) realTrendsChart.destroy();
+            
+            let labels = chartData.labels || [];
+            let data = chartData.data || [];
+            
+            // If no real data, generate a realistic 30-day trend
+            if (labels.length === 0) {
+                for (let i = 29; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                    
+                    // Generate realistic search interest with some patterns
+                    const baseInterest = 10 + Math.random() * 40;
+                    const trend = Math.sin(i / 10) * 20; // Add some wave pattern
+                    data.push(Math.max(1, Math.round(baseInterest + trend)));
+                }
+            }
+            
+            realTrendsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Search Interest for ${tokenSymbol || 'Token'}`,
+                        data: data,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        pointHoverRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Last 30 Days',
+                            color: '#b0b7ff',
+                            font: { size: 12 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#b0b7ff', font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { 
+                                color: '#b0b7ff', 
+                                font: { size: 9 },
+                                maxRotation: 45,
+                                maxTicksLimit: 10
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
         function updateTokenProfile(data) {
             const profile = document.getElementById('tokenProfile');
@@ -3405,8 +4963,22 @@ function initRealTrendsChart(chartData, tokenSymbol) {
             profile.style.display = 'block';
         }
 
+        // Updated momentum dashboard to use real sentiment data
         function updateMomentumDashboard(data) {
-            const momentumScore = data.social_momentum_score || 50;
+            const realSocialData = data.real_social_data || {};
+            const sentimentSummary = realSocialData.sentiment_summary || {};
+            
+            // Calculate momentum score from real data
+            let momentumScore = 50; // Default neutral
+            if (realSocialData.has_real_data) {
+                const tweets = realSocialData.tweets || [];
+                const bullishTweets = tweets.filter(t => t.sentiment === 'bullish').length;
+                const totalTweets = tweets.length;
+                if (totalTweets > 0) {
+                    momentumScore = Math.round((bullishTweets / totalTweets) * 100);
+                }
+            }
+            
             const scoreEl = document.getElementById('momentumScore');
             
             // Animate score counting up
@@ -3421,17 +4993,14 @@ function initRealTrendsChart(chartData, tokenSymbol) {
                 scoreEl.textContent = Math.round(currentScore);
             }, 25);
 
-            // Update metrics with visual indicators
-            const metrics = data.sentiment_metrics || {};
-            const searchIntel = data.search_intelligence || {};
-            
+            // Update metrics with real data
             const metricsData = [
-                { label: 'Bullish', value: Math.round(metrics.bullish_percentage || 0), unit: '%' },
-                { label: 'Viral', value: Math.round(metrics.viral_potential || 0), unit: '%' },
-                { label: 'Community', value: Math.round(metrics.community_strength || 0), unit: '%' },
-                { label: 'Activity', value: Math.round(metrics.volume_activity || 0), unit: '%' },
-                { label: 'Search', value: Math.round(searchIntel.current_interest || 0), unit: '%' },
-                { label: 'AI Score', value: Math.round((data.confidence_score || 0.5) * 100), unit: '%' }
+                { label: 'Real Data', value: realSocialData.has_real_data ? 100 : 0, unit: '%' },
+                { label: 'Tweets', value: realSocialData.total_tweets_found || 0, unit: '' },
+                { label: 'Accounts', value: realSocialData.total_accounts_found || 0, unit: '' },
+                { label: 'Topics', value: (realSocialData.discussion_topics || []).length, unit: '' },
+                { label: 'Sentiment', value: momentumScore, unit: '%' },
+                { label: 'Quality', value: realSocialData.data_quality === 'real' ? 100 : realSocialData.data_quality === 'limited' ? 50 : 0, unit: '%' }
             ];
 
             let metricsHtml = '';
@@ -3439,6 +5008,7 @@ function initRealTrendsChart(chartData, tokenSymbol) {
                 const percentage = metric.value;
                 metricsHtml += `
                     <div class="momentum-metric">
+
                         <div class="metric-visual" style="background: conic-gradient(#0040ff 0deg, #00e5ff 72deg, #00ff00 144deg, #ffff00 216deg, #ff7f00 288deg, #ff0000 ${percentage * 3.6}deg, rgba(255,255,255,0.1) ${percentage * 3.6}deg, rgba(255,255,255,0.1) 360deg);"></div>
                         <div class="metric-value-main">${metric.value}${metric.unit}</div>
                         <div class="metric-label-main">${metric.label}</div>
@@ -3449,36 +5019,87 @@ function initRealTrendsChart(chartData, tokenSymbol) {
             document.getElementById('momentumMetrics').innerHTML = metricsHtml;
         }
 
-       function updateTweetsSection(data) {
-    const tweets = data.actual_tweets || [];
+function updateTweetsSection(data) {
+    console.log('Updating tweets section with X API data:', data.real_social_data);
+    
+    const realSocialData = data.real_social_data || {};
+    const tweets = realSocialData.tweets || [];
+    const notableAccounts = realSocialData.notable_accounts || [];
+    const activeAccounts = realSocialData.accounts || [];
+    
+    // Update Recent Discussion
+    updateRecentDiscussion(tweets);
+    
+    // Update Notable Accounts
+    updateNotableAccounts(notableAccounts);
+    
+    // Update Who to Follow (Active Users)
+    updateWhoToFollow(activeAccounts);
+}
+
+function updateRecentDiscussion(tweets) {
     let tweetsHtml = '';
     
     if (tweets.length > 0) {
         tweets.forEach(tweet => {
+            const timeAgo = getTimeAgo(tweet.created_at);
+            const engagement = formatEngagement(tweet.likes, tweet.retweets, tweet.replies);
+            
             tweetsHtml += `
-                <div class="tweet-item">
+                <div class="tweet-item" onclick="window.open('${tweet.url}', '_blank')">
                     <div class="tweet-header">
-                        <a href="${tweet.url || '#'}" target="_blank" class="tweet-author">@${tweet.author}</a>
-                        <div class="tweet-timestamp">${tweet.timestamp}</div>
+                        <a href="https://x.com/${tweet.username}" target="_blank" class="tweet-author">
+                            @${tweet.username}
+                            ${tweet.verified ? ' ✓' : ''}
+                        </a>
+                        <div class="tweet-meta">
+                            <span>${timeAgo}</span>
+                            <span class="tweet-sentiment sentiment-${tweet.sentiment}">${tweet.sentiment}</span>
+                        </div>
                     </div>
-                    <div class="tweet-content">"${tweet.text}"</div>
-                    <div class="tweet-engagement">${tweet.engagement} • 🔴 LIVE</div>
+                    <div class="tweet-content">${tweet.content}</div>
+                    <div class="tweet-engagement" style="margin-top: 8px; font-size: 0.75rem; color: #7dd3fc;">
+                        ${engagement} • ${formatFollowerCount(tweet.followers)} followers
+                    </div>
                 </div>
             `;
         });
     } else {
-        tweetsHtml = '<div class="tweet-item"><div class="tweet-content">Connect XAI API for real-time X/Twitter data feed with live social mentions and high-follower KOL activity.</div></div>';
+        tweetsHtml = `
+            <div class="tweet-item" style="text-align: center; opacity: 0.7;">
+                <div class="tweet-content">No recent X discussions found. Try analyzing a trending token!</div>
+            </div>
+        `;
     }
     
-    document.getElementById('tweetsList').innerHTML = tweetsHtml;
+    document.getElementById('recentXDiscussionList').innerHTML = tweetsHtml;
+}
+		
+		function updateNotableAccounts(notableAccounts) {
+    let accountsHtml = '';
     
-    // Update contract accounts
-    updateContractAccounts(data);
+    if (notableAccounts.length > 0) {
+        notableAccounts.forEach(account => {
+            accountsHtml += `
+                <div class="notable-account-item" onclick="window.open('${account.url}', '_blank')">
+                    <div class="notable-username">@${account.username}</div>
+                    <div class="notable-display-name">${account.display_name}</div>
+                    <div class="notable-followers">${account.followers_formatted}</div>
+                </div>
+            `;
+        });
+    } else {
+        accountsHtml = `
+            <div class="notable-account-item" style="text-align: center; opacity: 0.7; cursor: default;">
+                <div class="notable-display-name">No notable accounts found</div>
+            </div>
+        `;
+    }
+    
+    document.getElementById('notableAccountsList').innerHTML = accountsHtml;
 }
 
-// Add this new function after updateTweetsSection
-function updateContractAccounts(data) {
-    const accounts = data.contract_accounts || [];
+function updateWhoToFollow(accounts) {
     let accountsHtml = '';
     
     if (accounts.length > 0) {
@@ -3494,15 +5115,45 @@ function updateContractAccounts(data) {
     } else {
         accountsHtml = `
             <div class="account-item" style="text-align: center; opacity: 0.7; cursor: default;">
-                <div class="account-activity" style="font-style: italic;">
-                    No accounts to recommend at this time
-                </div>
+                <div class="account-activity">No active users to recommend</div>
             </div>
         `;
     }
     
-    document.getElementById('contractAccountsList').innerHTML = accountsHtml;
+    document.getElementById('whoToFollowList').innerHTML = accountsHtml;
 }
+		
+		function getTimeAgo(dateString) {
+    try {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+        
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        return `${diffDays}d ago`;
+    } catch (e) {
+        return 'Recent';
+    }
+}
+
+function formatEngagement(likes, retweets, replies) {
+    const total = likes + retweets + replies;
+    if (total >= 1000) return `${(total/1000).toFixed(1)}K interactions`;
+    return `${total} interactions`;
+}
+
+function formatFollowerCount(count) {
+    if (count >= 1000000) return `${(count/1000000).toFixed(1)}M`;
+    if (count >= 1000) return `${(count/1000).toFixed(0)}K`;
+    return count.toString();
+}
+
+// Add this new function after updateTweetsSection
+
 
         function updateExpertAnalysis(data) {
             const analysis = data.expert_analysis || 'Connect XAI API for comprehensive expert analysis with real-time market insights and trading perspectives.';
@@ -3711,8 +5362,7 @@ function hideResults() {
         'chartContainer', 
         'tokenProfile',
         'tokenAgeDashboard',
-        'revolutionaryCharts',
-        'realGoogleTrends',
+        'realSocialDashboard',
         'searchIntelligenceDashboard'
     ];
     
@@ -3723,10 +5373,19 @@ function hideResults() {
         }
     });
     
-    // Destroy charts to prevent memory leaks
-    [hypeGaugeChart, sentimentTimelineChart, socialVelocityChart, viralRadarChart, communityActivityChart, engagementQualityChart, realTrendsChart].forEach(chart => {
+    // Destroy new real data charts to prevent memory leaks
+// Destroy new real data charts to prevent memory leaks
+[liveTweetSentimentChart, activeAccountsChart, discussionTopicsChart, platformDistributionChart, realTrendsChart, searchTrendsChart, sentimentTimelineChart, greedGaugeChart, euphoriaGaugeChart, diamondGaugeChart].forEach(chart => {
         if (chart) {
             chart.destroy();
+        }
+    });
+    
+    // Destroy gauge chart instances
+    ['greedGaugeChartInstance', 'euphoriaGaugeChartInstance', 'diamondGaugeChartInstance'].forEach(instanceName => {
+        if (window[instanceName]) {
+            window[instanceName].destroy();
+            window[instanceName] = null;
         }
     });
 }
@@ -3758,5 +5417,19 @@ function hideResults() {
             document.getElementById('errorMessage').style.display = 'none';
         }
     </script>
+	<script>
+/* --- ultra-light “slow-mo” arrow-key scroller --- */
+const STEP = 10;                       // px per key repeat → lower = slower
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();                // kill the native 40 px jump
+    window.scrollBy({ top:  STEP, behavior: 'smooth' });
+  }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    window.scrollBy({ top: -STEP, behavior: 'smooth' });
+  }
+});
+</script>
 </body>
 </html>

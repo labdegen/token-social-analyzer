@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Degen Academy - ASK DEGEN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: url('https://jeetsvsdegens.com/newbg.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        /* Fixed Header */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 15px 0;
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: "Lacquer", system-ui;
+            font-size: 2rem;
+            font-weight: 400;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s ease infinite;
+            text-decoration: none;
+        }
+
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #b0b7ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Landing Page Styles */
+        .academy-hero {
+            text-align: center;
+            margin: 50px 0;
+            padding: 50px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .academy-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s ease infinite;
+        }
+
+        .academy-subtitle {
+            font-size: 1.3rem;
+            color: #b0b7ff;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .academy-description {
+            font-size: 1.1rem;
+            color: #e1e7ff;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #b0b7ff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        /* Course Grid */
+        .courses-section {
+            margin: 60px 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #ffffff;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-card.active {
+            border-color: rgba(102, 126, 234, 0.5);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .course-card.inactive {
+            opacity: 0.6;
+            filter: grayscale(0.5);
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .course-level {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .course-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .course-description {
+            color: #b0b7ff;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .course-modules {
+            margin: 20px 0;
+        }
+
+        .modules-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .module-list {
+            list-style: none;
+        }
+
+        .module-item {
+            padding: 8px 0;
+            color: #e1e7ff;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-item::before {
+            content: '📚';
+            font-size: 0.8rem;
+        }
+
+        .course-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .course-duration {
+            font-size: 0.9rem;
+            color: #b0b7ff;
+            font-weight: 600;
+        }
+
+        .start-course-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .start-course-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .start-course-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .coming-soon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        /* Course Interface Styles */
+        .course-interface {
+            display: none;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .course-header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .course-progress {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            color: #b0b7ff;
+            font-size: 0.9rem;
+        }
+
+        /* Module Navigation */
+        .module-nav {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .modules-sidebar {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+
+        .module-nav-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .module-nav-item.active {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .module-nav-item.completed {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .module-nav-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .module-nav-title {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .module-nav-lessons {
+            font-size: 0.8rem;
+            color: #b0b7ff;
+        }
+
+        /* Content Area */
+        .content-area {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lesson-content {
+            display: none;
+        }
+
+        .lesson-content.active {
+            display: block;
+        }
+
+        .lesson-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .lesson-text {
+            color: #e1e7ff;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .lesson-image {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border-radius: 25px;
+            border: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #b0b7ff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Quiz Styles */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .quiz-options {
+            list-style: none;
+        }
+
+        .quiz-option {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .quiz-option.selected {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .quiz-option.correct {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .quiz-result {
+            text-align: center;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .quiz-result.passed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .quiz-result.failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Certificate Styles */
+        .certificate {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 50px;
+            margin: 40px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .certificate-badge {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .certificate-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s ease infinite;
+        }
+
+        .certificate-course {
+            font-size: 1.3rem;
+            color: #b0b7ff;
+            margin-bottom: 30px;
+        }
+
+        .certificate-date {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .academy-title {
+                font-size: 2.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-nav {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .modules-sidebar {
+                position: static;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .certificate {
+                padding: 30px 20px;
+            }
+
+            .certificate-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        .powered-by {
+            text-align: center;
+            margin-top: 50px;
+            color: #b0b7ff;
+            font-weight: 500;
+        }
+
+        .powered-by a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .powered-by a:hover {
+            color: #764ba2;
+            text-shadow: 0 0 15px rgba(102, 126, 234, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <a href="#" class="logo"><img style="max-height:60px;" src="https://jeetsvsdegens.com/ask-logo.png"></a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/dictionary" class="nav-link">Dictionary</a>
+                <a href="/charts" class="nav-link">Chart Analysis</a>
+                <a href="/academy" class="nav-link active">Academy</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Landing Page -->
+    <div id="landingPage" class="container">
+        <div class="academy-hero">
+            <div class="academy-title">🎓 Degen Academy</div>
+            <div class="academy-subtitle">Master the Art of Meme Coin Trading</div>
+            <div class="academy-description">
+                From complete beginner to confident degen trader. Learn everything you need to know about 
+                Solana meme coins, from setting up your first wallet to advanced trading strategies. 
+                Our step-by-step courses will guide you through the wild world of meme coin culture, 
+                narratives, and trading techniques.
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">1M+</div>
+                    <div class="stat-label">Students Trained</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Support</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="courses-section">
+            <h2 class="section-title">📚 Available Courses</h2>
+            <div class="courses-grid">
+                
+                <!-- Course 1: Getting Started -->
+                <div class="course-card active">
+                    <div class="course-level">Beginner</div>
+                    <div class="course-title">Getting Started as a Degen</div>
+                    <div class="course-description">
+                        Your complete introduction to meme coin trading. Learn to set up your wallet, 
+                        make your first trades, understand narratives, and navigate the Solana ecosystem safely.
+                    </div>
+                    <div class="course-modules">
+                        <div class="modules-title">What You'll Learn:</div>
+                        <ul class="module-list">
+                            <li class="module-item">Setting up Phantom Wallet & Funding</li>
+                            <li class="module-item">Your First SOL to Meme Coin Swap</li>
+                            <li class="module-item">Understanding Meme Coin Culture</li>
+                            <li class="module-item">Finding Alpha & Following KOLs</li>
+                            <li class="module-item">Basic Chart Reading & Risk Management</li>
+                        </ul>
+                    </div>
+                    <div class="course-footer">
+                        <div class="course-duration">⏱️ 2-3 hours</div>
+                        <button class="start-course-btn" onclick="startCourse('course1')">Start Course</button>
+                    </div>
+                </div>
+
+                <!-- Course 2: Advanced Trading -->
+                <div class="course-card inactive">
+                    <div class="coming-soon">Coming Soon</div>
+                    <div class="course-level">Intermediate</div>
+                    <div class="course-title">Advanced Trading Strategies</div>
+                    <div class="course-description">
+                        Master advanced techniques including technical analysis, on-chain metrics, 
+                        pump.fun sniping, and portfolio management for consistent profits.
+                    </div>
+                    <div class="course-modules">
+                        <div class="modules-title">What You'll Learn:</div>
+                        <ul class="module-list">
+                            <li class="module-item">Advanced Chart Patterns</li>
+                            <li class="module-item">On-Chain Analysis Tools</li>
+                            <li class="module-item">Pump.fun Sniping Techniques</li>
+                            <li class="module-item">Portfolio Diversification</li>
+                            <li class="module-item">DeFi Integration Strategies</li>
+                        </ul>
+                    </div>
+                    <div class="course-footer">
+                        <div class="course-duration">⏱️ 4-5 hours</div>
+                        <button class="start-course-btn" disabled>Coming Soon</button>
+                    </div>
+                </div>
+
+                <!-- Course 3: Psychology & Risk -->
+                <div class="course-card inactive">
+                    <div class="coming-soon">Coming Soon</div>
+                    <div class="course-level">Advanced</div>
+                    <div class="course-title">Trading Psychology & Risk Management</div>
+                    <div class="course-description">
+                        Learn to control emotions, manage risk effectively, and develop the mindset 
+                        needed for long-term success in volatile meme coin markets.
+                    </div>
+                    <div class="course-modules">
+                        <div class="modules-title">What You'll Learn:</div>
+                        <ul class="module-list">
+                            <li class="module-item">FOMO & Fear Management</li>
+                            <li class="module-item">Position Sizing Strategies</li>
+                            <li class="module-item">Diamond Hands vs Paper Hands</li>
+                            <li class="module-item">Profit Taking Techniques</li>
+                            <li class="module-item">Building Trading Discipline</li>
+                        </ul>
+                    </div>
+                    <div class="course-footer">
+                        <div class="course-duration">⏱️ 3-4 hours</div>
+                        <button class="start-course-btn" disabled>Coming Soon</button>
+                    </div>
+                </div>
+
+                <!-- Course 4: Creator Economy -->
+                <div class="course-card inactive">
+                    <div class="coming-soon">Coming Soon</div>
+                    <div class="course-level">Expert</div>
+                    <div class="course-title">Building Your Own Meme Coin</div>
+                    <div class="course-description">
+                        Learn to create, launch, and market your own meme coin project. From concept 
+                        to community building and sustainable tokenomics.
+                    </div>
+                    <div class="course-modules">
+                        <div class="modules-title">What You'll Learn:</div>
+                        <ul class="module-list">
+                            <li class="module-item">Meme Coin Ideation & Branding</li>
+                            <li class="module-item">pump.fun Launch Strategy</li>
+                            <li class="module-item">Community Building Tactics</li>
+                            <li class="module-item">Marketing & Viral Growth</li>
+                            <li class="module-item">Long-term Sustainability</li>
+                        </ul>
+                    </div>
+                    <div class="course-footer">
+                        <div class="course-duration">⏱️ 6-8 hours</div>
+                        <button class="start-course-btn" disabled>Coming Soon</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="powered-by">
+            <p>🎓 <strong>Degen Academy</strong> - Your gateway to meme coin mastery</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                Start your journey from zero to degen hero with our comprehensive courses
+            </p>
+        </div>
+    </div>
+
+    <!-- Course Interface -->
+    <div id="courseInterface" class="course-interface">
+        <div class="course-header">
+            <h1 id="courseTitle">Getting Started as a Degen</h1>
+            <div class="course-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Module 1 of 4 • 0% Complete</div>
+            </div>
+        </div>
+
+        <div class="module-nav">
+            <div class="modules-sidebar">
+                <h3>Course Modules</h3>
+                <div class="module-nav-item active" data-module="1">
+                    <div class="module-nav-title">💼 Setup & Wallet</div>
+                    <div class="module-nav-lessons">3 lessons</div>
+                </div>
+                <div class="module-nav-item" data-module="2">
+                    <div class="module-nav-title">🪙 Understanding Meme Coins</div>
+                    <div class="module-nav-lessons">3 lessons</div>
+                </div>
+                <div class="module-nav-item" data-module="3">
+                    <div class="module-nav-title">🔍 Finding Alpha</div>
+                    <div class="module-nav-lessons">3 lessons</div>
+                </div>
+                <div class="module-nav-item" data-module="4">
+                    <div class="module-nav-title">📈 Basic Trading</div>
+                    <div class="module-nav-lessons">3 lessons</div>
+                </div>
+                <div class="module-nav-item" data-module="quiz">
+                    <div class="module-nav-title">🎯 Final Quiz</div>
+                    <div class="module-nav-lessons">Certification</div>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <!-- Module 1: Setup & Wallet -->
+                <div class="lesson-content active" data-lesson="1.1">
+                    <h2 class="lesson-title">Creating Your Phantom Wallet</h2>
+                    <div class="lesson-text">
+                        <p>Welcome to your first step into the world of Solana meme coin trading! The Phantom wallet is the most popular and user-friendly wallet for the Solana ecosystem. It's your gateway to DeFi, meme coins, and all the opportunities waiting on Solana.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/667eea/ffffff?text=Phantom+Wallet+Setup" alt="Phantom Wallet Setup" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Step-by-Step Setup:</h3>
+                        <ol style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Download Phantom:</strong> Go to phantom.app and download the browser extension or mobile app</li>
+                            <li><strong>Create New Wallet:</strong> Click "Create New Wallet" and choose a strong password</li>
+                            <li><strong>Save Your Seed Phrase:</strong> Write down your 12-word recovery phrase and store it safely</li>
+                            <li><strong>Verify Setup:</strong> Confirm your seed phrase to complete the setup</li>
+                        </ol>
+                        
+                        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 20px; margin: 20px 0;">
+                            <strong style="color: #f59e0b;">🔒 Security Warning:</strong><br>
+                            Never share your seed phrase with anyone. This is your private key to all your funds. Phantom will never ask for your seed phrase.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lesson-content" data-lesson="1.2">
+                    <h2 class="lesson-title">Funding Your Wallet</h2>
+                    <div class="lesson-text">
+                        <p>Now that you have your Phantom wallet set up, it's time to add some SOL (Solana's native token). SOL is used to pay for transaction fees and serves as the base currency for trading meme coins.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/10b981/ffffff?text=Funding+Wallet" alt="Funding Your Wallet" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Funding Methods:</h3>
+                        <ol style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Buy SOL Directly:</strong> Use Phantom's built-in MoonPay integration to buy SOL with credit card</li>
+                            <li><strong>Transfer from Exchange:</strong> Buy SOL on Coinbase, Binance, or other exchanges and transfer to your wallet address</li>
+                            <li><strong>Bridge from Other Chains:</strong> Use cross-chain bridges if you have funds on Ethereum or other blockchains</li>
+                        </ol>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">How Much SOL Do You Need?</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Minimum:</strong> 0.1 SOL (~$20) for small trades and gas fees</li>
+                            <li><strong>Recommended:</strong> 1-5 SOL (~$200-1000) for active trading</li>
+                            <li><strong>Remember:</strong> Keep some SOL for transaction fees (usually 0.00025 SOL per transaction)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="lesson-content" data-lesson="1.3">
+                    <h2 class="lesson-title">Your First Swap: SOL to Meme Coin</h2>
+                    <div class="lesson-text">
+                        <p>Time for your first trade! We'll walk through swapping SOL for a meme coin using Jupiter, the best DEX aggregator on Solana. This will be your gateway to the exciting world of meme coin trading.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/9333ea/ffffff?text=Jupiter+Swap" alt="Jupiter Swap Interface" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Making Your First Swap:</h3>
+                        <ol style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Open Jupiter:</strong> Go to jup.ag or access it through Phantom's built-in swap</li>
+                            <li><strong>Connect Wallet:</strong> Click "Connect Wallet" and select Phantom</li>
+                            <li><strong>Choose Tokens:</strong> Select SOL as your input and search for a meme coin (try BONK for your first trade)</li>
+                            <li><strong>Set Amount:</strong> Start small - maybe 0.1 SOL for your first trade</li>
+                            <li><strong>Review & Swap:</strong> Check the price impact and fees, then click "Swap"</li>
+                            <li><strong>Confirm Transaction:</strong> Approve the transaction in your Phantom wallet</li>
+                        </ol>
+                        
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 20px; margin: 20px 0;">
+                            <strong style="color: #10b981;">💡 Pro Tip:</strong><br>
+                            Always start with small amounts when learning. You can practice with 0.01-0.1 SOL trades to understand the process without risking significant funds.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 2: Understanding Meme Coins -->
+                <div class="lesson-content" data-lesson="2.1">
+                    <h2 class="lesson-title">What Are Meme Coins?</h2>
+                    <div class="lesson-text">
+                        <p>Meme coins are cryptocurrencies inspired by internet memes, jokes, or cultural phenomena. Unlike traditional cryptocurrencies focused on utility, meme coins derive their value primarily from community sentiment, viral marketing, and cultural relevance.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/ef4444/ffffff?text=Meme+Coin+Culture" alt="Meme Coin Culture" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Key Characteristics:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Community-Driven:</strong> Success depends on community engagement and viral growth</li>
+                            <li><strong>High Volatility:</strong> Prices can swing 50-500% in hours based on social sentiment</li>
+                            <li><strong>Low Barriers:</strong> Easy to create and trade, making the market very accessible</li>
+                            <li><strong>Cultural Value:</strong> Often represent internet culture, trends, or shared experiences</li>
+                            <li><strong>Speculative Nature:</strong> Most have no fundamental utility beyond trading and community</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Famous Examples:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>DOGE:</strong> The original, inspired by the Shiba Inu "doge" meme</li>
+                            <li><strong>SHIB:</strong> "Dogecoin killer" that reached massive popularity</li>
+                            <li><strong>BONK:</strong> Solana's community coin that kickstarted the ecosystem</li>
+                            <li><strong>WIF (dogwifhat):</strong> Simple dog-with-hat meme that reached $4B+ market cap</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="lesson-content" data-lesson="2.2">
+                    <h2 class="lesson-title">Current Narratives & Meta</h2>
+                    <div class="lesson-text">
+                        <p>The meme coin market operates on "narratives" - overarching themes or trends that capture community attention. Understanding the current meta (what's popular right now) is crucial for identifying opportunities.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/f59e0b/ffffff?text=Market+Narratives" alt="Market Narratives" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Popular 2024-2025 Narratives:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>AI & Bots:</strong> Tokens promoted by AI agents or bot accounts</li>
+                            <li><strong>Political Memes:</strong> Election-related or political figure coins</li>
+                            <li><strong>Animal Themes:</strong> Dogs, cats, frogs, and other animal-based memes</li>
+                            <li><strong>Pop Culture:</strong> TV shows, movies, viral TikTok trends</li>
+                            <li><strong>Solana Ecosystem:</strong> Tokens that celebrate Solana culture specifically</li>
+                            <li><strong>Food & Objects:</strong> Random everyday items turned into memes</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">How Narratives Work:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Cycle Length:</strong> Most narratives last 1-4 weeks before rotating</li>
+                            <li><strong>Early Advantage:</strong> Getting into a narrative early provides the best opportunities</li>
+                            <li><strong>Multiple Tokens:</strong> Usually several tokens compete within each narrative</li>
+                            <li><strong>Community Adoption:</strong> Success depends on which token the community rallies behind</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="lesson-content" data-lesson="2.3">
+                    <h2 class="lesson-title">Community & Culture</h2>
+                    <div class="lesson-text">
+                        <p>Meme coin culture is built around shared language, memes, and community rituals. Understanding the culture is essential for recognizing strong projects and avoiding scams.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/764ba2/ffffff?text=Degen+Culture" alt="Degen Culture" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Essential Degen Vocabulary:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Diamond Hands 💎🙌:</strong> Holding through volatility without selling</li>
+                            <li><strong>Paper Hands 📄🙌:</strong> Selling quickly, often at a loss</li>
+                            <li><strong>WAGMI:</strong> "We're All Gonna Make It" - community optimism</li>
+                            <li><strong>NGMI:</strong> "Not Gonna Make It" - lack of conviction</li>
+                            <li><strong>Aping In:</strong> Buying without research, purely on hype</li>
+                            <li><strong>To the Moon 🚀:</strong> Expecting massive price increases</li>
+                            <li><strong>Rug Pull:</strong> When developers abandon the project and steal funds</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Community Indicators:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Active Telegram/Discord:</strong> Engaged communities with regular discussion</li>
+                            <li><strong>Original Memes:</strong> Community creates new content, not just reposts</li>
+                            <li><strong>Holder Count:</strong> Growing number of unique wallet addresses</li>
+                            <li><strong>Social Metrics:</strong> Twitter followers, engagement rates, viral potential</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Module 3: Finding Alpha -->
+                <div class="lesson-content" data-lesson="3.1">
+                    <h2 class="lesson-title">Where to Find New Coins</h2>
+                    <div class="lesson-text">
+                        <p>Finding meme coins early (before they pump) is the key to maximum profits. Here are the primary sources where experienced traders discover new opportunities.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/06b6d4/ffffff?text=Finding+Alpha" alt="Finding Alpha Sources" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Primary Discovery Platforms:</h3>
+                        <ol style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>pump.fun:</strong> Real-time feed of new token launches with built-in trading</li>
+                            <li><strong>DexScreener:</strong> Live charts and new pair alerts for all Solana tokens</li>
+                            <li><strong>Birdeye.so:</strong> Advanced analytics and new token discovery tools</li>
+                            <li><strong>GMGN.ai:</strong> Smart money tracking - see what successful wallets are buying</li>
+                            <li><strong>Solscan.io:</strong> Blockchain explorer for tracking on-chain activity</li>
+                        </ol>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Social Discovery:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Crypto Twitter (CT):</strong> Follow KOLs and community members for alpha calls</li>
+                            <li><strong>Telegram Groups:</strong> Join active trading groups for real-time tips</li>
+                            <li><strong>Discord Communities:</strong> Many projects start with Discord announcements</li>
+                            <li><strong>Reddit:</strong> r/SolanaMemeCoins and similar communities</li>
+                        </ul>
+                        
+                        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 20px; margin: 20px 0;">
+                            <strong style="color: #ef4444;">⚠️ Warning:</strong><br>
+                            Many "alpha groups" are scams or pump & dump schemes. Always DYOR (Do Your Own Research) and never invest more than you can afford to lose.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lesson-content" data-lesson="3.2">
+                    <h2 class="lesson-title">Who to Follow on X (Twitter)</h2>
+                    <div class="lesson-text">
+                        <p>Crypto Twitter is the heartbeat of meme coin culture. Following the right accounts can give you early access to narratives, project launches, and market sentiment shifts.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/1da1f2/ffffff?text=Crypto+Twitter+KOLs" alt="Crypto Twitter KOLs" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Types of Accounts to Follow:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>KOLs (Key Opinion Leaders):</strong> Influential traders with large followings</li>
+                            <li><strong>Alpha Callers:</strong> Accounts that share early token picks</li>
+                            <li><strong>Analysts:</strong> Provide market analysis and trend insights</li>
+                            <li><strong>Meme Creators:</strong> People who create viral content and spot trends early</li>
+                            <li><strong>Project Founders:</strong> Developers and teams behind successful projects</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Recommended Categories:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Solana Ecosystem:</strong> @solanafoundation, @solana, @anatoly_toly</li>
+                            <li><strong>Meme Coin Focus:</strong> Search for "Solana memes" or "pump.fun" in bios</li>
+                            <li><strong>Trading Education:</strong> Accounts that explain strategies and market dynamics</li>
+                            <li><strong>News Aggregators:</strong> Accounts that share breaking crypto news</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Evaluation Tips:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Track Record:</strong> Look for transparent win/loss sharing</li>
+                            <li><strong>Engagement Quality:</strong> Meaningful discussions vs just price predictions</li>
+                            <li><strong>No Financial Advice:</strong> Legitimate traders always say "NFA" (Not Financial Advice)</li>
+                            <li><strong>Avoid Paid Promotions:</strong> Be wary of obvious sponsored content</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="lesson-content" data-lesson="3.3">
+                    <h2 class="lesson-title">Research Techniques</h2>
+                    <div class="lesson-text">
+                        <p>DYOR (Do Your Own Research) is the golden rule of meme coin trading. Here's how to quickly evaluate a new token for potential and red flags.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/8b5cf6/ffffff?text=Research+Checklist" alt="Research Checklist" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Quick Research Checklist (5-10 minutes):</h3>
+                        <ol style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Contract Security:</strong> Check rugcheck.xyz for red flags</li>
+                            <li><strong>Liquidity Pool:</strong> Is there enough liquidity for your trade size?</li>
+                            <li><strong>Holder Distribution:</strong> Avoid tokens where one wallet owns 50%+</li>
+                            <li><strong>Social Presence:</strong> Active Twitter, Telegram, or Discord?</li>
+                            <li><strong>Meme Quality:</strong> Is it funny/viral? Does it have staying power?</li>
+                            <li><strong>Narrative Fit:</strong> Does it align with current market trends?</li>
+                        </ol>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Red Flags to Avoid:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Locked Liquidity:</strong> Developers can remove all liquidity</li>
+                            <li><strong>High Tax Tokens:</strong> Excessive buy/sell fees (>5%)</li>
+                            <li><strong>Copycat Projects:</strong> Direct copies of existing successful memes</li>
+                            <li><strong>Anonymous Teams:</strong> No verifiable team or social presence</li>
+                            <li><strong>Unrealistic Promises:</strong> Claims of guaranteed returns or utility</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Tools for Research:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>rugcheck.xyz:</strong> Automated security analysis</li>
+                            <li><strong>solscan.io:</strong> Detailed token and wallet information</li>
+                            <li><strong>dexscreener.com:</strong> Charts, volume, and holder data</li>
+                            <li><strong>birdeye.so:</strong> Advanced analytics and metrics</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Module 4: Basic Trading -->
+                <div class="lesson-content" data-lesson="4.1">
+                    <h2 class="lesson-title">Chart Analysis Basics</h2>
+                    <div class="lesson-text">
+                        <p>While meme coins are driven by sentiment, basic chart reading can help you time entries and exits better. Learn to read the essential patterns and indicators.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/f97316/ffffff?text=Chart+Analysis" alt="Chart Analysis Basics" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Essential Chart Elements:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Price Action:</strong> The basic movement of price over time</li>
+                            <li><strong>Volume:</strong> How much trading activity is happening</li>
+                            <li><strong>Support & Resistance:</strong> Price levels where buying/selling typically occurs</li>
+                            <li><strong>Trends:</strong> Overall direction - uptrend, downtrend, or sideways</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Basic Patterns to Recognize:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Breakouts:</strong> Price moving above resistance with high volume</li>
+                            <li><strong>Pumps:</strong> Rapid price increases, often on news or viral content</li>
+                            <li><strong>Dumps:</strong> Quick selloffs, usually after pumps</li>
+                            <li><strong>Consolidation:</strong> Sideways movement, often before big moves</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Simple Indicators:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Volume:</strong> High volume confirms price movements</li>
+                            <li><strong>Moving Averages:</strong> Shows overall trend direction</li>
+                            <li><strong>RSI:</strong> Indicates if a token is overbought (>70) or oversold (<30)</li>
+                        </ul>
+                        
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 20px; margin: 20px 0;">
+                            <strong style="color: #10b981;">💡 Remember:</strong><br>
+                            For meme coins, sentiment often trumps technical analysis. Use charts to confirm what the community sentiment is telling you.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lesson-content" data-lesson="4.2">
+                    <h2 class="lesson-title">Entry & Exit Strategies</h2>
+                    <div class="lesson-text">
+                        <p>Knowing when to buy and sell is crucial for meme coin success. Most traders lose money because they enter too late and exit too early (or too late).</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/22c55e/ffffff?text=Entry+Exit+Strategy" alt="Entry Exit Strategy" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Entry Strategies:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Early Narrative Play:</strong> Buy when you spot a new narrative forming</li>
+                            <li><strong>Breakout Entry:</strong> Buy when price breaks above resistance with volume</li>
+                            <li><strong>Dip Buying:</strong> Enter on pullbacks in strong uptrends</li>
+                            <li><strong>News-Based Entry:</strong> Buy immediately on positive catalysts</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Exit Strategies:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Profit Taking:</strong> Sell 25-50% at 2x, 3x, 5x gains</li>
+                            <li><strong>Trailing Stops:</strong> Let winners run but protect gains</li>
+                            <li><strong>Time-Based Exits:</strong> Sell after narrative peaks (usually 1-2 weeks)</li>
+                            <li><strong>Technical Exits:</strong> Sell at resistance or when momentum breaks</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">The "Rule of Thirds":</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>First 1/3:</strong> Sell to recover initial investment</li>
+                            <li><strong>Second 1/3:</strong> Sell for guaranteed profit</li>
+                            <li><strong>Final 1/3:</strong> Let it ride for maximum gains</li>
+                        </ul>
+                        
+                        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 20px; margin: 20px 0;">
+                            <strong style="color: #f59e0b;">🎯 Pro Strategy:</strong><br>
+                            Many successful meme coin traders sell 80% of their position at 3-5x gains and let 20% ride for potential 10-100x returns.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lesson-content" data-lesson="4.3">
+                    <h2 class="lesson-title">Risk Management</h2>
+                    <div class="lesson-text">
+                        <p>Risk management is what separates successful traders from those who lose everything. Meme coins are extremely risky, so proper position sizing and loss limits are essential.</p>
+                        
+                        <img src="https://via.placeholder.com/500x300/ef4444/ffffff?text=Risk+Management" alt="Risk Management" class="lesson-image">
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Position Sizing Rules:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>1-5% Rule:</strong> Never risk more than 1-5% of your portfolio on a single meme coin</li>
+                            <li><strong>Start Small:</strong> Begin with $20-100 trades while learning</li>
+                            <li><strong>Scale Up Gradually:</strong> Only increase position sizes after proven success</li>
+                            <li><strong>Diversify Bets:</strong> Spread risk across multiple tokens, not just one</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Loss Management:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Stop Losses:</strong> Set automatic sells at -20% to -50% loss</li>
+                            <li><strong>Time Limits:</strong> Exit losing positions after 1-2 weeks</li>
+                            <li><strong>Emotional Control:</strong> Don't revenge trade or double down on losses</li>
+                            <li><strong>Portfolio Limits:</strong> Never risk more than 10-20% total portfolio on meme coins</li>
+                        </ul>
+                        
+                        <h3 style="color: #667eea; margin: 20px 0 10px 0;">Psychological Guidelines:</h3>
+                        <ul style="color: #e1e7ff; line-height: 1.8; padding-left: 20px;">
+                            <li><strong>Only Risk What You Can Lose:</strong> Treat meme coin money as entertainment budget</li>
+                            <li><strong>Avoid FOMO:</strong> Missing one pump doesn't matter if you catch the next</li>
+                            <li><strong>Take Profits:</strong> Nobody went broke taking profits</li>
+                            <li><strong>Stay Humble:</strong> Meme coin success is part skill, part luck</li>
+                        </ul>
+                        
+                        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 20px; margin: 20px 0;">
+                            <strong style="color: #ef4444;">🚨 Critical Warning:</strong><br>
+                            97% of meme coins go to zero. Only trade with money you can afford to lose completely. Set strict limits and stick to them.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Quiz -->
+                <div class="lesson-content" data-lesson="quiz">
+                    <h2 class="lesson-title">🎯 Final Certification Quiz</h2>
+                    <div class="lesson-text">
+                        <p>Test your knowledge from all four modules. You need to score 80% or higher to earn your "Degen Academy Beginner" certificate.</p>
+                        
+                        <div id="quizContainer">
+                            <!-- Quiz questions will be generated here -->
+                        </div>
+                        
+                        <div id="quizResults" style="display: none;">
+                            <!-- Quiz results will appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate -->
+                <div class="lesson-content" data-lesson="certificate">
+                    <div class="certificate">
+                        <div class="certificate-badge">🎓</div>
+                        <div class="certificate-title">Congratulations!</div>
+                        <div class="certificate-course">Getting Started as a Degen - Beginner Certificate</div>
+                        <div class="certificate-date" id="certificateDate"></div>
+                        <p style="color: #e1e7ff; line-height: 1.8; margin: 20px 0;">
+                            You have successfully completed the introduction to meme coin trading. You now understand 
+                            wallet setup, basic trading, risk management, and how to navigate the Solana meme coin ecosystem.
+                        </p>
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 20px; margin: 20px 0;">
+                            <strong style="color: #10b981;">🚀 Next Steps:</strong><br>
+                            Continue practicing with small trades, join meme coin communities, and stay updated on narratives. 
+                            Advanced courses coming soon!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousLesson()">← Previous</button>
+                    <button class="btn btn-secondary" onclick="exitCourse()">Exit Course</button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextLesson()">Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Course data structure
+        const courseData = {
+            modules: [
+                {
+                    title: "💼 Setup & Wallet",
+                    lessons: ["1.1", "1.2", "1.3"]
+                },
+                {
+                    title: "🪙 Understanding Meme Coins", 
+                    lessons: ["2.1", "2.2", "2.3"]
+                },
+                {
+                    title: "🔍 Finding Alpha",
+                    lessons: ["3.1", "3.2", "3.3"]
+                },
+                {
+                    title: "📈 Basic Trading",
+                    lessons: ["4.1", "4.2", "4.3"]
+                },
+                {
+                    title: "🎯 Final Quiz",
+                    lessons: ["quiz"]
+                }
+            ]
+        };
+
+        // Quiz questions
+        const quizQuestions = [
+            {
+                question: "What is the recommended amount of SOL for a beginner trader?",
+                options: [
+                    "0.01 SOL (~$2)",
+                    "1-5 SOL (~$200-1000)", 
+                    "10+ SOL (~$2000+)",
+                    "100+ SOL (~$20,000+)"
+                ],
+                correct: 1
+            },
+            {
+                question: "What does 'Diamond Hands' mean in meme coin culture?",
+                options: [
+                    "Selling quickly for profit",
+                    "Holding through volatility without selling",
+                    "Only buying expensive tokens",
+                    "Using limit orders"
+                ],
+                correct: 1
+            },
+            {
+                question: "What percentage of your portfolio should you risk on meme coins?",
+                options: [
+                    "50-70% for maximum gains",
+                    "30-40% for balanced risk",
+                    "10-20% maximum",
+                    "1-5% per individual trade"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which platform is best for discovering new Solana meme coins?",
+                options: [
+                    "CoinMarketCap",
+                    "pump.fun",
+                    "Uniswap",
+                    "Binance"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is a major red flag when researching a new meme coin?",
+                options: [
+                    "Active community discussion",
+                    "Recent token creation",
+                    "One wallet owning 50%+ of supply",
+                    "Listed on DexScreener"
+                ],
+                correct: 2
+            }
+        ];
+
+        // State management
+        let currentLesson = "1.1";
+        let completedLessons = JSON.parse(localStorage.getItem('degenAcademy_completed') || '[]');
+        let quizScore = 0;
+        let currentQuizQuestion = 0;
+        let selectedAnswers = [];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            updateNavigation();
+        });
+
+        // Course navigation functions
+        function startCourse(courseId) {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('courseInterface').style.display = 'block';
+            showLesson("1.1");
+        }
+
+        function exitCourse() {
+            document.getElementById('courseInterface').style.display = 'none';
+            document.getElementById('landingPage').style.display = 'block';
+        }
+
+        function showLesson(lessonId) {
+            currentLesson = lessonId;
+            
+            // Hide all lessons
+            document.querySelectorAll('.lesson-content').forEach(lesson => {
+                lesson.classList.remove('active');
+            });
+            
+            // Show current lesson
+            const currentLessonEl = document.querySelector(`[data-lesson="${lessonId}"]`);
+            if (currentLessonEl) {
+                currentLessonEl.classList.add('active');
+            }
+            
+            // Update navigation
+            updateNavigation();
+            updateProgress();
+            updateActionButtons();
+
+            // Initialize quiz if needed
+            if (lessonId === 'quiz') {
+                initializeQuiz();
+            }
+        }
+
+        function nextLesson() {
+            // Mark current lesson as completed
+            if (!completedLessons.includes(currentLesson)) {
+                completedLessons.push(currentLesson);
+                localStorage.setItem('degenAcademy_completed', JSON.stringify(completedLessons));
+            }
+
+            // Determine next lesson
+            const allLessons = ["1.1", "1.2", "1.3", "2.1", "2.2", "2.3", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3", "quiz"];
+            const currentIndex = allLessons.indexOf(currentLesson);
+            
+            if (currentLesson === "quiz") {
+                // Handle quiz completion
+                if (quizScore >= 80) {
+                    showLesson("certificate");
+                    document.getElementById('certificateDate').textContent = new Date().toLocaleDateString();
+                } else {
+                    // Restart quiz or course
+                    alert("You need 80% or higher to pass. Please retake the quiz or review the course material.");
+                    currentQuizQuestion = 0;
+                    selectedAnswers = [];
+                    initializeQuiz();
+                }
+            } else if (currentIndex < allLessons.length - 1) {
+                showLesson(allLessons[currentIndex + 1]);
+            }
+        }
+
+        function previousLesson() {
+            const allLessons = ["1.1", "1.2", "1.3", "2.1", "2.2", "2.3", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3", "quiz"];
+            const currentIndex = allLessons.indexOf(currentLesson);
+            
+            if (currentIndex > 0) {
+                showLesson(allLessons[currentIndex - 1]);
+            }
+        }
+
+        function updateProgress() {
+            const totalLessons = 13; // 12 lessons + quiz
+            const completed = completedLessons.length;
+            const percentage = Math.round((completed / totalLessons) * 100);
+            
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = `${completed} of ${totalLessons} lessons complete • ${percentage}% Complete`;
+        }
+
+        function updateNavigation() {
+            // Update module navigation
+            document.querySelectorAll('.module-nav-item').forEach(item => {
+                item.classList.remove('active');
+                
+                const moduleNum = item.getAttribute('data-module');
+                if (currentLesson.startsWith(moduleNum) || (moduleNum === 'quiz' && currentLesson === 'quiz')) {
+                    item.classList.add('active');
+                }
+
+                // Mark as completed if all lessons in module are done
+                if (moduleNum !== 'quiz') {
+                    const moduleLessons = [`${moduleNum}.1`, `${moduleNum}.2`, `${moduleNum}.3`];
+                    const allCompleted = moduleLessons.every(lesson => completedLessons.includes(lesson));
+                    if (allCompleted) {
+                        item.classList.add('completed');
+                    }
+                }
+            });
+        }
+
+        function updateActionButtons() {
+            const allLessons = ["1.1", "1.2", "1.3", "2.1", "2.2", "2.3", "3.1", "3.2", "3.3", "4.1", "4.2", "4.3", "quiz"];
+            const currentIndex = allLessons.indexOf(currentLesson);
+            
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            
+            if (currentLesson === "certificate") {
+                document.getElementById('nextBtn').style.display = 'none';
+            } else {
+                document.getElementById('nextBtn').style.display = 'block';
+                document.getElementById('nextBtn').textContent = 
+                    currentLesson === "quiz" ? "Get Certificate" : "Next →";
+            }
+        }
+
+        // Quiz functions
+        function initializeQuiz() {
+            currentQuizQuestion = 0;
+            selectedAnswers = [];
+            quizScore = 0;
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const container = document.getElementById('quizContainer');
+            const resultsDiv = document.getElementById('quizResults');
+            
+            if (currentQuizQuestion >= quizQuestions.length) {
+                // Show results
+                calculateQuizScore();
+                showQuizResults();
+                return;
+            }
+
+            const question = quizQuestions[currentQuizQuestion];
+            
+            container.innerHTML = `
+                <div class="quiz-container">
+                    <h3>Question ${currentQuizQuestion + 1} of ${quizQuestions.length}</h3>
+                    <div class="quiz-question">${question.question}</div>
+                    <ul class="quiz-options">
+                        ${question.options.map((option, index) => `
+                            <li class="quiz-option" onclick="selectAnswer(${index})">${option}</li>
+                        `).join('')}
+                    </ul>
+                    <button class="btn btn-primary" onclick="nextQuizQuestion()" disabled id="quizNextBtn">Next Question</button>
+                </div>
+            `;
+            
+            resultsDiv.style.display = 'none';
+        }
+
+        function selectAnswer(answerIndex) {
+            // Clear previous selections
+            document.querySelectorAll('.quiz-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Mark selected answer
+            document.querySelectorAll('.quiz-option')[answerIndex].classList.add('selected');
+            selectedAnswers[currentQuizQuestion] = answerIndex;
+            
+            // Enable next button
+            document.getElementById('quizNextBtn').disabled = false;
+        }
+
+        function nextQuizQuestion() {
+            currentQuizQuestion++;
+            renderQuizQuestion();
+        }
+
+        function calculateQuizScore() {
+            let correct = 0;
+            for (let i = 0; i < quizQuestions.length; i++) {
+                if (selectedAnswers[i] === quizQuestions[i].correct) {
+                    correct++;
+                }
+            }
+            quizScore = Math.round((correct / quizQuestions.length) * 100);
+        }
+
+        function showQuizResults() {
+            const container = document.getElementById('quizContainer');
+            const resultsDiv = document.getElementById('quizResults');
+            
+            const passed = quizScore >= 80;
+            
+            container.innerHTML = `
+                <div class="quiz-result ${passed ? 'passed' : 'failed'}">
+                    <h3>${passed ? '🎉 Congratulations!' : '📚 Keep Learning'}</h3>
+                    <p>Your Score: ${quizScore}%</p>
+                    <p>${passed ? 
+                        'You passed! Click "Get Certificate" to receive your completion certificate.' : 
+                        'You need 80% or higher to pass. Review the course material and try again.'
+                    }</p>
+                    ${!passed ? '<button class="btn btn-primary" onclick="initializeQuiz()">Retake Quiz</button>' : ''}
+                </div>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+
+        // Module navigation clicks
+        document.querySelectorAll('.module-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const moduleNum = this.getAttribute('data-module');
+                if (moduleNum === 'quiz') {
+                    showLesson('quiz');
+                } else {
+                    showLesson(`${moduleNum}.1`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

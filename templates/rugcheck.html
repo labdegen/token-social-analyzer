@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASK DEGEN - Ultimate Rug Check</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            padding-top: 80px;
+        }
+
+        /* Animated background elements */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(2deg); }
+            66% { transform: translateY(-10px) rotate(-1deg); }
+        }
+
+        /* Header */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 15px 0;
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: "Lacquer", system-ui;
+            font-size: 2rem;
+            font-weight: 400;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 3s ease infinite;
+            text-decoration: none;
+        }
+
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #b0b7ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        /* Main Container */
+        .rug-check-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Rug Check Input */
+        .rug-check-input {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rug-check-input::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: all 0.8s;
+        }
+
+        .rug-check-input:hover::before {
+            left: 100%;
+        }
+
+        .input-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-title {
+            font-family: "Titillium Web", sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: #ffffff;
+        }
+
+        .version-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+        }
+
+        .input-form {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: end;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #e1e7ff;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-family: monospace;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #10b981;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "Titillium Web", sans-serif;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .check-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.6);
+        }
+
+        .check-btn:hover::before {
+            left: 100%;
+        }
+
+        .check-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Enhanced Loading Animation */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 16px;
+            margin: 20px 0;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading-spinner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Enhanced Risk Score Display */
+        .risk-score-display {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .risk-header {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .token-info h2 {
+            font-family: "Titillium Web", sans-serif;
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .token-address {
+            font-family: monospace;
+            color: #b0b7ff;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+
+        .risk-gauge {
+            text-align: center;
+            position: relative;
+        }
+
+        .risk-score {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px currentColor;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px currentColor; }
+            to { text-shadow: 0 0 30px currentColor, 0 0 40px currentColor; }
+        }
+
+        .risk-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .confidence-indicator {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .confidence-excellent { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .confidence-good { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .confidence-fair { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .confidence-limited { background: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+
+        .risk-very-low { color: #10b981; }
+        .risk-low { color: #84cc16; }
+        .risk-medium { color: #f59e0b; }
+        .risk-high { color: #ef4444; }
+        .risk-very-high { color: #dc2626; }
+
+        /* Enhanced Analysis Grid */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .analysis-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            animation: fadeInScale 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .analysis-card:nth-child(1) { animation-delay: 0.1s; }
+        .analysis-card:nth-child(2) { animation-delay: 0.2s; }
+        .analysis-card:nth-child(3) { animation-delay: 0.3s; }
+        .analysis-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-family: "Titillium Web", sans-serif;
+            font-size: 1.3rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .risk-indicator {
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+
+        .chart-container {
+            height: 250px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .bubble-chart-container {
+            height: 300px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        /* Bundle Risk Summary */
+        .bundle-summary {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .bundle-metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .bundle-risk-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Enhanced Data Sections */
+        .data-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .data-section:nth-child(6) { animation-delay: 0.5s; }
+        .data-section:nth-child(7) { animation-delay: 0.6s; }
+        .data-section:nth-child(8) { animation-delay: 0.7s; }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .data-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .data-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .data-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .data-label {
+            font-size: 0.8rem;
+            color: #b0b7ff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Risk Factors */
+        .risk-factors {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .factors-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .factors-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .factors-list li:hover {
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 15px;
+            border-radius: 8px;
+        }
+
+        .factors-list li:last-child {
+            border-bottom: none;
+        }
+
+        .factor-text {
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        /* Analysis Metadata */
+        .analysis-metadata {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .metadata-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .metadata-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Error Message */
+        .error-message {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
+            color: #ef4444;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            font-weight: 600;
+            display: none;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* AI Analysis Display */
+        .ai-analysis {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .ai-analysis h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .ai-analysis p {
+            line-height: 1.6;
+            color: #e1e7ff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .input-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .risk-header {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .data-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.7);
+        }
+
+        /* Success notification */
+        .success-notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            transform: translateX(400px);
+            transition: all 0.5s ease;
+            z-index: 1001;
+        }
+
+        .success-notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <a href="/" class="logo">ASK DEGEN</a>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/rugcheck" class="nav-link active">Rug Check</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/dictionary" class="nav-link">Degen Academy</a>
+                <a href="/charts" class="nav-link">Chart Analysis</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="rug-check-container">
+        <!-- Rug Check Input -->
+        <div class="rug-check-input">
+            <div class="input-header">
+                <div style="font-size: 2.5rem;">🛡️</div>
+                <div>
+                    <div class="input-title">Ultimate Solana Rug Check</div>
+                    <div style="color: #b0b7ff; margin-top: 5px;">Comprehensive holder analysis with bundle detection</div>
+                </div>
+                <div class="version-badge">V2.0 ENHANCED</div>
+            </div>
+            
+            <div class="input-form">
+                <div class="input-group">
+                    <label for="tokenAddress">Solana Token Contract Address:</label>
+                    <input 
+                        type="text" 
+                        id="tokenAddress" 
+                        placeholder="e.g. So11111111111111111111111111111111111111112"
+                        value=""
+                    >
+                </div>
+                <button class="check-btn" onclick="checkToken()">
+                    🔍 Analyze
+                </button>
+            </div>
+
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <div class="loading-text" id="loadingText">🛡️ Running comprehensive analysis...</div>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <!-- Risk Score Display -->
+        <div class="risk-score-display" id="riskScoreDisplay">
+            <div class="risk-header">
+                <div class="token-info">
+                    <h2 id="tokenName">Token Name</h2>
+                    <div class="token-address" id="tokenAddressDisplay">Contract Address</div>
+                </div>
+                <div class="risk-gauge">
+                    <div class="risk-score" id="riskScore">0</div>
+                    <div class="risk-label" id="riskLabel">ANALYZING</div>
+                </div>
+                <div class="confidence-indicator" id="confidenceIndicator">
+                    <div style="font-size: 0.9rem; font-weight: 600;">Confidence Level</div>
+                    <div style="font-size: 1.5rem; font-weight: 700;" id="confidenceLevel">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Grid -->
+        <div class="analysis-grid" id="analysisGrid" style="display: none;">
+            <!-- Holder Bubble Map -->
+            <div class="analysis-card">
+                <div class="card-header">
+                    <div>
+                        <span style="font-size: 1.5rem;">🫧</span>
+                        <span class="card-title">Top Holders Bubble Map</span>
+                    </div>
+                    <div class="risk-indicator" id="holderBubbleIndicator">ANALYZING</div>
+                </div>
+                <div class="bubble-chart-container">
+                    <canvas id="holderBubbleChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Bundle Risk Analysis -->
+            <div class="analysis-card">
+                <div class="card-header">
+                    <div>
+                        <span style="font-size: 1.5rem;">🔗</span>
+                        <span class="card-title">Bundle Risk Analysis</span>
+                    </div>
+                    <div class="risk-indicator" id="bundleRiskIndicator">ANALYZING</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="bundleRiskChart"></canvas>
+                </div>
+                <div class="bundle-summary" id="bundleSummary">
+                    <!-- Bundle metrics will be populated here -->
+                </div>
+            </div>
+
+            <!-- Concentration Analysis -->
+            <div class="analysis-card">
+                <div class="card-header">
+                    <div>
+                        <span style="font-size: 1.5rem;">📊</span>
+                        <span class="card-title">Concentration Analysis</span>
+                    </div>
+                    <div class="risk-indicator" id="concentrationIndicator">ANALYZING</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="concentrationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Authority Status -->
+            <div class="analysis-card">
+                <div class="card-header">
+                    <div>
+                        <span style="font-size: 1.5rem;">🔐</span>
+                        <span class="card-title">Authority Status</span>
+                    </div>
+                    <div class="risk-indicator" id="authorityIndicator">ANALYZING</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="authorityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Token Metrics -->
+        <div class="data-section" id="tokenMetricsSection" style="display: none;">
+            <div class="card-header">
+                <span style="font-size: 1.5rem;">📈</span>
+                <div class="card-title">Token Metrics</div>
+            </div>
+            <div class="data-grid" id="tokenMetrics">
+                <!-- Data items will be populated here -->
+            </div>
+        </div>
+
+        <!-- Risk Factors -->
+        <div class="risk-factors" id="riskFactors" style="display: none;">
+            <div class="card-header">
+                <span style="font-size: 1.5rem;">⚠️</span>
+                <div class="card-title">Risk Factors & Warnings</div>
+            </div>
+            <ul class="factors-list" id="factorsList">
+                <!-- Risk factors will be populated here -->
+            </ul>
+        </div>
+
+        <!-- AI Analysis -->
+        <div class="data-section" id="aiAnalysisSection" style="display: none;">
+            <div class="card-header">
+                <span style="font-size: 1.5rem;">🤖</span>
+                <div class="card-title">AI Analysis</div>
+            </div>
+            <div class="ai-analysis" id="aiAnalysisContent">
+                <!-- AI analysis will be populated here -->
+            </div>
+        </div>
+
+        <!-- Analysis Metadata -->
+        <div class="analysis-metadata" id="analysisMetadata" style="display: none;">
+            <div class="card-header">
+                <span style="font-size: 1.5rem;">🔍</span>
+                <div class="card-title">Analysis Details</div>
+            </div>
+            <div class="metadata-grid" id="metadataGrid">
+                <!-- Metadata will be populated here -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 40px; color: #b0b7ff; padding: 20px;">
+            <p>🛡️ Ultimate Rug Check v2.0 - Enhanced multi-source analysis</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                ⚠️ This tool provides advanced risk analysis but is not financial advice. Always DYOR!
+            </p>
+            <p style="margin-top: 5px; font-size: 0.8rem;">
+                🔍 Powered by: Helius RPC • Advanced Bundle Detection • AI Analysis
+            </p>
+        </div>
+    </div>
+
+    <!-- Success Notification -->
+    <div class="success-notification" id="successNotification">
+        ✅ Analysis Complete!
+    </div>
+
+    <script>
+        let currentAnalysis = null;
+        let charts = {};
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') checkToken();
+            });
+
+            // Add sample addresses for testing
+            const samples = [
+                'So11111111111111111111111111111111111111112', // WSOL
+                'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+            ];
+            
+            console.log('🚀 Ultimate Rug Checker loaded!');
+            console.log('💡 Try these sample addresses:', samples);
+        });
+
+        async function checkToken() {
+            const tokenAddress = document.getElementById('tokenAddress').value.trim();
+            
+            if (!tokenAddress) {
+                showError('Please enter a token address');
+                return;
+            }
+
+            if (tokenAddress.length < 32 || tokenAddress.length > 44) {
+                showError('Invalid Solana token address format');
+                return;
+            }
+
+            showLoading();
+            hideError();
+            hideResults();
+
+            try {
+                const response = await fetch('/rugcheck', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        token_address: tokenAddress
+                    })
+                });
+
+                const data = await response.json();
+                console.log('Analysis response:', data);
+                
+                if (response.ok && data.success) {
+                    currentAnalysis = data;
+                    hideLoading();
+                    displayResults(data);
+                    showSuccessNotification();
+                } else {
+                    throw new Error(data.error || `HTTP ${response.status}: Analysis failed`);
+                }
+                
+            } catch (error) {
+                console.error('Rug check error:', error);
+                hideLoading();
+                showError(`Analysis failed: ${error.message}`);
+            }
+        }
+
+        function displayResults(data) {
+            console.log('Displaying results:', data);
+            
+            const tokenInfo = data.token_info || {};
+            const holderAnalysis = data.holder_analysis || {};
+            const visualization = data.visualization || {};
+            const riskScore = data.risk_score || 0;
+            
+            // Update token info
+            document.getElementById('tokenName').textContent = `${tokenInfo.symbol || 'UNK'} - ${tokenInfo.name || 'Unknown'}`;
+            document.getElementById('tokenAddressDisplay').textContent = tokenInfo.address || 'Unknown';
+            
+            // Update risk score with animation
+            animateRiskScore(riskScore);
+            updateRiskLabel(riskScore);
+            updateConfidenceIndicator(data.confidence_level || 50);
+            
+            // Display sections
+            displayTokenMetrics(tokenInfo, holderAnalysis);
+            displayRiskFactors(data.riskFactors || []);
+            displayAIAnalysis(data.ai_analysis);
+            displayAnalysisMetadata(data);
+            
+            // Initialize charts
+            initializeCharts(data);
+            
+            // Show results with staggered animation
+            showResultsAnimated();
+        }
+
+        function showResultsAnimated() {
+            const elements = [
+                'riskScoreDisplay',
+                'analysisGrid', 
+                'tokenMetricsSection',
+                'riskFactors',
+                'aiAnalysisSection',
+                'analysisMetadata'
+            ];
+
+            elements.forEach((id, index) => {
+                setTimeout(() => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.style.display = id === 'analysisGrid' ? 'grid' : 'block';
+                    }
+                }, index * 150);
+            });
+
+            // Scroll to results
+            setTimeout(() => {
+                document.getElementById('riskScoreDisplay').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 800);
+        }
+
+        function displayTokenMetrics(tokenInfo, holderAnalysis) {
+            const container = document.getElementById('tokenMetrics');
+            
+            const metricsData = [
+                { label: 'Symbol', value: tokenInfo.symbol || 'UNK' },
+                { label: 'Total Supply', value: Number(tokenInfo.supply || 0).toLocaleString() },
+                { label: 'Decimals', value: tokenInfo.decimals || 9 },
+                { label: 'Age (Days)', value: tokenInfo.age_days || 0 },
+                { label: 'Total Holders', value: holderAnalysis.total_holders || 0 },
+                { label: 'Unique Holders', value: holderAnalysis.unique_holders || 0 },
+                { label: 'Top 5 Concentration', value: `${(holderAnalysis.top_5_concentration || 0).toFixed(1)}%` },
+                { label: 'Bundle Clusters', value: (holderAnalysis.bundle_clusters || []).length },
+                { label: 'Mint Authority', value: tokenInfo.mint_authority ? 'Active ⚠️' : 'Revoked ✅' },
+                { label: 'Freeze Authority', value: tokenInfo.freeze_authority ? 'Active ⚠️' : 'Revoked ✅' }
+            ];
+            
+            container.innerHTML = metricsData.map(item => `
+                <div class="data-item">
+                    <div class="data-value">${item.value}</div>
+                    <div class="data-label">${item.label}</div>
+                </div>
+            `).join('');
+        }
+
+        function displayRiskFactors(riskFactors) {
+            const factorsList = document.getElementById('factorsList');
+            
+            factorsList.innerHTML = '';
+            if (riskFactors && riskFactors.length > 0) {
+                riskFactors.forEach(factor => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div style="color: #ef4444; font-size: 1.2rem;">⚠️</div>
+                        <div class="factor-text">${factor}</div>
+                    `;
+                    factorsList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div style="color: #10b981; font-size: 1.2rem;">✅</div>
+                    <div class="factor-text">No major risk factors detected</div>
+                `;
+                factorsList.appendChild(li);
+            }
+            
+            document.getElementById('riskFactors').style.display = 'block';
+        }
+
+        function displayAIAnalysis(aiAnalysis) {
+            const container = document.getElementById('aiAnalysisContent');
+            
+            if (aiAnalysis && aiAnalysis.trim()) {
+                // Format the AI analysis with better styling
+                const formattedAnalysis = aiAnalysis
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/•/g, '•')
+                    .replace(/\n/g, '<br>');
+                
+                container.innerHTML = `<p>${formattedAnalysis}</p>`;
+            } else {
+                container.innerHTML = `<p>🤖 AI analysis completed. Risk assessment based on technical indicators and holder patterns.</p>`;
+            }
+        }
+
+        function displayAnalysisMetadata(data) {
+            const container = document.getElementById('metadataGrid');
+            
+            const metadata = [
+                { label: 'Analysis Version', value: '2.0 Enhanced' },
+                { label: 'Confidence Level', value: `${Math.round(data.confidence_level || 50)}%` },
+                { label: 'Data Sources', value: 'Helius RPC + Bundle Detection' },
+                { label: 'Timestamp', value: new Date(data.analysis_timestamp || Date.now()).toLocaleString() }
+            ];
+            
+            container.innerHTML = metadata.map(item => `
+                <div class="metadata-item">
+                    <span>${item.label}</span>
+                    <strong>${item.value}</strong>
+                </div>
+            `).join('');
+        }
+
+        function initializeCharts(data) {
+            // Destroy existing charts
+            Object.values(charts).forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            charts = {};
+            
+            const visualization = data.visualization || {};
+            const holderAnalysis = data.holder_analysis || {};
+            const tokenInfo = data.token_info || {};
+            
+            // Initialize charts with error handling
+            try {
+                charts.holderBubble = initHolderBubbleChart(visualization.holder_bubbles || []);
+                charts.bundleRisk = initBundleRiskChart(visualization.bundle_summary || {});
+                charts.concentration = initConcentrationChart(visualization.concentration_chart || {});
+                charts.authority = initAuthorityChart(tokenInfo);
+                
+                // Update bundle summary
+                updateBundleSummary(visualization.bundle_summary || {});
+                
+                // Update risk indicators
+                updateRiskIndicators(data);
+            } catch (error) {
+                console.error('Chart initialization error:', error);
+            }
+        }
+
+        function initHolderBubbleChart(holderBubbles) {
+            const ctx = document.getElementById('holderBubbleChart').getContext('2d');
+            
+            if (!holderBubbles || holderBubbles.length === 0) {
+                return new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'No holder data available',
+                            data: [],
+                            backgroundColor: 'rgba(156, 163, 175, 0.5)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: 'No holder data available',
+                                color: '#b0b7ff'
+                            }
+                        },
+                        scales: {
+                            x: { display: false },
+                            y: { display: false }
+                        }
+                    }
+                });
+            }
+            
+            const bubbleData = holderBubbles.map((holder, index) => ({
+                x: index + 1,
+                y: holder.percentage || 0,
+                r: Math.max(8, Math.min(40, (holder.percentage || 0) * 2)),
+            }));
+
+            const colors = holderBubbles.map(holder => {
+                if (holder.isBundled) return 'rgba(239, 68, 68, 0.8)';
+                if (holder.risk === 'high') return 'rgba(245, 158, 11, 0.8)';
+                return 'rgba(16, 185, 129, 0.8)';
+            });
+            
+            return new Chart(ctx, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Token Holders',
+                        data: bubbleData,
+                        backgroundColor: colors,
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const holder = holderBubbles[context.dataIndex];
+                                    return [
+                                        `Rank: ${holder.rank}`,
+                                        `Address: ${holder.address}`,
+                                        `Holdings: ${holder.percentage}%`,
+                                        `Type: ${holder.type}`,
+                                        `Risk: ${holder.risk}`,
+                                        holder.isBundled ? 'Part of bundle' : 'Individual wallet'
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Holder Rank', color: '#b0b7ff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#b0b7ff' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Percentage of Supply', color: '#b0b7ff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { 
+                                color: '#b0b7ff',
+                                callback: function(value) { return value + '%'; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initBundleRiskChart(bundleSummary) {
+            const ctx = document.getElementById('bundleRiskChart').getContext('2d');
+            
+            const totalBundles = bundleSummary.total_bundles || 0;
+            const highRiskBundles = bundleSummary.high_risk_bundles || 0;
+            const lowRiskBundles = totalBundles - highRiskBundles;
+            
+            const data = totalBundles === 0 ? [1] : [highRiskBundles, lowRiskBundles];
+            const labels = totalBundles === 0 ? ['No Bundles Detected'] : ['High Risk Bundles', 'Low Risk Bundles'];
+            const colors = totalBundles === 0 ? ['rgba(16, 185, 129, 0.8)'] : ['rgba(239, 68, 68, 0.8)', 'rgba(245, 158, 11, 0.8)'];
+            
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: totalBundles === 0 ? ['#10b981'] : ['#ef4444', '#f59e0b'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#b0b7ff', font: { size: 12 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initConcentrationChart(concentrationData) {
+            const ctx = document.getElementById('concentrationChart').getContext('2d');
+            
+            const data = {
+                top1: concentrationData.top1 || 0,
+                top5: concentrationData.top5 || 0,
+                top10: concentrationData.top10 || 0,
+                others: concentrationData.others || 100
+            };
+            
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Top 1 Holder', 'Top 2-5 Holders', 'Top 6-10 Holders', 'Others'],
+                    datasets: [{
+                        data: [
+                            data.top1,
+                            Math.max(0, data.top5 - data.top1),
+                            Math.max(0, data.top10 - data.top5),
+                            Math.max(0, data.others)
+                        ],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(16, 185, 129, 0.8)'
+                        ],
+                        borderColor: ['#ef4444', '#f59e0b', '#667eea', '#10b981'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#b0b7ff', font: { size: 11 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.parsed}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initAuthorityChart(tokenInfo) {
+            const ctx = document.getElementById('authorityChart').getContext('2d');
+            
+            const mintRevoked = !tokenInfo.mint_authority;
+            const freezeRevoked = !tokenInfo.freeze_authority;
+            
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mint Authority', 'Freeze Authority'],
+                    datasets: [{
+                        label: 'Authority Status',
+                        data: [mintRevoked ? 100 : 0, freezeRevoked ? 100 : 0],
+                        backgroundColor: [
+                            mintRevoked ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)',
+                            freezeRevoked ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)'
+                        ],
+                        borderColor: [
+                            mintRevoked ? '#10b981' : '#ef4444',
+                            freezeRevoked ? '#10b981' : '#ef4444'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const authority = context.label;
+                                    const status = context.parsed.y === 100 ? 'Revoked ✅' : 'Active ⚠️';
+                                    return `${authority}: ${status}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { 
+                                color: '#b0b7ff',
+                                callback: function(value) { 
+                                    return value === 100 ? 'Revoked ✅' : value === 0 ? 'Active ⚠️' : '';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#b0b7ff' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateBundleSummary(bundleSummary) {
+            const container = document.getElementById('bundleSummary');
+            
+            const metrics = [
+                { label: 'Total Bundles', value: bundleSummary.total_bundles || 0 },
+                { label: 'High Risk Bundles', value: bundleSummary.high_risk_bundles || 0 },
+                { label: 'Bundled Supply', value: `${(bundleSummary.bundled_supply_percentage || 0).toFixed(1)}%` },
+                { label: 'Largest Bundle', value: `${bundleSummary.largest_bundle_size || 0} wallets` }
+            ];
+            
+            const bundleRiskScore = bundleSummary.bundle_concentration_score || 0;
+            
+            container.innerHTML = `
+                ${metrics.map(metric => `
+                    <div class="bundle-metric">
+                        <span>${metric.label}:</span>
+                        <strong>${metric.value}</strong>
+                    </div>
+                `).join('')}
+                <div class="bundle-risk-score" style="color: ${bundleRiskScore > 70 ? '#ef4444' : bundleRiskScore > 40 ? '#f59e0b' : '#10b981'}">
+                    Bundle Risk Score: ${bundleRiskScore}/100
+                </div>
+            `;
+        }
+
+        function updateRiskIndicators(data) {
+            const riskScore = data.risk_score || 0;
+            const bundleScore = (data.visualization?.bundle_summary?.bundle_concentration_score || 0);
+            const concentrationScore = Math.min((data.holder_analysis?.top_5_concentration || 0), 100);
+            const authorityScore = (data.token_info?.mint_authority || data.token_info?.freeze_authority) ? 70 : 10;
+            
+            const indicators = {
+                'holderBubbleIndicator': concentrationScore,
+                'bundleRiskIndicator': bundleScore,
+                'concentrationIndicator': concentrationScore,
+                'authorityIndicator': authorityScore
+            };
+            
+            Object.entries(indicators).forEach(([id, risk]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    let status, className;
+                    if (risk <= 30) {
+                        status = 'LOW';
+                        className = 'risk-indicator risk-very-low';
+                    } else if (risk <= 60) {
+                        status = 'MEDIUM';
+                        className = 'risk-indicator risk-medium';
+                    } else {
+                        status = 'HIGH';
+                        className = 'risk-indicator risk-high';
+                    }
+                    element.textContent = status;
+                    element.className = className;
+                }
+            });
+        }
+
+        function animateRiskScore(targetScore) {
+            const scoreEl = document.getElementById('riskScore');
+            let currentScore = 0;
+            const increment = targetScore / 60;
+            
+            const counter = setInterval(() => {
+                currentScore += increment;
+                if (currentScore >= targetScore) {
+                    currentScore = targetScore;
+                    clearInterval(counter);
+                }
+                scoreEl.textContent = Math.round(currentScore);
+            }, 25);
+        }
+
+        function updateRiskLabel(score) {
+            const labelEl = document.getElementById('riskLabel');
+            
+            if (score <= 20) {
+                labelEl.textContent = 'VERY LOW RISK';
+                labelEl.className = 'risk-label risk-very-low';
+            } else if (score <= 40) {
+                labelEl.textContent = 'LOW RISK';
+                labelEl.className = 'risk-label risk-low';
+            } else if (score <= 60) {
+                labelEl.textContent = 'MEDIUM RISK';
+                labelEl.className = 'risk-label risk-medium';
+            } else if (score <= 80) {
+                labelEl.textContent = 'HIGH RISK';
+                labelEl.className = 'risk-label risk-high';
+            } else {
+                labelEl.textContent = 'VERY HIGH RISK';
+                labelEl.className = 'risk-label risk-very-high';
+            }
+        }
+
+        function updateConfidenceIndicator(confidence) {
+            const indicator = document.getElementById('confidenceIndicator');
+            const levelEl = document.getElementById('confidenceLevel');
+            
+            levelEl.textContent = `${Math.round(confidence)}%`;
+            
+            if (confidence >= 80) {
+                indicator.className = 'confidence-indicator confidence-excellent';
+            } else if (confidence >= 60) {
+                indicator.className = 'confidence-indicator confidence-good';
+            } else if (confidence >= 40) {
+                indicator.className = 'confidence-indicator confidence-fair';
+            } else {
+                indicator.className = 'confidence-indicator confidence-limited';
+            }
+        }
+
+        function hideResults() {
+            const elements = [
+                'riskScoreDisplay',
+                'analysisGrid',
+                'tokenMetricsSection',
+                'riskFactors',
+                'aiAnalysisSection',
+                'analysisMetadata'
+            ];
+            
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.style.display = 'none';
+                }
+            });
+            
+            // Destroy charts
+            Object.values(charts).forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            charts = {};
+        }
+
+        function showLoading() {
+            const loadingTexts = [
+                '🛡️ Initializing comprehensive analysis...',
+                '📊 Fetching token metadata...',
+                '🔍 Analyzing holder distribution...',
+                '🔗 Detecting wallet bundles...',
+                '🫧 Creating bubble visualization...',
+                '🤖 Generating AI insights...',
+                '⚡ Calculating risk score...',
+                '✨ Finalizing assessment...'
+            ];
+            
+            let textIndex = 0;
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.querySelector('.check-btn').disabled = true;
+            
+            const textInterval = setInterval(() => {
+                document.getElementById('loadingText').textContent = loadingTexts[textIndex];
+                textIndex = (textIndex + 1) % loadingTexts.length;
+            }, 1500);
+            
+            document.getElementById('loadingSpinner').textInterval = textInterval;
+        }
+
+        function hideLoading() {
+            const spinner = document.getElementById('loadingSpinner');
+            spinner.style.display = 'none';
+            document.querySelector('.check-btn').disabled = false;
+            
+            if (spinner.textInterval) {
+                clearInterval(spinner.textInterval);
+                delete spinner.textInterval;
+            }
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 10000);
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function showSuccessNotification() {
+            const notification = document.getElementById('successNotification');
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Global error handler
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            hideLoading();
+            showError('An unexpected error occurred. Please try again.');
+        });
+
+        // Handle unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+            hideLoading();
+            showError('Network error occurred. Please check your connection and try again.');
+        });
+    </script>
+</body>
+</html>
