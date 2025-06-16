@@ -3,14 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASK DEGEN - Ultimate Rug Check</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lacquer&family=Press+Start+2P&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
-    
-    <!-- Chart.js for visualizations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    
+    <title>🧠 Revolutionary Galaxy Brain Rug Checker v5.0 - Live Grok Intelligence</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <style>
         * {
             margin: 0;
@@ -19,1595 +13,1746 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
-            background-attachment: fixed;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 100%);
+            color: #fff;
+            line-height: 1.6;
+            padding: 20px;
             min-height: 100vh;
-            color: #ffffff;
-            overflow-x: hidden;
-            padding-top: 80px;
         }
 
-        /* Animated background elements */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
-            animation: float 20s ease-in-out infinite;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-20px) rotate(2deg); }
-            66% { transform: translateY(-10px) rotate(-1deg); }
-        }
-
-        /* Header */
-        .main-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
-            padding: 15px 0;
-        }
-
-        .header-content {
-            max-width: 1800px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: "Lacquer", system-ui;
-            font-size: 2rem;
-            font-weight: 400;
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradient-flow 3s ease infinite;
-            text-decoration: none;
-        }
-
-        @keyframes gradient-flow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-link {
-            color: #b0b7ff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background: rgba(102, 126, 234, 0.2);
-            color: #ffffff;
-            transform: translateY(-1px);
-        }
-
-        /* Main Container */
-        .rug-check-container {
+        .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
         }
 
-        /* Rug Check Input */
-        .rug-check-input {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
         }
 
-        .rug-check-input::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
-            transition: all 0.8s;
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d, #51cf66, #339af0, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 400% 400%;
+            animation: revolutionaryGradient 3s ease-in-out infinite;
         }
 
-        .rug-check-input:hover::before {
-            left: 100%;
-        }
-
-        .input-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .input-title {
-            font-family: "Titillium Web", sans-serif;
-            font-weight: 600;
-            font-size: 1.8rem;
-            color: #ffffff;
+        @keyframes revolutionaryGradient {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 50% 100%; }
+            75% { background-position: 0% 0%; }
         }
 
         .version-badge {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            animation: pulse 2s infinite;
+            display: inline-block;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe, #ff6b6b);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            animation: revolutionaryPulse 2s ease-in-out infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.5); }
-            50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+        @keyframes revolutionaryPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(108, 92, 231, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.8); }
         }
 
-        .input-form {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 20px;
-            align-items: end;
-            position: relative;
-            z-index: 1;
+        .header p {
+            color: #888;
+            font-size: 1.1rem;
         }
 
-        .input-group label {
-            display: block;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #e1e7ff;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .input-section {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .input-group input {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            flex: 1;
+            padding: 15px;
+            background: rgba(10, 10, 10, 0.8);
+            border: 2px solid #333;
             border-radius: 12px;
-            font-size: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
+            color: #fff;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
             transition: all 0.3s ease;
-            font-weight: 500;
-            font-family: monospace;
         }
 
         .input-group input:focus {
             outline: none;
-            border-color: #10b981;
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-            transform: translateY(-1px);
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
         }
 
-        .check-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            background: #333;
+            border: 2px solid #444;
+            border-radius: 10px;
+            color: #fff;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: "Titillium Web", sans-serif;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            border-color: #6c5ce7;
+        }
+
+        .analyze-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #ff6b6b, #ff5252, #6c5ce7);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            background-size: 200% 200%;
+            animation: revolutionaryButton 3s ease-in-out infinite;
         }
 
-        .check-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: all 0.5s;
+        @keyframes revolutionaryButton {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
-        .check-btn:hover {
+        .analyze-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.6);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
         }
 
-        .check-btn:hover::before {
-            left: 100%;
-        }
-
-        .check-btn:disabled {
-            opacity: 0.6;
+        .analyze-btn:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
-        /* Enhanced Loading Animation */
-        .loading-spinner {
+        .loading {
             display: none;
             text-align: center;
             padding: 40px;
-            background: rgba(16, 185, 129, 0.1);
-            border-radius: 16px;
-            margin: 20px 0;
-            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .brain-spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d, #51cf66, #339af0, #6c5ce7);
+            border-radius: 50%;
+            animation: revolutionaryBrainSpin 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background-size: 400% 400%;
+        }
+
+        @keyframes revolutionaryBrainSpin {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg);
+                box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+                background-position: 0% 50%;
+            }
+            50% { 
+                transform: scale(1.1) rotate(180deg);
+                box-shadow: 0 0 40px rgba(255, 107, 107, 0.6);
+                background-position: 100% 50%;
+            }
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        /* 🧠 REVOLUTIONARY GROK ANALYSIS SECTION */
+        .revolutionary-grok-analysis {
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(255, 107, 107, 0.15));
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 25px 0;
+            border: 2px solid;
+            border-image: linear-gradient(135deg, #6c5ce7, #ff6b6b) 1;
+            position: relative;
+            overflow: hidden;
+            animation: revolutionaryGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes revolutionaryGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(108, 92, 231, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(255, 107, 107, 0.5); }
+        }
+
+        .revolutionary-grok-analysis::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #6c5ce7, #ff6b6b, #ffd93d, #51cf66);
+            background-size: 400% 400%;
+            animation: revolutionaryBorder 3s ease-in-out infinite;
+            z-index: -1;
+            border-radius: 20px;
+        }
+
+        @keyframes revolutionaryBorder {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .grok-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .grok-brain-icon {
+            font-size: 2rem;
+            animation: revolutionaryBrainPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes revolutionaryBrainPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .grok-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #6c5ce7, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .grok-verdict {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+
+        .grok-verdict.revolutionary_safe {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: #fff;
+        }
+
+        .grok-verdict.caution_advised {
+            background: linear-gradient(135deg, #ffd93d, #fcc419);
+            color: #000;
+        }
+
+        .grok-verdict.danger_detected {
+            background: linear-gradient(135deg, #ff6b6b, #ff5252);
+            color: #fff;
+        }
+
+        .grok-verdict.extreme_danger {
+            background: linear-gradient(135deg, #ff3838, #ff0000);
+            color: #fff;
+            animation: dangerFlash 1s ease-in-out infinite;
+        }
+
+        @keyframes dangerFlash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .grok-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .grok-section {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .grok-section h4 {
+            color: #6c5ce7;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .grok-section p {
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .grok-indicators {
+            margin-top: 20px;
+        }
+
+        .indicator-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .indicator-item {
+            background: rgba(81, 207, 102, 0.2);
+            border: 1px solid #51cf66;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #51cf66;
+        }
+
+        .indicator-item.risk {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .galaxy-brain-summary {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(26, 26, 46, 0.9));
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 2px solid;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
 
-        .loading-spinner::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
-            animation: scan 2s linear infinite;
-        }
-
-        @keyframes scan {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid #10b981;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            color: #10b981;
-            font-weight: 600;
-            font-size: 1.1rem;
+        .galaxy-score {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 0 0 30px currentColor;
             position: relative;
             z-index: 1;
         }
 
-        /* Enhanced Risk Score Display */
-        .risk-score-display {
-            display: none;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            animation: slideInUp 0.6s ease-out;
+        .galaxy-score.minimal_risk { 
+            color: #51cf66; 
+            border-color: #51cf66;
+        }
+        .galaxy-score.low_risk { 
+            color: #339af0; 
+            border-color: #339af0;
+        }
+        .galaxy-score.medium_risk { 
+            color: #ffd93d; 
+            border-color: #ffd93d;
+        }
+        .galaxy-score.high_risk { 
+            color: #ff6b6b; 
+            border-color: #ff6b6b;
+        }
+        .galaxy-score.critical_risk { 
+            color: #ff3838; 
+            border-color: #ff3838;
+        }
+        .galaxy-score.extreme_danger { 
+            color: #ff0000; 
+            border-color: #ff0000;
+            animation: dangerPulse 1s ease-in-out infinite;
         }
 
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes dangerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
-        .risk-header {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 30px;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .token-info h2 {
-            font-family: "Titillium Web", sans-serif;
+        .severity-level {
             font-size: 1.8rem;
-            color: #ffffff;
-            margin-bottom: 5px;
-        }
-
-        .token-address {
-            font-family: monospace;
-            color: #b0b7ff;
-            font-size: 0.9rem;
-            word-break: break-all;
-        }
-
-        .risk-gauge {
-            text-align: center;
-            position: relative;
-        }
-
-        .risk-score {
-            font-size: 4rem;
-            font-weight: 900;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px currentColor;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 20px currentColor; }
-            to { text-shadow: 0 0 30px currentColor, 0 0 40px currentColor; }
-        }
-
-        .risk-label {
-            font-size: 1.2rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .confidence-indicator {
-            text-align: center;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .confidence-excellent { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .confidence-good { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-        .confidence-fair { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .confidence-limited { background: rgba(156, 163, 175, 0.2); color: #9ca3af; }
-
-        .risk-very-low { color: #10b981; }
-        .risk-low { color: #84cc16; }
-        .risk-medium { color: #f59e0b; }
-        .risk-high { color: #ef4444; }
-        .risk-very-high { color: #dc2626; }
-
-        /* Enhanced Analysis Grid */
-        .analysis-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 25px;
-            margin-bottom: 25px;
-        }
-
-        .analysis-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            animation: fadeInScale 0.6s ease-out;
-            animation-fill-mode: both;
-        }
-
-        .analysis-card:nth-child(1) { animation-delay: 0.1s; }
-        .analysis-card:nth-child(2) { animation-delay: 0.2s; }
-        .analysis-card:nth-child(3) { animation-delay: 0.3s; }
-        .analysis-card:nth-child(4) { animation-delay: 0.4s; }
-
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .analysis-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border-color: rgba(102, 126, 234, 0.4);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .card-title {
-            font-family: "Titillium Web", sans-serif;
-            font-size: 1.3rem;
-            color: #ffffff;
-            font-weight: 600;
-        }
-
-        .risk-indicator {
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            animation: pulse 2s infinite;
-        }
-
-        .chart-container {
-            height: 250px;
             margin-bottom: 15px;
+            font-weight: bold;
             position: relative;
+            z-index: 1;
         }
 
-        .bubble-chart-container {
-            height: 300px;
-            margin-bottom: 15px;
+        .confidence-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
             position: relative;
+            z-index: 1;
         }
 
-        /* Bundle Risk Summary */
-        .bundle-summary {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #51cf66);
+            border-radius: 4px;
+            transition: width 1s ease;
         }
 
-        .bundle-metric {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        .bundle-risk-score {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        /* Enhanced Data Sections */
-        .data-section {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            animation: slideInUp 0.6s ease-out;
-            animation-fill-mode: both;
-        }
-
-        .data-section:nth-child(6) { animation-delay: 0.5s; }
-        .data-section:nth-child(7) { animation-delay: 0.6s; }
-        .data-section:nth-child(8) { animation-delay: 0.7s; }
-
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .data-item {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .data-item:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .data-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 5px;
-        }
-
-        .data-label {
-            font-size: 0.8rem;
-            color: #b0b7ff;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Risk Factors */
-        .risk-factors {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            animation: slideInUp 0.6s ease-out;
-        }
-
-        .factors-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .factors-list li {
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .factors-list li:hover {
-            background: rgba(255, 255, 255, 0.05);
-            padding-left: 15px;
-            border-radius: 8px;
-        }
-
-        .factors-list li:last-child {
-            border-bottom: none;
-        }
-
-        .factor-text {
-            flex: 1;
-            line-height: 1.4;
-        }
-
-        /* Analysis Metadata */
-        .analysis-metadata {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .metadata-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .metadata-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .metadata-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Error Message */
-        .error-message {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
-            color: #ef4444;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 15px 0;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            font-weight: 600;
-            display: none;
-            animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        /* AI Analysis Display */
         .ai-analysis {
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(108, 92, 231, 0.1);
+            border: 1px solid #6c5ce7;
+            padding: 25px;
             border-radius: 15px;
-            padding: 20px;
-            margin-top: 15px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
+            text-align: left;
+        }
+
+        .ai-analysis::before {
+            content: '🧠';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #6c5ce7;
+            padding: 8px;
+            border-radius: 50%;
+            font-size: 1.2rem;
         }
 
         .ai-analysis h4 {
-            color: #667eea;
+            margin-bottom: 15px;
+            padding-left: 30px;
+            color: #a29bfe;
+        }
+
+        .token-info {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid #333;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .token-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .token-details h2 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #ccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .token-details p {
+            color: #888;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .risk-vectors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .risk-vector-card {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #333;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .risk-vector-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .risk-vector-card.critical {
+            border-color: #ff3838;
+            background: rgba(255, 56, 56, 0.1);
+        }
+
+        .risk-vector-card.high {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .risk-vector-card.medium {
+            border-color: #ffd93d;
+            background: rgba(255, 217, 61, 0.1);
+        }
+
+        .risk-vector-card.low {
+            border-color: #51cf66;
+            background: rgba(81, 207, 102, 0.1);
+        }
+
+        .vector-category {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .vector-title {
+            font-size: 1.3rem;
+            font-weight: bold;
             margin-bottom: 10px;
+        }
+
+        .vector-impact {
+            color: #ccc;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .vector-mitigation {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .advanced-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid #333;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            border-color: #6c5ce7;
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.2);
+        }
+
+        .metric-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .metric-subtitle {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .chart-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid #333;
+            transition: all 0.3s;
+            height: 400px;
+            position: relative;
+        }
+
+        .chart-container:hover {
+            border-color: #6c5ce7;
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            right: 30px;
+            height: 30px;
+        }
+
+        .chart-canvas {
+            position: absolute !important;
+            top: 70px !important;
+            left: 30px !important;
+            right: 30px !important;
+            bottom: 30px !important;
+            width: calc(100% - 60px) !important;
+            height: calc(100% - 100px) !important;
+            max-height: 300px !important;
+        }
+
+        .detailed-analysis {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid #333;
+            margin-bottom: 30px;
+        }
+
+        .analysis-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #333;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #6c5ce7;
+            border-bottom-color: #6c5ce7;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .holder-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            transition: all 0.3s;
+        }
+
+        .holder-row:hover {
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .holder-row:last-child {
+            border-bottom: none;
+        }
+
+        .holder-address {
+            font-family: 'Courier New', monospace;
+            color: #888;
+        }
+
+        .holder-percent {
+            font-weight: bold;
             font-size: 1.1rem;
         }
 
-        .ai-analysis p {
-            line-height: 1.6;
-            color: #e1e7ff;
+        .error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            display: none;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .input-form {
-                grid-template-columns: 1fr;
-            }
-            
-            .analysis-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .risk-header {
-                grid-template-columns: 1fr;
-                gap: 20px;
-                text-align: center;
-            }
-            
-            .data-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .nav-links {
-                display: none;
-            }
+        .error.active {
+            display: block;
         }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(102, 126, 234, 0.5);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(102, 126, 234, 0.7);
-        }
-
-        /* Success notification */
-        .success-notification {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 15px 20px;
+        .cluster-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-            transform: translateX(400px);
-            transition: all 0.5s ease;
-            z-index: 1001;
+            margin: 10px 0;
+            border-left: 4px solid #ff6b6b;
         }
 
-        .success-notification.show {
-            transform: translateX(0);
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .advanced-metrics {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .chart-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 350px;
+            }
+
+            .grok-content {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="main-header">
-        <div class="header-content">
-            <a href="/" class="logo">ASK DEGEN</a>
-            <nav class="nav-links">
-                <a href="/" class="nav-link">Dashboard</a>
-                <a href="/rugcheck" class="nav-link active">Rug Check</a>
-                <a href="/resources" class="nav-link">Resources</a>
-                <a href="/dictionary" class="nav-link">Degen Academy</a>
-                <a href="/charts" class="nav-link">Chart Analysis</a>
-            </nav>
+    <div class="container">
+        <div class="header">
+            <div class="version-badge">🧠 Revolutionary Galaxy Brain v5.0 + Live Grok Intelligence</div>
+            <h1>Revolutionary Galaxy Brain Rug Checker</h1>
+            <p>🧠 REVOLUTIONARY: Live Community Intelligence • Real-Time Grok Analysis • Advanced Meme Coin Safety Detection</p>
         </div>
-    </header>
 
-    <div class="rug-check-container">
-        <!-- Rug Check Input -->
-        <div class="rug-check-input">
-            <div class="input-header">
-                <div style="font-size: 2.5rem;">🛡️</div>
-                <div>
-                    <div class="input-title">Ultimate Solana Rug Check</div>
-                    <div style="color: #b0b7ff; margin-top: 5px;">Comprehensive holder analysis with bundle detection</div>
-                </div>
-                <div class="version-badge">V2.0 ENHANCED</div>
-            </div>
-            
-            <div class="input-form">
-                <div class="input-group">
-                    <label for="tokenAddress">Solana Token Contract Address:</label>
-                    <input 
-                        type="text" 
-                        id="tokenAddress" 
-                        placeholder="e.g. So11111111111111111111111111111111111111112"
-                        value=""
-                    >
-                </div>
-                <button class="check-btn" onclick="checkToken()">
-                    🔍 Analyze
+        <div class="input-section">
+            <div class="input-group">
+                <input type="text" id="tokenAddress" placeholder="Enter Solana token address..." 
+                       value="6ztpBm31cmBNPwa396ocmDfaWyKKY95Bu8T664QfCe7f">
+                <button class="analyze-btn" onclick="analyzeToken()">
+                    🧠 Revolutionary Analysis
                 </button>
             </div>
-
-            <div class="loading-spinner" id="loadingSpinner">
-                <div class="spinner"></div>
-                <div class="loading-text" id="loadingText">🛡️ Running comprehensive analysis...</div>
+            
+            <div class="mode-selector">
+                <button class="mode-btn active" onclick="setMode('express')" data-mode="express">
+                    ⚡ Express Mode + Grok
+                </button>
+                <button class="mode-btn" onclick="setMode('deep')" data-mode="deep">
+                    🔬 Deep Analysis + Full Grok Intelligence
+                </button>
             </div>
-
-            <div class="error-message" id="errorMessage"></div>
+            
+            <p style="color: #888; font-size: 0.9rem; margin-top: 15px;">
+                🧠 Revolutionary AI Analysis • 🔥 Live Community Intelligence • 🎯 Meme Coin Safety Patterns • 💎 Diamond Hands Detection
+            </p>
         </div>
 
-        <!-- Risk Score Display -->
-        <div class="risk-score-display" id="riskScoreDisplay">
-            <div class="risk-header">
-                <div class="token-info">
+        <div class="loading" id="loading">
+            <div class="brain-spinner">🧠</div>
+            <p><strong>🧠 Revolutionary Galaxy Brain v5.0 Analyzing...</strong></p>
+            <p style="color: #888; font-size: 0.9rem;">Live Grok intelligence, community analysis, revolutionary safety detection...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="results" id="results">
+            <!-- Token Info -->
+            <div class="token-info" id="tokenInfo" style="display: none;">
+                <div class="token-logo" id="tokenLogo">🪙</div>
+                <div class="token-details">
                     <h2 id="tokenName">Token Name</h2>
-                    <div class="token-address" id="tokenAddressDisplay">Contract Address</div>
-                </div>
-                <div class="risk-gauge">
-                    <div class="risk-score" id="riskScore">0</div>
-                    <div class="risk-label" id="riskLabel">ANALYZING</div>
-                </div>
-                <div class="confidence-indicator" id="confidenceIndicator">
-                    <div style="font-size: 0.9rem; font-weight: 600;">Confidence Level</div>
-                    <div style="font-size: 1.5rem; font-weight: 700;" id="confidenceLevel">0%</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Analysis Grid -->
-        <div class="analysis-grid" id="analysisGrid" style="display: none;">
-            <!-- Holder Bubble Map -->
-            <div class="analysis-card">
-                <div class="card-header">
-                    <div>
-                        <span style="font-size: 1.5rem;">🫧</span>
-                        <span class="card-title">Top Holders Bubble Map</span>
-                    </div>
-                    <div class="risk-indicator" id="holderBubbleIndicator">ANALYZING</div>
-                </div>
-                <div class="bubble-chart-container">
-                    <canvas id="holderBubbleChart"></canvas>
+                    <p id="tokenSymbol">Symbol</p>
+                    <p id="tokenAddressDisplay">Address</p>
                 </div>
             </div>
 
-            <!-- Bundle Risk Analysis -->
-            <div class="analysis-card">
-                <div class="card-header">
-                    <div>
-                        <span style="font-size: 1.5rem;">🔗</span>
-                        <span class="card-title">Bundle Risk Analysis</span>
-                    </div>
-                    <div class="risk-indicator" id="bundleRiskIndicator">ANALYZING</div>
+            <!-- 🧠 REVOLUTIONARY GROK ANALYSIS SECTION -->
+            <div class="revolutionary-grok-analysis" id="revolutionaryGrokAnalysis" style="display: none;">
+                <!-- This will be populated by displayRevolutionaryGrokInsights() -->
+            </div>
+
+            <!-- Galaxy Brain Summary -->
+            <div class="galaxy-brain-summary" id="galaxySummary">
+                <h2>🧠 Revolutionary Galaxy Brain Risk Assessment</h2>
+                <div class="galaxy-score" id="galaxyScore">0</div>
+                <div class="severity-level" id="severityLevel">ANALYZING...</div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidenceFill"></div>
                 </div>
+                <p id="confidenceText">Confidence: 0%</p>
+                
+                <div class="ai-analysis" id="aiAnalysis">
+                    <h4>🧠 AI Analysis</h4>
+                    <p>Revolutionary Galaxy Brain analysis in progress...</p>
+                </div>
+            </div>
+
+            <!-- Risk Vectors -->
+            <div class="risk-vectors-grid" id="riskVectorsGrid"></div>
+
+            <!-- Advanced Metrics -->
+            <div class="advanced-metrics" id="advancedMetrics"></div>
+
+            <!-- Charts Section -->
+            <div class="chart-section">
                 <div class="chart-container">
-                    <canvas id="bundleRiskChart"></canvas>
+                    <h3 class="chart-title">🧠 Revolutionary Risk Breakdown</h3>
+                    <canvas id="riskBreakdownChart" class="chart-canvas"></canvas>
                 </div>
-                <div class="bundle-summary" id="bundleSummary">
-                    <!-- Bundle metrics will be populated here -->
-                </div>
-            </div>
-
-            <!-- Concentration Analysis -->
-            <div class="analysis-card">
-                <div class="card-header">
-                    <div>
-                        <span style="font-size: 1.5rem;">📊</span>
-                        <span class="card-title">Concentration Analysis</span>
-                    </div>
-                    <div class="risk-indicator" id="concentrationIndicator">ANALYZING</div>
-                </div>
+                
                 <div class="chart-container">
-                    <canvas id="concentrationChart"></canvas>
+                    <h3 class="chart-title">👥 Holder Distribution Analysis</h3>
+                    <canvas id="holderChart" class="chart-canvas"></canvas>
                 </div>
-            </div>
-
-            <!-- Authority Status -->
-            <div class="analysis-card">
-                <div class="card-header">
-                    <div>
-                        <span style="font-size: 1.5rem;">🔐</span>
-                        <span class="card-title">Authority Status</span>
-                    </div>
-                    <div class="risk-indicator" id="authorityIndicator">ANALYZING</div>
-                </div>
+                
                 <div class="chart-container">
-                    <canvas id="authorityChart"></canvas>
+                    <h3 class="chart-title">🔄 Transaction Health Score</h3>
+                    <canvas id="transactionChart" class="chart-canvas"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">🕷️ Bundle Detection Results</h3>
+                    <canvas id="bundleChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis Tabs -->
+            <div class="detailed-analysis">
+                <div class="analysis-tabs">
+                    <button class="tab-btn active" onclick="showTab('holders')">👥 Holders</button>
+                    <button class="tab-btn" onclick="showTab('transactions')">🔄 Transactions</button>
+                    <button class="tab-btn" onclick="showTab('bundles')">🕷️ Bundles</button>
+                    <button class="tab-btn" onclick="showTab('liquidity')">💧 Liquidity</button>
+                </div>
+                
+                <div class="tab-content active" id="holders-tab">
+                    <div class="holder-list">
+                        <h3 style="margin-bottom: 20px;">🐋 Top Holders Analysis</h3>
+                        <div id="holdersList"></div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="transactions-tab">
+                    <div id="transactionAnalysis"></div>
+                </div>
+                
+                <div class="tab-content" id="bundles-tab">
+                    <div id="bundleDetection"></div>
+                </div>
+                
+                <div class="tab-content" id="liquidity-tab">
+                    <div id="liquidityAnalysis"></div>
                 </div>
             </div>
         </div>
-
-        <!-- Token Metrics -->
-        <div class="data-section" id="tokenMetricsSection" style="display: none;">
-            <div class="card-header">
-                <span style="font-size: 1.5rem;">📈</span>
-                <div class="card-title">Token Metrics</div>
-            </div>
-            <div class="data-grid" id="tokenMetrics">
-                <!-- Data items will be populated here -->
-            </div>
-        </div>
-
-        <!-- Risk Factors -->
-        <div class="risk-factors" id="riskFactors" style="display: none;">
-            <div class="card-header">
-                <span style="font-size: 1.5rem;">⚠️</span>
-                <div class="card-title">Risk Factors & Warnings</div>
-            </div>
-            <ul class="factors-list" id="factorsList">
-                <!-- Risk factors will be populated here -->
-            </ul>
-        </div>
-
-        <!-- AI Analysis -->
-        <div class="data-section" id="aiAnalysisSection" style="display: none;">
-            <div class="card-header">
-                <span style="font-size: 1.5rem;">🤖</span>
-                <div class="card-title">AI Analysis</div>
-            </div>
-            <div class="ai-analysis" id="aiAnalysisContent">
-                <!-- AI analysis will be populated here -->
-            </div>
-        </div>
-
-        <!-- Analysis Metadata -->
-        <div class="analysis-metadata" id="analysisMetadata" style="display: none;">
-            <div class="card-header">
-                <span style="font-size: 1.5rem;">🔍</span>
-                <div class="card-title">Analysis Details</div>
-            </div>
-            <div class="metadata-grid" id="metadataGrid">
-                <!-- Metadata will be populated here -->
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div style="text-align: center; margin-top: 40px; color: #b0b7ff; padding: 20px;">
-            <p>🛡️ Ultimate Rug Check v2.0 - Enhanced multi-source analysis</p>
-            <p style="margin-top: 10px; font-size: 0.9rem;">
-                ⚠️ This tool provides advanced risk analysis but is not financial advice. Always DYOR!
-            </p>
-            <p style="margin-top: 5px; font-size: 0.8rem;">
-                🔍 Powered by: Helius RPC • Advanced Bundle Detection • AI Analysis
-            </p>
-        </div>
-    </div>
-
-    <!-- Success Notification -->
-    <div class="success-notification" id="successNotification">
-        ✅ Analysis Complete!
     </div>
 
     <script>
-        let currentAnalysis = null;
-        let charts = {};
+        let currentCharts = {};
+        let currentMode = 'express';
 
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') checkToken();
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
             });
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+        }
 
-            // Add sample addresses for testing
-            const samples = [
-                'So11111111111111111111111111111111111111112', // WSOL
-                'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
-            ];
+        function formatAddress(address) {
+            if (!address) return '';
+            return address.slice(0, 8) + '...' + address.slice(-6);
+        }
+
+        function formatNumber(num) {
+            // FIXED: Handle null, undefined, and ensure proper number formatting
+            if (num === null || num === undefined || isNaN(num)) return '0';
             
-            console.log('🚀 Ultimate Rug Checker loaded!');
-            console.log('💡 Try these sample addresses:', samples);
-        });
+            const numValue = parseFloat(num);
+            if (numValue >= 1e9) return (numValue / 1e9).toFixed(2) + 'B';
+            if (numValue >= 1e6) return (numValue / 1e6).toFixed(2) + 'M';
+            if (numValue >= 1e3) return (numValue / 1e3).toFixed(1) + 'K';
+            return numValue.toFixed(2);
+        }
 
-        async function checkToken() {
+        function formatCurrency(num) {
+            // FIXED: Ensure proper currency formatting
+            if (num === null || num === undefined || isNaN(num)) return '$0';
+            return '$' + formatNumber(num);
+        }
+
+        function formatTokenAge(ageDays) {
+            // FIXED: Remove decimals from token age display
+            if (ageDays === null || ageDays === undefined || isNaN(ageDays)) return '0';
+            return Math.floor(parseFloat(ageDays)).toString();
+        }
+
+        async function analyzeToken() {
             const tokenAddress = document.getElementById('tokenAddress').value.trim();
-            
             if (!tokenAddress) {
                 showError('Please enter a token address');
                 return;
             }
 
-            if (tokenAddress.length < 32 || tokenAddress.length > 44) {
-                showError('Invalid Solana token address format');
-                return;
-            }
-
-            showLoading();
-            hideError();
-            hideResults();
+            // Reset UI
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('error').classList.remove('active');
+            document.getElementById('results').classList.remove('active');
+            document.querySelector('.analyze-btn').disabled = true;
 
             try {
                 const response = await fetch('/rugcheck', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        token_address: tokenAddress
+                        address: tokenAddress,
+                        mode: currentMode
                     })
                 });
 
                 const data = await response.json();
-                console.log('Analysis response:', data);
-                
-                if (response.ok && data.success) {
-                    currentAnalysis = data;
-                    hideLoading();
-                    displayResults(data);
-                    showSuccessNotification();
-                } else {
-                    throw new Error(data.error || `HTTP ${response.status}: Analysis failed`);
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Revolutionary analysis failed');
                 }
-                
+
+                displayResults(data);
+
             } catch (error) {
-                console.error('Rug check error:', error);
-                hideLoading();
-                showError(`Analysis failed: ${error.message}`);
-            }
-        }
-
-        function displayResults(data) {
-            console.log('Displaying results:', data);
-            
-            const tokenInfo = data.token_info || {};
-            const holderAnalysis = data.holder_analysis || {};
-            const visualization = data.visualization || {};
-            const riskScore = data.risk_score || 0;
-            
-            // Update token info
-            document.getElementById('tokenName').textContent = `${tokenInfo.symbol || 'UNK'} - ${tokenInfo.name || 'Unknown'}`;
-            document.getElementById('tokenAddressDisplay').textContent = tokenInfo.address || 'Unknown';
-            
-            // Update risk score with animation
-            animateRiskScore(riskScore);
-            updateRiskLabel(riskScore);
-            updateConfidenceIndicator(data.confidence_level || 50);
-            
-            // Display sections
-            displayTokenMetrics(tokenInfo, holderAnalysis);
-            displayRiskFactors(data.riskFactors || []);
-            displayAIAnalysis(data.ai_analysis);
-            displayAnalysisMetadata(data);
-            
-            // Initialize charts
-            initializeCharts(data);
-            
-            // Show results with staggered animation
-            showResultsAnimated();
-        }
-
-        function showResultsAnimated() {
-            const elements = [
-                'riskScoreDisplay',
-                'analysisGrid', 
-                'tokenMetricsSection',
-                'riskFactors',
-                'aiAnalysisSection',
-                'analysisMetadata'
-            ];
-
-            elements.forEach((id, index) => {
-                setTimeout(() => {
-                    const element = document.getElementById(id);
-                    if (element) {
-                        element.style.display = id === 'analysisGrid' ? 'grid' : 'block';
-                    }
-                }, index * 150);
-            });
-
-            // Scroll to results
-            setTimeout(() => {
-                document.getElementById('riskScoreDisplay').scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }, 800);
-        }
-
-        function displayTokenMetrics(tokenInfo, holderAnalysis) {
-            const container = document.getElementById('tokenMetrics');
-            
-            const metricsData = [
-                { label: 'Symbol', value: tokenInfo.symbol || 'UNK' },
-                { label: 'Total Supply', value: Number(tokenInfo.supply || 0).toLocaleString() },
-                { label: 'Decimals', value: tokenInfo.decimals || 9 },
-                { label: 'Age (Days)', value: tokenInfo.age_days || 0 },
-                { label: 'Total Holders', value: holderAnalysis.total_holders || 0 },
-                { label: 'Unique Holders', value: holderAnalysis.unique_holders || 0 },
-                { label: 'Top 5 Concentration', value: `${(holderAnalysis.top_5_concentration || 0).toFixed(1)}%` },
-                { label: 'Bundle Clusters', value: (holderAnalysis.bundle_clusters || []).length },
-                { label: 'Mint Authority', value: tokenInfo.mint_authority ? 'Active ⚠️' : 'Revoked ✅' },
-                { label: 'Freeze Authority', value: tokenInfo.freeze_authority ? 'Active ⚠️' : 'Revoked ✅' }
-            ];
-            
-            container.innerHTML = metricsData.map(item => `
-                <div class="data-item">
-                    <div class="data-value">${item.value}</div>
-                    <div class="data-label">${item.label}</div>
-                </div>
-            `).join('');
-        }
-
-        function displayRiskFactors(riskFactors) {
-            const factorsList = document.getElementById('factorsList');
-            
-            factorsList.innerHTML = '';
-            if (riskFactors && riskFactors.length > 0) {
-                riskFactors.forEach(factor => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        <div style="color: #ef4444; font-size: 1.2rem;">⚠️</div>
-                        <div class="factor-text">${factor}</div>
-                    `;
-                    factorsList.appendChild(li);
-                });
-            } else {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <div style="color: #10b981; font-size: 1.2rem;">✅</div>
-                    <div class="factor-text">No major risk factors detected</div>
-                `;
-                factorsList.appendChild(li);
-            }
-            
-            document.getElementById('riskFactors').style.display = 'block';
-        }
-
-        function displayAIAnalysis(aiAnalysis) {
-            const container = document.getElementById('aiAnalysisContent');
-            
-            if (aiAnalysis && aiAnalysis.trim()) {
-                // Format the AI analysis with better styling
-                const formattedAnalysis = aiAnalysis
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/•/g, '•')
-                    .replace(/\n/g, '<br>');
-                
-                container.innerHTML = `<p>${formattedAnalysis}</p>`;
-            } else {
-                container.innerHTML = `<p>🤖 AI analysis completed. Risk assessment based on technical indicators and holder patterns.</p>`;
-            }
-        }
-
-        function displayAnalysisMetadata(data) {
-            const container = document.getElementById('metadataGrid');
-            
-            const metadata = [
-                { label: 'Analysis Version', value: '2.0 Enhanced' },
-                { label: 'Confidence Level', value: `${Math.round(data.confidence_level || 50)}%` },
-                { label: 'Data Sources', value: 'Helius RPC + Bundle Detection' },
-                { label: 'Timestamp', value: new Date(data.analysis_timestamp || Date.now()).toLocaleString() }
-            ];
-            
-            container.innerHTML = metadata.map(item => `
-                <div class="metadata-item">
-                    <span>${item.label}</span>
-                    <strong>${item.value}</strong>
-                </div>
-            `).join('');
-        }
-
-        function initializeCharts(data) {
-            // Destroy existing charts
-            Object.values(charts).forEach(chart => {
-                if (chart && typeof chart.destroy === 'function') {
-                    chart.destroy();
-                }
-            });
-            charts = {};
-            
-            const visualization = data.visualization || {};
-            const holderAnalysis = data.holder_analysis || {};
-            const tokenInfo = data.token_info || {};
-            
-            // Initialize charts with error handling
-            try {
-                charts.holderBubble = initHolderBubbleChart(visualization.holder_bubbles || []);
-                charts.bundleRisk = initBundleRiskChart(visualization.bundle_summary || {});
-                charts.concentration = initConcentrationChart(visualization.concentration_chart || {});
-                charts.authority = initAuthorityChart(tokenInfo);
-                
-                // Update bundle summary
-                updateBundleSummary(visualization.bundle_summary || {});
-                
-                // Update risk indicators
-                updateRiskIndicators(data);
-            } catch (error) {
-                console.error('Chart initialization error:', error);
-            }
-        }
-
-        function initHolderBubbleChart(holderBubbles) {
-            const ctx = document.getElementById('holderBubbleChart').getContext('2d');
-            
-            if (!holderBubbles || holderBubbles.length === 0) {
-                return new Chart(ctx, {
-                    type: 'scatter',
-                    data: {
-                        datasets: [{
-                            label: 'No holder data available',
-                            data: [],
-                            backgroundColor: 'rgba(156, 163, 175, 0.5)'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            title: {
-                                display: true,
-                                text: 'No holder data available',
-                                color: '#b0b7ff'
-                            }
-                        },
-                        scales: {
-                            x: { display: false },
-                            y: { display: false }
-                        }
-                    }
-                });
-            }
-            
-            const bubbleData = holderBubbles.map((holder, index) => ({
-                x: index + 1,
-                y: holder.percentage || 0,
-                r: Math.max(8, Math.min(40, (holder.percentage || 0) * 2)),
-            }));
-
-            const colors = holderBubbles.map(holder => {
-                if (holder.isBundled) return 'rgba(239, 68, 68, 0.8)';
-                if (holder.risk === 'high') return 'rgba(245, 158, 11, 0.8)';
-                return 'rgba(16, 185, 129, 0.8)';
-            });
-            
-            return new Chart(ctx, {
-                type: 'bubble',
-                data: {
-                    datasets: [{
-                        label: 'Token Holders',
-                        data: bubbleData,
-                        backgroundColor: colors,
-                        borderColor: '#ffffff',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const holder = holderBubbles[context.dataIndex];
-                                    return [
-                                        `Rank: ${holder.rank}`,
-                                        `Address: ${holder.address}`,
-                                        `Holdings: ${holder.percentage}%`,
-                                        `Type: ${holder.type}`,
-                                        `Risk: ${holder.risk}`,
-                                        holder.isBundled ? 'Part of bundle' : 'Individual wallet'
-                                    ];
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            title: { display: true, text: 'Holder Rank', color: '#b0b7ff' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { color: '#b0b7ff' }
-                        },
-                        y: {
-                            title: { display: true, text: 'Percentage of Supply', color: '#b0b7ff' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { 
-                                color: '#b0b7ff',
-                                callback: function(value) { return value + '%'; }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function initBundleRiskChart(bundleSummary) {
-            const ctx = document.getElementById('bundleRiskChart').getContext('2d');
-            
-            const totalBundles = bundleSummary.total_bundles || 0;
-            const highRiskBundles = bundleSummary.high_risk_bundles || 0;
-            const lowRiskBundles = totalBundles - highRiskBundles;
-            
-            const data = totalBundles === 0 ? [1] : [highRiskBundles, lowRiskBundles];
-            const labels = totalBundles === 0 ? ['No Bundles Detected'] : ['High Risk Bundles', 'Low Risk Bundles'];
-            const colors = totalBundles === 0 ? ['rgba(16, 185, 129, 0.8)'] : ['rgba(239, 68, 68, 0.8)', 'rgba(245, 158, 11, 0.8)'];
-            
-            return new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: colors,
-                        borderColor: totalBundles === 0 ? ['#10b981'] : ['#ef4444', '#f59e0b'],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: '#b0b7ff', font: { size: 12 } }
-                        }
-                    }
-                }
-            });
-        }
-
-        function initConcentrationChart(concentrationData) {
-            const ctx = document.getElementById('concentrationChart').getContext('2d');
-            
-            const data = {
-                top1: concentrationData.top1 || 0,
-                top5: concentrationData.top5 || 0,
-                top10: concentrationData.top10 || 0,
-                others: concentrationData.others || 100
-            };
-            
-            return new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Top 1 Holder', 'Top 2-5 Holders', 'Top 6-10 Holders', 'Others'],
-                    datasets: [{
-                        data: [
-                            data.top1,
-                            Math.max(0, data.top5 - data.top1),
-                            Math.max(0, data.top10 - data.top5),
-                            Math.max(0, data.others)
-                        ],
-                        backgroundColor: [
-                            'rgba(239, 68, 68, 0.8)',
-                            'rgba(245, 158, 11, 0.8)',
-                            'rgba(102, 126, 234, 0.8)',
-                            'rgba(16, 185, 129, 0.8)'
-                        ],
-                        borderColor: ['#ef4444', '#f59e0b', '#667eea', '#10b981'],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: '#b0b7ff', font: { size: 11 } }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.label}: ${context.parsed}%`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function initAuthorityChart(tokenInfo) {
-            const ctx = document.getElementById('authorityChart').getContext('2d');
-            
-            const mintRevoked = !tokenInfo.mint_authority;
-            const freezeRevoked = !tokenInfo.freeze_authority;
-            
-            return new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Mint Authority', 'Freeze Authority'],
-                    datasets: [{
-                        label: 'Authority Status',
-                        data: [mintRevoked ? 100 : 0, freezeRevoked ? 100 : 0],
-                        backgroundColor: [
-                            mintRevoked ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)',
-                            freezeRevoked ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)'
-                        ],
-                        borderColor: [
-                            mintRevoked ? '#10b981' : '#ef4444',
-                            freezeRevoked ? '#10b981' : '#ef4444'
-                        ],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const authority = context.label;
-                                    const status = context.parsed.y === 100 ? 'Revoked ✅' : 'Active ⚠️';
-                                    return `${authority}: ${status}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { 
-                                color: '#b0b7ff',
-                                callback: function(value) { 
-                                    return value === 100 ? 'Revoked ✅' : value === 0 ? 'Active ⚠️' : '';
-                                }
-                            }
-                        },
-                        x: {
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { color: '#b0b7ff' }
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateBundleSummary(bundleSummary) {
-            const container = document.getElementById('bundleSummary');
-            
-            const metrics = [
-                { label: 'Total Bundles', value: bundleSummary.total_bundles || 0 },
-                { label: 'High Risk Bundles', value: bundleSummary.high_risk_bundles || 0 },
-                { label: 'Bundled Supply', value: `${(bundleSummary.bundled_supply_percentage || 0).toFixed(1)}%` },
-                { label: 'Largest Bundle', value: `${bundleSummary.largest_bundle_size || 0} wallets` }
-            ];
-            
-            const bundleRiskScore = bundleSummary.bundle_concentration_score || 0;
-            
-            container.innerHTML = `
-                ${metrics.map(metric => `
-                    <div class="bundle-metric">
-                        <span>${metric.label}:</span>
-                        <strong>${metric.value}</strong>
-                    </div>
-                `).join('')}
-                <div class="bundle-risk-score" style="color: ${bundleRiskScore > 70 ? '#ef4444' : bundleRiskScore > 40 ? '#f59e0b' : '#10b981'}">
-                    Bundle Risk Score: ${bundleRiskScore}/100
-                </div>
-            `;
-        }
-
-        function updateRiskIndicators(data) {
-            const riskScore = data.risk_score || 0;
-            const bundleScore = (data.visualization?.bundle_summary?.bundle_concentration_score || 0);
-            const concentrationScore = Math.min((data.holder_analysis?.top_5_concentration || 0), 100);
-            const authorityScore = (data.token_info?.mint_authority || data.token_info?.freeze_authority) ? 70 : 10;
-            
-            const indicators = {
-                'holderBubbleIndicator': concentrationScore,
-                'bundleRiskIndicator': bundleScore,
-                'concentrationIndicator': concentrationScore,
-                'authorityIndicator': authorityScore
-            };
-            
-            Object.entries(indicators).forEach(([id, risk]) => {
-                const element = document.getElementById(id);
-                if (element) {
-                    let status, className;
-                    if (risk <= 30) {
-                        status = 'LOW';
-                        className = 'risk-indicator risk-very-low';
-                    } else if (risk <= 60) {
-                        status = 'MEDIUM';
-                        className = 'risk-indicator risk-medium';
-                    } else {
-                        status = 'HIGH';
-                        className = 'risk-indicator risk-high';
-                    }
-                    element.textContent = status;
-                    element.className = className;
-                }
-            });
-        }
-
-        function animateRiskScore(targetScore) {
-            const scoreEl = document.getElementById('riskScore');
-            let currentScore = 0;
-            const increment = targetScore / 60;
-            
-            const counter = setInterval(() => {
-                currentScore += increment;
-                if (currentScore >= targetScore) {
-                    currentScore = targetScore;
-                    clearInterval(counter);
-                }
-                scoreEl.textContent = Math.round(currentScore);
-            }, 25);
-        }
-
-        function updateRiskLabel(score) {
-            const labelEl = document.getElementById('riskLabel');
-            
-            if (score <= 20) {
-                labelEl.textContent = 'VERY LOW RISK';
-                labelEl.className = 'risk-label risk-very-low';
-            } else if (score <= 40) {
-                labelEl.textContent = 'LOW RISK';
-                labelEl.className = 'risk-label risk-low';
-            } else if (score <= 60) {
-                labelEl.textContent = 'MEDIUM RISK';
-                labelEl.className = 'risk-label risk-medium';
-            } else if (score <= 80) {
-                labelEl.textContent = 'HIGH RISK';
-                labelEl.className = 'risk-label risk-high';
-            } else {
-                labelEl.textContent = 'VERY HIGH RISK';
-                labelEl.className = 'risk-label risk-very-high';
-            }
-        }
-
-        function updateConfidenceIndicator(confidence) {
-            const indicator = document.getElementById('confidenceIndicator');
-            const levelEl = document.getElementById('confidenceLevel');
-            
-            levelEl.textContent = `${Math.round(confidence)}%`;
-            
-            if (confidence >= 80) {
-                indicator.className = 'confidence-indicator confidence-excellent';
-            } else if (confidence >= 60) {
-                indicator.className = 'confidence-indicator confidence-good';
-            } else if (confidence >= 40) {
-                indicator.className = 'confidence-indicator confidence-fair';
-            } else {
-                indicator.className = 'confidence-indicator confidence-limited';
-            }
-        }
-
-        function hideResults() {
-            const elements = [
-                'riskScoreDisplay',
-                'analysisGrid',
-                'tokenMetricsSection',
-                'riskFactors',
-                'aiAnalysisSection',
-                'analysisMetadata'
-            ];
-            
-            elements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.style.display = 'none';
-                }
-            });
-            
-            // Destroy charts
-            Object.values(charts).forEach(chart => {
-                if (chart && typeof chart.destroy === 'function') {
-                    chart.destroy();
-                }
-            });
-            charts = {};
-        }
-
-        function showLoading() {
-            const loadingTexts = [
-                '🛡️ Initializing comprehensive analysis...',
-                '📊 Fetching token metadata...',
-                '🔍 Analyzing holder distribution...',
-                '🔗 Detecting wallet bundles...',
-                '🫧 Creating bubble visualization...',
-                '🤖 Generating AI insights...',
-                '⚡ Calculating risk score...',
-                '✨ Finalizing assessment...'
-            ];
-            
-            let textIndex = 0;
-            document.getElementById('loadingSpinner').style.display = 'block';
-            document.querySelector('.check-btn').disabled = true;
-            
-            const textInterval = setInterval(() => {
-                document.getElementById('loadingText').textContent = loadingTexts[textIndex];
-                textIndex = (textIndex + 1) % loadingTexts.length;
-            }, 1500);
-            
-            document.getElementById('loadingSpinner').textInterval = textInterval;
-        }
-
-        function hideLoading() {
-            const spinner = document.getElementById('loadingSpinner');
-            spinner.style.display = 'none';
-            document.querySelector('.check-btn').disabled = false;
-            
-            if (spinner.textInterval) {
-                clearInterval(spinner.textInterval);
-                delete spinner.textInterval;
+                showError(error.message);
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+                document.querySelector('.analyze-btn').disabled = false;
             }
         }
 
         function showError(message) {
-            const errorEl = document.getElementById('errorMessage');
-            errorEl.textContent = message;
-            errorEl.style.display = 'block';
+            const errorEl = document.getElementById('error');
+            errorEl.innerHTML = `<strong>Revolutionary Analysis Error:</strong> ${message}`;
+            errorEl.classList.add('active');
+        }
+
+        function displayResults(data) {
+            console.log('🧠 Revolutionary Galaxy Brain Results:', data);
             
-            // Auto-hide after 10 seconds
-            setTimeout(() => {
-                errorEl.style.display = 'none';
-            }, 10000);
+            // Show results section
+            document.getElementById('results').classList.add('active');
+
+            // Display token info
+            displayTokenInfo(data.token_info);
+
+            // 🧠 REVOLUTIONARY: Display Grok Analysis FIRST (most important)
+            displayRevolutionaryGrokInsights(data.grok_analysis);
+
+            // Display Galaxy Brain summary
+            displayGalaxyBrainSummary(data);
+
+            // Display risk vectors
+            displayRiskVectors(data.risk_vectors || []);
+
+            // Display advanced metrics
+            displayAdvancedMetrics(data);
+
+            // Display charts
+            displayAdvancedCharts(data);
+
+            // Display detailed analysis tabs
+            displayDetailedAnalysis(data);
         }
 
-        function hideError() {
-            document.getElementById('errorMessage').style.display = 'none';
-        }
-
-        function showSuccessNotification() {
-            const notification = document.getElementById('successNotification');
-            notification.classList.add('show');
+        function displayRevolutionaryGrokInsights(grokAnalysis) {
+            const grokContainer = document.getElementById('revolutionaryGrokAnalysis');
             
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
+            if (!grokAnalysis || !grokAnalysis.available) {
+                grokContainer.innerHTML = `
+                    <div class="grok-header">
+                        <div class="grok-brain-icon">🧠</div>
+                        <div class="grok-title">Revolutionary Grok Intelligence</div>
+                        <div class="grok-verdict caution_advised">API Key Required</div>
+                    </div>
+                    <div class="grok-content">
+                        <div class="grok-section">
+                            <h4>🔥 Connect Grok for Revolutionary Analysis</h4>
+                            <p>Add your XAI API key to unlock live community intelligence, real-time safety analysis, and revolutionary meme coin pattern detection.</p>
+                        </div>
+                        <div class="grok-section">
+                            <h4>🧠 Revolutionary Features Available</h4>
+                            <p>• Live X/Twitter community sentiment analysis<br>
+                               • Real-time scam and rug pull detection<br>
+                               • Meme coin safety pattern recognition<br>
+                               • Diamond hands vs paper hands analysis<br>
+                               • Whale legitimacy verification</p>
+                        </div>
+                    </div>
+                `;
+                grokContainer.style.display = 'block';
+                return;
+            }
+
+            const grokData = grokAnalysis.parsed_analysis || {};
+            const verdict = grokData.verdict || 'CAUTION_ADVISED';
+            const verdictClass = verdict.toLowerCase();
+
+            // Get specific community intelligence
+            const positiveSentiment = grokData.positive_community_sentiment || [];
+            const communityRisks = grokData.possible_community_risks || [];
+            const usernameMentions = grokData.username_mentions || 0;
+            const quoteMentions = grokData.quote_mentions || 0;
+
+            // 🧠 REVOLUTIONARY Grok display with SPECIFIC community intelligence
+            grokContainer.innerHTML = `
+                <div class="grok-header">
+                    <div class="grok-brain-icon">🧠</div>
+                    <div class="grok-title">Revolutionary Grok Intelligence</div>
+                    <div class="grok-verdict ${verdictClass}">${verdict.replace(/_/g, ' ')}</div>
+                </div>
+                
+                <div class="grok-content">
+                    ${positiveSentiment.length > 0 ? `
+                    <div class="grok-section">
+                        <h4>✅ Positive Community Sentiment</h4>
+                        ${positiveSentiment.map(sentiment => `
+                            <div style="background: rgba(81, 207, 102, 0.15); border-left: 3px solid #51cf66; padding: 12px; margin: 8px 0; border-radius: 5px;">
+                                ${sentiment}
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : `
+                    <div class="grok-section">
+                        <h4>✅ Positive Community Sentiment</h4>
+                        <p style="color: #888;">No specific positive community mentions found for this token.</p>
+                    </div>
+                    `}
+                    
+                    ${communityRisks.length > 0 ? `
+                    <div class="grok-section">
+                        <h4>⚠️ Possible Community Risks</h4>
+                        ${communityRisks.map(risk => `
+                            <div style="background: rgba(255, 107, 107, 0.15); border-left: 3px solid #ff6b6b; padding: 12px; margin: 8px 0; border-radius: 5px;">
+                                ${risk}
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : `
+                    <div class="grok-section">
+                        <h4>⚠️ Possible Community Risks</h4>
+                        <p style="color: #888;">No specific community risk warnings found for this token.</p>
+                    </div>
+                    `}
+                    
+                    <div class="grok-section">
+                        <h4>🐋 Whale Analysis</h4>
+                        <p>${grokData.whale_analysis || 'No specific whale behavior analysis available'}</p>
+                    </div>
+                    
+                    <div class="grok-section">
+                        <h4>🧠 Revolutionary Insight</h4>
+                        <p>${grokData.revolutionary_insight || 'Analysis incomplete'}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(108, 92, 231, 0.1); border-radius: 10px; border: 1px solid #6c5ce7;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 10px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #6c5ce7;">${usernameMentions}</div>
+                            <div style="font-size: 0.8rem; color: #aaa;">@Username Mentions</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #6c5ce7;">${quoteMentions}</div>
+                            <div style="font-size: 0.8rem; color: #aaa;">Specific Quotes</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #6c5ce7;">${Math.round((grokData.confidence || 0.5) * 100)}%</div>
+                            <div style="font-size: 0.8rem; color: #aaa;">Analysis Confidence</div>
+                        </div>
+                    </div>
+                    <p style="color: #a29bfe; font-size: 0.9rem; margin: 0; text-align: center;">
+                        <strong>🧠 Revolutionary Intelligence:</strong> ${grokData.analysis_type || 'Standard'} | 
+                        <strong>Data Source:</strong> Live X/Twitter Search
+                    </p>
+                </div>
+            `;
+            
+            grokContainer.style.display = 'block';
         }
 
-        // Global error handler
-        window.addEventListener('error', function(e) {
-            console.error('Global error:', e.error);
-            hideLoading();
-            showError('An unexpected error occurred. Please try again.');
-        });
+        function displayTokenInfo(tokenInfo) {
+            if (!tokenInfo) return;
 
-        // Handle unhandled promise rejections
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('Unhandled promise rejection:', e.reason);
-            hideLoading();
-            showError('Network error occurred. Please check your connection and try again.');
+            const tokenInfoEl = document.getElementById('tokenInfo');
+            const logoEl = document.getElementById('tokenLogo');
+            const nameEl = document.getElementById('tokenName');
+            const symbolEl = document.getElementById('tokenSymbol');
+            const addressEl = document.getElementById('tokenAddressDisplay');
+
+            if (tokenInfo.logo) {
+                logoEl.innerHTML = `<img src="${tokenInfo.logo}" alt="Token Logo" style="width: 100%; height: 100%; border-radius: 50%;">`;
+            } else {
+                logoEl.innerHTML = '🪙';
+            }
+
+            nameEl.textContent = tokenInfo.name || 'Unknown Token';
+            symbolEl.textContent = `${tokenInfo.symbol || 'UNKNOWN'}`;
+            addressEl.textContent = formatAddress(tokenInfo.address || tokenInfo.mint);
+
+            tokenInfoEl.style.display = 'flex';
+        }
+
+        function displayGalaxyBrainSummary(data) {
+            const score = data.galaxy_brain_score || 0;
+            const severity = data.severity_level || 'UNKNOWN';
+            const confidence = data.confidence || 0;
+
+            // Update Galaxy Brain score
+            const scoreEl = document.getElementById('galaxyScore');
+            const summaryEl = document.getElementById('galaxySummary');
+            scoreEl.textContent = score;
+            
+            // Set severity styling
+            const severityClass = severity.toLowerCase().replace(/_/g, '_');
+            scoreEl.className = `galaxy-score ${severityClass}`;
+            summaryEl.className = `galaxy-brain-summary ${scoreEl.className}`;
+
+            // Update severity level
+            document.getElementById('severityLevel').textContent = severity.replace(/_/g, ' ');
+
+            // Update confidence
+            const confidenceFill = document.getElementById('confidenceFill');
+            const confidenceText = document.getElementById('confidenceText');
+            confidenceFill.style.width = `${confidence * 100}%`;
+            confidenceText.textContent = `Confidence: ${Math.round(confidence * 100)}%`;
+
+            // Update AI analysis
+            const aiAnalysisEl = document.getElementById('aiAnalysis');
+            if (data.ai_analysis) {
+                aiAnalysisEl.innerHTML = `
+                    <h4>🧠 Revolutionary AI Analysis</h4>
+                    <div>${data.ai_analysis}</div>
+                `;
+            }
+        }
+
+        function displayRiskVectors(riskVectors) {
+            const grid = document.getElementById('riskVectorsGrid');
+            grid.innerHTML = '';
+
+            if (riskVectors.length === 0) {
+                grid.innerHTML = `
+                    <div class="risk-vector-card" style="grid-column: 1 / -1;">
+                        <div class="vector-title">✅ No Major Risk Vectors Detected</div>
+                        <div class="vector-impact">Revolutionary Galaxy Brain analysis found no critical risk patterns in this token.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            riskVectors.forEach(vector => {
+                const card = document.createElement('div');
+                card.className = `risk-vector-card ${vector.severity.toLowerCase()}`;
+                card.innerHTML = `
+                    <div class="vector-category">${vector.category}</div>
+                    <div class="vector-title">${getSeverityIcon(vector.severity)} ${vector.risk_type}</div>
+                    <div class="vector-impact">${vector.impact}</div>
+                    <div class="vector-mitigation">
+                        <strong>Mitigation:</strong> ${vector.mitigation}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function getSeverityIcon(severity) {
+            const icons = {
+                'CRITICAL': '🚨',
+                'HIGH': '⚠️',
+                'MEDIUM': '🟡',
+                'LOW': '🟢'
+            };
+            return icons[severity] || '⚪';
+        }
+
+        function displayAdvancedMetrics(data) {
+            const grid = document.getElementById('advancedMetrics');
+            grid.innerHTML = '';
+
+            const tokenInfo = data.token_info || {};
+            const holderAnalysis = data.holder_analysis || {};
+            const liquidityAnalysis = data.liquidity_analysis || {};
+            const transactionAnalysis = data.transaction_analysis || {};
+            const bundleDetection = data.bundle_detection || {};
+            const suspiciousActivity = data.suspicious_activity || {};
+
+            const metrics = [
+                {
+                    label: 'Market Cap',
+                    // FIXED: Properly handle market cap from correct field
+                    value: formatCurrency(tokenInfo.market_cap || 0),
+                    subtitle: 'Total Value'
+                },
+                {
+                    label: 'Liquidity',
+                    value: formatCurrency(tokenInfo.liquidity || 0),
+                    subtitle: `${(liquidityAnalysis.liquidity_ratio || 0).toFixed(1)}% of MC`
+                },
+                {
+                    label: 'Token Age',
+                    // FIXED: Remove decimals from token age display
+                    value: formatTokenAge(tokenInfo.age_days || 0),
+                    subtitle: 'Days Old'
+                },
+                {
+                    label: 'Top Holder',
+                    value: `${(holderAnalysis.top_1_percent || 0).toFixed(1)}%`,
+                    subtitle: 'Concentration Risk'
+                },
+                {
+                    label: 'Wash Trading',
+                    value: `${(suspiciousActivity.wash_trading_score || 0).toFixed(0)}%`,
+                    subtitle: 'Manipulation Risk'
+                },
+                {
+                    label: 'Bundle Risk',
+                    value: `${(bundleDetection.bundled_percentage || 0).toFixed(1)}%`,
+                    subtitle: `${bundleDetection.clusters_found || 0} Clusters`
+                },
+                {
+                    label: 'Transaction Health',
+                    value: `${(suspiciousActivity.transaction_health_score || 50).toFixed(0)}%`,
+                    subtitle: 'Quality Score'
+                },
+                {
+                    label: 'Authorities',
+                    value: tokenInfo.is_mutable ? '🔴 Active' : '✅ Renounced',
+                    subtitle: 'Mint/Freeze Status'
+                }
+            ];
+
+            metrics.forEach(metric => {
+                const card = document.createElement('div');
+                card.className = 'metric-card';
+                card.innerHTML = `
+                    <div class="metric-label">${metric.label}</div>
+                    <div class="metric-value">${metric.value}</div>
+                    <div class="metric-subtitle">${metric.subtitle}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function displayAdvancedCharts(data) {
+            // Destroy existing charts
+            Object.values(currentCharts).forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+            currentCharts = {};
+
+            // Wait a bit for DOM to settle
+            setTimeout(() => {
+                try {
+                    // Revolutionary Risk Breakdown Chart
+                    displayRiskBreakdownChart(data);
+                    
+                    // Holder Distribution Chart  
+                    displayHolderChart(data.holder_analysis || {});
+                    
+                    // Transaction Health Chart
+                    displayTransactionChart(data.transaction_analysis || {}, data.suspicious_activity || {});
+                    
+                    // Bundle Detection Chart
+                    displayBundleChart(data.bundle_detection || {});
+                } catch (error) {
+                    console.error('Chart display error:', error);
+                }
+            }, 100);
+        }
+
+        function displayRiskBreakdownChart(data) {
+            const canvas = document.getElementById('riskBreakdownChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            const riskVectors = data.risk_vectors || [];
+            const labels = riskVectors.map(v => v.risk_type);
+            const scores = riskVectors.map(v => {
+                const severityScores = { 'CRITICAL': 90, 'HIGH': 70, 'MEDIUM': 50, 'LOW': 30 };
+                return severityScores[v.severity] || 25;
+            });
+            const colors = riskVectors.map(v => {
+                const severityColors = { 
+                    'CRITICAL': '#ff3838', 
+                    'HIGH': '#ff6b6b', 
+                    'MEDIUM': '#ffd93d', 
+                    'LOW': '#51cf66' 
+                };
+                return severityColors[v.severity] || '#888';
+            });
+
+            if (labels.length === 0) {
+                labels.push('No Major Risks');
+                scores.push(10);
+                colors.push('#51cf66');
+            }
+
+            currentCharts.riskBreakdown = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: scores,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#1a1a1a'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff',
+                                padding: 15,
+                                usePointStyle: true,
+                                font: { size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayHolderChart(holderData) {
+            const canvas = document.getElementById('holderChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            const top1 = holderData.top_1_percent || 0;
+            const top5 = (holderData.top_5_percent || 0) - top1;
+            const top10 = (holderData.top_10_percent || 0) - (holderData.top_5_percent || 0);
+            const others = 100 - (holderData.top_10_percent || 0);
+
+            currentCharts.holder = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Top 1 Holder', 'Top 2-5 Holders', 'Top 6-10 Holders', 'Others'],
+                    datasets: [{
+                        data: [top1, top5, top10, others],
+                        backgroundColor: ['#ff3838', '#ff6b6b', '#ffd93d', '#51cf66'],
+                        borderWidth: 2,
+                        borderColor: '#1a1a1a'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff',
+                                padding: 15,
+                                font: { size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayTransactionChart(transactionData, suspiciousData) {
+            const canvas = document.getElementById('transactionChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            const healthScore = suspiciousData.transaction_health_score || 50;
+            const washScore = suspiciousData.wash_trading_score || 0;
+            const organicScore = 100 - washScore;
+
+            currentCharts.transaction = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Health', 'Organic', 'Wash Risk'],
+                    datasets: [{
+                        label: 'Score %',
+                        data: [healthScore, organicScore, washScore],
+                        backgroundColor: [
+                            healthScore > 70 ? '#51cf66' : healthScore > 40 ? '#ffd93d' : '#ff6b6b',
+                            organicScore > 70 ? '#51cf66' : organicScore > 40 ? '#ffd93d' : '#ff6b6b',
+                            washScore < 30 ? '#51cf66' : washScore < 60 ? '#ffd93d' : '#ff6b6b'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#1a1a1a'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: '#fff', font: { size: 11 } },
+                            grid: { color: '#333' }
+                        },
+                        x: {
+                            ticks: { color: '#fff', font: { size: 11 } },
+                            grid: { color: '#333' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function displayBundleChart(bundleData) {
+            const canvas = document.getElementById('bundleChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            const clustersFound = bundleData.clusters_found || 0;
+            const highRiskClusters = bundleData.high_risk_clusters || 0;
+            const lowRiskClusters = clustersFound - highRiskClusters;
+            const bundledPercentage = bundleData.bundled_percentage || 0;
+            const organicPercentage = 100 - bundledPercentage;
+
+            currentCharts.bundle = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Organic Holdings', 'Bundled Holdings', 'High Risk Clusters', 'Low Risk Clusters'],
+                    datasets: [{
+                        data: [organicPercentage, bundledPercentage, highRiskClusters * 5, lowRiskClusters * 3],
+                        backgroundColor: ['#51cf66', '#ffd93d', '#ff3838', '#ff6b6b'],
+                        borderWidth: 2,
+                        borderColor: '#1a1a1a'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff',
+                                padding: 15,
+                                font: { size: 11 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayDetailedAnalysis(data) {
+            // Holders tab
+            displayHoldersTab(data.holder_analysis || {});
+            
+            // Transactions tab
+            displayTransactionsTab(data.transaction_analysis || {}, data.suspicious_activity || {});
+            
+            // Bundles tab
+            displayBundlesTab(data.bundle_detection || {});
+            
+            // Liquidity tab
+            displayLiquidityTab(data.liquidity_analysis || {});
+        }
+
+        function displayHoldersTab(holderData) {
+            const holdersList = document.getElementById('holdersList');
+            holdersList.innerHTML = '';
+
+            const holders = holderData.top_holders || [];
+            
+            if (holders.length === 0) {
+                holdersList.innerHTML = '<p style="color: #888; text-align: center;">No holder data available</p>';
+                return;
+            }
+
+            holders.forEach(holder => {
+                const row = document.createElement('div');
+                row.className = 'holder-row';
+                
+                let riskColor = '#51cf66';
+                if (holder.percentage > 15) riskColor = '#ff3838';
+                else if (holder.percentage > 8) riskColor = '#ff6b6b';
+                else if (holder.percentage > 3) riskColor = '#ffd93d';
+
+                row.innerHTML = `
+                    <span class="holder-address">
+                        <strong>#${holder.rank}</strong> ${formatAddress(holder.address)}
+                    </span>
+                    <span class="holder-percent" style="color: ${riskColor}">
+                        ${holder.percentage.toFixed(2)}%
+                    </span>
+                `;
+                holdersList.appendChild(row);
+            });
+        }
+
+        function displayTransactionsTab(transactionData, suspiciousData) {
+            const container = document.getElementById('transactionAnalysis');
+            
+            container.innerHTML = `
+                <div style="display: grid; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="metric-card">
+                            <div class="metric-label">Transaction Health Score</div>
+                            <div class="metric-value">${(suspiciousData.transaction_health_score || 50).toFixed(0)}%</div>
+                            <div class="metric-subtitle">Overall transaction quality</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">Wash Trading Risk</div>
+                            <div class="metric-value">${(suspiciousData.wash_trading_score || 0).toFixed(1)}%</div>
+                            <div class="metric-subtitle">Artificial volume inflation</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">Insider Activity</div>
+                            <div class="metric-value">${(suspiciousData.insider_activity_score || 0).toFixed(1)}%</div>
+                            <div class="metric-subtitle">Coordinated trading patterns</div>
+                        </div>
+                    </div>
+                    
+                    ${suspiciousData.farming_indicators && suspiciousData.farming_indicators.length > 0 ? `
+                    <div style="background: rgba(255, 107, 107, 0.1); padding: 20px; border-radius: 10px; border: 1px solid #ff6b6b;">
+                        <h4 style="color: #ff6b6b; margin-bottom: 15px;">🚨 Farming Indicators Detected</h4>
+                        ${suspiciousData.farming_indicators.map(indicator => `<p>• ${indicator}</p>`).join('')}
+                    </div>
+                    ` : ''}
+                    
+                    ${suspiciousData.suspicious_patterns && suspiciousData.suspicious_patterns.length > 0 ? `
+                    <div style="background: rgba(255, 217, 61, 0.1); padding: 20px; border-radius: 10px; border: 1px solid #ffd93d;">
+                        <h4 style="color: #ffd93d; margin-bottom: 15px;">⚠️ Suspicious Patterns</h4>
+                        ${suspiciousData.suspicious_patterns.map(pattern => `<p>• ${pattern}</p>`).join('')}
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function displayBundlesTab(bundleData) {
+            const container = document.getElementById('bundleDetection');
+            
+            const clusters = bundleData.clusters || [];
+            
+            container.innerHTML = `
+                <div style="display: grid; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="metric-card">
+                            <div class="metric-label">Clusters Found</div>
+                            <div class="metric-value">${bundleData.clusters_found || 0}</div>
+                            <div class="metric-subtitle">Bundle groups detected</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">High Risk Clusters</div>
+                            <div class="metric-value">${bundleData.high_risk_clusters || 0}</div>
+                            <div class="metric-subtitle">Dangerous patterns</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">Bundled Percentage</div>
+                            <div class="metric-value">${(bundleData.bundled_percentage || 0).toFixed(1)}%</div>
+                            <div class="metric-subtitle">Of total supply</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">Risk Level</div>
+                            <div class="metric-value">${bundleData.risk_level || 'UNKNOWN'}</div>
+                            <div class="metric-subtitle">Bundle threat assessment</div>
+                        </div>
+                    </div>
+                    
+                    ${clusters.length > 0 ? `
+                    <div>
+                        <h4 style="margin-bottom: 15px;">🕷️ Detected Clusters</h4>
+                        ${clusters.map(cluster => `
+                        <div class="cluster-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <strong>${cluster.cluster_id}</strong>
+                                <span style="color: ${cluster.risk_score > 70 ? '#ff3838' : cluster.risk_score > 40 ? '#ffd93d' : '#51cf66'}">
+                                    Risk: ${cluster.risk_score}%
+                                </span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; font-size: 0.9rem; color: #ccc;">
+                                <div>Wallets: ${cluster.wallet_count}</div>
+                                <div>Holdings: ${cluster.total_percentage.toFixed(1)}%</div>
+                                <div>Pattern: ${cluster.creation_pattern}</div>
+                            </div>
+                        </div>
+                        `).join('')}
+                    </div>
+                    ` : '<p style="color: #888; text-align: center;">No clusters detected - this is good!</p>'}
+                </div>
+            `;
+        }
+
+        function displayLiquidityTab(liquidityData) {
+            const container = document.getElementById('liquidityAnalysis');
+            
+            container.innerHTML = `
+                <div style="display: grid; gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="metric-card">
+                            <div class="metric-label">Liquidity USD</div>
+                            <div class="metric-value">${formatCurrency(liquidityData.liquidity_usd || 0)}</div>
+                            <div class="metric-subtitle">Available liquidity</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">Liquidity Ratio</div>
+                            <div class="metric-value">${(liquidityData.liquidity_ratio || 0).toFixed(1)}%</div>
+                            <div class="metric-subtitle">Of market cap</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">Volume/Liquidity</div>
+                            <div class="metric-value">${(liquidityData.volume_to_liquidity || 0).toFixed(1)}x</div>
+                            <div class="metric-subtitle">Trading intensity</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">Risk Level</div>
+                            <div class="metric-value">${liquidityData.liquidity_risk || 'UNKNOWN'}</div>
+                            <div class="metric-subtitle">Liquidity assessment</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div style="background: rgba(255, 217, 61, 0.1); padding: 20px; border-radius: 10px; border: 1px solid #ffd93d;">
+                            <h4 style="color: #ffd93d; margin-bottom: 15px;">📊 Slippage Estimates</h4>
+                            <div style="display: grid; gap: 10px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>DEX:</span>
+                                    <span style="font-weight: bold;">${liquidityData.dex || 'Unknown'}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>$1K Trade:</span>
+                                    <span style="font-weight: bold;">${(liquidityData.slippage_1k || 0).toFixed(1)}%</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>$10K Trade:</span>
+                                    <span style="font-weight: bold;">${(liquidityData.slippage_10k || 0).toFixed(1)}%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(108, 92, 231, 0.1); padding: 20px; border-radius: 10px; border: 1px solid #6c5ce7;">
+                            <h4 style="color: #6c5ce7; margin-bottom: 15px;">🔒 Liquidity Lock Status</h4>
+                            <div style="display: grid; gap: 10px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Locked:</span>
+                                    <span style="font-weight: bold; color: ${liquidityData.is_locked ? '#51cf66' : '#ff6b6b'}">
+                                        ${liquidityData.is_locked ? 'Yes' : 'No'}
+                                    </span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Duration:</span>
+                                    <span style="font-weight: bold;">${liquidityData.lock_duration || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            event.target.classList.add('active');
+        }
+
+        // Auto-analyze on load if address is present
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const address = urlParams.get('address');
+            if (address) {
+                document.getElementById('tokenAddress').value = address;
+                analyzeToken();
+            }
+        };
+
+        // Enter key support
+        document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeToken();
+            }
         });
     </script>
 </body>

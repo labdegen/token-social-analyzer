@@ -24,8 +24,6 @@ import asyncio
 from enhanced_rugchecker_solanatracker import EnhancedRugCheckerWithSolanaTracker
 from dotenv import load_dotenv
 from splash import splash_route, api_planets
-from dataclasses import asdict, is_dataclass
-from typing import Any, Dict, List, Union
 
 # Load environment variables from .env file
 load_dotenv()
@@ -87,130 +85,6 @@ def run_async(coro):
     finally:
         loop.close()
 
-def make_json_serializable(obj: Any) -> Any:
-    """
-    Enhanced JSON serialization function that handles all object types including dataclasses,
-    custom objects, and ScamIndicators from the rug checker.
-    """
-    if obj is None:
-        return None
-    
-    # Handle basic JSON-serializable types
-    elif isinstance(obj, (str, int, float, bool)):
-        return obj
-    
-    # Handle datetime objects
-    elif isinstance(obj, datetime):
-        return obj.isoformat()
-    
-    # Handle dataclasses (like ScamIndicators)
-    elif is_dataclass(obj):
-        try:
-            return asdict(obj)
-        except Exception as e:
-            # Fallback: manually extract fields
-            return {
-                field.name: make_json_serializable(getattr(obj, field.name, None))
-                for field in obj.__dataclass_fields__.values()
-            }
-    
-    # Handle dictionaries
-    elif isinstance(obj, dict):
-        return {
-            str(key): make_json_serializable(value) 
-            for key, value in obj.items()
-        }
-    
-    # Handle lists and tuples
-    elif isinstance(obj, (list, tuple)):
-        return [make_json_serializable(item) for item in obj]
-    
-    # Handle sets
-    elif isinstance(obj, set):
-        return list(obj)
-    
-    # Handle custom objects with __dict__
-    elif hasattr(obj, '__dict__'):
-        result = {}
-        for key, value in obj.__dict__.items():
-            # Skip private attributes and methods
-            if not key.startswith('_'):
-                try:
-                    result[key] = make_json_serializable(value)
-                except Exception:
-                    # If we can't serialize a field, convert to string
-                    result[key] = str(value)
-        return result
-    
-    # Handle objects with to_dict method
-    elif hasattr(obj, 'to_dict') and callable(getattr(obj, 'to_dict')):
-        try:
-            return make_json_serializable(obj.to_dict())
-        except Exception:
-            return str(obj)
-    
-    # Handle enums
-    elif hasattr(obj, 'value'):
-        return obj.value
-    
-    # Handle other iterables (except strings which are already handled)
-    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes)):
-        try:
-            return [make_json_serializable(item) for item in obj]
-        except Exception:
-            return str(obj)
-    
-    # Final fallback: convert to string
-    else:
-        return str(obj)
-
-def fix_analysis_data_serialization(analysis_data: Dict) -> Dict:
-    """
-    Specifically fix the analysis data structure that's causing JSON serialization issues
-    """
-    try:
-        # Make a deep copy and ensure everything is JSON serializable
-        fixed_data = make_json_serializable(analysis_data)
-        
-        # Specifically handle rug_analysis results that might contain ScamIndicators
-        if 'rug_analysis' in fixed_data:
-            rug_analysis = fixed_data['rug_analysis']
-            
-            # Handle any nested objects in rug analysis
-            for key, value in rug_analysis.items():
-                if hasattr(value, '__dict__') or is_dataclass(value):
-                    rug_analysis[key] = make_json_serializable(value)
-        
-        # Handle safety_metrics that might contain complex objects
-        if 'safety_metrics' in fixed_data:
-            fixed_data['safety_metrics'] = make_json_serializable(fixed_data['safety_metrics'])
-        
-        # Handle holder_security data
-        if 'holder_security' in fixed_data:
-            fixed_data['holder_security'] = make_json_serializable(fixed_data['holder_security'])
-        
-        # Handle liquidity_security data
-        if 'liquidity_security' in fixed_data:
-            fixed_data['liquidity_security'] = make_json_serializable(fixed_data['liquidity_security'])
-        
-        # Handle authority_security data
-        if 'authority_security' in fixed_data:
-            fixed_data['authority_security'] = make_json_serializable(fixed_data['authority_security'])
-        
-        # Handle risk_vectors list
-        if 'risk_vectors' in fixed_data:
-            fixed_data['risk_vectors'] = make_json_serializable(fixed_data['risk_vectors'])
-        
-        return fixed_data
-        
-    except Exception as e:
-        logger.error(f"Error fixing analysis data serialization: {e}")
-        # Return a safe fallback structure
-        return {
-            'error': 'Serialization failed',
-            'original_error': str(e),
-            'timestamp': datetime.now().isoformat()
-        }
 
 # API URLs
 XAI_URL = "https://api.x.ai/v1/chat/completions"
@@ -992,807 +866,429 @@ class SocialCryptoDashboard:
         }
 
     def get_x_api_social_data(self, token_address: str, symbol: str, time_window: str) -> Dict:
-        """Fetch social data using Grok API with Live Search instead of X API"""
-        return self.get_grok_api_social_data(token_address, symbol, time_window)
-        
-
-    def get_grok_api_social_data(self, token_address: str, symbol: str, time_window: str) -> Dict:
-        """Fetch social data using Grok API and return raw response without parsing"""
+        """Fetch real social media data using X API directly."""
         try:
-            if not self.xai_api_key or self.xai_api_key == 'your-xai-api-key-here':
-                logger.warning("No XAI API key configured for Grok social data")
+            # Check if we have X API client
+            if not self.x_enabled or not self.x_client:
+                logger.warning("No X API client available")
                 return self._get_fallback_social_data(symbol)
 
             days = {'1d': 1, '3d': 3, '7d': 7}.get(time_window, 3)
             
-            # Calculate date range for search
-            end_date = datetime.now()
-            start_date = end_date - timedelta(days=days)
+            # Search queries to try
+            search_queries = [
+                token_address,  # Full contract address only
+                # COMMENTED OUT - testing contract-only search
+                # token_address[:12],  # First 12 chars of contract
+                # token_address[:8],   # First 8 chars of contract
+                # f"${symbol}",
+                # f"{symbol} solana", 
+                # f"{symbol} token",
+            ]
             
-            # Create a clearer Grok API prompt that specifically asks for handles
-            grok_prompt = f"""
-    Find Twitter/X accounts discussing ${symbol} (Solana contract {token_address[:12]}) in the last {days} days.
-
-    IMPORTANT: For each account, provide:
-    1. The Twitter HANDLE (the @username that appears in their profile URL, NOT their display name)
-    2. Their follower count
-    3. What they recently tweeted about ${symbol}
-
-    Format as a simple list like:
-    @actualhandle (50K followers): "Their tweet or opinion about ${symbol}"
-
-    Do NOT use display names. Only use the actual @handle that would appear in twitter.com/handle
-    Focus on crypto influencers, traders, and notable accounts.
-            """
             
-            logger.info(f"Making Grok Live Search API call for {symbol}...")
+            all_tweets = []
+            notable_accounts = set()
+            seen_users = set()  # Track users we've already included
             
-            # Make the API call
-            result = self._grok_live_search_query_fixed(grok_prompt, {
-                "mode": "on",
-                "sources": [{"type": "x"}],
-                "max_search_results": 20,
-                "from_date": start_date.strftime("%Y-%m-%d"),
-                "to_date": end_date.strftime("%Y-%m-%d"),
-                "return_citations": True
-            })
+            # PHASE 1: Contract address search (1 tweet per user)
+            for query in search_queries:
+                try:
+                    logger.info(f"Searching X for exact match: {query}")
+                    
+                    # X API v2 search with exact match
+                    tweets = self.x_client.search_recent_tweets(
+                        query=f'"{query}" -is:retweet lang:en',  # Exact match with quotes
+                        max_results=50,  # Get more to have options after deduplication
+                        tweet_fields=['created_at', 'author_id', 'public_metrics', 'context_annotations'],
+                        expansions=['author_id'],
+                        user_fields=['username', 'name', 'public_metrics', 'verified', 'profile_image_url']
+                    )
+                    
+                    if tweets.data:
+                        # Create user lookup
+                        users_dict = {}
+                        if hasattr(tweets, 'includes') and tweets.includes and 'users' in tweets.includes:
+                            users_dict = {user.id: user for user in tweets.includes['users']}
+                        
+                        for tweet in tweets.data:
+                            user = users_dict.get(tweet.author_id)
+                            if not user:
+                                continue
+                                
+                            # SKIP if we already have a tweet from this user
+                            if tweet.author_id in seen_users:
+                                continue
+                                
+                            seen_users.add(tweet.author_id)  # Mark this user as seen
+                            
+                            # Determine sentiment
+                            sentiment = self._analyze_tweet_sentiment(tweet.text)
+                            
+                            # Add to tweets list
+                            all_tweets.append({
+                                'id': tweet.id,
+                                'username': user.username,
+                                'display_name': user.name,
+                                'content': tweet.text,
+                                'created_at': tweet.created_at.strftime("%Y-%m-%d %H:%M:%S") if tweet.created_at else "Recent",
+                                'followers': user.public_metrics.get('followers_count', 0) if user.public_metrics else 0,
+                                'likes': tweet.public_metrics.get('like_count', 0) if tweet.public_metrics else 0,
+                                'retweets': tweet.public_metrics.get('retweet_count', 0) if tweet.public_metrics else 0,
+                                'replies': tweet.public_metrics.get('reply_count', 0) if tweet.public_metrics else 0,
+                                'sentiment': sentiment,
+                                'verified': getattr(user, 'verified', False),
+                                'profile_image': getattr(user, 'profile_image_url', ''),
+                                'url': f"https://x.com/{user.username}/status/{tweet.id}"
+                            })
+                            
+                            # Add to notable accounts if they have decent following
+                            if user.public_metrics and user.public_metrics.get('followers_count', 0) > 1000:
+                                notable_accounts.add((
+                                    user.username,
+                                    user.name,
+                                    user.public_metrics.get('followers_count', 0),
+                                    f"https://x.com/{user.username}"
+                                ))
+                    
+                    # Rate limit protection
+                    time.sleep(1)
+                    
+                except Exception as e:
+                    logger.warning(f"Error searching for '{query}': {e}")
+                    continue
             
-            logger.info(f"Grok Live Search result length: {len(result) if result else 0}")
+            # PHASE 2: High-follower influencer search (5K+ followers discussing the symbol)
+            # Use symbol without $ operator since it's not available in basic API
+            logger.info(f"Searching for high-follower accounts discussing contract: {token_address}")
+            try:
+                # Search for contract address to find influencers
+                influencer_tweets = self.x_client.search_recent_tweets(
+                    query=f'"{token_address}" -is:retweet lang:en',  # No $ operator
+                    max_results=50,
+                    tweet_fields=['created_at', 'author_id', 'public_metrics', 'context_annotations'],
+                    expansions=['author_id'],
+                    user_fields=['username', 'name', 'public_metrics', 'verified', 'profile_image_url']
+                )
+                
+                if influencer_tweets.data:
+                    # Create user lookup
+                    influencer_users_dict = {}
+                    if hasattr(influencer_tweets, 'includes') and influencer_tweets.includes and 'users' in influencer_tweets.includes:
+                        influencer_users_dict = {user.id: user for user in influencer_tweets.includes['users']}
+                    
+                    influencer_count = 0
+                    for tweet in influencer_tweets.data:
+                        user = influencer_users_dict.get(tweet.author_id)
+                        if not user or not user.public_metrics:
+                            continue
+                            
+                        # ONLY include users with 5K+ followers
+                        follower_count = user.public_metrics.get('followers_count', 0)
+                        if follower_count < 1000:
+                            continue
+                            
+                        # SKIP if we already have a tweet from this user
+                        if tweet.author_id in seen_users:
+                            continue
+                            
+                        seen_users.add(tweet.author_id)
+                        
+                        # Determine sentiment
+                        sentiment = self._analyze_tweet_sentiment(tweet.text)
+                        
+                        # Add to tweets list
+                        all_tweets.append({
+                            'id': tweet.id,
+                            'username': user.username,
+                            'display_name': user.name,
+                            'content': tweet.text,
+                            'created_at': tweet.created_at.strftime("%Y-%m-%d %H:%M:%S") if tweet.created_at else "Recent",
+                            'followers': follower_count,
+                            'likes': tweet.public_metrics.get('like_count', 0) if tweet.public_metrics else 0,
+                            'retweets': tweet.public_metrics.get('retweet_count', 0) if tweet.public_metrics else 0,
+                            'replies': tweet.public_metrics.get('reply_count', 0) if tweet.public_metrics else 0,
+                            'sentiment': sentiment,
+                            'verified': getattr(user, 'verified', False),
+                            'profile_image': getattr(user, 'profile_image_url', ''),
+                            'url': f"https://x.com/{user.username}/status/{tweet.id}",
+                            'is_influencer': True  # Mark as influencer
+                        })
+                        
+                        # Add to notable accounts (they all qualify with 5K+)
+                        notable_accounts.add((
+                            user.username,
+                            user.name,
+                            follower_count,
+                            f"https://x.com/{user.username}"
+                        ))
+                        
+                        influencer_count += 1
+                        # Stop if we found enough influencers
+                        if influencer_count >= 5:
+                            break
+                
+                time.sleep(1)  # Rate limit protection
+                
+            except Exception as e:
+                logger.warning(f"Error in influencer search: {e}")
             
-            # Return data structure with raw response
+            # Sort tweets by: influencers first, then engagement and verification
+            all_tweets.sort(key=lambda x: (
+                x.get('is_influencer', False),  # Influencers first
+                (x['likes'] + x['retweets']) * 0.7,  # Engagement
+                x['verified'] * 0.3,  # Verification bonus
+                x['followers'] * 0.1  # Follower count bonus
+            ), reverse=True)
+            
+            # Remove duplicates
+            seen_tweet_ids = set()
+            unique_tweets = []
+            for tweet in all_tweets:
+                if tweet['id'] not in seen_tweet_ids:
+                    unique_tweets.append(tweet)
+                    seen_tweet_ids.add(tweet['id'])
+            
+            # Sort tweets by engagement and recency
+            unique_tweets.sort(key=lambda x: (x['likes'] + x['retweets']) * 0.7 + (1 if x['verified'] else 0) * 0.3, reverse=True)
+            
+            # Sort notable accounts by followers
+            notable_accounts_list = sorted(notable_accounts, key=lambda x: x[2], reverse=True)
+            
+            # Format discussion topics from tweets
+            discussion_topics = self._extract_topics_from_tweets(unique_tweets)
+            
+            logger.info(f"X API found {len(unique_tweets)} tweets and {len(notable_accounts_list)} notable accounts for {symbol}")
+            
             return {
-                'has_real_data': bool(result and len(result) > 50),
-                'raw_grok_response': result if result else "No response from Grok API",
-                'api_source': 'grok_live_search',
-                'timestamp': datetime.now().isoformat(),
-                # Keep minimal parsed data for compatibility
-                'account_table': [],
-                'top_accounts': [],
-                'tweets': [],
-                'platform_distribution': {'twitter': 0},
-                'sentiment_summary': {'tone': 'See raw response', 'reasoning': 'Raw Grok analysis above'},
-                'total_tweets_found': 0,
-                'total_accounts_found': 0,
-                'data_quality': 'raw_response'
+                'has_real_data': len(unique_tweets) > 0,
+                'tweets': unique_tweets[:15],  # Top 15 tweets
+                'notable_accounts': [
+                    {
+                        'username': acc[0],
+                        'display_name': acc[1], 
+                        'followers': acc[2],
+                        'followers_formatted': self._format_follower_count(acc[2]),
+                        'url': acc[3]
+                    } for acc in notable_accounts_list[:10]
+                ],
+                'accounts': [  # For backward compatibility
+                    {
+                        'username': tweet['username'],
+                        'followers': self._format_follower_count(tweet['followers']),
+                        'recent_activity': f"Tweeted about ${symbol}",
+                        'url': f"https://x.com/{tweet['username']}"
+                    } for tweet in unique_tweets[:8]
+                ],
+                'discussion_topics': discussion_topics,
+                'platform_distribution': {'twitter': len(unique_tweets)},
+                'sentiment_summary': self._calculate_sentiment_summary(unique_tweets),
+                'total_tweets_found': len(unique_tweets),
+                'total_accounts_found': len(notable_accounts_list),
+                'data_quality': 'real' if len(unique_tweets) >= 5 else 'limited' if len(unique_tweets) > 0 else 'no_data'
             }
             
         except Exception as e:
-            logger.error(f"Grok Live Search error: {e}")
+            logger.error(f"X API social data error: {e}")
             return self._get_fallback_social_data(symbol)
 
-    def _grok_live_search_query_fixed(self, prompt: str, search_params: Dict = None) -> str:
-        """Fixed Grok API call using proper Live Search endpoint and parameters"""
-        try:
-            if not self.xai_api_key or self.xai_api_key == 'your-xai-api-key-here':
-                logger.warning("GROK API key not configured")
-                return ""
-
-            # Use the CORRECT API endpoint from documentation
-            url = "https://api.x.ai/v1/chat/completions"
-            
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.xai_api_key}"
-            }
-            
-            # ✅ FIXED: Prepare search parameters with proper limits
-            default_search_params = {
-                "mode": "on",  # Force live search
-                "sources": [{"type": "x"}],  # Only X search
-                "max_search_results": 20,  # ✅ REDUCED from 25/30 to 20
-                "return_citations": True
-            }
-            
-            if search_params:
-                default_search_params.update(search_params)
-            
-            # ✅ FIXED: Prepare the payload with better model and parameters
-            payload = {
-                "model": "grok-3-latest",  # ✅ CHANGED from grok-3-latest to grok-beta
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": "You are Grok, an AI assistant with access to real-time X data. Always return valid JSON arrays when requested. Do not add explanatory text before or after JSON responses. Be precise and factual."
-                    },
-                    {
-                        "role": "user", 
-                        "content": prompt
-                    }
-                ],
-                "search_parameters": default_search_params,
-                "max_tokens": 3000,  # ✅ INCREASED from 2000 to 3000
-                "temperature": 0.1,  # ✅ REDUCED for more consistent output
-                "stream": False  # Ensure complete response
-            }
-            
-            logger.info(f"Making Grok Live Search API call to {url}")
-            logger.info(f"Search parameters: {default_search_params}")
-            
-            # ✅ INCREASED timeout for more complex queries
-            response = requests.post(url, headers=headers, json=payload, timeout=90)
-            
-            logger.info(f"Grok API response status: {response.status_code}")
-            
-            if response.status_code == 200:
-                result = response.json()
-                
-                # Extract content from the proper response structure
-                if 'choices' in result and len(result['choices']) > 0:
-                    content = result['choices'][0]['message']['content']
-                    
-                    # Log citations if available
-                    if 'citations' in result:
-                        logger.info(f"Grok returned {len(result['citations'])} citations")
-                    
-                    logger.info(f"Grok Live Search successful, content length: {len(content)}")
-                    return content
-                else:
-                    logger.error("No choices in Grok API response")
-                    return ""
-                        
-            elif response.status_code == 400:
-                logger.error(f"Grok API Bad Request: {response.text}")
-                return ""
-            elif response.status_code == 401:
-                logger.error("Grok API: Unauthorized - check API key")
-                return ""
-            elif response.status_code == 429:
-                logger.error("Grok API: Rate limit exceeded")
-                return ""
-            else:
-                logger.error(f"Grok API error {response.status_code}: {response.text}")
-                return ""
-                    
-        except requests.exceptions.Timeout:
-            logger.error("Grok API call timed out")
-            return ""
-        except Exception as e:
-            logger.error(f"Grok Live Search API error: {e}")
-            return ""
-
-    def _parse_grok_live_search_response(self, content: str, contract_address: str, symbol: str) -> Dict:
-        """Parse Grok Live Search response with enhanced validation"""
-        social_data = {
-            'has_real_data': False,
-            'top_accounts': [],
-            'account_table': [],
-            'discussion_topics': [],
-            'platform_distribution': {'twitter': 0},
-            'sentiment_summary': {'tone': 'Neutral', 'reasoning': 'No data'},
-            'total_tweets_found': 0,
-            'total_accounts_found': 0,
-            'data_quality': 'no_data',
-            'api_source': 'grok_live_search'
-        }
+    def _analyze_tweet_sentiment(self, text: str) -> str:
+        """Simple sentiment analysis for tweets."""
+        text_lower = text.lower()
         
-        try:
-            logger.info(f"Parsing Grok Live Search response: {content[:200]}...")
-            
-            # First, try to parse as JSON
-            json_parsed = False
-            
-            # Check if content looks like JSON array
-            if content.strip().startswith('['):
-                try:
-                    # Pre-process content to fix common issues
-                    cleaned_content = content
-                    
-                    # Fix URL formatting issues
-                    cleaned_content = cleaned_content.replace('"https"://', 'https://')
-                    cleaned_content = cleaned_content.replace('"http"://', 'http://')
-                    
-                    # Fix newlines in JSON strings
-                    cleaned_content = re.sub(r'(?<!\\)\n', ' ', cleaned_content)
-                    
-                    # Try to parse
-                    accounts_data = json.loads(cleaned_content)
-                    
-                    if isinstance(accounts_data, list):
-                        logger.info(f"Successfully parsed JSON array with {len(accounts_data)} items")
-                        
-                        valid_accounts = []
-                        for i, account_entry in enumerate(accounts_data):
-                            if isinstance(account_entry, dict):
-                                processed = self._process_grok_account_entry(account_entry, symbol)
-                                if processed:
-                                    valid_accounts.append(processed)
-                                    logger.info(f"✅ Processed account {i}: @{processed['username']}")
-                        
-                        if valid_accounts:
-                            json_parsed = True
-                            social_data['account_table'] = valid_accounts
-                            social_data['has_real_data'] = True
-                            social_data['total_accounts_found'] = len(valid_accounts)
-                            social_data['data_quality'] = 'json_parsed'
-                            
-                except json.JSONDecodeError as e:
-                    logger.warning(f"JSON parsing failed: {e}")
-                    # Log the specific location of the error
-                    error_location = getattr(e, 'pos', 0)
-                    if error_location > 0:
-                        logger.warning(f"Error around: ...{content[max(0, error_location-50):error_location+50]}...")
-            
-            # If JSON parsing failed, try structured text parsing
-            if not json_parsed:
-                logger.info("Attempting structured text parsing for Grok response")
-                
-                # Look for account patterns in the response
-                account_patterns = [
-                    # Pattern 1: @username: "tweet content" (followers)
-                    r'@([a-zA-Z0-9_]{1,15}):\s*"([^"]+)"\s*\(([^)]+)\)',
-                    # Pattern 2: @username (followers): tweet content
-                    r'@([a-zA-Z0-9_]{1,15})\s*\(([^)]+)\):\s*([^\n]+)',
-                    # Pattern 3: account":"@username" with other fields
-                    r'"account"\s*:\s*"@([a-zA-Z0-9_]{1,15})"',
-                ]
-                
-                parsed_accounts = []
-                seen_usernames = set()
-                
-                # Try each pattern
-                for pattern in account_patterns:
-                    matches = re.findall(pattern, content, re.MULTILINE | re.DOTALL)
-                    
-                    for match in matches:
-                        if len(match) >= 1:
-                            username = match[0].strip()
-                            
-                            if username and username not in seen_usernames:
-                                seen_usernames.add(username)
-                                
-                                # Extract additional info based on pattern
-                                tweet_content = ""
-                                follower_info = "Unknown followers"
-                                
-                                if len(match) == 3:
-                                    if pattern == account_patterns[0]:  # Pattern 1
-                                        tweet_content = match[1]
-                                        follower_info = match[2]
-                                    elif pattern == account_patterns[1]:  # Pattern 2
-                                        follower_info = match[1]
-                                        tweet_content = match[2]
-                                
-                                # Parse follower count
-                                follower_count = self._parse_follower_count(follower_info)
-                                
-                                parsed_accounts.append({
-                                    'rank': len(parsed_accounts) + 1,
-                                    'account': f'@{username}',
-                                    'username': username,
-                                    'date_posted': 'recent',
-                                    'tweet_content': tweet_content or f"Discussed ${symbol} recently",
-                                    'follower_count': follower_count,
-                                    'follower_display': self._format_follower_count(follower_count) if follower_count else follower_info,
-                                    'tweet_url': f'https://x.com/{username}',
-                                    'total_engagement': max(100, follower_count // 100) if follower_count else 100,
-                                    'data_source': 'grok_text_parsed'
-                                })
-                
-                if parsed_accounts:
-                    social_data['account_table'] = parsed_accounts[:8]
-                    social_data['has_real_data'] = True
-                    social_data['total_accounts_found'] = len(parsed_accounts)
-                    social_data['data_quality'] = 'text_parsed'
-            
-            # Convert to top_accounts format
-            if social_data['account_table']:
-                social_data['top_accounts'] = [
-                    self._convert_to_top_account_format(acc) for acc in social_data['account_table']
-                ]
-                social_data['platform_distribution']['twitter'] = len(social_data['account_table'])
-                social_data['total_tweets_found'] = len(social_data['account_table'])
-                
-                # Update sentiment
-                social_data['sentiment_summary'] = self._analyze_real_sentiment(social_data['account_table'])
-                
-                logger.info(f"✅ Final result: {len(social_data['account_table'])} accounts parsed")
-            else:
-                logger.warning("❌ No accounts could be parsed from Grok response")
-                
-        except Exception as e:
-            logger.error(f"Error parsing Grok response: {e}")
-            import traceback
-            logger.error(traceback.format_exc())
-            
-        return social_data
-    
-    def _format_follower_count(self, count: int) -> str:
-        """Format follower count for display"""
-        if count >= 1000000:
-            return f"{count / 1000000:.1f}M followers"
-        elif count >= 1000:
-            return f"{count / 1000:.0f}K followers"
-        elif count > 0:
-            return f"{count} followers"
+        bullish_words = ['moon', 'bullish', 'pump', 'buy', 'hold', 'hodl', 'diamond', 'rocket', '🚀', '💎', 'green', 'up']
+        bearish_words = ['dump', 'sell', 'bearish', 'down', 'crash', 'rekt', 'red', 'dead', 'over']
+        
+        bullish_count = sum(1 for word in bullish_words if word in text_lower)
+        bearish_count = sum(1 for word in bearish_words if word in text_lower)
+        
+        if bullish_count > bearish_count:
+            return 'bullish'
+        elif bearish_count > bullish_count:
+            return 'bearish'
         else:
-            return "Unknown followers"
+            return 'neutral'
 
-
-
-    def _parse_follower_count(self, follower_text: str) -> int:
-        """Parse follower count from text like '45K followers' or '1.2M followers'"""
-        try:
-            # Look for patterns like "45K", "1.2M", "500", etc.
-            match = re.search(r'(\d+(?:\.\d+)?)\s*([KMBkmb]?)\s*(?:followers?)?', follower_text, re.IGNORECASE)
-            if match:
-                num = float(match.group(1))
-                multiplier = match.group(2).upper() if match.group(2) else ''
-                
-                if multiplier == 'K':
-                    return int(num * 1000)
-                elif multiplier == 'M':
-                    return int(num * 1000000)
-                elif multiplier == 'B':
-                    return int(num * 1000000000)
-                else:
-                    return int(num)
-        except:
-            pass
-        return 0
-
-    def _parse_structured_grok_text(self, content: str, symbol: str) -> List[Dict]:
-        """Parse structured text response from Grok when JSON fails"""
-        accounts = []
-        
-        # Pattern for structured account mentions with followers
-        patterns = [
-            # @username: "tweet content" (follower info)
-            r'@([a-zA-Z0-9_]{1,15}):\s*"([^"]+)"\s*\(([^)]+)\)',
-            # @username (follower info): "tweet content"
-            r'@([a-zA-Z0-9_]{1,15})\s*\(([^)]+)\):\s*"([^"]+)"',
-            # Simpler pattern: @username: tweet content
-            r'@([a-zA-Z0-9_]{1,15}):\s*([^\n]+)',
-        ]
-        
-        seen_usernames = set()
-        
-        for pattern in patterns:
-            matches = re.findall(pattern, content, re.MULTILINE)
-            
-            for match in matches:
-                username = match[0]
-                
-                if username.lower() in seen_usernames:
-                    continue
-                    
-                seen_usernames.add(username.lower())
-                
-                # Parse based on match groups
-                if len(match) == 3:
-                    if '(' in match[2]:  # Pattern 1
-                        tweet_content = match[1]
-                        follower_info = match[2]
-                    else:  # Pattern 2
-                        follower_info = match[1]
-                        tweet_content = match[2]
-                else:  # Pattern 3
-                    tweet_content = match[1]
-                    follower_info = "Unknown followers"
-                
-                # Parse follower count
-                follower_count = 0
-                follower_match = re.search(r'(\d+(?:\.\d+)?)\s*([KMk]?)\s*followers?', follower_info)
-                if follower_match:
-                    num = float(follower_match.group(1))
-                    multiplier = follower_match.group(2).upper()
-                    if multiplier == 'K':
-                        follower_count = int(num * 1000)
-                    elif multiplier == 'M':
-                        follower_count = int(num * 1000000)
-                    else:
-                        follower_count = int(num)
-                
-                follower_display = follower_info if 'followers' in follower_info else f"{follower_info} followers"
-                
-                accounts.append({
-                    'rank': len(accounts) + 1,
-                    'account': f'@{username}',
-                    'username': username,
-                    'date_posted': 'recent',
-                    'view_count': None,
-                    'favorite_count': None,
-                    'retweet_count': None,
-                    'reply_count': None,
-                    'tweet_content': tweet_content.strip(),
-                    'follower_count': follower_count,
-                    'follower_display': follower_display,
-                    'verified': False,
-                    'tweet_url': f'https://x.com/{username}',
-                    'total_engagement': follower_count // 100 if follower_count else 0,
-                    'data_source': 'grok_text_parsed'
-                })
-        
-        return accounts[:8] 
-
-
-
-    def _process_grok_account_entry(self, account_entry: Dict, symbol: str) -> Dict:
-        """Process a single account entry from Grok with better validation"""
-        try:
-            # Extract and validate account name
-            account = account_entry.get('account', '').strip()
-            
-            # Skip if no valid account name
-            if not account or len(account) < 2:
-                return None
-            
-            # Ensure account starts with @
-            if not account.startswith('@'):
-                account = f"@{account}"
-            
-            # Extract username without @
-            username = account[1:]
-            
-            # Validate username format (alphanumeric and underscore only)
-            if not re.match(r'^[a-zA-Z0-9_]{1,15}$', username):
-                logger.warning(f"Invalid username format: {username}")
-                return None
-            
-            # Extract metrics with defaults
-            view_count = int(account_entry.get('view_count', 0) or 0)
-            favorite_count = int(account_entry.get('favorite_count', 0) or 0)
-            retweet_count = int(account_entry.get('retweet_count', 0) or 0)
-            reply_count = int(account_entry.get('reply_count', 0) or 0)
-            follower_count = int(account_entry.get('follower_count', 0) or 0)
-            
-            # Get tweet content
-            tweet_content = account_entry.get('tweet_content', '').strip()
-            if not tweet_content:
-                tweet_content = f"Discussed ${symbol} recently"
-            
-            # Calculate total engagement
-            total_engagement = view_count + (favorite_count * 2) + (retweet_count * 3) + reply_count
-            
-            # Format follower count display
-            if follower_count > 1000000:
-                follower_display = f"{follower_count / 1000000:.1f}M followers"
-            elif follower_count > 1000:
-                follower_display = f"{follower_count / 1000:.0f}K followers"
-            elif follower_count > 0:
-                follower_display = f"{follower_count} followers"
-            else:
-                follower_display = "Unknown followers"
-            
-            return {
-                'rank': account_entry.get('rank', 0),
-                'account': account,
-                'username': username,  # Add clean username
-                'date_posted': account_entry.get('date_posted', 'recent'),
-                'view_count': view_count if view_count > 0 else None,
-                'favorite_count': favorite_count if favorite_count > 0 else None,
-                'retweet_count': retweet_count if retweet_count > 0 else None,
-                'reply_count': reply_count if reply_count > 0 else None,
-                'tweet_content': tweet_content[:200] + "..." if len(tweet_content) > 200 else tweet_content,
-                'follower_count': follower_count,
-                'follower_display': follower_display,
-                'verified': account_entry.get('verified', False),
-                'account_description': account_entry.get('account_description', ''),
-                'tweet_url': f"https://x.com/{username}",
-                'engagement_rate': account_entry.get('engagement_rate', 0),
-                'total_engagement': total_engagement,
-                'is_crypto_focused': account_entry.get('is_crypto_focused', True),
-                'data_source': 'grok_live_search'
-            }
-            
-        except Exception as e:
-            logger.error(f"Error processing account entry: {e}")
-            return None
-            
-
-    def _deep_clean_json_string(self, json_str: str) -> str:
-        """Deep clean JSON string to fix common formatting issues"""
-        # Remove control characters
-        json_str = ''.join(char for char in json_str if ord(char) >= 32 or char in '\n\r\t')
-        
-        # Fix escaped newlines in content
-        json_str = json_str.replace('\\n', ' ')
-        json_str = json_str.replace('\n', ' ')
-        json_str = json_str.replace('\r', ' ')
-        json_str = json_str.replace('\t', ' ')
-        
-        # Fix quotes issues
-        json_str = re.sub(r'(?<!\\)"(?![:,\]\}\s])', '\\"', json_str)
-        
-        # Fix trailing commas
-        json_str = re.sub(r',\s*}', '}', json_str)
-        json_str = re.sub(r',\s*]', ']', json_str)
-        
-        # Fix URLs
-        json_str = json_str.replace('"https"://', 'https://')
-        json_str = json_str.replace('"http"://', 'http://')
-        
-        return json_str.strip()
-
-    def _clean_json_string(self, json_str: str) -> str:
-        """Clean and fix common JSON formatting issues from Grok responses"""
-        
-        # Remove any text before the first [
-        start_idx = json_str.find('[')
-        if start_idx > 0:
-            json_str = json_str[start_idx:]
-        
-        # Remove any text after the last ]
-        end_idx = json_str.rfind(']')
-        if end_idx != -1:
-            json_str = json_str[:end_idx + 1]
-        
-        # Fix common JSON issues
-        json_str = json_str.replace('\\n', ' ')  # Replace literal newlines
-        json_str = json_str.replace('\n', ' ')   # Replace actual newlines
-        json_str = json_str.replace('\r', ' ')   # Replace carriage returns
-        json_str = json_str.replace('\t', ' ')   # Replace tabs
-        
-        # Fix trailing commas
-        json_str = re.sub(r',\s*}', '}', json_str)
-        json_str = re.sub(r',\s*]', ']', json_str)
-        
-        # Fix single quotes to double quotes
-        json_str = re.sub(r"'([^']*)':", r'"\1":', json_str)
-        
-        # Fix unquoted property names
-        json_str = re.sub(r'(\w+):', r'"\1":', json_str)
-        
-        # Remove any remaining non-JSON text
-        json_str = re.sub(r'^[^[\{]*', '', json_str)
-        json_str = re.sub(r'[^}\]]*$', '', json_str)
-        
-        return json_str.strip()
-
-
-
-    def _validate_account_entry(self, account_entry: Dict, symbol: str) -> bool:
-        """Validate that account entry contains real, useful data"""
-        
-        # Must have account name
-        account = account_entry.get('account', '')
-        if not account or not account.startswith('@') or len(account) < 2:
-            return False
-        
-        # Account name should be reasonable length and format
-        username = account.replace('@', '')
-        
-        # ✅ NEW: Validate username format - only alphanumeric and underscores
-        import re
-        if not re.match(r'^[a-zA-Z0-9_]{1,15}$', username):
-            logger.warning(f"⚠️ Invalid username format: '{username}' - contains invalid characters")
-            return False
-        
-        # ✅ NEW: Check for common display name patterns that should be rejected
-        invalid_patterns = [
-            r'\s',  # Contains spaces
-            r'[🎯🔥💎🚀📈📊🧠⚡💰🌙]',  # Contains emojis
-            r'\.com',  # Contains .com
-            r'[^\w_]'  # Contains special chars other than underscore
-        ]
-        
-        for pattern in invalid_patterns:
-            if re.search(pattern, username):
-                logger.warning(f"⚠️ Rejecting username '{username}' - matches invalid pattern: {pattern}")
-                return False
-        
-        # Rest of your existing validation...
-        has_engagement = any([
-            account_entry.get('view_count'),
-            account_entry.get('favorite_count'),
-            account_entry.get('retweet_count'),
-            account_entry.get('follower_count')
-        ])
-        
-        if not has_engagement:
-            return False
-        
-        # Must have tweet content that's not generic
-        tweet_content = account_entry.get('tweet_content', '')
-        if not tweet_content or len(tweet_content) < 10:
-            return False
-        
-        # Content should mention the token or be crypto-related
-        content_lower = tweet_content.lower()
-        symbol_lower = symbol.lower()
-        
-        is_relevant = any([
-            symbol_lower in content_lower,
-            'solana' in content_lower,
-            'crypto' in content_lower,
-            'token' in content_lower,
-            'meme' in content_lower,
-            '$' in content_lower
-        ])
-        
-        return is_relevant
-
-    def _process_account_entry(self, account_entry: Dict, symbol: str) -> Dict:
-        """Process and clean account entry data"""
-        
-        # ✅ FIXED: Clean account name properly
-        account = account_entry.get('account', '').strip()
-        
-        # Remove @ if present, then clean the username
-        username_clean = account.replace('@', '').strip()
-        
-        # ✅ NEW: Additional cleaning for display names that got through
+    def _extract_topics_from_tweets(self, tweets: List[Dict]) -> List[Dict]:
+        """Extract discussion topics from tweet content."""
+        from collections import Counter
         import re
         
-        # Remove emojis and special characters
-        username_clean = re.sub(r'[^\w_]', '', username_clean)
+        # Extract hashtags and key terms
+        all_text = ' '.join([tweet['content'] for tweet in tweets])
         
-        # Take only the first word if multiple words somehow got through
-        username_clean = username_clean.split()[0] if ' ' in username_clean else username_clean
+        # Find hashtags
+        hashtags = re.findall(r'#(\w+)', all_text.lower())
         
-        # Limit length
-        username_clean = username_clean[:15]
+        # Find common words (excluding common stop words)
+        stop_words = {'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'can', 'this', 'that', 'these', 'those'}
+        words = re.findall(r'\b\w+\b', all_text.lower())
+        filtered_words = [word for word in words if len(word) > 3 and word not in stop_words]
         
-        # Re-add @ prefix
-        account = f"@{username_clean}" if username_clean else "@unknown"
+        # Combine hashtags and words
+        all_terms = hashtags + filtered_words
+        term_counts = Counter(all_terms).most_common(10)
         
-        # ✅ NEW: Validate the final username
-        if not re.match(r'^@[a-zA-Z0-9_]{1,15}$', account):
-            logger.warning(f"⚠️ Final username validation failed: '{account}' - using fallback")
-            account = f"@user_{random.randint(1000, 9999)}"
-        
-        # Rest of your existing processing code...
-        def safe_int(value):
-            if value is None or value == 'null':
-                return 0
-            try:
-                return int(value)
-            except (ValueError, TypeError):
-                return 0
-        
-        view_count = safe_int(account_entry.get('view_count'))
-        favorite_count = safe_int(account_entry.get('favorite_count'))
-        retweet_count = safe_int(account_entry.get('retweet_count'))
-        reply_count = safe_int(account_entry.get('reply_count', 0))
-        
-        total_engagement = view_count + favorite_count + retweet_count + reply_count
-        
-        # Clean follower count
-        follower_count = account_entry.get('follower_count')
-        if follower_count is None or follower_count == 'null':
-            follower_count = 0
-        else:
-            follower_count = safe_int(follower_count)
-        
-        # Clean tweet content
-        tweet_content = account_entry.get('tweet_content', '').strip()
-        if len(tweet_content) > 150:
-            tweet_content = tweet_content[:147] + "..."
-        
-        # ✅ FIXED: Generate correct tweet URL with cleaned username
-        tweet_url = account_entry.get('tweet_url', '')
-        if not tweet_url:
-            tweet_url = f"https://x.com/{username_clean}"
-        
-        return {
-            'rank': account_entry.get('rank', 0),
-            'account': account,  # This now contains the properly cleaned @username
-            'date_posted': account_entry.get('date_posted', 'recent'),
-            'view_count': view_count if view_count > 0 else None,
-            'favorite_count': favorite_count if favorite_count > 0 else None,
-            'retweet_count': retweet_count if retweet_count > 0 else None,
-            'reply_count': reply_count if reply_count > 0 else None,
-            'tweet_content': tweet_content,
-            'follower_count': follower_count if follower_count > 0 else None,
-            'verified': account_entry.get('verified', False),
-            'account_description': account_entry.get('account_description', ''),
-            'tweet_url': tweet_url,
-            'engagement_rate': account_entry.get('engagement_rate', 0),
-            'total_engagement': total_engagement,
-            'is_crypto_focused': account_entry.get('is_crypto_focused', True),
-            'data_source': 'grok_live_search'
-        }
+        return [{'keyword': term, 'mentions': count} for term, count in term_counts]
 
-    def _convert_to_top_account_format(self, account_entry: Dict) -> Dict:
-        """Convert account entry to top_accounts format with proper data"""
-        username = account_entry.get('username', account_entry.get('account', '@unknown').replace('@', ''))
-        
-        # Ensure we have a proper follower display
-        follower_display = account_entry.get('follower_display')
-        if not follower_display or follower_display == 'Unknown followers':
-            follower_count = account_entry.get('follower_count', 0)
-            if follower_count > 0:
-                follower_display = self._format_follower_count(follower_count)
-            else:
-                follower_display = 'Unknown followers'
-        
-        return {
-            'username': username,
-            'followers': follower_display,
-            'recent_activity': account_entry.get('tweet_content', f'Discussed token recently'),
-            'url': f'https://x.com/{username}',
-            'engagement_score': account_entry.get('total_engagement', 0),
-            'verified': account_entry.get('verified', False),
-            'is_crypto_focused': account_entry.get('is_crypto_focused', True)
-        }
-
-    def _analyze_real_sentiment(self, accounts: List[Dict]) -> Dict:
-        """Analyze sentiment from real account data"""
-        if not accounts:
-            return {'tone': 'Neutral', 'reasoning': 'No account data available'}
-        
-        positive_indicators = ['bullish', 'moon', 'buy', 'pump', 'strong', 'great', 'love', 'amazing', 'hold', 'hodl', '🚀', '📈', '💎', '🔥']
-        negative_indicators = ['bearish', 'dump', 'sell', 'crash', 'weak', 'bad', 'avoid', 'scam', 'rug', 'dead', '📉', '💀', '⚠️']
-        
-        positive_count = 0
-        negative_count = 0
-        
-        for account in accounts:
-            content = (account.get('tweet_content', '') + ' ' + account.get('account_description', '')).lower()
+    def _calculate_sentiment_summary(self, tweets: List[Dict]) -> Dict:
+        """Calculate sentiment summary from tweets."""
+        if not tweets:
+            return {'tone': 'Neutral', 'reasoning': 'No tweets found'}
             
-            pos_score = sum(1 for indicator in positive_indicators if indicator in content)
-            neg_score = sum(1 for indicator in negative_indicators if indicator in content)
-            
-            if pos_score > neg_score:
-                positive_count += 1
-            elif neg_score > pos_score:
-                negative_count += 1
+        sentiments = [tweet['sentiment'] for tweet in tweets]
+        bullish = sentiments.count('bullish')
+        bearish = sentiments.count('bearish')
+        neutral = sentiments.count('neutral')
+        total = len(sentiments)
         
-        total = len(accounts)
-        
-        if positive_count > negative_count:
+        if bullish > bearish:
             tone = 'Bullish'
-        elif negative_count > positive_count:
+        elif bearish > bullish:
             tone = 'Bearish'
         else:
             tone = 'Mixed'
-        
-        reasoning = f"Based on {total} verified accounts: {positive_count} bullish, {negative_count} bearish signals from real X activity."
+            
+        reasoning = f"Based on {total} tweets: {bullish} bullish, {bearish} bearish, {neutral} neutral."
         
         return {'tone': tone, 'reasoning': reasoning}
 
-    def _extract_accounts_from_text(self, content: str, social_data: Dict, symbol: str) -> Dict:
-        """Fallback: extract account mentions from text if JSON parsing fails"""
-        logger.info("Using text extraction fallback for Grok response")
-        
-        import re
-        
-        # Look for account mentions in text
-        account_pattern = r'@([a-zA-Z0-9_]{1,15})'
-        accounts = re.findall(account_pattern, content)
-        
-        # Remove duplicates
-        unique_accounts = list(dict.fromkeys(accounts))  # Preserves order
-        
-        fallback_accounts = []
-        for i, username in enumerate(unique_accounts[:8]):  # Limit to 8
-            fallback_accounts.append({
-                'rank': i + 1,
-                'account': f'@{username}',
-                'date_posted': 'recent',
-                'view_count': None,
-                'favorite_count': None,
-                'retweet_count': None,
-                'tweet_content': f'Found mentioning {symbol} in Grok analysis',
-                'follower_count': None,
-                'verified': False,
-                'tweet_url': f'https://x.com/{username}',
-                'total_engagement': 0,
-                'data_source': 'grok_text_extraction'
-            })
-        
-        if fallback_accounts:
-            social_data['account_table'] = fallback_accounts
-            social_data['top_accounts'] = [self._convert_to_top_account_format(acc) for acc in fallback_accounts]
-            social_data['total_accounts_found'] = len(fallback_accounts)
-            social_data['has_real_data'] = True
-            social_data['data_quality'] = 'limited_text_extraction'
-            social_data['platform_distribution']['twitter'] = len(fallback_accounts)
-        
-        return social_data
+    def _format_follower_count(self, count: int) -> str:
+        """Format follower count for display."""
+        if count >= 1000000:
+            return f"{count/1000000:.1f}M followers"
+        elif count >= 1000:
+            return f"{count/1000:.0f}K followers"
+        else:
+            return f"{count} followers"
 
-    def _get_enhanced_fallback_with_real_check(self, symbol: str, token_address: str) -> Dict:
-        """Enhanced fallback that indicates the data is not from live search"""
-        fallback_data = self._get_fallback_social_data(symbol)
+    def get_real_social_data(self, token_address: str, symbol: str, time_window: str) -> Dict:
+        """Fetch real social media data for a Solana token."""
+        try:
+            if not self.xai_api_key or self.xai_api_key == 'your-xai-api-key-here':
+                logger.warning("No XAI API key configured for social data")
+                return self._get_fallback_social_data(symbol)
+
+            days = {'1d': 1, '3d': 3, '7d': 7}.get(time_window, 3)
+            search_prompt = f"""
+            Find social media data for Solana token ${symbol} (contract {token_address[:12]}).
+            Search last {days} days. Return only actual findings.
+
+            **Tweets:**
+            List 5-10 tweets:
+            @username: "exact tweet text" (timestamp, followers: X, engagement: Y)
+
+            **Accounts:**
+            List accounts mentioning ${symbol}:
+            @username (followers, activity)
+
+            **Topics:**
+            List discussion keywords:
+            "moon", "bullish", etc.
+
+            **Platforms:**
+            Twitter: X tweets, Telegram: Y messages, Reddit: Z posts
+
+            **Sentiment:**
+            Tone: Bullish/Bearish/Mixed (reasoning)
+
+            If no data, return "No significant social activity found".
+            """
+            
+            logger.info(f"Fetching real social data for {symbol} contract: {token_address[:12]}...")
+            result = self._grok_live_search_query(search_prompt, {
+                "mode": "on",
+                "sources": [{"type": "x"}],
+                "max_search_results": 25,  # Fixed: reduced from 50 to 25
+                "from_date": (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+            })
+            
+            logger.info(f"Social data result length: {len(result) if result else 0}")
+            
+            if result and len(result) > 50 and "API request failed" not in result and "Error" not in result:
+                social_data = self._parse_social_data_improved(result, token_address, symbol)
+                logger.info(f"Parsed social data: {len(social_data.get('tweets', []))} tweets, {len(social_data.get('accounts', []))} accounts")
+                return social_data
+            
+            logger.warning(f"No valid social data found for {symbol}, using fallback")
+            return self._get_fallback_social_data(symbol)
+            
+        except Exception as e:
+            logger.error(f"Social data fetch error: {e}")
+            return self._get_fallback_social_data(symbol)
+
+    def _parse_social_data_improved(self, content: str, contract_address: str, symbol: str) -> Dict:
+        """Parse social data with improved tweet and account extraction."""
+        social_data = {
+            'has_real_data': False,
+            'tweets': [],
+            'accounts': [],
+            'discussion_topics': [],
+            'platform_distribution': {'twitter': 0, 'telegram': 0, 'reddit': 0, 'discord': 0},
+            'sentiment_summary': {'tone': 'Neutral', 'reasoning': 'No data'},
+            'total_tweets_found': 0,
+            'total_accounts_found': 0,
+            'data_quality': 'no_data'
+        }
         
-        # Mark as fallback data
-        fallback_data['data_quality'] = 'fallback_demo'
-        fallback_data['api_source'] = 'fallback'
-        fallback_data['has_real_data'] = False
+        seen_tweets = set()
+        seen_usernames = set()
         
-        # Add warning in sentiment summary
-        fallback_data['sentiment_summary']['reasoning'] += ' (Demo data - Grok Live Search unavailable)'
+        # Parse tweets
+        tweet_pattern = r'@([a-zA-Z0-9_]{1,15}):\s*"([^"]{20,200})"\s*\(([^)]+),\s*followers:\s*([^,]+),\s*engagement:\s*([^)]+)\)'
+        tweet_matches = re.findall(tweet_pattern, content, re.IGNORECASE)
         
-        return fallback_data
+        for match in tweet_matches:
+            username, text, timestamp, followers, engagement = match
+            tweet_id = f"{username}:{text[:50]}"
+            if tweet_id not in seen_tweets and username.lower() not in seen_usernames:
+                seen_tweets.add(tweet_id)
+                seen_usernames.add(username.lower())
+                sentiment = 'bullish' if any(word in text.lower() for word in ['bullish', 'moon', 'buy']) else \
+                           'bearish' if any(word in text.lower() for word in ['bearish', 'dump', 'sell']) else 'neutral'
+                social_data['tweets'].append({
+                    'author': username,
+                    'text': text.strip(),
+                    'timestamp': timestamp.strip(),
+                    'followers': followers.strip(),
+                    'engagement': engagement.strip(),
+                    'sentiment': sentiment,
+                    'url': f"https://x.com/{username}"
+                })
+        
+        # Parse accounts (for Who to Follow)
+        social_data['accounts'] = self._parse_contract_accounts_improved(content, contract_address, symbol)
+        
+        # Parse discussion topics
+        topics_pattern = r'"([^"]+)"'
+        topics = re.findall(topics_pattern, content.split('**DISCUSSION TOPICS:**')[-1], re.IGNORECASE)
+        social_data['discussion_topics'] = [{'keyword': topic, 'mentions': random.randint(1, 100)} for topic in topics[:10]]
+        
+        # Parse platform distribution
+        platform_pattern = r'(Twitter|Telegram|Reddit|Discord):\s*(\d+)\s*(tweets|messages|posts)'
+        platform_matches = re.findall(platform_pattern, content, re.IGNORECASE)
+        for platform, count, _ in platform_matches:
+            social_data['platform_distribution'][platform.lower()] = int(count)
+        
+        # Sentiment summary
+        if social_data['tweets']:
+            bullish = sum(1 for t in social_data['tweets'] if t['sentiment'] == 'bullish')
+            bearish = sum(1 for t in social_data['tweets'] if t['sentiment'] == 'bearish')
+            total = len(social_data['tweets'])
+            tone = 'Bullish' if bullish > bearish else 'Bearish' if bearish > bullish else 'Mixed'
+            reasoning = f"Based on {total} tweets: {bullish} bullish, {bearish} bearish."
+            social_data['sentiment_summary'] = {'tone': tone, 'reasoning': reasoning}
+        
+        # Update metadata
+        social_data['total_tweets_found'] = len(social_data['tweets'])
+        social_data['total_accounts_found'] = len(social_data['accounts'])
+        social_data['has_real_data'] = social_data['total_tweets_found'] > 0 or social_data['total_accounts_found'] > 0
+        social_data['data_quality'] = 'real' if social_data['total_tweets_found'] >= 5 else 'limited' if social_data['has_real_data'] else 'no_data'
+        
+        logger.info(f"Parsed social data: {social_data['total_tweets_found']} tweets, {social_data['total_accounts_found']} accounts")
+        return social_data
+    
+
 
     def get_real_sentiment_timeline(self, symbol: str, token_address: str, time_window: str, token_age_days: int) -> Dict:
         """Get real sentiment timeline with multiple historical data points"""
@@ -2018,7 +1514,7 @@ class SocialCryptoDashboard:
 
     # Update the stream_revolutionary_analysis method:
     def stream_revolutionary_analysis(self, token_address: str, time_window: str = "3d"):
-        """Stream analysis with ONLY real social data - FIXED JSON serialization"""
+        """Stream analysis with ONLY real social data"""
         try:
             market_data = self.fetch_enhanced_market_data(token_address)
             symbol = market_data.get('symbol', 'UNKNOWN')
@@ -2097,33 +1593,6 @@ class SocialCryptoDashboard:
                 "details": "Calculating Greed Index, Euphoria Meter & Diamond Hands"
             })
 
-            yield self._stream_response("progress", {
-                "step": 8,
-                "stage": "rug_analysis",
-                "message": "🧠 Revolutionary Rug Check Analysis",
-                "details": "Comprehensive safety analysis with live Grok intelligence"
-            })
-
-            # Get rug analysis and immediately serialize it
-            try:
-                rug_analysis_raw = run_async(enhanced_rug_checker.analyze_token(token_address, deep_analysis=True))
-                # CRITICAL FIX: Serialize the rug analysis immediately
-                rug_analysis = make_json_serializable(rug_analysis_raw)
-            except Exception as e:
-                logger.error(f"Rug analysis error: {e}")
-                rug_analysis = {
-                    'error': str(e),
-                    'galaxy_brain_score': 50,
-                    'severity_level': 'UNKNOWN',
-                    'confidence': 0.5,
-                    'safety_data': {},
-                    'holder_analysis': {},
-                    'liquidity_analysis': {},
-                    'authority_analysis': {},
-                    'risk_vectors': [],
-                    'grok_analysis': {}
-                }
-
             psychology_metrics = self.calculate_meme_coin_psychology(token_address, market_data, real_social_data)
 
             # Assemble final analysis with real data
@@ -2139,23 +1608,8 @@ class SocialCryptoDashboard:
                 'psychology_metrics': psychology_metrics, 
                 **comprehensive_analysis
             }
-
-            # CRITICAL FIX: Serialize rug analysis data before adding to analysis_data
-            analysis_data.update({
-                'rug_analysis': rug_analysis,
-                'safety_metrics': make_json_serializable(rug_analysis.get('safety_data', {})),
-                'holder_security': make_json_serializable(rug_analysis.get('holder_analysis', {})),
-                'liquidity_security': make_json_serializable(rug_analysis.get('liquidity_analysis', {})),
-                'authority_security': make_json_serializable(rug_analysis.get('authority_analysis', {})),
-                'risk_vectors': make_json_serializable(rug_analysis.get('risk_vectors', [])),
-                'galaxy_brain_score': rug_analysis.get('galaxy_brain_score', 50),
-                'confidence_level': rug_analysis.get('confidence', 0.5)
-            })
             
-            # CRITICAL FIX: Apply serialization to the entire analysis_data structure
-            analysis_data = fix_analysis_data_serialization(analysis_data)
-            
-            # Cache the analysis with serialized data
+            # Cache the analysis
             chat_context_cache[token_address] = {
                 'analysis_data': analysis_data,
                 'market_data': market_data,
@@ -2167,11 +1621,10 @@ class SocialCryptoDashboard:
             
         except Exception as e:
             logger.error(f"Real data analysis error: {e}")
-            logger.error(f"Error traceback: {traceback.format_exc()}")
             yield self._stream_response("error", {"error": str(e)})
 
     def _assemble_real_data_analysis(self, token_address: str, symbol: str, analysis_data: Dict, market_data: Dict) -> Dict:
-        """Assemble analysis response with real data only - FIXED to handle token_age as dict"""
+        """Assemble analysis response with real data only"""
         def format_currency(value):
             if value < 1000:
                 return f"${value:.2f}"
@@ -2182,13 +1635,9 @@ class SocialCryptoDashboard:
             else:
                 return f"${value/1000000000:.1f}B"
         
-        token_age = analysis_data.get('token_age', {})
-        trends_data = analysis_data.get('trends_data', {})
+        token_age = analysis_data.get('token_age')
+        trends_data = analysis_data.get('trends_data')
         real_social_data = analysis_data.get('real_social_data', {})
-        
-        # Extract raw Grok response if available
-        raw_grok_response = real_social_data.get('raw_grok_response', '')
-        rug_analysis = analysis_data.get('rug_analysis', {})
         
         return {
             "type": "complete",
@@ -2205,52 +1654,21 @@ class SocialCryptoDashboard:
             "volume_24h_formatted": format_currency(market_data.get('volume_24h', 0)),
             "liquidity": market_data.get('liquidity', 0),
             "liquidity_formatted": format_currency(market_data.get('liquidity', 0)),
-            "rug_analysis": rug_analysis,
-            "galaxy_brain_score": analysis_data.get('galaxy_brain_score', 50),
-            "safety_level": rug_analysis.get('severity_level', 'UNKNOWN'),
-            "confidence_level": analysis_data.get('confidence_level', 0.5),
-            "safety_metrics": analysis_data.get('safety_metrics', {}),
-            "holder_security": analysis_data.get('holder_security', {}),
-            "liquidity_security": analysis_data.get('liquidity_security', {}),
-            "authority_security": analysis_data.get('authority_security', {}),
-            "risk_vectors": analysis_data.get('risk_vectors', []),
-            "grok_safety_analysis": rug_analysis.get('grok_analysis', {}),
             
-            # FIXED: Token age data - handle as dictionary safely
+            # Token age data
             "token_age": {
-                "days_old": (
-                    token_age.get('days_old', 999) if isinstance(token_age, dict) 
-                    else getattr(token_age, 'days_old', 999) if hasattr(token_age, 'days_old')
-                    else 999
-                ),
-                "launch_platform": (
-                    token_age.get('launch_platform', 'Unknown') if isinstance(token_age, dict) 
-                    else getattr(token_age, 'launch_platform', 'Unknown') if hasattr(token_age, 'launch_platform')
-                    else 'Unknown'
-                ),
-                "initial_liquidity": (
-                    token_age.get('initial_liquidity', 0) if isinstance(token_age, dict) 
-                    else getattr(token_age, 'initial_liquidity', 0) if hasattr(token_age, 'initial_liquidity')
-                    else 0
-                ),
-                "risk_multiplier": (
-                    token_age.get('risk_multiplier', 1.0) if isinstance(token_age, dict) 
-                    else getattr(token_age, 'risk_multiplier', 1.0) if hasattr(token_age, 'risk_multiplier')
-                    else 1.0
-                ),
-                "creation_date": (
-                    token_age.get('creation_date', 'Unknown') if isinstance(token_age, dict) 
-                    else getattr(token_age, 'creation_date', 'Unknown') if hasattr(token_age, 'creation_date')
-                    else 'Unknown'
-                )
+                "days_old": token_age.days_old if token_age else 999,
+                "launch_platform": token_age.launch_platform if token_age else "Unknown",
+                "initial_liquidity": token_age.initial_liquidity if token_age else 0,
+                "risk_multiplier": token_age.risk_multiplier if token_age else 1.0,
+                "creation_date": token_age.creation_date if token_age else "Unknown"
             },
             
             # Google Trends data
             "trends_data": trends_data,
             
-            # REAL social data with raw Grok response
+            # REAL social data for new charts
             "real_social_data": real_social_data,
-            "raw_grok_response": raw_grok_response,  # Add raw response at top level for easy access
             
             "time_window": analysis_data.get('time_window', '3d'),
             
@@ -4747,8 +4165,8 @@ def market_overview():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/trending-tokens')
-def get_trending_tokens_unified():
-    """Unified trending tokens route with proper caching"""
+def get_trending_tokens_fixed():
+    """Fixed trending tokens route using correct Solana Tracker API"""
     category = request.args.get('category', 'trending')
     force_refresh = request.args.get('refresh', 'false').lower() == 'true'
     
@@ -4760,23 +4178,22 @@ def get_trending_tokens_unified():
         }), 400
     
     try:
-        logger.info(f"🚀 Trending tokens request: {category}")
+        logger.info(f"🚀 Fixed trending tokens request: {category}")
         
-        # Use the existing method but ensure consistent response
+        # Use the fixed method
         tokens = dashboard.get_trending_tokens_by_category_fixed(category, force_refresh)
         
-        # Convert TrendingToken objects to dictionaries with consistent fields
+        # Convert TrendingToken objects to dictionaries
         token_dicts = []
         for token in tokens:
             token_dicts.append({
                 'symbol': token.symbol,
                 'address': token.address,
-                'price_change': float(token.price_change),
-                'volume': float(token.volume),
-                'market_cap': float(token.market_cap),
-                'mentions': int(token.mentions),
-                'sentiment_score': float(token.sentiment_score),
-                'category': category
+                'price_change': token.price_change,
+                'volume': token.volume,
+                'market_cap': token.market_cap,
+                'mentions': token.mentions,
+                'category': token.category
             })
         
         logger.info(f"✅ Returning {len(token_dicts)} {category} tokens")
@@ -4784,66 +4201,84 @@ def get_trending_tokens_unified():
         return jsonify({
             'success': True,
             'tokens': token_dicts,
-            'source': 'solana_tracker_unified',
+            'source': 'solana_tracker_fixed',
             'count': len(token_dicts),
             'timestamp': datetime.now().isoformat(),
-            'cache_info': {
-                'category': category,
-                'force_refresh': force_refresh,
-                'rate_limit': '1 req/sec (Free Tier)'
+            'api_info': {
+                'base_url': 'https://data.solanatracker.io',
+                'rate_limit': '1 req/sec (Free Tier)',
+                'monthly_limit': '10,000 requests'
             }
         })
         
     except Exception as e:
-        logger.error(f"❌ Trending tokens error: {e}")
+        logger.error(f"❌ Fixed trending tokens error: {e}")
+        logger.error(f"Full traceback: {traceback.format_exc()}")
         
-        # Return consistent fallback
-        fallback_tokens = generate_consistent_fallback(category)
+        # Emergency fallback
+        fallback_tokens = generate_fallback_tokens(category)
         return jsonify({
             'success': True,
             'tokens': fallback_tokens,
-            'source': 'fallback',
+            'source': 'emergency_fallback',
             'error': str(e),
             'count': len(fallback_tokens)
         })
 
-def generate_consistent_fallback(category):
-    """Generate consistent fallback tokens"""
-    base_data = {
-        'trending': [
-            {'symbol': 'BONK', 'change': 15.3, 'volume': 25000000, 'mcap': 450000000},
-            {'symbol': 'WIF', 'change': 8.7, 'volume': 18000000, 'mcap': 280000000},
-            {'symbol': 'POPCAT', 'change': 22.1, 'volume': 28000000, 'mcap': 150000000},
-            {'symbol': 'MEW', 'change': 12.4, 'volume': 22000000, 'mcap': 200000000},
-            {'symbol': 'BOME', 'change': 18.6, 'volume': 20000000, 'mcap': 160000000},
-            {'symbol': 'GME', 'change': 9.8, 'volume': 15000000, 'mcap': 120000000}
-        ],
-        'volume': [
-            {'symbol': 'BONK', 'change': 15.3, 'volume': 45000000, 'mcap': 450000000},
-            {'symbol': 'WIF', 'change': 8.7, 'volume': 38000000, 'mcap': 280000000},
-            {'symbol': 'POPCAT', 'change': 22.1, 'volume': 52000000, 'mcap': 150000000}
-        ],
-        'latest': [
-            {'symbol': 'NEWCOIN', 'change': 245.7, 'volume': 2500000, 'mcap': 15000000},
-            {'symbol': 'FRESH', 'change': 189.3, 'volume': 1800000, 'mcap': 8200000},
-            {'symbol': 'LAUNCH', 'change': 156.2, 'volume': 1200000, 'mcap': 6000000}
+def generate_fallback_tokens(category):
+    """Generate realistic fallback tokens when API fails"""
+    
+    if category == 'trending':
+        # Trending tokens - high volatility
+        base_tokens = [
+            {'symbol': 'BONK', 'change': 45.2, 'volume': 2500000},
+            {'symbol': 'WIF', 'change': 28.1, 'volume': 1800000},
+            {'symbol': 'POPCAT', 'change': -12.5, 'volume': 1200000},
+            {'symbol': 'MEW', 'change': 67.3, 'volume': 950000},
+            {'symbol': 'BOME', 'change': -8.2, 'volume': 800000},
+            {'symbol': 'SLERF', 'change': 34.7, 'volume': 750000},
+            {'symbol': 'MYRO', 'change': 15.8, 'volume': 650000},
+            {'symbol': 'PONKE', 'change': -22.1, 'volume': 580000}
         ]
-    }
+    elif category == 'volume':
+        # High volume tokens - more stable
+        base_tokens = [
+            {'symbol': 'SOL', 'change': 5.2, 'volume': 50000000},
+            {'symbol': 'USDC', 'change': 0.1, 'volume': 25000000}, 
+            {'symbol': 'RAY', 'change': 8.7, 'volume': 15000000},
+            {'symbol': 'ORCA', 'change': -2.3, 'volume': 8500000},
+            {'symbol': 'SRM', 'change': 12.1, 'volume': 6200000},
+            {'symbol': 'COPE', 'change': -5.8, 'volume': 4800000},
+            {'symbol': 'FIDA', 'change': 7.4, 'volume': 3900000},
+            {'symbol': 'MAPS', 'change': 14.2, 'volume': 3200000}
+        ]
+    else:  # latest
+        # New tokens - very volatile
+        base_tokens = [
+            {'symbol': 'NEWDOG', 'change': 156.7, 'volume': 450000},
+            {'symbol': 'MOONCAT', 'change': -45.2, 'volume': 380000},
+            {'symbol': 'ROCKETAI', 'change': 89.3, 'volume': 320000},
+            {'symbol': 'DEGEN42', 'change': 234.1, 'volume': 280000},
+            {'symbol': 'ELONMARS', 'change': -67.8, 'volume': 250000},
+            {'symbol': 'SHIBAINU2', 'change': 445.2, 'volume': 220000},
+            {'symbol': 'DOGECOIN3', 'change': -89.1, 'volume': 180000},
+            {'symbol': 'PEPE2024', 'change': 167.9, 'volume': 150000}
+        ]
     
     tokens = []
-    for i, token_data in enumerate(base_data.get(category, base_data['trending'])):
+    for i, token_data in enumerate(base_tokens):
+        mentions = max(50, int(token_data['volume'] / 5000))
         tokens.append({
             'symbol': token_data['symbol'],
-            'address': f"FALLBACK{category.upper()}{i:02d}" + "x" * 28,
+            'address': f"DEMO{category.upper()}{i:02d}" + "x" * 32,  # Demo address
             'price_change': token_data['change'],
             'volume': token_data['volume'],
-            'market_cap': token_data['mcap'],
-            'mentions': max(100, int(token_data['volume'] / 10000)),
-            'sentiment_score': 0.75,
+            'mentions': mentions,
+            'market_cap': token_data['volume'] * 2,
             'category': category
         })
     
-    return tokens      
+    return tokens       
 
 @app.route('/analyze', methods=['POST'])
 def analyze_token():
@@ -5266,162 +4701,6 @@ def get_planets_api():
 def coming_soon():
     """Alternative route name for the splash page"""
     return splash_route()    
-
-# Add this to your Flask app.py file
-
-@app.route('/token-price/<token_address>', methods=['GET'])
-def get_token_price(token_address):
-    """Get real price data from Solana Tracker for a specific token"""
-    try:
-        if not SOLANA_TRACKER_API_KEY or SOLANA_TRACKER_API_KEY == 'your-solana-tracker-api-key-here':
-            return jsonify({
-                'success': False,
-                'error': 'Solana Tracker API key not configured'
-            }), 400
-        
-        # Rate limiting check
-        current_time = time.time()
-        if hasattr(get_token_price, '_last_call'):
-            time_since_last = current_time - get_token_price._last_call
-            if time_since_last < 1.0:  # 1 second rate limit
-                time.sleep(1.0 - time_since_last)
-        
-        get_token_price._last_call = time.time()
-        
-        # Call Solana Tracker price/history endpoint
-        url = f"https://data.solanatracker.io/price/history"
-        headers = {
-            "x-api-key": SOLANA_TRACKER_API_KEY,
-            "Content-Type": "application/json"
-        }
-        params = {"token": token_address}
-        
-        logger.info(f"🔍 Fetching price data for {token_address[:12]}...")
-        response = requests.get(url, headers=headers, params=params, timeout=15)
-        
-        if response.status_code == 429:
-            logger.warning("⚠️ Solana Tracker price API rate limited")
-            return jsonify({
-                'success': False,
-                'error': 'Rate limit exceeded',
-                'retry_after': 1
-            }), 429
-        
-        if response.status_code != 200:
-            logger.error(f"❌ Solana Tracker price API error: {response.status_code}")
-            return jsonify({
-                'success': False,
-                'error': f'API error {response.status_code}'
-            }), response.status_code
-        
-        price_data = response.json()
-        
-        # Calculate real price changes
-        current = float(price_data.get('current', 0))
-        day3 = float(price_data.get('3d', current))
-        day7 = float(price_data.get('7d', current))
-        day14 = float(price_data.get('14d', current))
-        day30 = float(price_data.get('30d', current))
-        
-        # Calculate percentage changes
-        change_3d = ((current - day3) / day3 * 100) if day3 > 0 else 0
-        change_7d = ((current - day7) / day7 * 100) if day7 > 0 else 0
-        change_14d = ((current - day14) / day14 * 100) if day14 > 0 else 0
-        change_30d = ((current - day30) / day30 * 100) if day30 > 0 else 0
-        
-        result = {
-            'success': True,
-            'token_address': token_address,
-            'price_data': {
-                'current_price': current,
-                'price_change_3d': round(change_3d, 2),
-                'price_change_7d': round(change_7d, 2),
-                'price_change_14d': round(change_14d, 2),
-                'price_change_30d': round(change_30d, 2),
-                'historical_prices': {
-                    'current': current,
-                    '3d': day3,
-                    '7d': day7,
-                    '14d': day14,
-                    '30d': day30
-                }
-            },
-            'timestamp': datetime.now().isoformat()
-        }
-        
-        logger.info(f"✅ Price data for {token_address[:12]}: ${current:.8f}, 7d: {change_7d:+.1f}%")
-        return jsonify(result)
-        
-    except Exception as e:
-        logger.error(f"❌ Error fetching price for {token_address}: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@app.route('/token-prices', methods=['POST'])
-def get_multiple_token_prices_dexscreener():
-    """Get token prices from DexScreener - no API key required"""
-    try:
-        data = request.get_json()
-        token_addresses = data.get('tokens', [])
-        
-        if not token_addresses:
-            return jsonify({'success': False, 'error': 'No token addresses provided'}), 400
-        
-        logger.info(f"🔍 DexScreener bulk price request for {len(token_addresses)} tokens")
-        
-        results = {}
-        
-        # DexScreener can handle multiple addresses in one call
-        addresses_string = ",".join(token_addresses[:50])  # Limit to 50 for URL length
-        url = f"https://api.dexscreener.com/latest/dex/tokens/{addresses_string}"
-        
-        response = requests.get(url, timeout=15)
-        
-        if response.status_code == 200:
-            data = response.json()
-            pairs = data.get('pairs', [])
-            
-            # Create a lookup of token addresses to prices
-            price_lookup = {}
-            for pair in pairs:
-                if pair.get('chainId') == 'solana':
-                    base_token = pair.get('baseToken', {})
-                    token_address = base_token.get('address')
-                    price_usd = float(pair.get('priceUsd', 0) or 0)
-                    
-                    if token_address and price_usd > 0:
-                        price_lookup[token_address] = price_usd
-            
-            # Format results for each requested token
-            for token_address in token_addresses:
-                price = price_lookup.get(token_address, 0)
-                results[token_address] = {
-                    'success': price > 0,
-                    'current_price': price,
-                    'source': 'dexscreener'
-                }
-            
-            successful = sum(1 for r in results.values() if r['success'])
-            logger.info(f"✅ DexScreener price fetch: {successful}/{len(token_addresses)} successful")
-            
-            return jsonify({
-                'success': True,
-                'results': results,
-                'processed': len(results),
-                'successful': successful,
-                'source': 'dexscreener',
-                'timestamp': datetime.now().isoformat()
-            })
-            
-        else:
-            logger.error(f"DexScreener API error: {response.status_code}")
-            return jsonify({'success': False, 'error': f'DexScreener API error {response.status_code}'}), 500
-            
-    except Exception as e:
-        logger.error(f"❌ DexScreener price fetch error: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
     import os

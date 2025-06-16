@@ -12,2151 +12,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <!-- Plotly for Geographic Heatmaps -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.18.2/plotly.min.js"></script>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                   background: url('https://jeetsvsdegens.com/newbg.jpg');
-			background-size:cover;
-			background-attachment: fixed;
-            min-height: 100vh;
-            color: #ffffff;
-            overflow-x: hidden;
-            padding-top: 80px; /* Space for fixed header */
-        }
-
-        /* Fixed Header */
-        .main-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
-            padding: 15px 0;
-        }
-
-        .header-content {
-            max-width: 1800px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: "Lacquer", system-ui;
-            font-size: 2rem;
-            font-weight: 400;
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradient-flow 3s ease infinite;
-            text-decoration: none;
-        }
-		
-		html {
-  scroll-behavior: smooth;   /* enables the built-in smooth scroller */
-}
-
-        @keyframes gradient-flow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-link {
-            color: #b0b7ff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .nav-link:hover {
-            background: rgba(102, 126, 234, 0.2);
-            color: #ffffff;
-            transform: translateY(-1px);
-        }
-
-        .dashboard-container {
-            max-width: 1800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Enhanced Market Overview Bar with CoinGecko/DexScreener */
-        .market-overview {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .market-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .market-title {
-             font-family: "Titillium Web", sans-serif;
-  font-weight: 600;
-  font-style: normal;
-            font-size: 1.4rem;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .market-sentiment {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-weight: 700;
-        }
-
-        .sentiment-indicator {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .sentiment-bullish { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .sentiment-bearish { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .sentiment-neutral { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-
-        /* Enhanced Market Overview Layout */
-        .market-overview-grid {
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            gap: 25px;
-            align-items: start;
-        }
-		
-		.diamond-hands-container {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-radius: 12px;
-    padding: 20px;
-    margin: 10px 0;
-}
-
-.diamond-hands-main {
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.diamond-hands-score {
-    font-size: 2.5em;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.diamond-hands-level {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.diamond-hands-breakdown {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 10px;
-}
-
-.breakdown-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    font-size: 0.9em;
-}
-
-.diamond-hands-metrics {
-    text-align: center;
-    opacity: 0.8;
-    font-size: 0.8em;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding-top: 10px;
-}
-
-.no-data-message {
-    text-align: center;
-    padding: 30px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    color: #888;
-}
-
-        .crypto-prices {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 15px;
-        }
-
-        .crypto-price-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .crypto-price-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
-        }
-
-        .crypto-symbol {
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #ffffff;
-            margin-bottom: 6px;
-			float:left;
-			padding-top:5px;
-        }
-
-        .crypto-price {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #667eea;
-            margin-bottom: 4px;
-			padding:0px 15px 0px 15px;
-			float:left;
-        }
-
-        .crypto-change {
-            font-size: 0.75rem;
-            font-weight: 600;
-			float:left;
-			padding-top:8px;
-        }
-
-        .crypto-change.positive { color: #10b981; }
-        .crypto-change.negative { color: #ef4444; }
-
-        /* Fear & Greed Dial */
-        .fear-greed-dial {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .dial-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #b0b7ff;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .dial-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 15px;
-        }
-
-   .dial-value {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-top: -60px;
-}
-
-        .dial-label {
-            font-size: 0.75rem;
-            color: #b0b7ff;
-            margin-top: 5px;
-        }
-
-        /* Market Intelligence Sections - Updated for CoinGecko data */
-        .market-intelligence {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .intelligence-section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .intelligence-section-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #667eea;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .market-insights {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .insight-tag {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .insight-tag:hover {
-            background: rgba(16, 185, 129, 0.3);
-            color: #ffffff;
-        }
-
-        .trending-searches {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .search-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .search-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            transform: translateX(3px);
-        }
-
-        .search-name {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .search-rank {
-            font-size: 0.65rem;
-            padding: 2px 6px;
-            border-radius: 8px;
-            font-weight: 600;
-            background: rgba(102, 126, 234, 0.2);
-            color: #667eea;
-        }
-
-        /* Dashboard Grid with Sticky Sidebar */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 25px;
-            margin-bottom: 25px;
-            align-items: start;
-        }
-
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .sidebar {
-            position: sticky;
-            top: 100px; /* Account for header height */
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            height: calc(100vh - 120px);
-            overflow-y: auto;
-        }
-
-        /* Trending Tokens with Enhanced Tabs - FIXED */
-        .trending-tokens-section {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .section-title {
-           font-family: "Titillium Web", sans-serif;
-  font-weight: 600;
-  font-style: normal;
-            font-size: 1.5rem;
-            color: #ffffff;
-            font-weight: 400;
-        }
-
-        .section-refresh {
-            margin-left: auto;
-            background: none;
-            border: none;
-            color: #667eea;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-size: 1.1rem;
-        }
-
-        .section-refresh:hover {
-            background: rgba(102, 126, 234, 0.2);
-            transform: rotate(180deg);
-        }
-
-        /* Enhanced Tab Navigation */
-        .tab-navigation {
-            display: flex;
-            gap: 0;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            color: #b0b7ff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .tab-btn:hover {
-            background: rgba(102, 126, 234, 0.2);
-            color: #ffffff;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #ffffff;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeInTab 0.4s ease-in;
-        }
-
-        @keyframes fadeInTab {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .trending-tokens-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-        }
-
-        .trending-token {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            border-left: 3px solid #667eea;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .trending-token:hover {
-            transform: translateY(-2px);
-            background: rgba(102, 126, 234, 0.1);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
-        }
-
-        .trending-token.fresh-hype {
-            border-left-color: #10b981;
-            background: rgba(16, 185, 129, 0.05);
-        }
-
-        .trending-token.recent-trending {
-            border-left-color: #f59e0b;
-            background: rgba(245, 158, 11, 0.05);
-        }
-
-        .trending-token.blue-chip {
-            border-left-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .trending-symbol {
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #ffffff;
-            margin-bottom: 5px;
-        }
-
-        .trending-change {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .trending-mentions {
-            font-size: 0.7rem;
-            color: #b0b7ff;
-            opacity: 0.8;
-        }
-
-        /* Loading and Error States */
-        .loading-state {
-            text-align: center;
-            color: #b0b7ff;
-            padding: 40px;
-            font-style: italic;
-        }
-
-        .error-state {
-            text-align: center;
-            color: #ef4444;
-            padding: 40px;
-            font-style: italic;
-        }
-
-        /* Token Analyzer */
-        .token-analyzer {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-		h2{padding-top:35px;}
-        .analyzer-input {
-            display: grid;
-            grid-template-columns: 2fr 1fr auto;
-            gap: 20px;
-            align-items: end;
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            min-width: 0;
-        }
-
-        .input-group label {
-            display: block;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #e1e7ff;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            font-size: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .input-group input:focus, .input-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-        }
-
-        .analyze-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-          font-family: "Titillium Web", sans-serif;
-  font-weight: 600;
-  font-style: normal;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .analyze-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
-        }
-
-        .analyze-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Loading Animation */
-        .loading-spinner {
-            display: none;
-            text-align: center;
-            padding: 40px;
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 16px;
-            margin: 20px 0;
-            border: 1px solid rgba(102, 126, 234, 0.2);
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            color: #667eea;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        /* Token Age Dashboard */
-        .token-age-dashboard {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .age-metric-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.3s ease;
-        }
-
-        .age-metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.2);
-        }
-
-        .age-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .age-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #f59e0b;
-            margin-bottom: 5px;
-        }
-
-        .age-label {
-            font-size: 0.8rem;
-            color: #b0b7ff;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Revolutionary Charts Dashboard */
-        .revolutionary-charts-dashboard {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            border-radius: 24px;
-            padding: 30px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(102, 126, 234, 0.3);
-        }
-
-        .chart-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .chart-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
-            border-color: rgba(102, 126, 234, 0.4);
-        }
-
-        .chart-card h3 {
-            color: #ffffff;
-            font-size: 1rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .chart-value {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #10b981;
-        }
-
-        .chart-card canvas {
-            max-height: 150px !important;
-        }
-
-        /* Real Google Trends */
-       /* Enhanced Search Intelligence Dashboard */
-        .search-intelligence-dashboard {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 24px;
-            padding: 40px;
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            margin-bottom: 25px;
-        }
-
-        .search-intel-header {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .search-intel-metric {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .intel-value {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: #10b981;
-            margin-bottom: 8px;
-        }
-
-        .intel-label {
-            font-size: 0.9rem;
-            color: #b0b7ff;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .search-trends-chart {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            height: 350px; /* Fixed height to prevent stretching */
-        }
-
-        .search-trends-chart canvas {
-            max-height: 280px !important; /* Prevent canvas from growing too large */
-        }
-
-        .geo-heatmap-container {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            height: 350px; /* Fixed height to match chart */
-        }
-
-        /* Fix the search intelligence grid to be 50/50 */
-        .search-intel-charts {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 50/50 split */
-            gap: 25px;
-            margin-top: 20px;
-        }
-
-        /* DexScreener Chart */
-        .chart-container {
-            display: none;
-            margin: 25px 0;
-            position: relative;
-            width: 100%;
-            height: 600px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-		
-		/* Notable Accounts Styling */
-.notable-account-item {
-    background: rgba(0, 0, 0, 0.65);
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-left: 3px solid #fbbf24;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.notable-account-item:hover {
-    background: rgba(251, 191, 36, 0.1);
-    transform: translateX(3px);
-}
-
-.notable-username {
-    font-weight: 700;
-    color: #fbbf24;
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-}
-
-.notable-display-name {
-    font-size: 0.8rem;
-    color: #e1e7ff;
-    margin-bottom: 6px;
-}
-
-.notable-followers {
-    font-size: 0.75rem;
-    color: #fbbf24;
-    font-weight: 600;
-}
-
-/* Enhanced tweet styling */
-.tweet-item {
-    background: rgba(0, 0, 0, 0.65);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 12px;
-    border-left: 3px solid #1da1f2;
-    transition: all 0.3s ease;
-}
-
-.tweet-item:hover {
-    background: rgba(29, 161, 242, 0.1);
-    transform: translateX(3px);
-}
-
-.tweet-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 0.75rem;
-    color: #7dd3fc;
-}
-
-.tweet-sentiment {
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.sentiment-bullish { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-.sentiment-bearish { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-.sentiment-neutral { background: rgba(107, 114, 128, 0.2); color: #6b7280; }
-
-        .chart-container iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            background: #1a1a2e;
-        }
-
-        /* Token Profile Section */
-        .token-profile {
-            display: none;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            border-radius: 20px;
-            padding: 30px;
-           
-            border: 1px solid rgba(102, 126, 234, 0.2);
-        }
-
-        .token-profile-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .token-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid rgba(102, 126, 234, 0.3);
-        }
-
-        .token-info h2 {
-            font-family: "Titillium Web", sans-serif;
-  font-weight: 600;
-  font-style: normal;
-            font-size: 2.2rem;
-            color: #ffffff;
-            margin-bottom: 5px;
-        }
-
-        .token-info .token-contract {
-            font-family: monospace;
-            font-size: 0.9rem;
-            color: #b0b7ff;
-            opacity: 0.8;
-        }
-
-        .token-metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-        }
-
-        .metric-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .metric-value {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 5px;
-        }
-
-        .metric-label {
-            font-size: 0.8rem;
-            color: #b0b7ff;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Results Section */
-        .results-section {
-            display: none;
-            margin-top: 25px;
-        }
-
-        /* Enhanced Search Intelligence Dashboard */
-        .search-intelligence-dashboard {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 24px;
-            padding: 40px;
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            margin-bottom: 25px;
-        }
-
-        .search-intel-header {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .search-intel-metric {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .intel-value {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: #10b981;
-            margin-bottom: 8px;
-        }
-
-        .intel-label {
-            font-size: 0.9rem;
-            color: #b0b7ff;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .search-trends-chart {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            height: 350px; /* Fixed height to prevent stretching */
-        }
-
-        .search-trends-chart canvas {
-            max-height: 280px !important; /* Prevent canvas from growing too large */
-        }
-
-        .geo-heatmap-container {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            height: 350px; /* Fixed height to match chart */
-        }
-
-        /* Fix the search intelligence grid to be 50/50 */
-        .search-intel-charts {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 50/50 split */
-            gap: 25px;
-            margin-top: 20px;
-        }
-
-        /* Social Momentum Dashboard with Visual Metrics */
-        .momentum-dashboard {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-            border-radius: 24px;
-            padding: 40px;
-            border: 1px solid rgba(102, 126, 234, 0.25);
-            margin-bottom: 25px;
-			
-        }
-
-
-		
-        .momentum-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .momentum-score {
-            font-size: 4rem;
-            font-weight: 900;
-            background: #fff;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-		
-		/* ===========================
-   Safety Analysis Styles
-   =========================== */
-
-#rugcheck-safety {
-  margin: 20px 0;
-  font-family: Arial, sans-serif;
-  color: #333;
-}
-
-#rugcheck-safety h2 {
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-}
-
-/* Container for the colored bar and score text */
-.safety-bar-container {
-  position: relative;
-  background: #e0e0e0;
-  border-radius: 4px;
-  height: 16px;
-  width: 100%;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-/* The inner div whose width = score% */
-.safety-bar {
-  height: 100%;
-  width: 0;
-  border-radius: 4px;
-  transition: width 0.3s ease;
-  background: green; /* default; JS overrides with .low/.medium/.high */
-}
-
-/* Color tiers */
-.safety-bar.low {
-  background: #e74c3c; /* red */
-}
-.safety-bar.medium {
-  background: #f39c12; /* orange */
-}
-.safety-bar.high {
-  background: #27ae60; /* green */
-}
-
-/* Score text (e.g. “72/100”) centered on the bar */
-.safety-score-text {
-  position: absolute;
-  top: -2px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.75rem;
-  color: #fff;
-  font-weight: bold;
-}
-
-/* Top risks list */
-.top-risks-list {
-  list-style: disc inside;
-  margin: 6px 0 12px 0;
-  padding: 0;
-}
-.top-risks-list li {
-  font-size: 0.9rem;
-  margin: 4px 0;
-}
-
-/* “Show Details” / “Hide Details” button */
-#toggle-details-btn {
-  background: none;
-  border: none;
-  color: #007bff;
-  cursor: pointer;
-  font-size: 0.9rem;
-  padding: 0;
-}
-
-/* Full details section (hidden by default) */
-#safety-details.hidden {
-  display: none;
-}
-
-#safety-details {
-  margin-top: 16px;
-  border-top: 1px solid #ccc;
-  padding-top: 12px;
-}
-
-#safety-details h3 {
-  margin-top: 12px;
-  font-size: 1.1rem;
-  color: #444;
-}
-
-#safety-details p,
-#safety-details ul {
-  margin: 6px 0;
-  font-size: 0.9rem;
-}
-#safety-details ul {
-  list-style: disc inside;
-  padding-left: 16px;
-}
-
-
-        .momentum-label {
-            font-size: 1.2rem;
-            color: #b0b7ff;
-            margin-bottom: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .live-data-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(16, 185, 129, 0.2);
-            padding: 6px 12px;
-            border-radius: 15px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .live-dot {
-            width: 6px;
-            height: 6px;
-            background: #10b981;
-            border-radius: 50%;
-            animation: pulse-green 2s infinite;
-        }
-
-        @keyframes pulse-green {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.2); }
-        }
-
-        .momentum-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 15px;
-        }
-
-        .momentum-metric {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border-radius: 12px;
-            padding: 15px 10px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .momentum-metric:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .metric-visual {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 10px;
-            border-radius: 50%;
-            position: relative;
-             background: conic-gradient(
-    from 180deg,
-    #0040ff 0deg,    /* deep blue (cold) */
-    #00e5ff 72deg,   /* cyan */
-    #00ff00 144deg,  /* green */
-    #ffff00 216deg,  /* yellow */
-    #ff7f00 288deg,  /* orange */
-    #ff0000 360deg   /* red (hot) */
-  );
-        }
-		
-		.news-summary img{display:none;}
-
-        .metric-visual::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 24px;
-            height: 24px;
-            background: #1a1a2e;
-            border-radius: 50%;
-        }
-
-        .metric-value-main {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 5px;
-        }
-
-        .metric-label-main {
-            font-size: 0.75rem;
-            color: #b0b7ff;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        /* Live Tweets Panel */
-        .live-tweets-panel {
-                background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(29, 161, 242, 0.2);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-        }
-
-        .tweets-list {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .tweet-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 12px;
-            border-left: 3px solid #1da1f2;
-            transition: all 0.3s ease;
-        }
-
-        .tweet-item:hover {
-            background: rgba(29, 161, 242, 0.1);
-            transform: translateX(3px);
-        }
-
-        .tweet-header {
-            display: flex;
-            justify-content: space-between;
-
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .tweet-author {
-            font-weight: 700;
-            color: #1da1f2;
-            font-size: 0.9rem;
-            text-decoration: none;
-        }
-
-        .tweet-author:hover {
-            text-decoration: underline;
-        }
-
-        .tweet-timestamp {
-            font-size: 0.75rem;
-            color: #7dd3fc;
-        }
-
-        .tweet-content {
-            color: #e1e7ff;
-            line-height: 1.5;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        .tweet-engagement {
-            font-size: 0.75rem;
-            color: #7dd3fc;
-        }
-
-        /* Sidebar Sections */
-        .sidebar-section {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .sidebar-content {
-            padding: 0 25px 25px 25px;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-arrow {
-            margin-left: auto;
-			padding-right:15px;
-            font-size: 1rem;
-            transition: transform 0.3s ease;
-            user-select: none;
-        }
-
-        /* KOLs List */
-        .kols-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .kol-item {
-            padding: 12px;
-            margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            border-left: 3px solid #667eea;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .kol-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            transform: translateX(3px);
-        }
-
-        .kol-account {
-            font-weight: 700;
-            color: #1da1f2;
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-        }
-
-        .kol-description {
-            color: #b0b7ff;
-            font-size: 0.75rem;
-            line-height: 1.3;
-        }
-
-        /* Enhanced Analysis Grid - 3 Columns */
-        .analysis-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            margin-bottom: 25px;
-        }
-
-        .analysis-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            min-height: 300px;
-        }
-
-        .analysis-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            border-color: rgba(102, 126, 234, 0.3);
-        }
-
-        /* Enhanced Card Content with Infographics */
-        .card-content {
-            line-height: 1.7;
-            color: #e1e7ff;
-            font-size: 0.95rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .info-score {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #667eea;
-            border: 3px solid rgba(102, 126, 234, 0.3);
-        }
-
-        .info-rating {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin: 15px 0;
-        }
-
-        .rating-star {
-            font-size: 1.2rem;
-            color: #fbbf24;
-        }
-
-        .rating-star.empty {
-            color: rgba(251, 191, 36, 0.3);
-        }
-
-        /* Enhanced Social Momentum with Icons and Thermometers */
-        .momentum-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 15px;
-        }
-
-        .momentum-metric {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border-radius: 12px;
-            padding: 15px 10px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .momentum-metric:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        /* Different Chart Types for Each Metric */
-        .metric-visual {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 10px;
-            border-radius: 50%;
-            position: relative;
-            background: conic-gradient(#667eea 0deg, #764ba2 120deg, rgba(255,255,255,0.1) 120deg, rgba(255,255,255,0.1) 360deg);
-        }
-
-        .metric-visual.thermometer {
-            border-radius: 20px;
-            background: linear-gradient(to top, 
-                #ef4444 0%, 
-                #f59e0b 25%, 
-                #eab308 50%, 
-                #84cc16 75%, 
-                #10b981 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .metric-visual.thermometer::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.9);
-            transition: height 1s ease;
-        }
-
-        .metric-visual.bar-chart {
-            border-radius: 4px;
-            background: linear-gradient(to top, 
-                rgba(102, 126, 234, 0.2) 0%, 
-                #667eea 100%);
-            position: relative;
-        }
-
-        .metric-visual.gauge {
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-top-color: #667eea;
-            border-right-color: #764ba2;
-            animation: gauge-spin 2s ease-in-out infinite alternate;
-        }
-		
-		  /* Meme Psychology Dashboard */
-        .psychology-dashboard {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05));
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 25px;
-            border: 2px solid rgba(139, 92, 246, 0.3);
-        }
-
-        .psychology-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 25px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .psychology-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
-        }
-
-        .psychology-score {
-            font-size: 2.5rem;
-            font-weight: 900;
-            margin-bottom: 10px;
-            background: #fff;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .psychology-label {
-            font-size: 1rem;
-            color: #c4b5fd;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
-        }
-
-        .psychology-insight {
-            font-size: 0.85rem;
-            color: #e1e7ff;
-            line-height: 1.4;
-            font-style: italic;
-        }
-
-        @keyframes gauge-spin {
-            0% { transform: rotate(-90deg); }
-            100% { transform: rotate(90deg); }
-        }
-
-        .metric-visual::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 24px;
-            height: 24px;
-            background: #1a1a2e;
-            border-radius: 50%;
-        }
-
-        .metric-visual.thermometer::after,
-        .metric-visual.bar-chart::after {
-            display: none;
-        }
-
-        .metric-icon {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            font-size: 0.8rem;
-            opacity: 0.8;
-        }
-		
-		.tweet-details {
-    margin-top: 8px;
-    padding-left: 15px;
-    font-size: 0.75rem;
-    color: #b0b7ff;
-}
-
-.tweet-details li {
-    position: relative;
-    padding-left: 15px;
-    margin-bottom: 6px;
-    line-height: 1.3;
-}
-
-.tweet-details li::before {
-    content: '▶';
-    color: #667eea;
-    position: absolute;
-    left: 0;
-    font-size: 0.7rem;
-}
-
-        .metric-value-main {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 5px;
-        }
-
-        .metric-label-main {
-            font-size: 0.75rem;
-            color: #b0b7ff;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        /* Enhanced Risk Assessment & Market Predictions Styling */
-        .card-content .risk-table,
-        .card-content .prediction-list {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-
-        .card-content .risk-item,
-        .card-content .prediction-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .card-content .risk-item:last-child,
-        .card-content .prediction-item:last-child {
-            border-bottom: none;
-        }
-
-        .card-content .risk-icon,
-        .card-content .prediction-icon {
-            font-size: 1.5rem;
-            width: 30px;
-            text-align: center;
-        }
-
-        .card-content .risk-text,
-        .card-content .prediction-text {
-            flex: 1;
-        }
-
-        .card-content .risk-level {
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card-content .risk-high { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .card-content .risk-medium { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-        .card-content .risk-low { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-
-        .content-heading {
-            font-weight: 700;
-            color: #ffff;
-            margin: 20px 0 10px 0;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .bullet-point {
-            position: relative;
-            padding-left: 20px;
-            margin: 10px 0;
-            color: #b0b7ff;
-        }
-
-        .bullet-point::before {
-            content: '▶';
-            color: #667eea;
-            font-weight: bold;
-            position: absolute;
-            left: 0;
-            font-size: 0.9rem;
-        }
-
-        /* Expert Analysis */
-        .expert-analysis {
-               background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .analysis-content {
-            line-height: 1.8;
-            color: #e1e7ff;
-            font-size: 1.05rem;
-        }
-
-        /* Crypto News Sidebar */
-        .crypto-news {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            flex: 1;
-        }
-
-        .news-list {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .news-item {
-            padding: 15px;
-            margin-bottom: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            border-left: 3px solid #667eea;
-            transition: all 0.3s ease;
-            cursor: pointer;
-			min-height:150px;
-        }
-
-        .news-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            transform: translateX(3px);
-        }
-
-        .news-headline {
-            font-weight: 700;
-            color: #ffffff;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-
-        .news-summary {
-            color: #b0b7ff;
-            font-size: 0.8rem;
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-
-        .news-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            color: #667eea;
-        }
-
-        /* Sticky Chat Interface */
-        .chat-interface {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            height: 450px;
-            display: flex;
-            flex-direction: column;
-            position: sticky;
-            top: 120px;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px 0;
-            margin-bottom: 15px;
-            max-height: 280px;
-        }
-
-        .chat-message {
-            margin: 12px 0;
-            padding: 12px 16px;
-            border-radius: 16px;
-            max-width: 85%;
-            line-height: 1.5;
-            font-size: 0.9rem;
-        }
-
-        .chat-message.user {
-            background: rgba(102, 126, 234, 0.2);
-            color: #e1e7ff;
-            margin-left: auto;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-message.assistant {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            margin-right: auto;
-            border-bottom-left-radius: 4px;
-        }
-
-        .chat-input-container {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            color: #ffffff;
-            font-size: 0.9rem;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .chat-input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
-        }
-
-        .chat-send {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 0.8rem;
-        }
-
-        .chat-send:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .chat-send:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Error Message */
-        .error-message {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
-            color: #ef4444;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 15px 0;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            font-weight: 600;
-            display: none;
-        }
-
-        /* Powered By */
-        .powered-by {
-            text-align: center;
-            margin-top: 40px;
-            color: #b0b7ff;
-            font-weight: 500;
-        }
-
-        .powered-by a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.3s ease;
-        }
-
-        .powered-by a:hover {
-            color: #764ba2;
-            text-shadow: 0 0 15px rgba(102, 126, 234, 0.6);
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 1200px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                position: static;
-                height: auto;
-            }
-            
-            .chat-interface {
-                position: static;
-                height: 400px;
-            }
-
-            .market-overview-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .search-intel-charts {
-                grid-template-columns: 1fr; /* Stack charts vertically on smaller screens */
-                gap: 20px;
-            }
-
-            .search-intel-header {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                padding: 0 15px;
-            }
-            
-            .logo {
-                font-size: 1.5rem;
-            }
-            
-            .nav-links {
-                gap: 15px;
-            }
-            
-            .nav-link {
-                font-size: 0.8rem;
-                padding: 6px 12px;
-            }
-            
-            .analyzer-input {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .crypto-prices {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-            
-            .momentum-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
-            }
-            
-            .analysis-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .token-metrics {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-
-            body {
-                padding-top: 70px;
-            }
-
-            .search-intel-charts {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .search-trends-chart, .geo-heatmap-container {
-                height: 300px; /* Smaller height on mobile */
-            }
-
-            .market-insights {
-                gap: 4px;
-            }
-
-            .insight-tag {
-                font-size: 0.65rem;
-                padding: 3px 6px;
-            }
-        }
-
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.8s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Custom Scrollbar */
-        .tweets-list::-webkit-scrollbar,
-        .news-list::-webkit-scrollbar,
-        .chat-messages::-webkit-scrollbar,
-        .sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .tweets-list::-webkit-scrollbar-track,
-        .news-list::-webkit-scrollbar-track,
-        .chat-messages::-webkit-scrollbar-track,
-        .sidebar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-        }
-
-        .tweets-list::-webkit-scrollbar-thumb,
-        .news-list::-webkit-scrollbar-thumb,
-        .chat-messages::-webkit-scrollbar-thumb,
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(102, 126, 234, 0.5);
-            border-radius: 3px;
-        }
-
-        .tweets-list::-webkit-scrollbar-thumb:hover,
-        .news-list::-webkit-scrollbar-thumb:hover,
-        .chat-messages::-webkit-scrollbar-thumb:hover,
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: rgba(102, 126, 234, 0.7);
-        }
-
-        /* Hide navigation on very small screens */
-        @media (max-width: 480px) {
-            .nav-links {
-                display: none;
-            }
-        }
-		/* Accounts to Follow Styling */
-.accounts-list {
-    padding-right: 10px;
-}
-
-.account-item {
-    background: rgba(0, 0, 0, 0.65);
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-left: 3px solid #1da1f2;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.account-item:hover {
-    background: rgba(29, 161, 242, 0.1);
-    transform: translateX(3px);
-}
-
-.account-username {
-    font-weight: 700;
-    color: #1da1f2;
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-}
-
-.account-followers {
-    font-size: 0.75rem;
-    color: #7dd3fc;
-    margin-bottom: 6px;
-}
-
-.account-activity {
-    font-size: 0.8rem;
-    color: #e1e7ff;
-    line-height: 1.3;
-}
-		
-		.dial-talk{    display: flex
-;
-    flex-direction: row;
-    gap: 15px;}
-		
-				.mainleft{    display: flex
-;
-    flex-direction: column;
-    gap: 15px;}
-    </style>
+  <link rel="stylesheet" href="/static/indexstyle.css" />
+   
 </head>
 <body>
     <!-- Fixed Header -->
@@ -2173,7 +30,13 @@
         </div>
     </header>
 
+
     <div class="dashboard-container">
+<div class="news-ticker-container"><span style="background-color:#000; z-index:9;">News:</span>
+    <div class="news-ticker-content" id="newsTicker">
+        <div class="ticker-item">📈 Loading crypto news... Market analysis in progress</div>
+    </div>
+</div>
         <!-- Enhanced Market Overview Bar with CoinGecko/DexScreener -->
         <div class="market-overview">
 
@@ -2182,49 +45,64 @@
             <div class="market-overview-grid">
                 <!-- Condensed Crypto Prices (Left) -->
 				<div class="mainleft">
-                <div class="crypto-prices" id="cryptoPrices">
-                    <!-- Crypto prices will be populated here -->
-                </div>
+               
 					<div class="trending-tokens-section">
-            
-                    
-                    <!-- Tab Navigation -->
-                    <div class="tab-navigation">
-                        <button class="tab-btn active" onclick="switchTab('fresh-hype')" data-tab="fresh-hype">
-                            🚀 Recent Dex Boosted
-                        </button>
-                        <button class="tab-btn" onclick="switchTab('recent-trending')" data-tab="recent-trending">
-                            📈 Recent Trending
-                        </button>
-                        <button class="tab-btn" onclick="switchTab('blue-chips')" data-tab="blue-chips">
-                            💎 Blue Chips
-                        </button>
-                    </div>
-                    
-                    <!-- Tab Content -->
-                    <div class="tab-content active" id="fresh-hype">
-                        <div class="trending-tokens-grid" id="freshHypeGrid">
-                            <div class="loading-state">Loading fresh hype tokens...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="recent-trending">
-                        <div class="trending-tokens-grid" id="recentTrendingGrid">
-                            <div class="loading-state">Loading trending tokens...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="blue-chips">
-                        <div class="trending-tokens-grid" id="blueChipsGrid">
-                            <div class="loading-state">Loading blue chip tokens...</div>
-                        </div>
-                    </div>
-                </div>
+    <div class="section-header">
+        <span style="font-size: 1.5rem;">🔥</span>
+        <div class="section-title">
+            Trending Tokens
+            <span class="cache-indicator" id="cacheIndicator" style="display: none;">
+                Session Cached
+            </span>
+        </div>
+        <button class="refresh-cache-btn" onclick="refreshSessionCache()" title="Refresh Data">
+            🔄 Refresh
+        </button>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+        <button class="tab-btn active" onclick="switchTab('trending')" data-tab="trending">
+            🔥 Trending Now
+        </button>
+        <button class="tab-btn" onclick="switchTab('volume')" data-tab="volume">
+            💰 Highest Volume
+        </button>
+        <button class="tab-btn" onclick="switchTab('latest')" data-tab="latest">
+            ✨ Latest Tokens
+        </button>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content active" id="trending">
+        <div class="trending-tokens-grid" id="trendingGrid">
+            <div class="loading-state">Loading trending tokens...</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="volume">
+        <div class="trending-tokens-grid" id="volumeGrid">
+            <div class="loading-state">Loading high volume tokens...</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="latest">
+        <div class="trending-tokens-grid" id="latestGrid">
+            <div class="loading-state">Loading latest tokens...</div>
+        </div>
+    </div>
+    
+    <!-- Session Info Footer -->
+
+</div>
                 </div>
      
                 
                 <!-- Market Intelligence (Right) -->
                 <div class="market-intelligence">
+                     <div class="crypto-prices" id="cryptoPrices">
+                    <!-- Crypto prices will be populated here -->
+                </div>
                     <div class="intelligence-section" style="display:none;">
                         <div class="intelligence-section-title">
                             <span>🔥</span>
@@ -2251,14 +129,15 @@
                     </div>
                     <div class="dial-value" id="dialValue">72</div>
                     <div class="dial-label" id="dialLabel">Greed</div>
-                </div></div>
-					   <div class="market-sentiment">
-                    <span><span>📊</span> Market Sentiment:</span>
+                       <div class="market-sentiment"><br>
+                    <span>Sentiment:</span><br>
                     <span id="fearGreedIndex" style="display:none;">Loading...</span>
                     <div class="sentiment-indicator" id="sentimentIndicator">
                         Loading...
                     </div>
                 </div>
+                </div></div>
+					
                 </div>
             </div>
         </div>
@@ -2367,7 +246,7 @@
 					
 
                     <!-- Revolutionary Chart.js Visualizations -->
-                    <div class="real-social-dashboard" id="realSocialDashboard" style="display: none;">
+                    <div class="real-social-dashboard" id="realSocialDashboard" >
     <div class="section-header">
         <span style="font-size: 1.5rem;">🔥</span>
         <div class="section-title">Social Data Analysis</div>
@@ -2505,43 +384,436 @@
                     </div>
 
                   <!-- Live Tweets Panel with Accounts to Follow -->
-<div class="live-tweets-panel">
+<!-- Replace the Live Tweets Panel section in your HTML with this -->
+
+<!-- Top Accounts Table with Grok API Data -->
+<div class="top-accounts-panel">
     <div class="section-header">
-        <span style="font-size: 1.5rem;">🐦</span>
-        <div class="section-title">Live X Feed</div>
+        <span style="font-size: 1.5rem;">📊</span>
+        <div class="section-title">Top Accounts Analysis</div>
         <div class="live-data-badge">
             <div class="live-dot"></div>
-            X API DIRECT
+            GROK LIVE SEARCH
         </div>
     </div>
     
-    <!-- Three Column Layout -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px;">
-        <!-- Recent X Discussion (2/4 width) -->
-        <div>
-            <h3 style="color: #ffffff; margin-bottom: 15px; font-size: 1.1rem;">📱 Recent Discussion</h3>
-            <div class="tweets-list" id="recentXDiscussionList" style="max-height: 400px;">
-                <!-- Tweets will be populated here -->
-            </div>
-        </div>
-        
-        <!-- Notable Accounts (1/4 width) -->
-        <div>
-            <h3 style="color: #ffffff; margin-bottom: 15px; font-size: 1.1rem;">⭐ Notable Accounts</h3>
-            <div class="accounts-list" id="notableAccountsList" style="max-height: 400px; overflow-y: auto;">
-                <!-- Notable accounts will be populated here -->
-            </div>
-        </div>
-        
-        <!-- Who to Follow (1/4 width) -->
-        <div>
-            <h3 style="color: #ffffff; margin-bottom: 15px; font-size: 1.1rem;">👥 Active Users</h3>
-            <div class="accounts-list" id="whoToFollowList" style="max-height: 400px; overflow-y: auto;">
-                <!-- Accounts will be populated here -->
-            </div>
+    <!-- Two Column Layout -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+        <div class="grok-raw-section" id="grok-raw-section" style="display: none;">
+    <div class="section-header">
+        <h2>🤖 Grok Live Analysis</h2>
+        <span class="subtitle">Raw AI response from X/Twitter data</span>
+    </div>
+    
+    <div class="grok-raw-container">
+        <div class="raw-response-box">
+            <pre id="grok-raw-content"></pre>
         </div>
     </div>
 </div>
+
+<style>
+.grok-raw-section {
+    margin: 20px 0;
+    background: rgba(138, 120, 255, 0.05);
+    border: 1px solid rgba(138, 120, 255, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    color: #8a78ff;
+    font-size: 24px;
+    margin: 0;
+}
+
+.section-header .subtitle {
+    color: #666;
+    font-size: 14px;
+}
+
+.grok-raw-container {
+    background: #1a1a2e;
+    border-radius: 8px;
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.raw-response-box pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: #e0e0e0;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Styles for formatted account display */
+.grok-accounts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.grok-account-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.2s ease;
+}
+
+.grok-account-item:hover {
+    background: rgba(138, 120, 255, 0.1);
+    border-color: rgba(138, 120, 255, 0.3);
+}
+
+.account-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.account-number {
+    background: rgba(138, 120, 255, 0.2);
+    color: #8a78ff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.account-name {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.follower-count {
+    color: #888;
+    font-size: 14px;
+    margin-left: auto;
+}
+
+.account-activity {
+    color: #e0e0e0;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.account-status {
+    color: #999;
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* Scrollbar styling */
+.grok-raw-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.grok-raw-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.grok-raw-container::-webkit-scrollbar-thumb {
+    background: rgba(138, 120, 255, 0.5);
+    border-radius: 4px;
+}
+
+.grok-raw-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(138, 120, 255, 0.7);
+}
+</style>
+
+
+        <!-- Top Accounts Table (2/3 width) -->
+        <div>
+            <h3 style="color: #ffffff; margin-bottom: 15px; font-size: 1.1rem;">📈 Top Accounts by Engagement</h3>
+            <div class="accounts-table-wrapper" id="recentXDiscussionList" style="max-height: 500px; overflow-y: auto;">
+                <!-- Accounts table will be populated here -->
+                <div class="loading-state" style="text-align: center; padding: 40px; color: #666;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">📊</div>
+                    <p>Analyze a token to see top accounts</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Summary & Who to Follow (1/3 width) -->
+        <div>
+            <h3 style="color: #ffffff; margin-bottom: 15px; font-size: 1.1rem;">👥 Quick Follow List</h3>
+            <div class="accounts-list" id="whoToFollowList" style="max-height: 500px; overflow-y: auto;">
+                <!-- Quick follow accounts will be populated here -->
+                <div class="loading-state" style="text-align: center; padding: 20px; color: #666;">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">👤</div>
+                    <p style="font-size: 0.9rem;">Account recommendations will appear here</p>
+                </div>
+            </div>
+            
+            <!-- Engagement Summary -->
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                <h4 style="color: #10b981; margin-bottom: 10px; font-size: 1rem;">📊 Engagement Summary</h4>
+                <div id="engagementSummary" style="font-size: 0.9rem; color: #b0b7ff;">
+                    <div style="margin-bottom: 5px;">Total Accounts: <span id="totalAccounts">-</span></div>
+                    <div style="margin-bottom: 5px;">Avg Engagement: <span id="avgEngagement">-</span></div>
+                    <div style="margin-bottom: 5px;">Data Quality: <span id="dataQuality">-</span></div>
+                    <div>Source: <span style="color: #fbbf24;">Grok Live Search</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Data Source Footer -->
+    <div style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(102, 126, 234, 0.1); border-radius: 8px;">
+        <p style="color: #667eea; font-size: 0.9rem; margin: 0;">
+            <strong>🧠 Powered by Grok Live Search API</strong><br>
+            Real-time X analysis with engagement metrics and account ranking
+        </p>
+    </div>
+</div>
+
+<style>
+/* Enhanced styles for the new accounts table */
+.top-accounts-panel {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 16px;
+    padding: 25px;
+    margin: 20px 0;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.accounts-table-wrapper {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.accounts-table-container {
+    background: transparent;
+    padding: 0;
+}
+
+.accounts-table-container h4 {
+    color: #ffffff;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 40px 200px 140px 1fr 90px;
+    gap: 15px;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 40px 200px 140px 1fr 90px;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table-row:hover {
+    background: rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+    border-color: rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.col-rank {
+    text-align: center;
+    font-weight: 700;
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+.col-account .account-name {
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+}
+
+.col-account .account-followers {
+    font-size: 0.75rem;
+    color: #b0b7ff;
+}
+
+.col-engagement .engagement-total {
+    font-weight: 600;
+    color: #10b981;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+}
+
+.col-engagement .engagement-breakdown {
+    font-size: 0.7rem;
+    color: #7dd3fc;
+    line-height: 1.2;
+}
+
+.col-content .tweet-preview {
+    color: #ffffff;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.col-content .account-notes {
+    font-size: 0.7rem;
+    color: #fbbf24;
+    font-style: italic;
+}
+
+.col-date {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    text-align: center;
+    font-weight: 500;
+}
+
+.table-footer {
+    text-align: center;
+    margin-top: 15px;
+    padding: 12px;
+    color: #667eea;
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(102, 126, 234, 0.3);
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 8px;
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(107, 114, 128, 0.1);
+    border-radius: 12px;
+    color: #9ca3af;
+    border: 2px dashed rgba(107, 114, 128, 0.3);
+}
+
+.no-data-message h4 {
+    color: #f59e0b;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.no-data-message p {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* Quick follow list styling */
+#whoToFollowList .account-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#whoToFollowList .account-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: rgba(102, 126, 234, 0.3);
+    transform: translateX(5px);
+}
+
+#whoToFollowList .account-username {
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+#whoToFollowList .account-followers {
+    font-size: 0.8rem;
+    color: #b0b7ff;
+    margin-bottom: 6px;
+}
+
+#whoToFollowList .account-activity {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    line-height: 1.3;
+}
+
+/* Engagement summary styling */
+#engagementSummary span {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .top-accounts-panel > div:first-of-type {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .table-header,
+    .table-row {
+        grid-template-columns: 30px 150px 100px 1fr 70px;
+        gap: 10px;
+        padding: 10px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        text-align: left;
+    }
+    
+    .table-header > div,
+    .table-row > div {
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .table-header > div:last-child,
+    .table-row > div:last-child {
+        border-bottom: none;
+    }
+    
+    .col-rank::before { content: "Rank: "; color: #667eea; font-weight: normal; }
+    .col-account::before { content: "Account: "; color: #667eea; font-weight: normal; }
+    .col-engagement::before { content: "Engagement: "; color: #667eea; font-weight: normal; }
+    .col-content::before { content: "Content: "; color: #667eea; font-weight: normal; }
+    .col-date::before { content: "Date: "; color: #667eea; font-weight: normal; }
+}
+</style>
 
                     <!-- Expert Analysis -->
                     <div class="expert-analysis">
@@ -2630,38 +902,23 @@
             <div class="sidebar">
                 <!-- Crypto News -->
                 <div class="sidebar-section">
-					
-                    <div class="section-header" onclick="toggleNewsSection()" style="padding:10px; cursor: pointer;">
-                        <span style="font-size: 1.5rem;">📰</span>
-                        <div class="section-title">Crypto News</div>
-                        <span class="toggle-arrow" id="newsToggle">▶</span>
-                       
-                    </div>
-                    <div class="sidebar-content" id="newsContent" style="display:none;">
-                        <div class="news-list" id="newsList">
-                            <div class="loading-state">Loading crypto news...</div>
-                        </div>
+        <div class="section-header">
+            <span style="font-size: 1.5rem;">📊</span>
+            <div class="section-title">Token History</div>
+            <button class="clear-history-btn" onclick="clearTokenHistory()" title="Clear History">🗑️</button>
+        </div>
+        <div class="sidebar-content">
+            <div class="token-history-list" id="tokenHistoryList">
+                <div class="history-empty">
+                    <div style="text-align: center; padding: 20px; color: #666;">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">📈</div>
+                        <p>Analyze tokens to build your history</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <!-- Sticky Chat Interface -->
-                <div class="chat-interface" id="chatInterface">
-                    <div class="section-header">
-                        <span style="font-size: 1.5rem;">💬</span>
-                        <div class="section-title">AI Assistant</div>
-                    </div>
-                    <div class="chat-messages" id="chatMessages">
-                        <div class="chat-message assistant">
-                            👋 Analyze a token first, then I can chat about it with live market context and search intelligence!
-                        </div>
-                    </div>
-                    <div class="chat-input-container">
-                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask about the analyzed token..." disabled>
-                        <button class="chat-send" id="chatSend" onclick="sendChatMessage()" disabled>
-                            Send
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -2677,7 +934,7 @@
         let currentAnalysis = null;
         let currentTokenAddress = '';
         let chatHistory = [];
-        let currentTab = 'fresh-hype';
+        let currentTab = 'trending';
         let fearGreedChart = null;
         let searchTrendsChart = null;
 		        let sentimentTimelineChart = null;
@@ -2691,23 +948,68 @@
         let discussionTopicsChart = null;
         let platformDistributionChart = null;
         let realTrendsChart = null;
-  
+
+        // Tab click handlers setup (called from main DOMContentLoaded)
+        function setupTrendingTokenHandlers() {
+            console.log('🚀 Setting up trending tokens handlers...');
+            
+            // Set up tab click handlers
+            document.addEventListener('click', function(event) {
+                if (event.target.closest('.tab-btn')) {
+                    const button = event.target.closest('.tab-btn');
+                    const category = button.getAttribute('data-tab') || button.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                    if (category) {
+                        switchToTab(category, button);
+                    }
+                }
+            });
+        }
 
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadMarketOverview();
-            loadTrendingTokens();
             loadCryptoNews();
             initializeFearGreedChart();
+            updateTokenHistoryDisplay(); // Load token history
+            disableChatPopup(); // Initialize chat as disabled
+            
+            // Initialize trending tokens system
+            setupTrendingTokenHandlers();
+            if (typeof loadCategoryOnce === 'function') {
+                loadCategoryOnce('trending');
+            } else {
+                // Fallback to trending manager if unified cache system not available
+                initializeTrendingManager();
+            }
             
             // Allow Enter key for inputs
             document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') analyzeToken();
             });
-            document.getElementById('chatInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') sendChatMessage();
-            });
+            
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') sendChatMessage();
+                });
+            }
         });
+
+
+        function updateCacheStatus() {
+    const indicator = document.getElementById('cacheIndicator');
+    const sessionInfo = document.getElementById('sessionInfo');
+    const lastUpdated = document.getElementById('lastUpdated');
+    
+    if (sessionTokensCache.loaded) {
+        indicator.style.display = 'inline-flex';
+        sessionInfo.textContent = 'Data cached for session - no API calls on tab switch';
+        lastUpdated.textContent = `Loaded: ${new Date().toLocaleTimeString()}`;
+    } else if (sessionTokensCache.loading) {
+        sessionInfo.textContent = 'Loading data for session...';
+        lastUpdated.textContent = '';
+    }
+}
 
         // Fear & Greed Chart Initialization
         function initializeFearGreedChart() {
@@ -2821,22 +1123,22 @@
                 <div class="crypto-price-card">
                     <div class="crypto-symbol">BTC</div>
                     <div class="crypto-price">$${data.bitcoin_price?.toLocaleString() || '95,000'}</div>
-                    <div class="crypto-change positive">+2.3%</div>
+                    
                 </div>
                 <div class="crypto-price-card">
                     <div class="crypto-symbol">ETH</div>
                     <div class="crypto-price">$${data.ethereum_price?.toLocaleString() || '3,500'}</div>
-                    <div class="crypto-change positive">+1.8%</div>
+                  
                 </div>
                 <div class="crypto-price-card">
                     <div class="crypto-symbol">SOL</div>
                     <div class="crypto-price">$${data.solana_price?.toLocaleString() || '180'}</div>
-                    <div class="crypto-change positive">+4.2%</div>
+                   
                 </div>
                 <div class="crypto-price-card">
-                    <div class="crypto-symbol">Market Cap</div>
+                    <div class="crypto-symbol">Total MC</div>
                     <div class="crypto-price">$${(data.total_market_cap / 1e12)?.toFixed(2) || '2.3'}T</div>
-                    <div class="crypto-change positive">+0.9%</div>
+                  
                 </div>
             `;
             document.getElementById('cryptoPrices').innerHTML = pricesHtml;
@@ -2903,116 +1205,392 @@
         }
 
         // Trending Tokens Functions - FIXED
-        async function loadTrendingTokens() {
-            // Load all tabs on initial load
-            await loadFreshHype();
-            await loadRecentTrending();
-            await loadBlueChips();
-        }
+// Session-based caching for trending tokens
+let sessionTokensCache = {
+    trending: null,
+    volume: null, 
+    latest: null,
+    loaded: false,
+    loading: false
+};
 
-        // Tab switching function - FIXED
-        function switchTab(tabName) {
-            currentTab = tabName;
-            
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabName).classList.add('active');
-        }
+// FIXED TRENDING TOKENS IMPLEMENTATION
+// Replace the entire trending tokens section in your HTML with this
 
-        // Fresh Hype tokens using DexScreener
-        async function loadFreshHype(forceRefresh = false) {
-            try {
-                const gridElement = document.getElementById('freshHypeGrid');
-                gridElement.innerHTML = '<div class="loading-state">Loading fresh hype tokens from DexScreener...</div>';
+// Single unified cache system
+let unifiedTokensCache = {
+    trending: { tokens: [], lastUpdated: null, pricesLoaded: false },
+    volume: { tokens: [], lastUpdated: null, pricesLoaded: false },
+    latest: { tokens: [], lastUpdated: null, pricesLoaded: false },
+    currentTab: 'trending',
+    isLoading: false,
+    priceCache: new Map() // Cache individual token prices
+};
+
+// Main function to load a category once per session
+async function loadCategoryOnce(category) {
+    const cacheData = unifiedTokensCache[category];
+    
+    // Check if we already have data and it's less than 30 minutes old
+    if (cacheData.tokens.length > 0 && cacheData.lastUpdated) {
+        const cacheAge = Date.now() - cacheData.lastUpdated;
+        if (cacheAge < 30 * 60 * 1000) { // 30 minutes
+            console.log(`✅ Using cached ${category} data (${Math.round(cacheAge/60000)}min old)`);
+            displayTokensInGrid(cacheData.tokens, category);
+            if (!cacheData.pricesLoaded) {
+                loadRealPricesForCategory(category);
+            }
+            return;
+        }
+    }
+    
+    // Prevent multiple simultaneous loads
+    if (unifiedTokensCache.isLoading) {
+        console.log(`⏳ ${category} already loading...`);
+        return;
+    }
+    
+    unifiedTokensCache.isLoading = true;
+    showLoadingState(category);
+    
+    try {
+        console.log(`🌐 Loading ${category} tokens from API...`);
+        
+        const response = await fetch(`/trending-tokens?category=${category}&refresh=false`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            signal: AbortSignal.timeout(30000) // 30 second timeout
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.tokens && data.tokens.length > 0) {
+            // Cache the basic token data
+            cacheData.tokens = data.tokens;
+            cacheData.lastUpdated = Date.now();
+            cacheData.pricesLoaded = false;
+            
+            console.log(`✅ Cached ${data.tokens.length} ${category} tokens`);
+            
+            // Display immediately with basic data
+            displayTokensInGrid(data.tokens, category);
+            
+            // Load real prices in background
+            setTimeout(() => loadRealPricesForCategory(category), 500);
+            
+        } else {
+            throw new Error(data.error || 'No tokens returned');
+        }
+        
+    } catch (error) {
+        console.error(`❌ Error loading ${category}:`, error.message);
+        showErrorState(category, error.message);
+        
+    } finally {
+        unifiedTokensCache.isLoading = false;
+    }
+}
+
+// Load real price data for tokens in a category
+async function loadRealPricesForCategory(category) {
+    const cacheData = unifiedTokensCache[category];
+    if (!cacheData.tokens.length || cacheData.pricesLoaded) return;
+    
+    console.log(`💰 Loading real prices for ${category} tokens...`);
+    
+    // Get valid token addresses
+    const addresses = cacheData.tokens
+        .map(token => token.address)
+        .filter(addr => addr && addr.length >= 32 && !addr.startsWith('DEMO'));
+    
+    if (addresses.length === 0) {
+        console.log(`⚠️ No valid addresses for ${category} price loading`);
+        cacheData.pricesLoaded = true;
+        return;
+    }
+    
+    try {
+        // Update loading indicator
+        updateCategoryStatus(category, 'Loading prices...');
+        
+        const response = await fetch('/token-prices', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tokens: addresses.slice(0, 12) }) // Limit to 12 tokens
+        });
+        
+        if (response.ok) {
+            const priceData = await response.json();
+            
+            if (priceData.success) {
+                // Update tokens with real price data
+                cacheData.tokens = cacheData.tokens.map(token => {
+                    const priceInfo = priceData.results[token.address];
+                    if (priceInfo && priceInfo.success) {
+                        return {
+                            ...token,
+                            current_price: priceInfo.current_price,
+                            price_change_7d: priceInfo.price_change_7d,
+                            has_real_price: true
+                        };
+                    }
+                    return token;
+                });
                 
-                const response = await fetch(`/trending-tokens?category=fresh-hype&refresh=${forceRefresh}`);
-                const data = await response.json();
+                cacheData.pricesLoaded = true;
                 
-                if (data.success && data.tokens) {
-                    displayTokensInGrid(data.tokens, 'freshHypeGrid', 'fresh-hype');
-                } else {
-                    gridElement.innerHTML = '<div class="error-state">Error loading fresh hype tokens</div>';
+                // Re-display with price data if this is the current tab
+                if (unifiedTokensCache.currentTab === category) {
+                    displayTokensInGrid(cacheData.tokens, category);
                 }
-            } catch (error) {
-                console.error('Fresh hype tokens error:', error);
-                document.getElementById('freshHypeGrid').innerHTML = '<div class="error-state">Error loading fresh hype tokens</div>';
+                
+                console.log(`✅ Loaded real prices for ${category}`);
+                updateCategoryStatus(category, 'Ready');
             }
         }
+        
+    } catch (error) {
+        console.error(`❌ Price loading error for ${category}:`, error);
+        cacheData.pricesLoaded = true; // Mark as attempted
+    }
+}
 
-        // Recent Trending tokens using CoinGecko
-        async function loadRecentTrending(forceRefresh = false) {
-            try {
-                const gridElement = document.getElementById('recentTrendingGrid');
-                gridElement.innerHTML = '<div class="loading-state">Loading trending tokens from CoinGecko...</div>';
-                
-                const response = await fetch(`/trending-tokens?category=recent-trending&refresh=${forceRefresh}`);
-                const data = await response.json();
-                
-                if (data.success && data.tokens) {
-                    displayTokensInGrid(data.tokens, 'recentTrendingGrid', 'recent-trending');
-                } else {
-                    gridElement.innerHTML = '<div class="error-state">Error loading trending tokens</div>';
-                }
-            } catch (error) {
-                console.error('Recent trending tokens error:', error);
-                document.getElementById('recentTrendingGrid').innerHTML = '<div class="error-state">Error loading trending tokens</div>';
-            }
-        }
 
-        // Blue Chip tokens using CoinGecko
-        async function loadBlueChips(forceRefresh = false) {
-            try {
-                const gridElement = document.getElementById('blueChipsGrid');
-                gridElement.innerHTML = '<div class="loading-state">Loading blue chip tokens from CoinGecko...</div>';
-                
-                const response = await fetch(`/trending-tokens?category=blue-chips&refresh=${forceRefresh}`);
-                const data = await response.json();
-                
-                if (data.success && data.tokens) {
-                    displayTokensInGrid(data.tokens, 'blueChipsGrid', 'blue-chip');
-                } else {
-                    gridElement.innerHTML = '<div class="error-state">Error loading blue chip tokens</div>';
-                }
-            } catch (error) {
-                console.error('Blue chip tokens error:', error);
-                document.getElementById('blueChipsGrid').innerHTML = '<div class="error-state">Error loading blue chip tokens</div>';
-            }
-        }
-
-        function displayTokensInGrid(tokens, gridId, category) {
-            let tokensHtml = '';
-            
-            tokens.slice(0, 12).forEach(token => { // Show 12 tokens as requested
-                const changeClass = token.price_change >= 0 ? 'positive' : 'negative';
-                const changeIcon = token.price_change >= 0 ? '🚀' : '📉';
-                
-                // Only allow clicks on valid Solana addresses
-                const isClickable = token.address && token.address.length >= 32 && !token.address.startsWith('PLACEHOLDER') && !token.address.startsWith('TRENDING') && !token.address.startsWith('BLUECHIP');
-                const clickHandler = isClickable ? `onclick="loadTokenAnalysis('${token.address}')"` : '';
-                const cursorStyle = isClickable ? 'cursor: pointer;' : 'cursor: default; opacity: 0.7;';
-                
-                tokensHtml += `
-                    <div class="trending-token ${category}" ${clickHandler} style="${cursorStyle}">
-                        <div class="trending-symbol">${token.symbol}</div>
-                        <div class="trending-change ${changeClass}">
-                            ${changeIcon} ${token.price_change >= 0 ? '+' : ''}${token.price_change.toFixed(1)}%
-                        </div>
-                        <div class="trending-mentions">${token.mentions || Math.floor(token.volume / 1000)} ${category === 'blue-chip' ? 'vol' : 'mentions'}</div>
-                        ${!isClickable ? '<div style="font-size: 0.6rem; color: #888; margin-top: 5px;">View only</div>' : ''}
+function updateAccountsTable(accountTable, socialData) {
+    console.log('Updating accounts table with', accountTable.length, 'accounts');
+    
+    const container = document.getElementById('recentXDiscussionList');
+    let tableHtml = '';
+    
+    if (accountTable.length > 0) {
+        tableHtml = `
+            <div class="accounts-table-container">
+                <h4>📊 Top ${accountTable.length} Accounts by Engagement</h4>
+                <div class="accounts-table">
+                    <div class="table-header">
+                        <div class="col-rank">#</div>
+                        <div class="col-account">Account</div>
+                        <div class="col-engagement">Engagement</div>
+                        <div class="col-content">Latest Activity</div>
+                        <div class="col-date">Date</div>
                     </div>
-                `;
-            });
+        `;
+        
+        accountTable.forEach(account => {
+            const engagementDisplay = formatEngagementCount(account.total_engagement);
+            const accountUsername = account.account.replace('@', '');
+            const followerDisplay = formatFollowerDisplay(account.follower_count);
+            const tweetPreview = truncateText(account.tweet_content, 100);
+            const notesPreview = truncateText(account.notes, 80);
             
-            document.getElementById(gridId).innerHTML = tokensHtml;
+            tableHtml += `
+                <div class="table-row" onclick="openAccountLink('${accountUsername}')">
+                    <div class="col-rank">${account.rank}</div>
+                    <div class="col-account">
+                        <div class="account-name">${account.account}</div>
+                        <div class="account-followers">${followerDisplay}</div>
+                    </div>
+                    <div class="col-engagement">
+                        <div class="engagement-total">${engagementDisplay}</div>
+                        <div class="engagement-breakdown">
+                            ${formatEngagementBreakdown(account)}
+                        </div>
+                    </div>
+                    <div class="col-content">
+                        <div class="tweet-preview">${tweetPreview}</div>
+                        <div class="account-notes">${notesPreview}</div>
+                    </div>
+                    <div class="col-date">${formatDate(account.date_posted)}</div>
+                </div>
+            `;
+        });
+        
+        tableHtml += `
+                </div>
+                <div class="table-footer">
+                    <p>🧠 Powered by Grok Live Search API • Real-time X engagement analysis</p>
+                    <p style="margin-top: 5px; font-size: 0.8rem; color: #7dd3fc;">
+                        Data Quality: ${socialData.data_quality} • Found ${socialData.total_accounts_found} accounts
+                    </p>
+                </div>
+            </div>
+        `;
+    } else {
+        tableHtml = createNoDataMessage(socialData);
+    }
+    
+    container.innerHTML = tableHtml;
+}
+
+function createNoDataMessage(socialData) {
+    const isApiError = socialData.data_quality === 'no_data';
+    const hasLimitedData = socialData.data_quality === 'limited';
+    
+    return `
+        <div class="no-data-message">
+            <div style="font-size: 3rem; margin-bottom: 15px;">
+                ${isApiError ? '🔍' : hasLimitedData ? '📊' : '💭'}
+            </div>
+            <h4>${isApiError ? 'No Discussion Found' : hasLimitedData ? 'Limited Data Available' : 'Searching...'}</h4>
+            <p>${isApiError ? 'Grok API found no significant discussions about this token in the selected timeframe.' : 
+                hasLimitedData ? 'Found some mentions but limited engagement data available.' : 
+                'Analyzing social media activity...'}</p>
+            <p style="color: #fbbf24; margin-top: 10px;">
+                💡 Try analyzing a more popular token or extend the time window
+            </p>
+            ${isApiError ? `
+                <div style="margin-top: 20px; padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
+                    <strong>Suggestions:</strong><br>
+                    • Check if token symbol is correct<br>
+                    • Try a trending token like BONK or WIF<br>
+                    • Extend analysis to 7 days<br>
+                    • Verify Grok API configuration
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+
+// Switch to a tab (no API calls, just display cached data)
+function switchToTab(category, buttonElement) {
+    if (unifiedTokensCache.currentTab === category) return;
+    
+    console.log(`🔄 Switching to ${category} tab`);
+    unifiedTokensCache.currentTab = category;
+    
+    // Update active tab button
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    buttonElement.classList.add('active');
+    
+    // Update tab content visibility
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    const contentElement = document.getElementById(category);
+    if (contentElement) {
+        contentElement.classList.add('active');
+    }
+    
+    // Load category data if not already loaded
+    loadCategoryOnce(category);
+}
+
+// Display tokens in the grid
+function displayTokensInGrid(tokens, category) {
+    const gridElement = document.getElementById(`${category}Grid`);
+    if (!gridElement) return;
+    
+    if (!tokens || tokens.length === 0) {
+        gridElement.innerHTML = '<div class="error-state">No tokens available</div>';
+        return;
+    }
+    
+    let tokensHtml = '';
+    
+    tokens.slice(0, 12).forEach(token => {
+        const isClickable = token.address && token.address.length >= 32 && 
+                           !token.address.startsWith('DEMO');
+        
+        const clickHandler = isClickable ? `onclick="loadTokenAnalysis('${token.address}')"` : '';
+        const cursorStyle = isClickable ? 'cursor: pointer;' : 'cursor: default; opacity: 0.7;';
+        
+        // Simple price display only
+        let priceDisplay = 'Loading...';
+        
+        if (token.has_real_price && token.current_price !== undefined) {
+            priceDisplay = token.current_price > 0 ? `$${token.current_price.toFixed(8)}` : 'N/A';
+        } else {
+            priceDisplay = formatMarketCap(token.volume) + ' vol';
         }
+        
+        tokensHtml += `
+            <div class="trending-token ${category}" ${clickHandler} style="${cursorStyle}">
+                <div class="trending-symbol">${token.symbol}</div>
+                <div class="trending-price">${priceDisplay}</div>
+            
+                ${!isClickable ? '<div style="font-size: 0.6rem; color: #888; margin-top: 5px;">View only</div>' : ''}
+            </div>
+        `;
+    });
+    
+    gridElement.innerHTML = tokensHtml;
+}
+
+// Utility functions
+function showLoadingState(category) {
+    const gridElement = document.getElementById(`${category}Grid`);
+    if (gridElement) {
+        gridElement.innerHTML = `
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <div>Loading ${category} tokens...</div>
+            </div>
+        `;
+    }
+}
+
+function showErrorState(category, errorMessage) {
+    const gridElement = document.getElementById(`${category}Grid`);
+    if (gridElement) {
+        gridElement.innerHTML = `
+            <div class="error-state">
+                <div>⚠️ Error loading ${category} tokens</div>
+                <div style="font-size: 0.8rem; margin-top: 10px;">${errorMessage}</div>
+                <button onclick="refreshCategory('${category}')" style="margin-top: 10px; padding: 8px 16px; border: 1px solid #667eea; background: transparent; color: #667eea; border-radius: 4px; cursor: pointer;">
+                    🔄 Retry
+                </button>
+            </div>
+        `;
+    }
+}
+
+function updateCategoryStatus(category, status) {
+    const tabButton = document.querySelector(`[data-tab="${category}"]`);
+    if (tabButton) {
+        const statusSpan = tabButton.querySelector('.tab-status') || 
+                          tabButton.querySelector('.cache-indicator');
+        if (statusSpan) {
+            statusSpan.textContent = status;
+        }
+    }
+}
+
+function refreshCategory(category) {
+    console.log(`🔄 Refreshing ${category}...`);
+    
+    // Clear cache
+    unifiedTokensCache[category] = { tokens: [], lastUpdated: null, pricesLoaded: false };
+    
+    // Reload
+    loadCategoryOnce(category);
+}
+
+function formatMarketCap(value) {
+    if (value >= 1e9) return `$${(value / 1e9).toFixed(1)}B`;
+    if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
+    if (value >= 1e3) return `$${(value / 1e3).toFixed(0)}K`;
+    if (value > 0) return `$${value.toFixed(0)}`;
+    return 'N/A';
+}
+
+// Global functions for compatibility
+function switchTab(tabName) {
+    const button = document.querySelector(`[data-tab="${tabName}"]`) || 
+                   document.querySelector(`[onclick*="${tabName}"]`);
+    if (button) {
+        switchToTab(tabName, button);
+    }
+}
+
+function refreshSessionCache() {
+    const currentTab = unifiedTokensCache.currentTab;
+    refreshCategory(currentTab);
+}
+
+  
 
         function loadTokenAnalysis(address) {
             if (!address) return;
@@ -3030,54 +1608,352 @@
         }
 
         // Toggle Functions
-        function toggleNewsSection() {
-            const newsContent = document.getElementById('newsContent');
-            const newsToggle = document.getElementById('newsToggle');
-            
-            if (newsContent.style.display === 'none') {
-                newsContent.style.display = 'block';
-                newsToggle.textContent = '▼';
-            } else {
-                newsContent.style.display = 'none';
-                newsToggle.textContent = '▶';
-            }
+       // Token History Management
+let tokenHistory = JSON.parse(sessionStorage.getItem('tokenHistory')) || [];
+
+function addToTokenHistory(tokenData) {
+    // Remove existing entry for this token
+    tokenHistory = tokenHistory.filter(item => item.token_address !== tokenData.token_address);
+    
+    // Add new entry at the beginning
+    const historyItem = {
+        token_address: tokenData.token_address,
+        token_symbol: tokenData.token_symbol,
+        token_name: tokenData.token_name,
+        price_usd: tokenData.price_usd,
+        price_change_24h: tokenData.price_change_24h,
+        market_cap: tokenData.market_cap,
+        timestamp: new Date().toISOString(),
+        analysis_data: tokenData // Store full analysis for quick access
+    };
+    
+    tokenHistory.unshift(historyItem);
+    
+    // Keep only last 20 tokens
+    if (tokenHistory.length > 20) {
+        tokenHistory = tokenHistory.slice(0, 20);
+    }
+    
+    // Save to session storage
+    sessionStorage.setItem('tokenHistory', JSON.stringify(tokenHistory));
+    
+    updateTokenHistoryDisplay();
+}
+
+function updateTokenHistoryDisplay() {
+    const historyContainer = document.getElementById('tokenHistoryList');
+    
+    if (tokenHistory.length === 0) {
+        historyContainer.innerHTML = `
+            <div class="history-empty">
+                <div style="text-align: center; padding: 20px; color: #666;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">📈</div>
+                    <p>Analyze tokens to build your history</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    let historyHtml = '';
+    tokenHistory.forEach(item => {
+        const timeAgo = getRelativeTime(item.timestamp);
+        const changeClass = item.price_change_24h >= 0 ? 'positive' : 'negative';
+        const changeSign = item.price_change_24h >= 0 ? '+' : '';
+        
+        historyHtml += `
+            <div class="history-item" onclick="loadFromHistory('${item.token_address}')">
+                <div class="history-symbol">${item.token_symbol}</div>
+                <div class="history-name">${item.token_name}</div>
+                <div class="history-meta">
+                    <span class="history-price">$${(item.price_usd || 0).toFixed(8)}</span>
+                    <span class="history-change ${changeClass}">${changeSign}${(item.price_change_24h || 0).toFixed(2)}%</span>
+                </div>
+                <div class="history-meta">
+                    <span>${timeAgo}</span>
+                    <span>$${formatNumber(item.market_cap || 0)}</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    historyContainer.innerHTML = historyHtml;
+}
+
+function loadFromHistory(tokenAddress) {
+    const historyItem = tokenHistory.find(item => item.token_address === tokenAddress);
+    if (!historyItem) return;
+    
+    // Set the token address in the input
+    document.getElementById('tokenAddress').value = tokenAddress;
+    
+    // Load cached analysis if available
+    if (historyItem.analysis_data) {
+        console.log('Loading from cached analysis data...');
+        currentAnalysis = historyItem.analysis_data;
+        currentTokenAddress = tokenAddress;
+        
+        // Display results immediately from cache
+        try {
+            displayResults(historyItem.analysis_data);
+            showChart(tokenAddress);
+            enableChatWithContext();
+        } catch (error) {
+            console.error('Error loading from cache:', error);
+            // Fall back to fresh analysis
+            analyzeToken();
         }
+    } else {
+        // Run fresh analysis
+        analyzeToken();
+    }
+    
+    // Scroll to results
+    setTimeout(() => {
+        document.getElementById('tokenAddress').scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+}
+
+function clearTokenHistory() {
+    if (confirm('Clear all token history?')) {
+        tokenHistory = [];
+        sessionStorage.removeItem('tokenHistory');
+        updateTokenHistoryDisplay();
+    }
+}
+
+function getRelativeTime(timestamp) {
+    const now = new Date();
+    const past = new Date(timestamp);
+    const diffMs = now - past;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${Math.floor(diffHours / 24)}d ago`;
+}
+
+function formatNumber(num) {
+    if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
+    if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
+    if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K';
+    return num.toString();
+}
+
+// Floating Chat Widget Functions
+let chatPopupOpen = false;
+let chatPopupHistory = [];
+
+function toggleChat() {
+    const chatPopup = document.getElementById('chatPopup');
+    const chatTrigger = document.getElementById('chatTrigger');
+    
+    chatPopupOpen = !chatPopupOpen;
+    
+    if (chatPopupOpen) {
+        chatPopup.classList.add('active');
+        chatTrigger.style.transform = 'scale(0.9)';
+        // Focus input if enabled
+        const input = document.getElementById('chatInputPopup');
+        if (!input.disabled) {
+            setTimeout(() => input.focus(), 300);
+        }
+    } else {
+        chatPopup.classList.remove('active');
+        chatTrigger.style.transform = 'scale(1)';
+    }
+}
+
+function enableChatPopup() {
+    const chatInput = document.getElementById('chatInputPopup');
+    const chatSend = document.getElementById('chatSendPopup');
+    const chatStatus = document.getElementById('chatStatus');
+    
+    chatInput.disabled = false;
+    chatInput.placeholder = `Ask about ${currentAnalysis?.token_symbol || 'the analyzed token'}...`;
+    chatSend.disabled = false;
+    chatStatus.textContent = 'Ready';
+    chatStatus.style.color = '#10b981';
+    
+    // Add pulsing effect to trigger when ready
+    const trigger = document.getElementById('chatTrigger');
+    trigger.classList.add('ready');
+    
+    // Allow Enter key
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !chatInput.disabled) {
+            sendChatMessagePopup();
+        }
+    });
+}
+
+function disableChatPopup() {
+    const chatInput = document.getElementById('chatInputPopup');
+    const chatSend = document.getElementById('chatSendPopup');
+    const chatStatus = document.getElementById('chatStatus');
+    
+    chatInput.disabled = true;
+    chatInput.placeholder = 'Analyze a token first...';
+    chatSend.disabled = true;
+    chatStatus.textContent = 'Analyze a token first';
+    chatStatus.style.color = '#f59e0b';
+}
+
+async function sendChatMessagePopup() {
+    const chatInput = document.getElementById('chatInputPopup');
+    const message = chatInput.value.trim();
+    
+    if (!message || !currentTokenAddress) return;
+
+    addChatMessagePopup(message, 'user');
+    chatInput.value = '';
+    
+    // Show typing indicator
+    showTypingIndicator();
+
+    try {
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token_address: currentTokenAddress,
+                message: message,
+                history: chatPopupHistory
+            })
+        });
+
+        const data = await response.json();
+        
+        hideTypingIndicator();
+        
+        if (data.response) {
+            addChatMessagePopup(data.response, 'assistant');
+        } else {
+            addChatMessagePopup('Sorry, I encountered an error. Please try again.', 'assistant');
+        }
+        
+    } catch (error) {
+        console.error('Chat error:', error);
+        hideTypingIndicator();
+        addChatMessagePopup('Connection error. Please try again.', 'assistant');
+    }
+}
+
+function addChatMessagePopup(message, sender) {
+    const chatMessages = document.getElementById('chatPopupMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${sender}`;
+    messageDiv.textContent = message;
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    chatPopupHistory.push({
+        role: sender === 'user' ? 'user' : 'assistant',
+        content: message
+    });
+    
+    if (chatPopupHistory.length > 8) {
+        chatPopupHistory = chatPopupHistory.slice(-8);
+    }
+}
+
+function showTypingIndicator() {
+    const chatMessages = document.getElementById('chatPopupMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'chat-message assistant typing-indicator';
+    typingDiv.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+    typingDiv.id = 'typingIndicator';
+    
+    chatMessages.appendChild(typingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function hideTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
 
         // Crypto News Functions with RSS
-        async function loadCryptoNews() {
-            try {
-                const response = await fetch('/crypto-news');
-                const data = await response.json();
-                
-                if (data.success && data.articles) {
-                    displayCryptoNews(data.articles);
-                } else {
-                    document.getElementById('newsList').innerHTML = '<div class="error-state">Error loading news</div>';
-                }
-            } catch (error) {
-                console.error('Crypto news error:', error);
-                document.getElementById('newsList').innerHTML = '<div class="error-state">Error loading news</div>';
-            }
+// Crypto News Functions with RSS - Now for ticker
+async function loadCryptoNews() {
+    try {
+        const response = await fetch('/crypto-news');
+        const data = await response.json();
+        
+        if (data.success && data.articles && data.articles.length > 0) {
+            displayCryptoNewsTicker(data.articles);
+        } else {
+            // Fallback ticker content if API fails
+            displayFallbackTicker();
         }
+    } catch (error) {
+        console.error('Crypto news error:', error);
+        displayFallbackTicker();
+    }
+}
 
-        function displayCryptoNews(articles) {
-            let newsHtml = '';
-            
-            articles.slice(0, 8).forEach(article => {
-                newsHtml += `
-                    <div class="news-item" onclick="window.open('${article.url}', '_blank')">
-                        <div class="news-headline">${article.headline}</div>
-                        <div class="news-summary">${article.summary}</div>
-                        <div class="news-meta">
-                            <span>${article.source}</span>
-                            <span>${article.timestamp}</span>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('newsList').innerHTML = newsHtml;
+function displayFallbackTicker() {
+    const tickerContainer = document.getElementById('newsTicker');
+    
+    // Stop animation temporarily
+    tickerContainer.style.animation = 'none';
+    
+    const fallbackNews = [
+        "📈 Bitcoin holds above $95,000 as institutional interest remains strong",
+        "⚡ Ethereum sees increased Layer 2 adoption with record transaction volumes", 
+        "🚀 Solana ecosystem continues growth with new DeFi protocols launching",
+        "💎 Crypto market cap maintains $2.3 trillion as sentiment stays bullish",
+        "📊 Major exchanges report surge in altcoin trading volumes",
+        "🔥 DeFi protocols reach new milestone in total value locked",
+        "⚖️ Regulatory clarity drives institutional crypto adoption forward",
+        "🎯 Meme coin sector attracts renewed retail investor attention"
+    ];
+    
+    let tickerHtml = '';
+    fallbackNews.forEach(headline => {
+        tickerHtml += `<div class="ticker-item" title="Market Update">${headline}</div>`;
+    });
+    
+    // Duplicate for seamless loop
+    tickerContainer.innerHTML = tickerHtml + tickerHtml;
+    
+    // Restart animation
+    tickerContainer.offsetHeight; // Trigger reflow
+    tickerContainer.style.animation = 'scroll-ticker 180s linear infinite';
+}
+
+function displayCryptoNewsTicker(articles) {
+    let tickerHtml = '';
+    
+    // Just use the articles as-is, no duplication
+    let articlesToShow = articles.slice(0, 8);
+    
+    if (articlesToShow.length < 8) {
+        const fallbackArticles = [
+            { headline: "Bitcoin maintains strong position as institutional adoption continues", url: "#", summary: "BTC holding steady" },
+            { headline: "Ethereum Layer 2 solutions see record transaction volumes", url: "#", summary: "L2 scaling success" },
+            { headline: "Solana ecosystem tokens rally on increased developer activity", url: "#", summary: "SOL ecosystem growth" },
+            { headline: "DeFi total value locked reaches new quarterly high", url: "#", summary: "DeFi growth continues" }
+        ];
+        
+        while (articlesToShow.length < 8) {
+            articlesToShow.push(fallbackArticles[articlesToShow.length % fallbackArticles.length]);
         }
+    }
+    
+    articlesToShow.forEach(article => {
+        tickerHtml += `<div class="ticker-item" onclick="window.open('${article.url}', '_blank')" title="${article.summary}">${article.headline}</div>`;
+    });
+    
+    // NO DUPLICATION - just set the content
+    document.getElementById('newsTicker').innerHTML = tickerHtml;
+}
 
         // Enhanced Token Analysis Functions with Time Window
        async function analyzeToken() {
@@ -3209,13 +2085,22 @@ function handleStreamMessage(data) {
         console.log('Handling stream message type:', data.type);
         
         if (data.type === 'progress') {
-            updateLoadingText(data.message || 'Processing...');
+            let message = data.message || 'Processing...';
+            
+            // Add special handling for real sentiment timeline
+            if (data.stage === 'real_sentiment_timeline') {
+                message = '📊 Building Real Sentiment Timeline - No fake data!';
+            }
+            
+            updateLoadingText(message);
         } else if (data.type === 'complete') {
             console.log('Analysis complete, displaying results');
             currentAnalysis = data;
             hideLoading();
             
-            // Add delay to ensure DOM is ready
+            // ADD THIS LINE HERE:
+            displayGrokRawResponse(data);
+            
             setTimeout(() => {
                 try {
                     displayResults(data);
@@ -3229,15 +2114,92 @@ function handleStreamMessage(data) {
             console.error('Server error:', data.error);
             hideLoading();
             showError('Analysis error: ' + (data.error || 'Unknown error'));
-        } else {
-            console.warn('Unknown message type:', data.type);
         }
     } catch (error) {
         console.error('Error handling stream message:', error);
-        console.error('Message data:', data);
         hideLoading();
         showError('Error processing response: ' + error.message);
     }
+}
+
+// Function to display Grok raw response
+function displayGrokRawResponse(data) {
+    console.log('displayGrokRawResponse called with:', data);
+    
+    // Try multiple paths to find the raw response
+    const rawResponse = data.raw_grok_response || 
+                       data.real_social_data?.raw_grok_response ||
+                       data.realSocialData?.raw_grok_response;
+    
+    const section = document.getElementById('grok-raw-section');
+    const contentElement = document.getElementById('grok-raw-content');
+    
+    if (!section || !contentElement) {
+        console.error('Grok display elements not found');
+        return;
+    }
+    
+    if (rawResponse && rawResponse !== "No response from Grok API") {
+        // Show the section
+        section.style.display = 'block';
+        
+        try {
+            // Try to parse as JSON
+            const jsonData = JSON.parse(rawResponse);
+            console.log('Parsed Grok JSON:', jsonData);
+            contentElement.innerHTML = formatGrokJsonResponse(jsonData);
+        } catch (e) {
+            // If not JSON, display as formatted text
+            console.log('Displaying as text:', rawResponse);
+            const formattedContent = rawResponse
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/@(\w+)/g, '<a href="https://x.com/$1" target="_blank" class="account-handle">@$1</a>');
+            contentElement.innerHTML = formattedContent;
+        }
+    } else {
+        console.log('No valid Grok response found');
+        section.style.display = 'block';
+        contentElement.innerHTML = '<div class="grok-error">No Grok data available</div>';
+    }
+}
+
+function formatGrokJsonResponse(jsonData) {
+    if (Array.isArray(jsonData)) {
+        let html = '<div class="grok-accounts-list">';
+        
+        jsonData.forEach((account, index) => {
+            const handle = account.handle || account.username || 'Unknown';
+            const cleanHandle = handle.startsWith('@') ? handle.substring(1) : handle;
+            const followerCount = account.follower_count || account.followers || 'Unknown followers';
+            const activity = account.recent_activity || account.recent_tweet || 'No activity data';
+            
+            html += `
+                <div class="grok-account-item">
+                    <div class="account-header">
+                        <span class="account-number">#${index + 1}</span>
+                        <a href="https://x.com/${cleanHandle}" target="_blank" class="account-handle">@${cleanHandle}</a>
+                        <span class="follower-count">${followerCount}</span>
+                    </div>
+                    <div class="account-activity">
+                        <strong>Recent Activity:</strong> ${escapeHtml(activity)}
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        return html;
+    } else {
+        // Format as pretty JSON if not an array
+        return '<pre>' + JSON.stringify(jsonData, null, 2) + '</pre>';
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
         function showChart(tokenAddress) {
@@ -3254,6 +2216,14 @@ function handleStreamMessage(data) {
             console.log('Starting to display results with real data...');
             
             try {
+
+                console.log('Updating token profile...');
+                updateTokenProfile(data);
+                
+                // Add safety dashboard
+                console.log('Updating safety dashboard...');
+                updateSafetyDashboard(data);
+                
                 // Show token profile
                 console.log('Updating token profile...');
                 updateTokenProfile(data);
@@ -3318,9 +2288,17 @@ function handleStreamMessage(data) {
                     console.error('Error updating sentiment timeline:', e);
                 }
                 
+
+                try {
+                    addToTokenHistory(data);
+                } catch (e) {
+                    console.error('Error adding to history:', e);
+                }
+
                 try {
                     console.log('Enabling chat...');
                     enableChatWithContext();
+                    enableChatPopup(); // Enable popup chat
                 } catch (e) {
                     console.error('Error enabling chat:', e);
                 }
@@ -4336,46 +3314,6 @@ function createSentimentTimelineChart(timeSeriesData) {
     });
 }
 
-// Update the handleStreamMessage function to handle the new progress step
-function handleStreamMessage(data) {
-    try {
-        console.log('Handling stream message type:', data.type);
-        
-        if (data.type === 'progress') {
-            let message = data.message || 'Processing...';
-            
-            // Add special handling for real sentiment timeline
-            if (data.stage === 'real_sentiment_timeline') {
-                message = '📊 Building Real Sentiment Timeline - No fake data!';
-            }
-            
-            updateLoadingText(message);
-        } else if (data.type === 'complete') {
-            console.log('Analysis complete, displaying results');
-            currentAnalysis = data;
-            hideLoading();
-            
-            setTimeout(() => {
-                try {
-                    displayResults(data);
-                } catch (displayError) {
-                    console.error('Error displaying results:', displayError);
-                    showError('Error displaying results: ' + displayError.message);
-                }
-            }, 100);
-            
-        } else if (data.type === 'error') {
-            console.error('Server error:', data.error);
-            hideLoading();
-            showError('Analysis error: ' + (data.error || 'Unknown error'));
-        }
-    } catch (error) {
-        console.error('Error handling stream message:', error);
-        hideLoading();
-        showError('Error processing response: ' + error.message);
-    }
-}
-
             // Update Sentiment Distribution
         function updateSentimentDistribution(sentimentMetrics, data) {
             // Try multiple data sources for sentiment
@@ -4685,283 +3623,140 @@ function showNoHeatmapData() {
         `;
     }
 }
-// Fix 3: Safe Country Code Function
-
-// Fix 4: Create Plotly Heatmap
-function createPlotlyHeatmap(countries) {
-    try {
-        console.log('Creating Plotly heatmap with countries:', countries);
-        
-        if (countries.length === 0) {
-            showNoHeatmapData();
-            return;
-        }
-        
-        const data = [{
-            type: 'choropleth',
-            locations: countries.map(c => c.code),
-            z: countries.map(c => c.interest),
-            text: countries.map(c => `${c.name}: ${c.interest}%`),
-            colorscale: [
-                [0, 'rgba(16, 185, 129, 0.1)'],
-                [0.5, 'rgba(16, 185, 129, 0.5)'],
-                [1, 'rgba(16, 185, 129, 1)']
-            ],
-            colorbar: {
-                title: 'Search Interest',
-                titlefont: { color: '#b0b7ff' },
-                tickfont: { color: '#b0b7ff' },
-                bgcolor: 'rgba(255, 255, 255, 0.1)',
-                bordercolor: 'rgba(255, 255, 255, 0.2)'
-            }
-        }];
-        
-        const layout = {
-            geo: {
-                projection: { type: 'natural earth' },
-                bgcolor: 'rgba(0, 0, 0, 0)',
-                showframe: false,
-                showcoastlines: true,
-                coastlinecolor: 'rgba(255, 255, 255, 0.2)',
-                showland: true,
-                landcolor: 'rgba(255, 255, 255, 0.05)',
-                showocean: true,
-                oceancolor: 'rgba(0, 0, 0, 0.3)',
-                showcountries: true,
-                countrycolor: 'rgba(255, 255, 255, 0.1)'
-            },
-            plot_bgcolor: 'rgba(0, 0, 0, 0)',
-            paper_bgcolor: 'rgba(0, 0, 0, 0)',
-            margin: { t: 0, b: 0, l: 0, r: 0 },
-            height: 280
-        };
-        
-        const config = {
-            displayModeBar: false,
-            responsive: true
-        };
-        
-        // Clear any existing plot first
-        const container = document.getElementById('geoHeatmap');
-        if (container) {
-            container.innerHTML = '';
-            Plotly.newPlot('geoHeatmap', data, layout, config);
-            console.log('Plotly heatmap created successfully');
-        }
-        
-    } catch (error) {
-        console.error('Error creating Plotly heatmap:', error);
-        showNoHeatmapData();
-    }
-}
-
-
-// Fix 6: Update Display Results to Ensure Psychology Shows
-function displayResultsFixed(data) {
-    console.log('Starting to display results with real data...');
+function updateTokenProfile(data) {
+         const profile = document.getElementById('tokenProfile');
     
-    try {
-        // Show token profile
-        console.log('Updating token profile...');
-        updateTokenProfile(data);
-        
-        // Show Token Age Dashboard
-        console.log('Updating token age dashboard...');
-        updateTokenAgeDashboard(data);
-        
-        // Show Real Social Data Charts
-        console.log('Updating real social data charts...');
-        updateRealSocialCharts(data);
-        
-        // Show Real Google Trends
-        console.log('Updating search intelligence...');
-        updateSearchIntelligence(data);
-        
-        // Show results section
-        console.log('Showing results section...');
-        document.getElementById('resultsSection').style.display = 'block';
-        document.getElementById('resultsSection').classList.add('fade-in');
-
-        // Update all sections with individual error handling
-        try {
-            console.log('Updating momentum dashboard...');
-            updateMomentumDashboard(data);
-        } catch (e) {
-            console.error('Error updating momentum dashboard:', e);
-        }
-        
-        try {
-            console.log('Updating tweets section...');
-            updateTweetsSection(data);
-        } catch (e) {
-            console.error('Error updating tweets section:', e);
-        }
-        
-        try {
-            console.log('Updating expert analysis...');
-            updateExpertAnalysis(data);
-        } catch (e) {
-            console.error('Error updating expert analysis:', e);
-        }
-        
-        try {
-            console.log('Updating analysis cards...');
-            updateAnalysisCards(data);
-        } catch (e) {
-            console.error('Error updating analysis cards:', e);
-        }
-        
-        try {
-            console.log('Updating psychology dashboard...');
-            updatePsychologyDashboard(data); // This will now show the dashboard
-        } catch (e) {
-            console.error('Error updating psychology dashboard:', e);
-        }
-        
-        try {
-            console.log('Updating sentiment timeline...');
-            updateSentimentTimeline(data);
-        } catch (e) {
-            console.error('Error updating sentiment timeline:', e);
-        }
-        
-        try {
-            console.log('Enabling chat...');
-            enableChatWithContext();
-        } catch (e) {
-            console.error('Error enabling chat:', e);
-        }
-
-        // Scroll to results
-        console.log('Scrolling to results...');
-        setTimeout(() => {
-            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
-        }, 300);
-        
-        console.log('Results display completed successfully');
-        
-    } catch (error) {
-        console.error('Error in displayResults:', error);
-        showError('Error displaying results: ' + error.message);
+    // Get token image from rug analysis or market data
+    const tokenImage = data.rug_analysis?.token_info?.logo || 
+                      data.rug_analysis?.token_info?.profile_image || 
+                      data.token_image || '';
+    
+    // Update token info with image
+    document.getElementById('tokenName').textContent = `${data.token_symbol} - ${data.token_name || data.token_symbol + ' Token'}`;
+    document.getElementById('tokenContract').textContent = `${data.token_address.slice(0, 8)}...${data.token_address.slice(-8)}`;
+    
+    // Update token image
+    const tokenImageEl = document.getElementById('tokenImage');
+    if (tokenImage) {
+        tokenImageEl.src = tokenImage;
+        tokenImageEl.style.display = 'block';
+    } else {
+        tokenImageEl.style.display = 'none';
     }
+    
+    // Use market cap from main analysis, not rug check (to avoid duplication)
+    const metricsHtml = `
+        <div class="metric-card">
+            <div class="metric-value">${(data.price_usd || 0).toFixed(8)}</div>
+            <div class="metric-label">Price USD</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value ${data.price_change_24h >= 0 ? 'positive' : 'negative'}">${data.price_change_24h >= 0 ? '+' : ''}${(data.price_change_24h || 0).toFixed(2)}%</div>
+            <div class="metric-label">24h Change</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">${((data.market_cap || 0) / 1e6).toFixed(1)}M</div>
+            <div class="metric-label">Market Cap</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">${data.galaxy_brain_score || 50}/100</div>
+            <div class="metric-label">Safety Score</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">${((data.liquidity || 0) / 1e6).toFixed(1)}M</div>
+            <div class="metric-label">Liquidity</div>
+        </div>
+    `;
+    document.getElementById('tokenMetrics').innerHTML = metricsHtml;
+    
+    profile.style.display = 'block';
 }
 
 
-        // Enhanced Real Trends Chart for 30-day view
-        function initRealTrendsChart(chartData, tokenSymbol) {
-            const ctx = document.getElementById('realTrendsChart').getContext('2d');
-            
-            if (realTrendsChart) realTrendsChart.destroy();
-            
-            let labels = chartData.labels || [];
-            let data = chartData.data || [];
-            
-            // If no real data, generate a realistic 30-day trend
-            if (labels.length === 0) {
-                for (let i = 29; i >= 0; i--) {
-                    const date = new Date();
-                    date.setDate(date.getDate() - i);
-                    labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-                    
-                    // Generate realistic search interest with some patterns
-                    const baseInterest = 10 + Math.random() * 40;
-                    const trend = Math.sin(i / 10) * 20; // Add some wave pattern
-                    data.push(Math.max(1, Math.round(baseInterest + trend)));
-                }
-            }
-            
-            realTrendsChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: `Search Interest for ${tokenSymbol || 'Token'}`,
-                        data: data,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        borderWidth: 2,
-                        pointRadius: 2,
-                        pointHoverRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        title: {
-                            display: true,
-                            text: 'Last 30 Days',
-                            color: '#b0b7ff',
-                            font: { size: 12 }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { color: '#b0b7ff', font: { size: 10 } }
-                        },
-                        x: {
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { 
-                                color: '#b0b7ff', 
-                                font: { size: 9 },
-                                maxRotation: 45,
-                                maxTicksLimit: 10
-                            }
-                        }
-                    }
-                }
-            });
-        }
+function updateSafetyDashboard(data) {
+    const rugAnalysis = data.rug_analysis || {};
+    const safetyMetrics = data.safety_metrics || {};
+    const riskVectors = data.risk_vectors || [];
+    
+    // Create safety dashboard HTML
+    const safetyHtml = `
+        <div class="safety-overview">
+            <div class="safety-score-card">
+                <div class="safety-score">${data.galaxy_brain_score || 50}</div>
+                <div class="safety-level">${data.safety_level || 'UNKNOWN'}</div>
+                <div class="confidence">Confidence: ${Math.round((data.confidence_level || 0.5) * 100)}%</div>
+            </div>
+        </div>
+        
+<!-- Risk Vectors -->
+            <div class="risk-vectors-grid" id="riskVectorsGrid"></div>
 
-        function updateTokenProfile(data) {
-            const profile = document.getElementById('tokenProfile');
-            
-            // Update token info
-            document.getElementById('tokenName').textContent = `${data.token_symbol} - ${data.token_name || data.token_symbol + ' Token'}`;
-            document.getElementById('tokenContract').textContent = `${data.token_address.slice(0, 8)}...${data.token_address.slice(-8)}`;
-            
-            // Update token image if available
-            const tokenImage = document.getElementById('tokenImage');
-            if (data.token_image) {
-                tokenImage.src = data.token_image;
-                tokenImage.style.display = 'block';
-            } else {
-                tokenImage.style.display = 'none';
-            }
-            
-            // Update metrics
-            const metricsHtml = `
-                <div class="metric-card">
-                    <div class="metric-value">${(data.price_usd || 0).toFixed(8)}</div>
-                    <div class="metric-label">Price USD</div>
+            <!-- Advanced Metrics -->
+            <div class="advanced-metrics" id="advancedMetrics"></div>
+
+            <!-- Charts Section -->
+            <div class="chart-section">
+                <div class="chart-container">
+                    <h3 class="chart-title">🧠 Revolutionary Risk Breakdown</h3>
+                    <canvas id="riskBreakdownChart" class="chart-canvas"></canvas>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-value ${data.price_change_24h >= 0 ? 'positive' : 'negative'}">${data.price_change_24h >= 0 ? '+' : ''}${(data.price_change_24h || 0).toFixed(2)}%</div>
-                    <div class="metric-label">24h Change</div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">👥 Holder Distribution Analysis</h3>
+                    <canvas id="holderChart" class="chart-canvas"></canvas>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-value">${((data.market_cap || 0) / 1e6).toFixed(1)}M</div>
-                    <div class="metric-label">Market Cap</div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">🔄 Transaction Health Score</h3>
+                    <canvas id="transactionChart" class="chart-canvas"></canvas>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-value">${((data.volume_24h || 0) / 1e6).toFixed(1)}M</div>
-                    <div class="metric-label">24h Volume</div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">🕷️ Bundle Detection Results</h3>
+                    <canvas id="bundleChart" class="chart-canvas"></canvas>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-value">${((data.liquidity || 0) / 1e6).toFixed(1)}M</div>
-                    <div class="metric-label">Liquidity</div>
+            </div>
+
+            <!-- Detailed Analysis Tabs -->
+            <div class="detailed-analysis">
+                <div class="analysis-tabs">
+                    <button class="tab-btn active" onclick="showTab('holders')">👥 Holders</button>
+                    <button class="tab-btn" onclick="showTab('transactions')">🔄 Transactions</button>
+                    <button class="tab-btn" onclick="showTab('bundles')">🕷️ Bundles</button>
+                    <button class="tab-btn" onclick="showTab('liquidity')">💧 Liquidity</button>
                 </div>
-            `;
-            document.getElementById('tokenMetrics').innerHTML = metricsHtml;
-            
-            profile.style.display = 'block';
-        }
+                
+                <div class="tab-content active" id="holders-tab">
+                    <div class="holder-list">
+                        <h3 style="margin-bottom: 20px;">🐋 Top Holders Analysis</h3>
+                        <div id="holdersList"></div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="transactions-tab">
+                    <div id="transactionAnalysis"></div>
+                </div>
+                
+                <div class="tab-content" id="bundles-tab">
+                    <div id="bundleDetection"></div>
+                </div>
+                
+                <div class="tab-content" id="liquidity-tab">
+                    <div id="liquidityAnalysis"></div>
+                </div>
+            </div>
+    `;
+    
+    // Insert into your results section
+    const resultsSection = document.getElementById('resultsSection');
+    const safetyDashboard = document.createElement('div');
+    safetyDashboard.className = 'safety-dashboard';
+    safetyDashboard.innerHTML = safetyHtml;
+    
+    // Insert after token profile
+    const tokenProfile = document.getElementById('tokenProfile');
+    tokenProfile.insertAdjacentElement('afterend', safetyDashboard);
+}
 
         // Updated momentum dashboard to use real sentiment data
         function updateMomentumDashboard(data) {
@@ -5020,21 +3815,38 @@ function displayResultsFixed(data) {
         }
 
 function updateTweetsSection(data) {
-    console.log('Updating tweets section with X API data:', data.real_social_data);
+    console.log('Updating accounts section with Grok API data:', data.real_social_data);
     
     const realSocialData = data.real_social_data || {};
-    const tweets = realSocialData.tweets || [];
-    const notableAccounts = realSocialData.notable_accounts || [];
-    const activeAccounts = realSocialData.accounts || [];
+    const accountTable = realSocialData.account_table || [];
+    const topAccounts = realSocialData.top_accounts || [];
     
-    // Update Recent Discussion
-    updateRecentDiscussion(tweets);
+    // Update with new Grok API table format
+    updateAccountsTable(accountTable, realSocialData);
     
-    // Update Notable Accounts
-    updateNotableAccounts(notableAccounts);
+    // Update Who to Follow (using existing structure)
+    updateWhoToFollow(topAccounts);
     
-    // Update Who to Follow (Active Users)
-    updateWhoToFollow(activeAccounts);
+    // Update engagement summary
+    updateEngagementSummary(realSocialData);
+}
+
+function updateEngagementSummary(socialData) {
+    const accountTable = socialData.account_table || [];
+    const totalAccounts = accountTable.length;
+    
+    // Calculate average engagement
+    const totalEngagement = accountTable.reduce((sum, account) => sum + (account.total_engagement || 0), 0);
+    const avgEngagement = totalAccounts > 0 ? Math.round(totalEngagement / totalAccounts) : 0;
+    
+    // Update summary elements
+    document.getElementById('totalAccounts').textContent = totalAccounts;
+    document.getElementById('avgEngagement').textContent = formatEngagementCount(avgEngagement);
+    
+    const qualityElement = document.getElementById('dataQuality');
+    const quality = socialData.data_quality || 'unknown';
+    qualityElement.textContent = quality.toUpperCase();
+    qualityElement.style.color = getQualityColor(quality);
 }
 
 function updateRecentDiscussion(tweets) {
@@ -5099,23 +3911,45 @@ function updateRecentDiscussion(tweets) {
     document.getElementById('notableAccountsList').innerHTML = accountsHtml;
 }
 
-function updateWhoToFollow(accounts) {
+function updateWhoToFollow(topAccounts) {
+    console.log('Updating who to follow with', topAccounts.length, 'accounts');
+    
     let accountsHtml = '';
     
-    if (accounts.length > 0) {
-        accounts.forEach(account => {
+    if (topAccounts.length > 0) {
+        // Sort by engagement score if available
+        const sortedAccounts = topAccounts.sort((a, b) => 
+            (b.engagement_score || 0) - (a.engagement_score || 0)
+        );
+        
+        sortedAccounts.slice(0, 8).forEach((account, index) => {
+            const isTopAccount = index < 3;
+            const icon = isTopAccount ? ['🥇', '🥈', '🥉'][index] : '👤';
+            
             accountsHtml += `
-                <div class="account-item" onclick="window.open('${account.url}', '_blank')">
-                    <div class="account-username">@${account.username}</div>
-                    <div class="account-followers">${account.followers}</div>
-                    <div class="account-activity">${account.recent_activity}</div>
+                <div class="account-item ${isTopAccount ? 'top-account' : ''}" onclick="window.open('${account.url}', '_blank')">
+                    <div class="account-rank">${icon}</div>
+                    <div class="account-info">
+                        <div class="account-username">@${account.username}</div>
+                        <div class="account-followers">${account.followers}</div>
+                        <div class="account-activity">${truncateText(account.recent_activity, 60)}</div>
+                        ${account.engagement_score ? `
+                            <div class="engagement-badge">
+                                ⚡ ${formatEngagementCount(account.engagement_score)} engagement
+                            </div>
+                        ` : ''}
+                    </div>
                 </div>
             `;
         });
     } else {
         accountsHtml = `
             <div class="account-item" style="text-align: center; opacity: 0.7; cursor: default;">
-                <div class="account-activity">No active users to recommend</div>
+                <div style="font-size: 2rem; margin-bottom: 10px;">👥</div>
+                <div class="account-activity">No account recommendations available</div>
+                <div style="font-size: 0.8rem; color: #666; margin-top: 8px;">
+                    Try analyzing a token with more social activity
+                </div>
             </div>
         `;
     }
@@ -5123,7 +3957,154 @@ function updateWhoToFollow(accounts) {
     document.getElementById('whoToFollowList').innerHTML = accountsHtml;
 }
 		
-		function getTimeAgo(dateString) {
+
+function formatEngagementCount(count) {
+    if (count === 0 || count === 'N/A' || !count) return 'N/A';
+    if (count >= 1000000) return `${(count/1000000).toFixed(1)}M`;
+    if (count >= 1000) return `${(count/1000).toFixed(1)}K`;
+    return count.toLocaleString();
+}
+
+function formatEngagementBreakdown(account) {
+    const views = formatEngagementCount(account.view_count);
+    const favorites = formatEngagementCount(account.favorite_count);
+    const retweets = formatEngagementCount(account.retweet_count);
+    
+    return `👁️ ${views} • ❤️ ${favorites} • 🔄 ${retweets}`;
+}
+
+function formatFollowerDisplay(followerCount) {
+    if (followerCount === 'N/A' || !followerCount) return 'Unknown followers';
+    
+    // If it's already formatted, return as is
+    if (typeof followerCount === 'string' && followerCount.includes('followers')) {
+        return followerCount;
+    }
+    
+    // If it's a number, format it
+    if (typeof followerCount === 'number') {
+        return formatEngagementCount(followerCount) + ' followers';
+    }
+    
+    // Try to extract number from string
+    const match = followerCount.toString().match(/[\d,]+/);
+    if (match) {
+        const num = parseInt(match[0].replace(/,/g, ''));
+        return formatEngagementCount(num) + ' followers';
+    }
+    
+    return followerCount + ' followers';
+}
+
+function formatDate(dateString) {
+    if (!dateString || dateString === 'N/A' || dateString === 'unknown') return 'Recent';
+    
+    try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString; // Return original if not a valid date
+        
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays <= 7) return `${diffDays}d ago`;
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } catch (e) {
+        return dateString;
+    }
+}
+
+function truncateText(text, maxLength) {
+    if (!text || text === 'N/A') return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength - 3) + '...';
+}
+
+function openAccountLink(username) {
+    if (username && username !== 'unknown') {
+        window.open(`https://x.com/${username}`, '_blank');
+    }
+}
+
+function getQualityColor(quality) {
+    switch (quality) {
+        case 'real': return '#10b981';
+        case 'limited': return '#f59e0b';
+        case 'no_data': return '#ef4444';
+        default: return '#6b7280';
+    }
+}
+
+// Enhanced account item styling for top accounts
+const enhancedStyles = `
+<style>
+.account-item.top-account {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    position: relative;
+}
+
+.account-item.top-account::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #10b981, #667eea);
+    border-radius: 8px 8px 0 0;
+}
+
+.account-rank {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.account-info {
+    flex: 1;
+}
+
+.engagement-badge {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-top: 6px;
+    display: inline-block;
+}
+
+.account-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+</style>
+`;
+
+// Add enhanced styles to document
+if (!document.getElementById('enhanced-account-styles')) {
+    const styleElement = document.createElement('style');
+    styleElement.id = 'enhanced-account-styles';
+    styleElement.textContent = enhancedStyles.replace(/<\/?style>/g, '');
+    document.head.appendChild(styleElement);
+}
+
+
+
+
+
+function getTimeAgo(dateString) {
     try {
         const date = new Date(dateString);
         const now = new Date();
@@ -5151,9 +4132,6 @@ function formatFollowerCount(count) {
     if (count >= 1000) return `${(count/1000).toFixed(0)}K`;
     return count.toString();
 }
-
-// Add this new function after updateTweetsSection
-
 
         function updateExpertAnalysis(data) {
             const analysis = data.expert_analysis || 'Connect XAI API for comprehensive expert analysis with real-time market insights and trading perspectives.';
@@ -5292,14 +4270,10 @@ function formatFollowerCount(count) {
         }
 
         // Chat Functions
-        function enableChatWithContext() {
-            const chatInput = document.getElementById('chatInput');
-            const chatSend = document.getElementById('chatSend');
-            
-            chatInput.disabled = false;
-            chatInput.placeholder = `Ask about ${currentAnalysis?.token_symbol || 'this token'}...`;
-            chatSend.disabled = false;
-        }
+function enableChatWithContext() {
+    // This function is kept for backward compatibility but now just calls enableChatPopup
+    enableChatPopup();
+}
 
         async function sendChatMessage() {
             const chatInput = document.getElementById('chatInput');
@@ -5374,7 +4348,6 @@ function hideResults() {
     });
     
     // Destroy new real data charts to prevent memory leaks
-// Destroy new real data charts to prevent memory leaks
 [liveTweetSentimentChart, activeAccountsChart, discussionTopicsChart, platformDistributionChart, realTrendsChart, searchTrendsChart, sentimentTimelineChart, greedGaugeChart, euphoriaGaugeChart, diamondGaugeChart].forEach(chart => {
         if (chart) {
             chart.destroy();
@@ -5390,6 +4363,476 @@ function hideResults() {
     });
 }
 
+const FREE_TIER_CONFIG = {
+    categories: ['trending', 'volume', 'latest'],
+    categoryNames: ['🔥 Trending', '💰 Highest Volume', '✨ Latest Tokens'],
+    loadOnDemand: true,  // Only load when tab is clicked
+    cacheTime: 30 * 60 * 1000,  // 30 minutes cache
+    retryDelay: 5000  // 5 seconds before retry on error
+};
+
+class TrendingTokensManager {
+    constructor() {
+        this.currentCategory = 'trending';
+        this.loadedCategories = new Set();
+        this.loadingStates = new Map();
+        this.errorStates = new Map();
+        this.lastLoadTimes = new Map();
+        
+        this.init();
+    }
+    
+    init() {
+        this.createTabs();
+        this.setupEventListeners();
+        
+        // Load only the first tab initially (to avoid rate limit)
+        this.loadCategory('trending', false);
+    }
+    
+    createTabs() {
+        const tabsContainer = document.querySelector('.trending-tabs') || 
+                             document.querySelector('.tabs-container') ||
+                             document.createElement('div');
+        
+        if (!tabsContainer.parentNode) {
+            // Create container if it doesn't exist
+            const container = document.querySelector('.trending-section') || 
+                             document.querySelector('.dashboard-section');
+            if (container) {
+                tabsContainer.className = 'trending-tabs';
+                container.insertBefore(tabsContainer, container.firstChild);
+            }
+        }
+        
+        tabsContainer.innerHTML = FREE_TIER_CONFIG.categories.map((category, index) => `
+            <button class="tab-button ${index === 0 ? 'active' : ''}" 
+                    data-category="${category}"
+                    id="tab-${category}">
+                ${FREE_TIER_CONFIG.categoryNames[index]}
+                <span class="tab-status"></span>
+            </button>
+        `).join('');
+    }
+    
+    setupEventListeners() {
+        // Tab click handlers
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('.tab-button')) {
+                const button = event.target.closest('.tab-button');
+                const category = button.dataset.category;
+                this.switchTab(category, button);
+            }
+        });
+        
+        // Refresh button handler
+        const refreshButton = document.querySelector('.refresh-trending');
+        if (refreshButton) {
+            refreshButton.addEventListener('click', () => {
+                this.refreshCurrentCategory();
+            });
+        }
+    }
+    
+    switchTab(category, buttonElement) {
+        // Don't switch if already loading
+        if (this.loadingStates.get(category)) {
+            console.log(`Tab ${category} is already loading...`);
+            return;
+        }
+        
+        // Update active tab
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        buttonElement.classList.add('active');
+        
+        this.currentCategory = category;
+        
+        // Load category data (with caching)
+        this.loadCategory(category, false);
+    }
+    
+    async loadCategory(category, forceRefresh = false) {
+        try {
+            // Check if we should use cache
+            if (!forceRefresh && this.shouldUseCache(category)) {
+                console.log(`✅ Using cached data for ${category}`);
+                return;
+            }
+            
+            // Prevent multiple simultaneous loads
+            if (this.loadingStates.get(category)) {
+                console.log(`⏳ ${category} already loading...`);
+                return;
+            }
+            
+            // Clear any previous errors
+            this.clearError(category);
+            
+            // Set loading state
+            this.setLoadingState(category, true);
+            this.showLoadingUI(category);
+            
+            console.log(`🚀 Loading ${category} tokens from API...`);
+            
+            const response = await fetch(`/trending-tokens?category=${category}&refresh=${forceRefresh}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                // Add timeout for free tier
+                signal: AbortSignal.timeout(30000)  // 30 second timeout
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success && data.tokens && data.tokens.length > 0) {
+                this.displayTokens(data.tokens, category);
+                this.markCategoryLoaded(category);
+                console.log(`✅ Successfully loaded ${data.tokens.length} ${category} tokens`);
+            } else {
+                throw new Error(data.error || 'No tokens returned');
+            }
+            
+        } catch (error) {
+            console.error(`❌ Error loading ${category}:`, error);
+            
+            if (error.name === 'AbortError') {
+                this.showError(category, 'Request timeout - API taking too long');
+            } else if (error.message.includes('429')) {
+                this.showError(category, 'Rate limit hit - Free tier (1/sec) exceeded');
+            } else {
+                this.showError(category, error.message);
+            }
+            
+            // Show fallback data if available
+            this.showFallbackData(category);
+            
+        } finally {
+            this.setLoadingState(category, false);
+        }
+    }
+    
+    shouldUseCache(category) {
+        const lastLoad = this.lastLoadTimes.get(category);
+        if (!lastLoad) return false;
+        
+        const cacheAge = Date.now() - lastLoad;
+        return cacheAge < FREE_TIER_CONFIG.cacheTime && this.loadedCategories.has(category);
+    }
+    
+    setLoadingState(category, isLoading) {
+        this.loadingStates.set(category, isLoading);
+        
+        const tabButton = document.getElementById(`tab-${category}`);
+        const statusSpan = tabButton?.querySelector('.tab-status');
+        
+        if (statusSpan) {
+            if (isLoading) {
+                statusSpan.innerHTML = '<span class="spinner-small"></span>';
+                statusSpan.className = 'tab-status loading';
+            } else {
+                statusSpan.innerHTML = '';
+                statusSpan.className = 'tab-status';
+            }
+        }
+    }
+    
+    showLoadingUI(category) {
+        if (this.currentCategory !== category) return;
+        
+        const container = this.getTokensContainer();
+        if (container) {
+            container.innerHTML = `
+                <div class="loading-state-free-tier">
+                    <div class="spinner-large"></div>
+                    <h3>Loading ${category} tokens...</h3>
+                    <p class="free-tier-note">
+                        🕐 Free tier: Please wait for rate limiting (1 request/second)
+                    </p>
+                </div>
+            `;
+        }
+    }
+    
+    showError(category, errorMessage) {
+        this.errorStates.set(category, {
+            message: errorMessage,
+            timestamp: Date.now()
+        });
+        
+        if (this.currentCategory !== category) return;
+        
+        const container = this.getTokensContainer();
+        if (container) {
+            const isRateLimit = errorMessage.includes('rate limit') || 
+                               errorMessage.includes('429');
+            
+            container.innerHTML = `
+                <div class="error-state-free-tier ${isRateLimit ? 'rate-limit' : ''}">
+                    <div class="error-icon">${isRateLimit ? '🕐' : '⚠️'}</div>
+                    <h3>${isRateLimit ? 'Rate Limit Reached' : 'Loading Error'}</h3>
+                    <p class="error-message">${errorMessage}</p>
+                    ${isRateLimit ? `
+                        <div class="rate-limit-info">
+                            <p><strong>Free Tier Limits:</strong></p>
+                            <ul>
+                                <li>1 request per second</li>
+                                <li>10,000 requests per month</li>
+                                <li>Consider upgrading for higher limits</li>
+                            </ul>
+                        </div>
+                    ` : ''}
+                    <button onclick="trendingManager.retryCategory('${category}')" 
+                            class="retry-button">
+                        🔄 Retry in 5 seconds
+                    </button>
+                    <div class="retry-countdown" id="countdown-${category}"></div>
+                </div>
+            `;
+            
+            // Start countdown for retry
+            this.startRetryCountdown(category);
+        }
+    }
+    
+    startRetryCountdown(category) {
+        let seconds = 5;
+        const countdownEl = document.getElementById(`countdown-${category}`);
+        
+        const countdown = setInterval(() => {
+            if (countdownEl) {
+                countdownEl.textContent = `Auto-retry in ${seconds} seconds...`;
+            }
+            
+            seconds--;
+            
+            if (seconds < 0) {
+                clearInterval(countdown);
+                // Auto-retry
+                this.retryCategory(category);
+            }
+        }, 1000);
+    }
+    
+    retryCategory(category) {
+        console.log(`🔄 Retrying ${category}...`);
+        this.clearError(category);
+        this.loadCategory(category, true);
+    }
+    
+    clearError(category) {
+        this.errorStates.delete(category);
+    }
+    
+    displayTokens(tokens, category) {
+        if (this.currentCategory !== category) return;
+        
+        const container = this.getTokensContainer();
+        if (!container) return;
+        
+        const tokensHtml = tokens.map(token => this.createTokenCard(token)).join('');
+        
+        container.innerHTML = `
+            <div class="tokens-grid">
+                ${tokensHtml}
+            </div>
+            <div class="free-tier-footer">
+                <p>📊 Data from Solana Tracker API (Free Tier) • Updated: ${new Date().toLocaleTimeString()}</p>
+            </div>
+        `;
+    }
+    
+    createTokenCard(token) {
+        const changeClass = token.price_change >= 0 ? 'positive' : 'negative';
+        const changeIcon = token.price_change >= 0 ? '📈' : '📉';
+        
+        return `
+            <div class="token-card" onclick="loadTokenAnalysis('${token.address}')">
+                <div class="token-header">
+                    <span class="token-symbol">${token.symbol}</span>
+                    <span class="price-change ${changeClass}">
+                        ${changeIcon} ${token.price_change > 0 ? '+' : ''}${token.price_change.toFixed(2)}%
+                    </span>
+                </div>
+                <div class="token-metrics">
+                    <div class="metric">
+                        <span class="label">Volume 24h:</span>
+                        <span class="value">${this.formatNumber(token.volume)}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">Market Cap:</span>
+                        <span class="value">${this.formatNumber(token.market_cap)}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">Sentiment:</span>
+                        <span class="value">${(token.sentiment_score * 100).toFixed(0)}%</span>
+                    </div>
+                </div>
+                <div class="token-footer">
+                    <span class="mentions">${token.mentions} mentions</span>
+                    <span class="category-badge">${token.category}</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    showFallbackData(category) {
+        // Show cached data or static fallback
+        console.log(`📦 Showing fallback data for ${category}`);
+        // Implementation depends on your fallback strategy
+    }
+    
+    markCategoryLoaded(category) {
+        this.loadedCategories.add(category);
+        this.lastLoadTimes.set(category, Date.now());
+    }
+    
+    refreshCurrentCategory() {
+        console.log(`🔄 Refreshing ${this.currentCategory}...`);
+        this.loadCategory(this.currentCategory, true);
+    }
+    
+    formatNumber(num) {
+        if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+        if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+        if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+        return num.toFixed(2);
+    }
+    
+    getTokensContainer() {
+        return document.querySelector('.trending-tokens-container') ||
+               document.querySelector('.tokens-container') ||
+               document.querySelector('.dashboard-content');
+    }
+}
+
+// Initialize trending tokens manager (called from main DOMContentLoaded if needed)
+let trendingManager;
+
+function initializeTrendingManager() {
+    if (typeof TrendingTokensManager !== 'undefined') {
+        console.log('🚀 Initializing Trending Tokens Manager...');
+        trendingManager = new TrendingTokensManager();
+        addFreeTierStyles();
+    }
+}
+
+function addFreeTierStyles() {
+    const styles = `
+        <style>
+        .tab-status.loading .spinner-small {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #333;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 5px;
+        }
+        
+        .loading-state-free-tier {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .spinner-large {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #333;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        .free-tier-note {
+            color: #ffa500;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .error-state-free-tier {
+            text-align: center;
+            padding: 30px 20px;
+            background: #2a1810;
+            border: 1px solid #ff6b47;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .error-state-free-tier.rate-limit {
+            background: #1a2a1a;
+            border-color: #ffa500;
+        }
+        
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .rate-limit-info {
+            background: rgba(255, 165, 0, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        
+        .rate-limit-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .retry-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 15px 0;
+            transition: transform 0.2s;
+        }
+        
+        .retry-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .retry-countdown {
+            color: #ffa500;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .free-tier-footer {
+            text-align: center;
+            padding: 15px;
+            color: #888;
+            font-size: 12px;
+            border-top: 1px solid #333;
+            margin-top: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        </style>
+    `;
+    
+    document.head.insertAdjacentHTML('beforeend', styles);
+}
 
         // Utility Functions
 
@@ -5418,7 +4861,7 @@ function hideResults() {
         }
     </script>
 	<script>
-/* --- ultra-light “slow-mo” arrow-key scroller --- */
+/* --- ultra-light "slow-mo" arrow-key scroller --- */
 const STEP = 10;                       // px per key repeat → lower = slower
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowDown') {
@@ -5431,5 +4874,34 @@ document.addEventListener('keydown', e => {
   }
 });
 </script>
+<div class="floating-chat-widget">
+    <div class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
+        <div class="chat-icon">💬</div>
+        <div class="pulse-ring"></div>
+    </div>
+    
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-popup-header">
+            <div class="chat-title">
+                <span>🤖 AI Assistant</span>
+                <span class="chat-status" id="chatStatus">Ready</span>
+            </div>
+            <button class="chat-close" onclick="toggleChat()">×</button>
+        </div>
+        
+        <div class="chat-popup-messages" id="chatPopupMessages">
+            <div class="chat-message assistant">
+                👋 Hi! Analyze a token first, then I can chat about it with live market context and search intelligence!
+            </div>
+        </div>
+        
+        <div class="chat-popup-input">
+            <input type="text" class="chat-input-popup" id="chatInputPopup" placeholder="Ask about the analyzed token..." disabled>
+            <button class="chat-send-popup" id="chatSendPopup" onclick="sendChatMessagePopup()" disabled>
+                <span>🚀</span>
+            </button>
+        </div>
+    </div>
+</div>
 </body>
 </html>

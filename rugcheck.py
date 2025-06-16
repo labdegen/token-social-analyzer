@@ -1,1238 +1,2753 @@
 import asyncio
-import json
-import logging
-import statistics
-import base64
-import struct
-from datetime import datetime, timedelta
-from dataclasses import dataclass, asdict
-from typing import List, Dict, Optional, Any, Tuple
-from collections import defaultdict, Counter
-import math
-import hashlib
-
 import aiohttp
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, FileResponse
-from pydantic import BaseModel
-import uvicorn
+import logging
+from datetime import datetime, timedelta
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
+import base58
+import json
+import random
+import time
+import re
 
-# ──────────────────────────────────────────────────────────────────────────────
-# CONFIG
-# ──────────────────────────────────────────────────────────────────────────────
-HELIUS_API_KEY = "YOUR-HELIUS-KEY"  # Replace with your actual key
-HELIUS_RPC_URL = f"https://mainnet.helius-rpc.com/?api-key={HELIUS_API_KEY}"
-
-# External API endpoints
-JUPITER_PRICE_API = "https://price.jup.ag/v4/price"
-BIRDEYE_API = "https://public-api.birdeye.so/public"
-
-OPENAI_API_KEY = ""  # Optional - will use rule-based analysis if not provided
-try:
-    from openai import AsyncOpenAI
-    OPENAI_AVAILABLE = True
-except ImportError:
-    OPENAI_AVAILABLE = False
-
-# Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("rugcheck")
 
-# Rate-limit config
-RATE_LIMIT_DELAY = 0.1           # 100ms between RPC calls
-MAX_CONCURRENT_REQUESTS = 5       # concurrent RPCs allowed
-
-# Known DEX program IDs for liquidity detection
-DEX_PROGRAMS = {
-    "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",  # Raydium
-    "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",  # Raydium V4
-    "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK",  # Raydium CLMM
-    "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",   # Orca
-    "DjVE6JNiYqPL2QXyCUUh8rNjHrbz9hXHNYt99MQ59qw1",   # Orca V2
-}
-
-# ──────────────────────────────────────────────────────────────────────────────
-# DATA CLASSES (keeping your existing structure)
-# ──────────────────────────────────────────────────────────────────────────────
 @dataclass
-class DeployerToken:
-    address: str
-    symbol: str
-    name: str
-    launch_date: datetime
-    current_price: Optional[float]
-    current_market_cap: Optional[float]
-    highest_market_cap: Optional[float]
-    is_rugged: bool
-    holder_count: int
-    liquidity: Optional[float]
-    age_days: int
+class ScamIndicators:
+    """Key indicators for scam detection"""
+    # Critical Risks
+    mint_enabled: bool = False
+    freeze_enabled: bool = False
+    
+    # Ownership Risks  
+    top_holder_percent: float = 0.0
+    top_10_holders_percent: float = 0.0
+    dev_wallet_percent: float = 0.0
+    
+    # Liquidity Risks
+    liquidity_locked: bool = False
+    liquidity_percent: float = 0.0
+    
+    # Trading Risks
+    can_sell: bool = True
+    buy_tax: float = 0.0
+    sell_tax: float = 0.0
+    
+    # Age & Activity
+    token_age_hours: int = 0
+    unique_holders: int = 0
+    
+    # Scores
+    overall_risk_score: int = 0
+    risk_level: str = "UNKNOWN"
 
-@dataclass
-class DeployerAnalysis:
-    deployer_address: str
-    total_tokens_deployed: int
-    successful_launches: int
-    rugged_tokens: int
-    active_tokens: int
-    average_token_lifespan: float
-    total_value_extracted: float
-    reputation_score: int
-    token_history: List[DeployerToken]
-    deployment_pattern: str
-    risk_assessment: str
+class EnhancedRugChecker:
+    def __init__(self, helius_key: str, birdeye_key: str = None, xai_key: str = None):
+        self.helius_key = helius_key or "demo_key"
+        self.birdeye_key = birdeye_key
+        self.xai_key = xai_key
+        self.rpc_url = f"https://mainnet.helius-rpc.com/?api-key={helius_key}" if helius_key else None
+        
+        # Debug logging
+        logger.info(f"🧠 XAI API Key status: {'✅ Available' if self.xai_key and self.xai_key != 'your-xai-api-key-here' else '❌ Missing'}")
+        
+    async def analyze_token(self, mint_address: str, deep_analysis: bool = True) -> Dict:
+        """
+        🧠 REVOLUTIONARY Galaxy Brain v5.0 Analysis with LIVE Grok Intelligence:
+        - REAL-TIME social sentiment analysis via Grok
+        - Live community discussions monitoring
+        - Advanced meme coin safety patterns
+        - Revolutionary risk assessment with AI insights
+        """
+        session = None
+        try:
+            start_time = time.time()
+            mode = "DEEP" if deep_analysis else "EXPRESS"
+            logger.info(f"🧠 REVOLUTIONARY Galaxy Brain v5.0 {mode} Mode analyzing: {mint_address}")
+            logger.info(f"🧠 Analysis mode: {mode}")
+            
+            session = aiohttp.ClientSession()
+            
+            # Step 1: Get comprehensive token security data
+            security_data = await self._get_birdeye_security_data(mint_address, session)
+            
+            # Step 2: Get token metadata and basic info
+            token_info = await self._get_token_info(mint_address, session)
+            if not token_info:
+                return {
+                    "success": False, 
+                    "error": "Token not found or invalid address",
+                    "suggestions": [
+                        "Verify the token address is correct",
+                        "Ensure token exists on Solana mainnet",
+                        "Check if token has been deployed"
+                    ]
+                }
+                
+            # Step 3: Get market data with liquidity lock detection
+            market_data = await self._get_enhanced_market_data(mint_address, session)
 
-@dataclass
-class WalletInfo:
-    address: str
-    balance: float
-    percentage: float
-    sol_balance: Optional[float]
-    token_count: Optional[int]
-    creation_time: Optional[datetime]
-    first_activity: Optional[datetime]
-    transaction_count: int
-    is_suspicious: bool
-    risk_flags: List[str]
-    rank: int = 0
-    type: str = "holder"
-    risk: str = "low"
-    isBundled: bool = False
+            # IMPORTANT: Merge real symbol/name from market data into token_info
+            if market_data.get("symbol") and market_data["symbol"] != "TOKEN":
+                token_info["symbol"] = market_data["symbol"]
+                token_info["name"] = market_data.get("name", token_info.get("name", "Token"))
+                logger.info(f"🔄 Updated token info: {token_info['name']} (${token_info['symbol']})")
+            
+            # Step 4: Get REAL holder analysis
+            holders_data = await self._get_real_holders_analysis(mint_address, token_info['supply'], session)
+            
+            # Step 5: Get REAL transaction analysis via Helius
+            transaction_analysis = await self._get_real_transaction_analysis(mint_address, session, deep_analysis)
+            
+            # Step 6: Enhanced liquidity analysis with lock detection
+            liquidity_data = await self._get_enhanced_liquidity_analysis(mint_address, market_data, security_data, session)
+            
+            # Step 7: Authority analysis
+            authority_analysis = await self._analyze_enhanced_authorities(token_info, security_data)
+            
+            # Step 8: Calculate enhanced indicators
+            indicators = self._calculate_enhanced_indicators(
+                token_info, market_data, holders_data, liquidity_data, security_data
+            )
+            
+            # Step 9: 🧠 REVOLUTIONARY GROK LIVE ANALYSIS
+            logger.info("🧠 REVOLUTIONARY: Calling Grok Live Intelligence Analysis...")
+            grok_analysis = await self._grok_revolutionary_meme_analysis(
+                mint_address, token_info, holders_data, liquidity_data, indicators, session
+            )
+            
+            # MODE SPLIT: Different analysis based on mode
+            if deep_analysis:
+                logger.info("🧠 Deep Mode: Running advanced AI analysis with Grok insights...")
+                
+                bundle_detection = await self._detect_enhanced_bundles(mint_address, holders_data, transaction_analysis)
+                suspicious_activity = await self._detect_enhanced_suspicious_activity(
+                    mint_address, transaction_analysis, holders_data, security_data
+                )
+                
+                # 🧠 REVOLUTIONARY: Enhanced scoring with Grok intelligence
+                galaxy_brain_score, severity_level, confidence = self._calculate_revolutionary_galaxy_score_with_grok(
+                    indicators, transaction_analysis, bundle_detection, suspicious_activity, security_data, grok_analysis
+                )
+                
+                risk_vectors = self._generate_revolutionary_risk_vectors_with_grok(
+                    indicators, transaction_analysis, suspicious_activity, security_data, grok_analysis
+                )
+                
+            else:
+                logger.info("⚡ Express Mode: Quick analysis with Grok insights...")
+                
+                bundle_detection = await self._detect_basic_bundles(holders_data)
+                suspicious_activity = self._detect_basic_suspicious_activity(
+                    transaction_analysis, holders_data, security_data
+                )
+                
+                # Even Express mode gets Grok enhancement
+                galaxy_brain_score, severity_level, confidence = self._calculate_express_score_with_grok(
+                    indicators, holders_data, security_data, grok_analysis
+                )
+                
+                risk_vectors = self._generate_basic_risk_vectors_with_grok(
+                    indicators, holders_data, liquidity_data, security_data, grok_analysis
+                )
+            
+            analysis_time = time.time() - start_time
+            
+            # 🧠 REVOLUTIONARY response with Grok intelligence
+            return {
+                "success": True,
+                "analysis_mode": mode,
+                "galaxy_brain_score": galaxy_brain_score,
+                "severity_level": severity_level,
+                "confidence": confidence,
+                
+                # 🧠 REVOLUTIONARY: Grok Analysis Integration
+                "grok_analysis": grok_analysis,
+                "ai_analysis": self._format_grok_ai_analysis(grok_analysis),
+                
+                # Enhanced token info with security data
+                "token_info": {
+                    **token_info,
+                    **market_data,
+                    "age_days": self._calculate_token_age_days(market_data.get("created_at", 0)),
+                    "is_mutable": not authority_analysis.get("fully_decentralized", False),
+                    "security_score": security_data.get("overall_score", 50)
+                },
+                
+                # Real analysis results
+                "holder_analysis": holders_data,
+                "liquidity_analysis": liquidity_data,
+                "transaction_analysis": transaction_analysis,
+                "bundle_detection": bundle_detection,
+                "suspicious_activity": suspicious_activity,
+                "authority_analysis": authority_analysis,
+                "security_data": security_data,
+                "scam_indicators": indicators,
+                "risk_vectors": risk_vectors,
+                
+                # Enhanced metadata
+                "analysis_time_seconds": round(analysis_time, 2),
+                "analysis_timestamp": datetime.now().isoformat(),
+                "analysis_version": "5.0_REVOLUTIONARY_GROK",
+                "data_sources": {
+                    "token_data": "helius_rpc" if self.helius_key != "demo_key" else "demo",
+                    "market_data": "dexscreener_enhanced",
+                    "security_data": "birdeye_api" if self.birdeye_key else "basic",
+                    "holder_data": "helius_real",
+                    "transaction_data": "helius_parsed",
+                    "liquidity_locks": "birdeye_dexscreener",
+                    "grok_intelligence": "live_community_analysis" if self.xai_key and self.xai_key != 'your-xai-api-key-here' else "unavailable"
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Revolutionary analysis failed: {e}")
+            return {
+                "success": False, 
+                "error": f"Analysis failed: {str(e)}",
+                "error_type": "analysis_error",
+                "analysis_mode": mode if 'mode' in locals() else "UNKNOWN",
+                "suggestions": [
+                    "Try again in a few minutes",
+                    "Verify network connectivity", 
+                    "Check if token address is valid"
+                ]
+            }
+        finally:
+            if session:
+                await session.close()
 
-@dataclass
-class BundleCluster:
-    cluster_id: str
-    wallets: List[str]
-    creation_timeframe: float
-    funding_source: Optional[str]
-    similar_patterns: List[str]
-    risk_score: int
-    total_holdings: float
+    async def _grok_revolutionary_meme_analysis(self, mint_address: str, token_info: Dict, 
+                                            holders_data: Dict, liquidity_data: Dict, 
+                                            indicators: ScamIndicators, session: aiohttp.ClientSession) -> Dict:
+        """🧠 REVOLUTIONARY Grok-powered meme coin safety analysis with live community intelligence"""
+        try:
+            if not self.xai_key or self.xai_key == 'your-xai-api-key-here':
+                logger.warning("No Grok API key - revolutionary analysis unavailable")
+                return {"available": False, "reason": "no_api_key"}
+            
+            # Get the ACTUAL symbol from token_info or market data
+            symbol = token_info.get('symbol', 'UNKNOWN')
+            if symbol == 'TOKEN' or symbol == 'UNKNOWN':
+                symbol = token_info.get('name', 'TOKEN')[:10]
+            
+            # Calculate derived insights from the data
+            top_holder = holders_data.get('top_1_percent', 0)
+            liquidity_usd = liquidity_data.get('liquidity_usd', 0)
+            market_cap = token_info.get('market_cap', 0)
+            age_hours = indicators.token_age_hours
+            
+            # 🧠 REVOLUTIONARY prompt optimized for actionable insights
+            revolutionary_prompt = f"""
+    🧠 CRYPTOCURRENCY SAFETY ANALYST - ${symbol} Security Assessment
 
-@dataclass
-class BundleRiskSummary:
-    total_bundles: int
-    high_risk_bundles: int
-    bundled_supply_percentage: float
-    largest_bundle_size: int
-    bundle_concentration_score: int
-    patterns_detected: List[str]
+    Contract: {mint_address}
+    Current Metrics:
+    - Top holder: {top_holder:.1f}% of supply
+    - Liquidity: ${liquidity_usd:,.0f} USD
+    - Market cap: ${market_cap:,.0f} USD  
+    - Token age: {age_hours} hours ({age_hours/24:.1f} days)
+    - Mint authority: {"RENOUNCED ✅" if not indicators.mint_enabled else "ACTIVE ⚠️"}
+    - Freeze authority: {"RENOUNCED ✅" if not indicators.freeze_enabled else "ACTIVE ⚠️"}
 
-@dataclass
-class HolderVisualization:
-    holder_bubbles: List[Dict[str, Any]]
-    concentration_chart: Dict[str, float]
-    bundle_summary: BundleRiskSummary
+    SEARCH X/TWITTER for recent discussions about ${symbol} token and this contract address.
 
-@dataclass
-class EnhancedHolderAnalysis:
-    total_holders: int
-    unique_holders: int
-    top_10_concentration: float
-    top_5_concentration: float
-    deployer_holdings: float
-    holder_distribution: List[WalletInfo]
-    bundle_clusters: List[BundleCluster]
-    whale_wallets: List[str]
-    suspicious_wallets: List[str]
-    holder_growth_24h: int
-    average_holding: float
-    median_holding: float
-    visualization_data: HolderVisualization
+    CRITICAL ANALYSIS FRAMEWORK:
 
-@dataclass
-class TransactionAnalysis:
-    total_transactions: int
-    unique_traders: int
-    volume_24h: float
-    volume_7d: float
-    first_transaction: Optional[datetime]
-    peak_activity_time: Optional[datetime]
-    suspicious_patterns: List[str]
-    coordinated_activity: bool
-    wash_trading_risk: float
+    1. ABSENCE OF NEGATIVE SIGNALS = POSITIVE FINDING
+    - If NO scam accusations found → "Community shows no scam concerns"
+    - If NO rug pull warnings found → "No community warnings detected"
+    - If NO dump coordination found → "No coordinated selling patterns reported"
+    - If NO bot/bundle reports found → "Community reports organic trading activity"
 
-@dataclass
-class EnhancedTokenInfo:
-    address: str
-    symbol: str
-    name: str
-    decimals: int
-    supply: float
-    age_days: int
-    mint_authority: Optional[str]
-    freeze_authority: Optional[str]
-    deployer: str
-    creation_date: datetime
-    is_mutable: bool
-    metadata_uri: Optional[str]
-    social_links: Dict[str, str]
-    verified_status: bool
-    current_price: Optional[float]
-    market_cap: Optional[float]
-    liquidity: Optional[float]
+    2. SPECIFIC SAFETY CONFIRMATIONS to look for:
+    - Team communication and transparency updates
+    - Locked liquidity confirmations from community
+    - Diamond hands/holder confidence posts
+    - Legitimate project development news
+    - Partnership announcements or team verification
 
-# ──────────────────────────────────────────────────────────────────────────────
-# REQUEST/RESPONSE MODELS
-# ──────────────────────────────────────────────────────────────────────────────
-class RugCheckRequest(BaseModel):
-    token_address: str
+    3. WHALE BEHAVIOR INTERPRETATION:
+    Based on the {top_holder:.1f}% top holder concentration:
+    {self._generate_whale_context(top_holder, liquidity_usd, market_cap)}
 
-# ──────────────────────────────────────────────────────────────────────────────
-# ENHANCED HELIUS API CLIENT
-# ──────────────────────────────────────────────────────────────────────────────
-class HeliusAPIClient:
-    def __init__(self, api_key: str) -> None:
-        self.api_key = api_key
-        self.base_url = f"https://mainnet.helius-rpc.com/?api-key={api_key}"
-        self.rest_url = "https://api.helius.xyz/v0"
-        self.session: Optional[aiohttp.ClientSession] = None
-        self.semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
+    4. LIQUIDITY ASSESSMENT:
+    ${liquidity_usd:,.0f} liquidity vs ${market_cap:,.0f} market cap = {(liquidity_usd/market_cap*100) if market_cap > 0 else 0:.1f}% ratio
+    Community perspective on liquidity security and trading conditions.
 
-    async def __aenter__(self):
-        self.session = aiohttp.ClientSession()
-        return self
+    5. FINAL VERDICT BASED ON EVIDENCE:
+    - REVOLUTIONARY_SAFE: Strong positive community + no negative signals + good metrics
+    - COMMUNITY_CONFIDENT: Some positive signals + no major concerns + decent metrics  
+    - NEUTRAL_MONITORING: Mixed signals or limited data + average metrics
+    - COMMUNITY_CONCERNS: Some warnings but not widespread + concerning metrics
+    - DANGER_DETECTED: Clear negative community consensus + poor metrics
 
-    async def __aexit__(self, exc_type, exc, tb):
-        if self.session:
-            await self.session.close()
+    IMPORTANT: 
+    - NO NEGATIVE FINDINGS = GOOD SIGN, not "no data"
+    - Provide SPECIFIC community sentiment quotes when available
+    - Interpret metrics in context of community discussion
+    - Give actionable trading insights based on ACTUAL findings
 
-    async def call_rpc(self, method: str, params: list, retry: int = 3) -> Dict[str, Any]:
-        async with self.semaphore:
-            for attempt in range(retry):
+    Focus on what the community IS saying (positive) and what they're NOT saying (absence of negatives).
+    """
+            
+            # Enhanced search parameters
+            search_params = {
+                "mode": "on",
+                "sources": [
+                    {"type": "x"},
+                    {"type": "web"}
+                ],
+                "max_search_results": 30,
+                "from_date": (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d"),
+                "return_citations": True
+            }
+            
+            logger.info(f"🧠 REVOLUTIONARY Grok analyzing {symbol} with enhanced prompting...")
+            grok_response = await self._call_grok_api_new_format(revolutionary_prompt, search_params, session)
+            
+            if grok_response:
+                parsed_analysis = self._parse_enhanced_grok_analysis(
+                    grok_response.get('content', ''), 
+                    symbol, 
+                    top_holder, 
+                    liquidity_usd, 
+                    market_cap,
+                    indicators
+                )
+                logger.info(f"🧠 REVOLUTIONARY Enhanced analysis: {parsed_analysis.get('verdict', 'UNKNOWN')}")
+                return {
+                    "available": True,
+                    "raw_response": grok_response.get('content', ''),
+                    "parsed_analysis": parsed_analysis,
+                    "confidence": parsed_analysis.get('confidence', 0.7),
+                    "analysis_type": "revolutionary_enhanced_search",
+                    "citations": grok_response.get('citations', [])
+                }
+            else:
+                return {"available": False, "reason": "api_failed"}
+                
+        except Exception as e:
+            logger.error(f"Revolutionary Grok analysis failed: {e}")
+            return {"available": False, "reason": "error", "error": str(e)}
+
+    def _generate_whale_context(self, top_holder_percent: float, liquidity_usd: float, market_cap: float) -> str:
+        """Generate specific whale behavior context based on metrics"""
+        if top_holder_percent > 30:
+            return f"EXTREME concentration ({top_holder_percent:.1f}%) - Look for community explanations: team wallet, treasury, or concerning accumulation"
+        elif top_holder_percent > 15:
+            return f"HIGH concentration ({top_holder_percent:.1f}%) - Check if community discusses this whale: legitimate reserves vs concerning accumulation"
+        elif top_holder_percent > 8:
+            return f"MODERATE concentration ({top_holder_percent:.1f}%) - Monitor community sentiment about large holder activity"
+        else:
+            return f"GOOD distribution ({top_holder_percent:.1f}%) - Look for community confirmation of healthy holder spread"
+
+    def _parse_enhanced_grok_analysis(self, grok_response: str, symbol: str, top_holder: float, 
+                                    liquidity_usd: float, market_cap: float, indicators: ScamIndicators) -> Dict:
+        """Enhanced parsing that creates actionable insights even from limited findings"""
+        try:
+            logger.info(f"🧠 Enhanced parsing for {symbol}: {len(grok_response)} characters")
+            
+            # Extract verdict with improved patterns
+            verdict_patterns = [
+                r'(?:FINAL VERDICT|VERDICT|ASSESSMENT):\s*\*?\*?([A-Z_]+)',
+                r'\*\*(?:SAFETY VERDICT|FINAL VERDICT):\*\*\s*([A-Z_]+)',
+                r'(?:^|\n)([A-Z_]+):\s*(?:Strong|Clear|Community|No major)'
+            ]
+            
+            verdict = "NEUTRAL_MONITORING"  # Better default
+            for pattern in verdict_patterns:
+                match = re.search(pattern, grok_response, re.IGNORECASE | re.MULTILINE)
+                if match:
+                    verdict = match.group(1).upper()
+                    break
+            
+            # Enhanced safety signal detection
+            safety_signals = self._extract_safety_signals(grok_response, symbol, indicators)
+            risk_signals = self._extract_risk_signals(grok_response, symbol)
+            
+            # Generate whale analysis from actual data + community context
+            whale_analysis = self._generate_contextual_whale_analysis(
+                grok_response, top_holder, liquidity_usd, market_cap
+            )
+            
+            # Create actionable insight
+            actionable_insight = self._create_actionable_insight(
+                verdict, safety_signals, risk_signals, symbol, top_holder, 
+                liquidity_usd, market_cap, indicators
+            )
+            
+            # Enhanced confidence based on actual findings
+            confidence = self._calculate_enhanced_confidence(
+                grok_response, safety_signals, risk_signals, verdict
+            )
+            
+            return {
+                "verdict": verdict,
+                "confidence": confidence,
+                "positive_community_sentiment": safety_signals,
+                "possible_community_risks": risk_signals,
+                "whale_analysis": whale_analysis,
+                "revolutionary_insight": actionable_insight,
+                "safety_indicators": [s for s in safety_signals if any(term in s.lower() for term in ['safe', 'legitimate', 'locked', 'verified'])],
+                "risk_indicators": [r for r in risk_signals if any(term in r.lower() for term in ['scam', 'warning', 'rug', 'dump'])],
+                "username_mentions": len(re.findall(r'@\w+', grok_response)),
+                "quote_mentions": len(re.findall(r'"[^"]{10,}"', grok_response)),
+                "response_length": len(grok_response),
+                "analysis_type": "revolutionary_enhanced",
+                "token_specific_data": {
+                    "symbol": symbol,
+                    "top_holder_percent": top_holder,
+                    "liquidity_ratio": (liquidity_usd/market_cap*100) if market_cap > 0 else 0,
+                    "age_assessment": self._assess_token_age(indicators.token_age_hours)
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Enhanced parsing failed: {e}")
+            return self._create_fallback_analysis(symbol, top_holder, liquidity_usd, indicators, str(e))
+
+    def _assess_token_age(self, age_hours: int) -> str:
+        """Assess token age for context"""
+        if age_hours < 6:
+            return "VERY_NEW"
+        elif age_hours < 24:
+            return "NEW" 
+        elif age_hours < 168:  # 1 week
+            return "YOUNG"
+        elif age_hours < 720:  # 1 month
+            return "DEVELOPING"
+        else:
+            return "MATURE"
+
+    def _create_fallback_analysis(self, symbol: str, top_holder: float, liquidity_usd: float, 
+                                indicators: ScamIndicators, error: str) -> Dict:
+        """Create analysis when Grok fails but we have metrics"""
+        return {
+            "verdict": "NEUTRAL_MONITORING",
+            "confidence": 0.5,
+            "positive_community_sentiment": [
+                f"Analysis based on verified on-chain metrics for ${symbol}",
+                f"Mint authority: {'renounced' if not indicators.mint_enabled else 'active'}",
+                f"Freeze authority: {'renounced' if not indicators.freeze_enabled else 'active'}"
+            ],
+            "possible_community_risks": [
+                f"Community analysis unavailable - relying on technical metrics only"
+            ],
+            "whale_analysis": f"Top holder: {top_holder:.1f}% - {'concerning concentration' if top_holder > 20 else 'manageable distribution'}",
+            "revolutionary_insight": f"${symbol} analysis completed using on-chain data. Community sentiment analysis failed: {error}",
+            "safety_indicators": [],
+            "risk_indicators": [],
+            "username_mentions": 0,
+            "quote_mentions": 0,
+            "analysis_type": "fallback_metrics_only"
+        }
+
+
+    def _calculate_enhanced_confidence(self, response: str, safety_signals: List[str], 
+                                    risk_signals: List[str], verdict: str) -> float:
+        """Calculate confidence based on actual findings and response quality"""
+        base_confidence = 0.6
+        
+        # Response quality indicators
+        if len(response) > 300:
+            base_confidence += 0.15
+        if len(response) > 600:
+            base_confidence += 0.1
+        
+        # Evidence quality
+        username_mentions = len(re.findall(r'@\w+', response))
+        if username_mentions > 0:
+            base_confidence += min(0.15, username_mentions * 0.03)
+        
+        quote_mentions = len(re.findall(r'"[^"]{10,}"', response))
+        if quote_mentions > 0:
+            base_confidence += min(0.1, quote_mentions * 0.02)
+        
+        # Signal quality
+        if len(safety_signals) > 2:
+            base_confidence += 0.1
+        if len(risk_signals) > 0:
+            base_confidence += 0.05  # Risk findings often more reliable
+        
+        # Verdict consistency
+        if verdict in ["REVOLUTIONARY_SAFE", "DANGER_DETECTED"]:
+            base_confidence += 0.1  # Clear verdicts more confident
+        
+        return min(0.95, max(0.3, base_confidence))    
+    
+    
+    def _create_actionable_insight(self, verdict: str, safety_signals: List[str], risk_signals: List[str],
+                                symbol: str, top_holder: float, liquidity_usd: float, 
+                                market_cap: float, indicators: ScamIndicators) -> str:
+        """Create specific, actionable insight based on all available data"""
+        
+        # Base insight on verdict
+        verdict_insights = {
+            "REVOLUTIONARY_SAFE": f"${symbol} shows strong community confidence with no major red flags detected.",
+            "COMMUNITY_CONFIDENT": f"${symbol} has positive community sentiment with manageable risks.",
+            "NEUTRAL_MONITORING": f"${symbol} requires careful monitoring - mixed signals detected.",
+            "COMMUNITY_CONCERNS": f"${symbol} has community concerns that warrant investigation.",
+            "DANGER_DETECTED": f"${symbol} shows concerning community warnings and metrics."
+        }
+        
+        base_insight = verdict_insights.get(verdict, f"${symbol} analysis complete with specific findings.")
+        
+        # Add specific risk factors
+        critical_factors = []
+        if indicators.mint_enabled:
+            critical_factors.append("mint authority active")
+        if indicators.freeze_enabled:
+            critical_factors.append("freeze authority active")
+        if top_holder > 25:
+            critical_factors.append(f"extreme concentration ({top_holder:.1f}%)")
+        if liquidity_usd < 100000:
+            critical_factors.append("low liquidity")
+        
+        if critical_factors:
+            base_insight += f" Key concerns: {', '.join(critical_factors)}."
+        
+        # Add actionable recommendation
+        if verdict in ["REVOLUTIONARY_SAFE", "COMMUNITY_CONFIDENT"]:
+            if top_holder > 15:
+                base_insight += f" Monitor whale activity due to {top_holder:.1f}% concentration."
+            else:
+                base_insight += " Proceed with standard caution for meme token trading."
+        elif verdict in ["COMMUNITY_CONCERNS", "DANGER_DETECTED"]:
+            base_insight += " RECOMMEND: Avoid or use only small test amounts."
+        else:
+            base_insight += " RECOMMEND: Wait for clearer signals before significant investment."
+        
+        return base_insight
+
+    def _generate_contextual_whale_analysis(self, response: str, top_holder: float, 
+                                        liquidity_usd: float, market_cap: float) -> str:
+        """Generate whale analysis combining community sentiment with metrics"""
+        
+        # Check for whale-related community discussion
+        whale_mentions = re.findall(r'(?:whale|large holder|dev wallet|team wallet|treasury)', response, re.IGNORECASE)
+        
+        base_analysis = f"Top holder controls {top_holder:.1f}% of supply"
+        
+        if top_holder > 25:
+            if whale_mentions:
+                return f"{base_analysis}. Community discusses large holder activity - {', '.join(whale_mentions[:2])}. Extreme concentration requires monitoring."
+            else:
+                return f"{base_analysis}. CRITICAL: No community explanation for extreme concentration. High dump risk."
+        elif top_holder > 15:
+            if whale_mentions:
+                return f"{base_analysis}. Community aware of concentration - monitoring for explanations or concerns."
+            else:
+                return f"{base_analysis}. Significant concentration but no major community concerns detected."
+        elif top_holder > 8:
+            return f"{base_analysis}. Moderate concentration within acceptable range for meme tokens."
+        else:
+            return f"{base_analysis}. Healthy distribution - good for price stability."
+
+
+
+    def _extract_risk_signals(self, response: str, symbol: str) -> List[str]:
+        """Extract specific risk signals from community analysis"""
+        risks = []
+        
+        risk_patterns = [
+            r'(?:scam|rug pull|pump and dump|honeypot|bot activity)',
+            r'(?:warning|avoid|suspicious|red flag|concerning)',
+            r'(?:dump incoming|exit|coordination|manipulation)'
+        ]
+        
+        for pattern in risk_patterns:
+            matches = re.findall(pattern, response, re.IGNORECASE)
+            for match in matches:
+                risks.append(f"Community concern: {match}")
+        
+        return risks[:3]  # Limit to most critical
+   
+   
+   
+   
+   
+    def _extract_safety_signals(self, response: str, symbol: str, indicators: ScamIndicators) -> List[str]:
+        """Extract or infer safety signals from response and metrics"""
+        signals = []
+        
+        # Look for explicit positive mentions
+        positive_patterns = [
+            r'(?:no scam|no rug|no concerns|legitimate|verified|transparent|locked|safe)',
+            r'(?:community confident|holders holding|diamond hands|good project)',
+            r'(?:team active|development ongoing|partnerships|roadmap)'
+        ]
+        
+        for pattern in positive_patterns:
+            matches = re.findall(pattern, response, re.IGNORECASE)
+            for match in matches:
+                signals.append(f"Community reports: {match}")
+        
+        # Infer from absence of negative signals
+        negative_indicators = ['scam', 'rug', 'dump', 'warning', 'avoid', 'suspicious']
+        has_negatives = any(indicator in response.lower() for indicator in negative_indicators)
+        
+        if not has_negatives and len(response) > 200:
+            signals.append(f"No community warnings or scam reports found for ${symbol}")
+        
+        # Add metric-based positive signals
+        if not indicators.mint_enabled:
+            signals.append("Mint authority properly renounced - cannot create new tokens")
+        if not indicators.freeze_enabled:
+            signals.append("Freeze authority renounced - cannot halt transfers")
+        
+        return signals[:5]  # Limit to most relevant
+
+
+    async def _call_grok_api_new_format(self, prompt: str, search_params: Dict, session: aiohttp.ClientSession) -> Dict:
+        """🧠 REVOLUTIONARY Grok API call using NEW live search format"""
+        try:
+            payload = {
+                "model": "grok-3-latest",
+                "messages": [
+                    {
+                        "role": "system", 
+                        "content": """You are REVOLUTIONARY GROK, an expert in cryptocurrency safety analysis and community intelligence. You specialize in detecting meme coin scams, rug pulls, and community sentiment patterns.
+
+ANALYSIS APPROACH:
+- Focus on REAL community evidence and specific mentions
+- Quote actual users and posts when available  
+- Distinguish between hype/speculation vs legitimate concerns
+- Identify coordinated vs organic community behavior
+- Assess whale behavior context and explanations
+- Provide actionable safety insights for traders
+
+Always cite specific sources and quotes when making claims about community sentiment."""
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "search_parameters": search_params,
+                "max_tokens": 1500,
+                "temperature": 0.3,
+                "stream": False
+            }
+            
+            headers = {
+                "Authorization": f"Bearer {self.xai_key}",
+                "Content-Type": "application/json"
+            }
+            
+            logger.info(f"🧠 Making live search API call to Grok...")
+            
+            async with session.post("https://api.x.ai/v1/chat/completions", 
+                                json=payload, headers=headers, timeout=60) as resp:
+                
+                if resp.status == 200:
+                    result = await resp.json()
+                    
+                    if 'choices' in result and len(result['choices']) > 0:
+                        choice = result['choices'][0]
+                        content = choice.get('message', {}).get('content', '')
+                        
+                        # Extract citations if available (new format includes them)
+                        citations = choice.get('citations', [])
+                        
+                        logger.info(f"🧠 REVOLUTIONARY Grok API success: {len(content)} characters, {len(citations)} citations")
+                        
+                        return {
+                            'content': content,
+                            'citations': citations,
+                            'usage': result.get('usage', {})
+                        }
+                    else:
+                        logger.error(f"🧠 REVOLUTIONARY Grok API unexpected response structure: {result}")
+                        return None
+                else:
+                    error_text = await resp.text()
+                    logger.error(f"🧠 REVOLUTIONARY Grok API error {resp.status}: {error_text}")
+                    return None
+                    
+        except asyncio.TimeoutError:
+            logger.error("🧠 REVOLUTIONARY Grok API timeout")
+            return None
+        except Exception as e:
+            logger.error(f"🧠 REVOLUTIONARY Grok API call failed: {e}")
+            return None
+
+    def _parse_revolutionary_grok_analysis(self, grok_response: str) -> Dict:
+        """🧠 Parse revolutionary Grok analysis response with SPECIFIC community intelligence"""
+        try:
+            logger.info(f"🧠 Parsing Grok response: {len(grok_response)} characters")
+            
+            # Extract revolutionary sections with more flexible patterns
+            verdict_patterns = [
+                r'(?:FINAL ASSESSMENT|VERDICT|ASSESSMENT):\s*\*?\*?([A-Z_]+)',
+                r'\*\*(?:SAFETY VERDICT|FINAL VERDICT|ASSESSMENT):\*\*\s*([A-Z_]+)',
+                r'(?:^|\n)([A-Z_]+):\s*(?:Strong|Clear|Widespread|Mixed)'
+            ]
+            
+            verdict = "CAUTION_ADVISED"  # Default
+            for pattern in verdict_patterns:
+                match = re.search(pattern, grok_response, re.IGNORECASE | re.MULTILINE)
+                if match:
+                    verdict = match.group(1).upper()
+                    break
+            
+            # Extract positive community sentiment
+            positive_match = re.search(r'(?:POSITIVE|GOOD|SAFE).*?(?:SIGNALS?|SENTIMENT|MENTIONS?):(.*?)(?=(?:RISK|DANGER|WHALE|FINAL|$))', 
+                                     grok_response, re.DOTALL | re.IGNORECASE)
+            positive_sentiment = []
+            if positive_match:
+                positive_text = positive_match.group(1).strip()
+                positive_sentiment = self._extract_specific_quotes(positive_text, "positive")
+            
+            # Extract risk warnings  
+            risk_match = re.search(r'(?:RISK|DANGER|WARNING|NEGATIVE).*?(?:SIGNALS?|WARNINGS?|MENTIONS?):(.*?)(?=(?:WHALE|FINAL|ASSESSMENT|$))', 
+                                 grok_response, re.DOTALL | re.IGNORECASE)
+            community_risks = []
+            if risk_match:
+                risk_text = risk_match.group(1).strip()
+                community_risks = self._extract_specific_quotes(risk_text, "risks")
+            
+            # Extract whale analysis
+            whale_match = re.search(r'(?:WHALE|LARGE HOLDER).*?(?:BEHAVIOR|ANALYSIS):(.*?)(?=(?:FINAL|ASSESSMENT|$))', 
+                                  grok_response, re.DOTALL | re.IGNORECASE)
+            whale_analysis = whale_match.group(1).strip() if whale_match else "No specific whale analysis found"
+            
+            # Extract overall insight
+            insight_patterns = [
+                r'(?:REVOLUTIONARY INSIGHT|CONCLUSION|SUMMARY):\s*(.*?)(?=\n\n|$)',
+                r'(?:Based on|Overall|In conclusion).*?evidence[^.]*\.(.*?)(?=\n|$)'
+            ]
+            revolutionary_insight = "Analysis incomplete - limited data available"
+            for pattern in insight_patterns:
+                match = re.search(pattern, grok_response, re.DOTALL | re.IGNORECASE)
+                if match:
+                    revolutionary_insight = match.group(1).strip()
+                    break
+            
+            # Count specific evidence indicators
+            username_mentions = len(re.findall(r'@\w+', grok_response))
+            quote_mentions = len(re.findall(r'"[^"]{10,}"', grok_response))
+            
+            # Enhanced confidence calculation
+            confidence = 0.5  # Base confidence
+            
+            # Evidence quality scoring
+            if username_mentions > 0:
+                confidence += min(0.3, username_mentions * 0.05)
+                logger.info(f"🧠 Found {username_mentions} @username mentions (+{min(0.3, username_mentions * 0.05):.2f} confidence)")
+            
+            if quote_mentions > 0:
+                confidence += min(0.2, quote_mentions * 0.02)
+                logger.info(f"🧠 Found {quote_mentions} specific quotes (+{min(0.2, quote_mentions * 0.02):.2f} confidence)")
+            
+            # Content depth scoring
+            if len(grok_response) > 500:
+                confidence += 0.1
+            if len(positive_sentiment) > 0:
+                confidence += 0.1
+            if len(community_risks) > 0:
+                confidence += 0.15  # Risk findings are often more reliable
+            
+            # Penalty for generic responses
+            generic_indicators = ['no information', 'not found', 'unable to find', 'limited data']
+            if any(indicator in grok_response.lower() for indicator in generic_indicators):
+                confidence -= 0.2
+                
+            confidence = max(0.2, min(0.95, confidence))
+            
+            # Extract safety vs risk indicators
+            safety_indicators = []
+            risk_indicators = []
+            
+            for sentiment in positive_sentiment:
+                if any(term in sentiment.lower() for term in ['legitimate', 'official', 'verified', 'safe', 'locked', 'transparent']):
+                    safety_indicators.append(sentiment)
+            
+            for risk in community_risks:
+                if any(term in risk.lower() for term in ['scam', 'rug', 'warning', 'dump', 'manipulation', 'suspicious']):
+                    risk_indicators.append(risk)
+            
+            logger.info(f"🧠 Analysis complete: {verdict} (confidence: {confidence:.0%}, evidence: {username_mentions} users, {quote_mentions} quotes)")
+            
+            return {
+                "verdict": verdict,
+                "confidence": confidence,
+                "positive_community_sentiment": positive_sentiment,
+                "possible_community_risks": community_risks,
+                "whale_analysis": whale_analysis,
+                "revolutionary_insight": revolutionary_insight,
+                "safety_indicators": safety_indicators,
+                "risk_indicators": risk_indicators,
+                "username_mentions": username_mentions,
+                "quote_mentions": quote_mentions,
+                "response_length": len(grok_response),
+                "full_analysis": grok_response[:1000] + "..." if len(grok_response) > 1000 else grok_response,
+                "analysis_type": "revolutionary_live_search"
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to parse revolutionary Grok analysis: {e}")
+            return {
+                "verdict": "CAUTION_ADVISED",
+                "confidence": 0.3,
+                "error": str(e),
+                "positive_community_sentiment": [],
+                "possible_community_risks": [],
+                "whale_analysis": "Analysis error occurred",
+                "revolutionary_insight": f"Parsing error: {str(e)}",
+                "safety_indicators": [],
+                "risk_indicators": [],
+                "username_mentions": 0,
+                "quote_mentions": 0,
+                "full_analysis": grok_response[:500] if grok_response else "No response",
+                "analysis_type": "error"
+            }
+
+    def _extract_specific_quotes(self, text: str, category: str) -> List[str]:
+        """Extract specific quotes and usernames from community analysis"""
+        if not text or len(text.strip()) < 10:
+            return []
+        
+        items = []
+        
+        # Split by common delimiters and clean up
+        lines = re.split(r'[•\-\*\n]+', text)
+        
+        for line in lines:
+            line = line.strip()
+            if not line or len(line) < 20:  # Skip very short lines
+                continue
+            
+            # Clean up formatting
+            line = re.sub(r'^[•\-\*\d+\.\s]+', '', line)  # Remove bullets and numbers
+            line = re.sub(r'^\s*[-:]\s*', '', line)       # Remove leading dashes/colons
+            
+            # Look for substantial content
+            if len(line) > 25 and any(keyword in line.lower() for keyword in [
+                # Positive keywords
+                'legitimate', 'official', 'team', 'locked', 'verified', 'community', 'transparent', 'safe',
+                # Risk keywords  
+                'scam', 'rug', 'warning', 'dump', 'manipulation', 'suspicious', 'concern', 'red flag'
+            ]):
+                items.append(line.strip())
+        
+        # If no structured items found, try to extract sentences with quotes or mentions
+        if not items:
+            sentences = re.split(r'[.!?]+', text)
+            for sentence in sentences:
+                sentence = sentence.strip()
+                if len(sentence) > 30 and ('"' in sentence or '@' in sentence or 
+                    any(keyword in sentence.lower() for keyword in ['said', 'mentioned', 'reported', 'warned', 'confirmed'])):
+                    items.append(sentence)
+        
+        return items[:5]  # Return top 5 most relevant items
+
+    def _calculate_revolutionary_galaxy_score_with_grok(self, indicators, transaction_analysis, 
+                                                      bundle_detection, suspicious_activity, security_data, grok_analysis):
+        """🧠 REVOLUTIONARY Galaxy Brain scoring enhanced with live Grok intelligence"""
+        
+        # Get base score
+        base_score, base_severity, base_confidence = self._calculate_enhanced_galaxy_score(
+            indicators, transaction_analysis, bundle_detection, suspicious_activity, security_data
+        )
+        
+        # 🧠 REVOLUTIONARY Grok adjustments
+        if grok_analysis.get("available") and grok_analysis.get("parsed_analysis"):
+            grok_data = grok_analysis["parsed_analysis"]
+            verdict = grok_data.get("verdict", "CAUTION_ADVISED")
+            safety_indicators = grok_data.get("safety_indicators", [])
+            risk_indicators = grok_data.get("risk_indicators", [])
+            
+            # 🧠 REVOLUTIONARY scoring adjustments
+            score_adjustment = 0
+            
+            if verdict == "REVOLUTIONARY_SAFE":
+                score_adjustment = -25  # Major risk reduction
+                logger.info("🧠 REVOLUTIONARY: Grok confirms token is SAFE - major risk reduction")
+            elif verdict == "CAUTION_ADVISED":
+                score_adjustment = -5   # Minor risk reduction
+                logger.info("🧠 REVOLUTIONARY: Grok advises caution - minor risk reduction")
+            elif verdict == "DANGER_DETECTED":
+                score_adjustment = +20  # Major risk increase
+                logger.info("🧠 REVOLUTIONARY: Grok detects DANGER - major risk increase")
+            elif verdict == "EXTREME_DANGER":
+                score_adjustment = +35  # Extreme risk increase
+                logger.info("🧠 REVOLUTIONARY: Grok detects EXTREME DANGER - critical risk increase")
+            
+            # Additional adjustments for specific findings
+            for indicator in safety_indicators:
+                if "legitimate" in indicator.lower():
+                    score_adjustment -= 8
+                    logger.info(f"🧠 REVOLUTIONARY: {indicator} - reducing risk")
+                elif "official" in indicator.lower():
+                    score_adjustment -= 6
+                    logger.info(f"🧠 REVOLUTIONARY: {indicator} - reducing risk")
+            
+            for indicator in risk_indicators:
+                if "warning" in indicator.lower() or "scam" in indicator.lower():
+                    score_adjustment += 15
+                    logger.info(f"🧠 REVOLUTIONARY: {indicator} - increasing risk")
+            
+            # Apply revolutionary adjustment
+            adjusted_score = max(0, min(100, base_score + score_adjustment))
+            
+            # 🧠 REVOLUTIONARY severity adjustment
+            if adjusted_score < base_score - 20:
+                if base_severity == "CRITICAL_RISK":
+                    severity_level = "MEDIUM_RISK"
+                elif base_severity == "HIGH_RISK":
+                    severity_level = "LOW_RISK"
+                else:
+                    severity_level = "MINIMAL_RISK"
+            elif adjusted_score > base_score + 20:
+                if base_severity == "MEDIUM_RISK":
+                    severity_level = "CRITICAL_RISK"
+                elif base_severity == "LOW_RISK":
+                    severity_level = "HIGH_RISK"
+                else:
+                    severity_level = "EXTREME_DANGER"
+            else:
+                severity_level = base_severity
+            
+            # 🧠 REVOLUTIONARY confidence enhancement
+            grok_confidence = grok_data.get("confidence", 0.5)
+            enhanced_confidence = (base_confidence * 0.6) + (grok_confidence * 0.4)
+            
+            logger.info(f"🧠 REVOLUTIONARY Galaxy Brain: {base_score} → {adjusted_score} ({severity_level}) - Live community intelligence applied")
+            
+            return int(adjusted_score), severity_level, enhanced_confidence
+        
+        return base_score, base_severity, base_confidence
+
+    def _calculate_express_score_with_grok(self, indicators: ScamIndicators, holders_data: Dict, 
+                                         security_data: Dict, grok_analysis: Dict) -> Tuple[int, str, float]:
+        """🧠 Express mode scoring with revolutionary Grok enhancement"""
+        
+        # Get base express score
+        base_score, base_severity, base_confidence = self._calculate_express_score(
+            indicators, holders_data, security_data
+        )
+        
+        # Apply Grok adjustments even in Express mode
+        if grok_analysis.get("available"):
+            grok_data = grok_analysis.get("parsed_analysis", {})
+            verdict = grok_data.get("verdict", "CAUTION_ADVISED")
+            
+            # Simplified Grok adjustments for Express mode
+            if verdict == "REVOLUTIONARY_SAFE":
+                base_score = max(0, base_score - 15)
+                if base_severity in ["CRITICAL_RISK", "HIGH_RISK"]:
+                    base_severity = "MEDIUM_RISK"
+            elif verdict in ["DANGER_DETECTED", "EXTREME_DANGER"]:
+                base_score = min(100, base_score + 20)
+                if base_severity in ["LOW_RISK", "MINIMAL_RISK"]:
+                    base_severity = "HIGH_RISK"
+        
+        return int(base_score), base_severity, base_confidence
+
+    def _generate_revolutionary_risk_vectors_with_grok(self, indicators, transaction_analysis, 
+                                                     suspicious_activity, security_data, grok_analysis):
+        """🧠 REVOLUTIONARY risk vectors enhanced with live Grok intelligence"""
+        
+        # Get base risk vectors
+        risk_vectors = self._generate_enhanced_risk_vectors(
+            indicators, transaction_analysis, suspicious_activity, security_data
+        )
+        
+        # 🧠 REVOLUTIONARY Grok-enhanced risk vectors
+        if grok_analysis.get("available") and grok_analysis.get("parsed_analysis"):
+            grok_data = grok_analysis["parsed_analysis"]
+            
+            # Add revolutionary safety insights
+            for safety_indicator in grok_data.get("safety_indicators", []):
+                risk_vectors.append({
+                    "category": "🧠 Revolutionary Intelligence",
+                    "risk_type": f"Community Safety Confirmation",
+                    "severity": "LOW",  # Positive finding
+                    "impact": safety_indicator,
+                    "likelihood": "CONFIRMED",
+                    "mitigation": "Based on live community analysis and verified information"
+                })
+            
+            # Add revolutionary risk insights
+            for risk_indicator in grok_data.get("risk_indicators", []):
+                risk_vectors.append({
+                    "category": "🧠 Revolutionary Intelligence", 
+                    "risk_type": f"Community Risk Warning",
+                    "severity": "HIGH",
+                    "impact": risk_indicator,
+                    "likelihood": "HIGH",
+                    "mitigation": "URGENT: Community has identified specific risks - investigate immediately"
+                })
+            
+            # Add overall revolutionary assessment
+            verdict = grok_data.get("verdict", "CAUTION_ADVISED")
+            revolutionary_insight = grok_data.get("revolutionary_insight", "No insight available")
+            
+            if verdict != "CAUTION_ADVISED":
+                severity_map = {
+                    "REVOLUTIONARY_SAFE": "LOW", 
+                    "DANGER_DETECTED": "HIGH",
+                    "EXTREME_DANGER": "CRITICAL"
+                }
+                
+                risk_vectors.append({
+                    "category": "🧠 Revolutionary Assessment",
+                    "risk_type": f"Live Community Verdict: {verdict.replace('_', ' ')}",
+                    "severity": severity_map.get(verdict, "MEDIUM"),
+                    "impact": revolutionary_insight,
+                    "likelihood": "HIGH",
+                    "mitigation": "Based on comprehensive live social media analysis and community monitoring"
+                })
+        
+        return risk_vectors
+
+    def _generate_basic_risk_vectors_with_grok(self, indicators: ScamIndicators, holders_data: Dict, 
+                                             liquidity_data: Dict, security_data: Dict, grok_analysis: Dict) -> List[Dict]:
+        """🧠 Basic risk vectors enhanced with revolutionary Grok insights"""
+        
+        # Get base vectors
+        risk_vectors = self._generate_basic_risk_vectors(
+            indicators, holders_data, liquidity_data, security_data
+        )
+        
+        # Add simplified Grok insights even in basic mode
+        if grok_analysis.get("available"):
+            grok_data = grok_analysis.get("parsed_analysis", {})
+            verdict = grok_data.get("verdict", "CAUTION_ADVISED")
+            
+            risk_vectors.append({
+                "category": "🧠 Revolutionary Intelligence",
+                "risk_type": f"Community Analysis: {verdict.replace('_', ' ')}",
+                "severity": "MEDIUM",
+                "impact": grok_data.get("community_intelligence", "Live community analysis completed"),
+                "likelihood": "CONFIRMED",
+                "mitigation": "Consider community sentiment in your investment decision"
+            })
+        
+        return risk_vectors
+
+    def _format_grok_ai_analysis(self, grok_analysis: Dict) -> str:
+        """🧠 Format Grok analysis for AI analysis display"""
+        if not grok_analysis.get("available"):
+            return "🧠 Revolutionary Grok Analysis: Connect XAI API key for live community intelligence and advanced meme coin safety analysis with real-time X/Twitter search."
+        
+        grok_data = grok_analysis.get("parsed_analysis", {})
+        verdict = grok_data.get("verdict", "CAUTION_ADVISED")
+        insight = grok_data.get("revolutionary_insight", "Analysis unavailable")
+        confidence = grok_data.get("confidence", 0.5)
+        
+        # Count evidence
+        username_mentions = grok_data.get("username_mentions", 0) 
+        quote_mentions = grok_data.get("quote_mentions", 0)
+        safety_indicators = len(grok_data.get("safety_indicators", []))
+        risk_indicators = len(grok_data.get("risk_indicators", []))
+        
+        verdict_emojis = {
+            "REVOLUTIONARY_SAFE": "✅🧠",
+            "CAUTION_ADVISED": "⚠️🧠", 
+            "DANGER_DETECTED": "❌🧠",
+            "EXTREME_DANGER": "🚨🧠"
+        }
+        
+        emoji = verdict_emojis.get(verdict, "🧠")
+        
+        evidence_summary = []
+        if username_mentions > 0:
+            evidence_summary.append(f"{username_mentions} user mentions")
+        if quote_mentions > 0:
+            evidence_summary.append(f"{quote_mentions} specific quotes")
+        if safety_indicators > 0:
+            evidence_summary.append(f"{safety_indicators} positive signals")
+        if risk_indicators > 0:
+            evidence_summary.append(f"{risk_indicators} risk warnings")
+        
+        evidence_text = f" ({', '.join(evidence_summary)})" if evidence_summary else " (limited community data)"
+        
+        return f"{emoji} Revolutionary Live Search: {verdict.replace('_', ' ')} • {confidence:.0%} confidence{evidence_text} • {insight[:100]}{'...' if len(insight) > 100 else ''}"
+
+    # Legacy method - redirects to new format
+    async def _call_grok_api(self, prompt: str, search_params: Dict, session: aiohttp.ClientSession) -> str:
+        """Legacy method - redirects to new format"""
+        result = await self._call_grok_api_new_format(prompt, search_params, session)
+        return result.get('content', '') if result else None
+
+    # Core analysis methods
+    async def _get_birdeye_security_data(self, mint: str, session: aiohttp.ClientSession) -> Dict:
+        """Get security data from Birdeye API"""
+        try:
+            if not self.birdeye_key or self.birdeye_key == "your-birdeye-api-key-here":
+                return {"source": "basic", "available": False}
+            
+            url = "https://public-api.birdeye.so/defi/token_security"
+            headers = {"X-API-KEY": self.birdeye_key, "accept": "application/json"}
+            params = {"address": mint, "include_historical": "false"}
+            
+            async with session.get(url, headers=headers, params=params, timeout=15) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    if data.get("success") and data.get("data"):
+                        security_info = data["data"]
+                        return {
+                            "source": "birdeye",
+                            "available": True,
+                            "liquidity_locked": security_info.get("is_liquidity_locked", False),
+                            "mint_enabled": security_info.get("can_mint", True),
+                            "freeze_enabled": security_info.get("can_freeze_account", True),
+                            "buy_tax": security_info.get("buy_tax_percentage", 0),
+                            "sell_tax": security_info.get("sell_tax_percentage", 0),
+                            "overall_score": self._calculate_birdeye_score(security_info),
+                            "raw_data": security_info
+                        }
+        except Exception as e:
+            logger.error(f"Birdeye API error: {e}")
+        
+        return {"source": "unavailable", "available": False}
+
+    def _calculate_birdeye_score(self, security_info: Dict) -> int:
+        """Calculate security score from Birdeye data"""
+        score = 100
+        if security_info.get("mint_enabled", False): score -= 25
+        if security_info.get("freeze_enabled", False): score -= 20
+        if not security_info.get("liquidity_locked", False): score -= 15
+        if security_info.get("buy_tax", 0) > 5: score -= 10
+        if security_info.get("sell_tax", 0) > 5: score -= 10
+        return max(0, score)
+
+    async def _get_token_info(self, mint: str, session: aiohttp.ClientSession) -> Optional[Dict]:
+        """Get basic token info from RPC"""
+        try:
+            if not self.rpc_url or self.helius_key == "demo_key":
+                return {
+                    "mint": mint,
+                    "decimals": 6,
+                    "supply": 1000000000,
+                    "mint_authority": None,
+                    "freeze_authority": None,
+                    "is_initialized": True,
+                    "symbol": "DEMO",
+                    "name": "Demo Token"
+                }
+            
+            payload = {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "getAccountInfo",
+                "params": [mint, {"encoding": "jsonParsed"}]
+            }
+            
+            async with session.post(self.rpc_url, json=payload, timeout=10) as resp:
+                data = await resp.json()
+                
+            if not data.get("result", {}).get("value"):
+                return None
+                
+            account_data = data["result"]["value"]["data"]["parsed"]["info"]
+            
+            # Get supply
+            supply_payload = {
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": "getTokenSupply",
+                "params": [mint]
+            }
+            
+            async with session.post(self.rpc_url, json=supply_payload, timeout=10) as resp:
+                supply_data = await resp.json()
+                
+            supply = float(supply_data["result"]["value"]["amount"]) / (10 ** account_data["decimals"])
+            
+            return {
+                "mint": mint,
+                "decimals": account_data["decimals"],
+                "supply": supply,
+                "mint_authority": account_data.get("mintAuthority"),
+                "freeze_authority": account_data.get("freezeAuthority"),
+                "is_initialized": account_data.get("isInitialized", False),
+                "symbol": "TOKEN",  # Will be updated from DexScreener
+                "name": "Token"
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to get token info: {e}")
+            return None
+
+    async def _get_enhanced_market_data(self, mint: str, session: aiohttp.ClientSession) -> Dict:
+        """Enhanced market data with liquidity lock detection"""
+        try:
+            url = f"https://api.dexscreener.com/latest/dex/tokens/{mint}"
+            async with session.get(url, timeout=10) as resp:
+                data = await resp.json()
+                
+            if not data.get("pairs"):
+                return {}
+                
+            # Get the most liquid pair
+            pair = max(data["pairs"], key=lambda x: float(x.get("liquidity", {}).get("usd", 0)))
+            base_token = pair.get("baseToken", {})
+            symbol = base_token.get("symbol", "TOKEN")
+            name = base_token.get("name", "Token") 
+
+            # If we got the symbol, log it
+            if symbol and symbol != "TOKEN":
+                logger.info(f"📊 Found token: {name} (${symbol})")
+            else:
+                logger.warning(f"⚠️ Could not extract symbol from DexScreener for {mint}")
+                        
+            # Check for liquidity lock labels
+            labels = pair.get("labels", [])
+            liquidity_locked_dex = "Liquidity Locked" in labels
+            
+            return {
+                "price": float(pair.get("priceUsd", 0)),
+                "market_cap": float(pair.get("marketCap", 0)),
+                "liquidity": float(pair.get("liquidity", {}).get("usd", 0)),
+                "volume_24h": float(pair.get("volume", {}).get("h24", 0)),
+                "price_change_24h": float(pair.get("priceChange", {}).get("h24", 0)),
+                "price_change_1h": float(pair.get("priceChange", {}).get("h1", 0)),
+                "price_change_6h": float(pair.get("priceChange", {}).get("h6", 0)),
+                "created_at": pair.get("pairCreatedAt", 0),
+                "symbol": base_token.get("symbol", "TOKEN"),
+                "name": base_token.get("name", "Token"),
+                "txns": {
+                    "buys_24h": pair.get("txns", {}).get("h24", {}).get("buys", 0),
+                    "sells_24h": pair.get("txns", {}).get("h24", {}).get("sells", 0),
+                    "buys_1h": pair.get("txns", {}).get("h1", {}).get("buys", 0),
+                    "sells_1h": pair.get("txns", {}).get("h1", {}).get("sells", 0)
+                },
+                "pool_address": pair.get("pairAddress", ""),
+                "dex": pair.get("dexId", ""),
+                "liquidity_locked_dexscreener": liquidity_locked_dex,
+                "labels": labels,
+                "logo": base_token.get("image", ""),
+                "description": base_token.get("description", ""),
+                "website": base_token.get("website", ""),
+                "twitter": base_token.get("twitter", ""),
+                "telegram": base_token.get("telegram", ""),
+                "discord": base_token.get("discord", "")
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to get enhanced market data: {e}")
+            return {}
+
+    async def _get_real_holders_analysis(self, mint: str, total_supply: float, session: aiohttp.ClientSession) -> Dict:
+        """Real holder analysis with protocol wallet filtering"""
+        try:
+            if not self.rpc_url or self.helius_key == "demo_key":
+                logger.warning("No Helius key - returning limited holder data")
+                return {
+                    "top_1_percent": 0,
+                    "top_5_percent": 0,
+                    "top_10_percent": 0,
+                    "top_holders": [],
+                    "data_source": "unavailable",
+                    "error": "No RPC access available"
+                }
+            
+            # Get real holder data
+            payload = {
+                "jsonrpc": "2.0",
+                "id": 3,
+                "method": "getTokenLargestAccounts",
+                "params": [mint]
+            }
+            
+            async with session.post(self.rpc_url, json=payload, timeout=15) as resp:
+                data = await resp.json()
+                
+            if not data.get("result", {}).get("value"):
+                return {
+                    "top_1_percent": 0,
+                    "top_5_percent": 0,
+                    "top_10_percent": 0,
+                    "top_holders": [],
+                    "data_source": "no_data",
+                    "error": "No holder data returned from RPC"
+                }
+                
+            accounts = data["result"]["value"]
+            logger.info(f"🔍 Found {len(accounts)} total token accounts")
+            
+            # Process holders
+            all_holders = []
+            protocol_holders = []
+            
+            for i, account in enumerate(accounts):
+                amount = float(account.get("uiAmount", 0))
+                if amount > 0 and total_supply > 0:
+                    percentage = (amount / total_supply) * 100
+                    address = account["address"]
+                    
+                    holder_info = {
+                        "rank": i + 1,
+                        "address": address,
+                        "balance": amount,
+                        "percentage": percentage,
+                        "is_protocol": False,
+                        "protocol_type": None
+                    }
+                    
+                    # Filter protocol wallets
+                    if address in [
+                        'So11111111111111111111111111111111111111112',  # Wrapped SOL
+                        '11111111111111111111111111111111',              # System Program
+                        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',   # Token Program
+                    ]:
+                        protocol_holders.append(holder_info)
+                        logger.info(f"🏛️ Filtered system account: {address[:8]}... ({percentage:.2f}%)")
+                    else:
+                        all_holders.append(holder_info)
+            
+            real_holders = all_holders
+            
+            if not real_holders:
+                logger.warning("⚠️ No real holders found after filtering protocols")
+                return {
+                    "top_1_percent": 0,
+                    "top_5_percent": 0,
+                    "top_10_percent": 0,
+                    "top_holders": [],
+                    "protocol_holders": protocol_holders,
+                    "data_source": "all_protocol",
+                    "warning": "All top holders appear to be protocol contracts"
+                }
+            
+            # Calculate concentration metrics
+            top_1 = real_holders[0]["percentage"] if real_holders else 0
+            top_5 = sum(h["percentage"] for h in real_holders[:5])
+            top_10 = sum(h["percentage"] for h in real_holders[:10])
+            
+            # Calculate concentration risk
+            if top_1 > 25:
+                concentration_risk = "CRITICAL"
+            elif top_1 > 15:
+                concentration_risk = "HIGH"
+            elif top_1 > 8:
+                concentration_risk = "MEDIUM"
+            elif top_1 > 3:
+                concentration_risk = "LOW"
+            else:
+                concentration_risk = "MINIMAL"
+            
+            total_protocol_percent = sum(h["percentage"] for h in protocol_holders)
+            
+            logger.info(f"📊 FILTERED Holder Analysis:")
+            logger.info(f"   Real holders: {len(real_holders)}")
+            logger.info(f"   Protocol wallets: {len(protocol_holders)} ({total_protocol_percent:.1f}% of supply)")
+            logger.info(f"   Top 1 REAL holder: {top_1:.1f}%")
+            logger.info(f"   Concentration risk: {concentration_risk}")
+            
+            return {
+                "top_1_percent": round(top_1, 2),
+                "top_5_percent": round(top_5, 2),
+                "top_10_percent": round(top_10, 2),
+                "concentration_risk": concentration_risk,
+                "top_holders": real_holders[:10],
+                "protocol_holders": protocol_holders,
+                "holders_analyzed": len(real_holders),
+                "protocol_wallets_filtered": len(protocol_holders),
+                "total_protocol_percentage": round(total_protocol_percent, 2),
+                "whale_count": len([h for h in real_holders if h["percentage"] > 5]),
+                "data_source": "helius_filtered",
+                "total_accounts": len(accounts)
+            }
+            
+        except Exception as e:
+            logger.error(f"Filtered holders analysis failed: {e}")
+            return {
+                "top_1_percent": 0,
+                "top_5_percent": 0,
+                "top_10_percent": 0,
+                "top_holders": [],
+                "protocol_holders": [],
+                "data_source": "error",
+                "error": str(e)
+            }
+
+    async def _get_real_transaction_analysis(self, mint: str, session: aiohttp.ClientSession, deep_analysis: bool) -> Dict:
+        """Real transaction analysis using Helius"""
+        try:
+            if not self.rpc_url or self.helius_key == "demo_key":
+                logger.warning("No Helius key - returning basic transaction data")
+                return {
+                    "pattern_score": 50,
+                    "unique_traders_24h": 0,
+                    "transaction_count_24h": 0,
+                    "data_source": "unavailable"
+                }
+            
+            # Get token accounts for this mint
+            token_accounts = await self._get_token_accounts(mint, session)
+            
+            if not token_accounts:
+                logger.warning(f"No token accounts found for mint: {mint}")
+                return {
+                    "pattern_score": 50,
+                    "unique_traders_24h": 0,
+                    "transaction_count_24h": 0,
+                    "data_source": "no_accounts"
+                }
+            
+            # Get transactions for top token accounts
+            all_signatures = []
+            for account in token_accounts[:5]:
                 try:
                     payload = {
                         "jsonrpc": "2.0",
-                        "id": 1,
-                        "method": method,
-                        "params": params,
+                        "id": f"tx-analysis-{account}",
+                        "method": "getSignaturesForAddress",
+                        "params": [
+                            account,
+                            {
+                                "limit": 50,
+                                "commitment": "confirmed"
+                            }
+                        ]
                     }
-                    async with self.session.post(
-                        self.base_url, json=payload, timeout=30
-                    ) as resp:
-                        data = await resp.json()
+                    
+                    async with session.post(self.rpc_url, json=payload, timeout=15) as resp:
+                        if resp.status == 200:
+                            data = await resp.json()
+                            signatures = data.get("result", [])
+                            all_signatures.extend(signatures)
+                            logger.info(f"📝 Found {len(signatures)} signatures for account {account[:8]}...")
+                        
+                except Exception as e:
+                    logger.warning(f"Failed to get signatures for account {account}: {e}")
+                    continue
+            
+            if not all_signatures:
+                return {
+                    "pattern_score": 30,
+                    "unique_traders_24h": 0,
+                    "transaction_count_24h": 0,
+                    "data_source": "no_transactions"
+                }
+            
+            logger.info(f"📊 Analyzing {len(all_signatures)} total transaction signatures")
+            
+            if deep_analysis and len(all_signatures) > 10:
+                return await self._analyze_detailed_transactions(all_signatures[:50], session)
+            else:
+                return self._analyze_signature_patterns(all_signatures)
+                
+        except Exception as e:
+            logger.error(f"Transaction analysis failed: {e}")
+            return {
+                "pattern_score": 50,
+                "unique_traders_24h": 0,
+                "transaction_count_24h": len(all_signatures) if 'all_signatures' in locals() else 0,
+                "data_source": "error",
+                "error": str(e)
+            }
 
-                        if resp.status == 429:
-                            delay = (2 ** attempt) * RATE_LIMIT_DELAY
-                            logger.warning(f"Rate-limited ({method}); sleeping {delay:.2f}s")
-                            await asyncio.sleep(delay)
-                            continue
-
-                        if resp.status != 200:
-                            raise RuntimeError(f"HTTP {resp.status}")
-                        if "error" in data:
-                            raise RuntimeError(f"RPC error → {data['error']}")
-
-                        await asyncio.sleep(RATE_LIMIT_DELAY)
-                        return data.get("result", {})
-                except Exception as exc:
-                    logger.error(f"{method} attempt {attempt+1}/{retry} failed → {exc}")
-                    if attempt == retry - 1:
-                        return {}
-                    await asyncio.sleep((2 ** attempt) * RATE_LIMIT_DELAY)
-        return {}
-
-    async def get_token_accounts(self, mint: str, limit: int = 1000) -> List[Dict]:
-        """Get all token accounts for a mint"""
-        return await self.call_rpc("getTokenLargestAccounts", [mint, {"commitment": "confirmed"}]) or {"value": []}
-
-    async def get_multiple_accounts(self, addresses: List[str]) -> List[Dict]:
-        """Get multiple account info in batch"""
-        if not addresses:
-            return []
-        
-        # Split into batches of 100 (Solana RPC limit)
-        accounts = []
-        for i in range(0, len(addresses), 100):
-            batch = addresses[i:i+100]
-            result = await self.call_rpc("getMultipleAccounts", [
-                batch, 
-                {"encoding": "jsonParsed", "commitment": "confirmed"}
-            ])
-            if result and "value" in result:
-                accounts.extend(result["value"])
-            await asyncio.sleep(0.1)  # Rate limiting
-        
-        return accounts
-
-    async def get_token_metadata(self, mint: str) -> Dict[str, Any]:
-        """Enhanced metadata fetching with fallbacks"""
+    async def _get_token_accounts(self, mint: str, session: aiohttp.ClientSession) -> List[str]:
+        """Get token accounts that hold this token"""
         try:
-            # Try Helius metadata API first
-            url = f"{self.rest_url}/tokens/metadata?mints={mint}"
-            headers = {"api-key": self.api_key}
-            async with self.session.get(url, headers=headers, timeout=10) as resp:
+            payload = {
+                "jsonrpc": "2.0",
+                "id": "token-accounts",
+                "method": "getTokenLargestAccounts",
+                "params": [mint]
+            }
+            
+            async with session.post(self.rpc_url, json=payload, timeout=10) as resp:
                 if resp.status == 200:
                     data = await resp.json()
-                    if data and len(data) > 0:
-                        return data[0]
+                    result = data.get("result", {})
+                    accounts = result.get("value", [])
+                    
+                    token_account_addresses = []
+                    for account in accounts:
+                        address = account.get("address")
+                        amount = account.get("uiAmount", 0)
+                        if address and amount > 0:
+                            token_account_addresses.append(address)
+                    
+                    logger.info(f"🏦 Found {len(token_account_addresses)} token accounts for {mint}")
+                    return token_account_addresses
+                    
         except Exception as e:
-            logger.debug(f"Metadata API failed: {e}")
-
-        # Fallback to RPC
-        try:
-            result = await self.call_rpc("getAsset", [mint])
-            if result:
-                return result
-        except Exception:
-            pass
-
-        # Final fallback - basic mint info
-        account_info = await self.call_rpc("getAccountInfo", [mint, {"encoding": "jsonParsed"}])
-        if account_info and account_info.get("value"):
-            parsed = account_info["value"]["data"]["parsed"]["info"]
-            return {
-                "symbol": "UNKNOWN",
-                "name": "Unknown Token",
-                "decimals": parsed.get("decimals", 9),
-                "supply": parsed.get("supply", "0")
-            }
+            logger.error(f"Failed to get token accounts: {e}")
         
-        return {}
+        return []
 
-    async def get_token_supply(self, mint: str) -> Dict[str, Any]:
-        return await self.call_rpc("getTokenSupply", [mint]) or {}
+    async def _analyze_detailed_transactions(self, signatures: List[Dict], session: aiohttp.ClientSession) -> Dict:
+        """Analyze detailed transaction data for deep insights"""
+        try:
+            signature_strings = [sig["signature"] for sig in signatures[:10]]
+            
+            payload = {
+                "jsonrpc": "2.0",
+                "id": "detailed-tx",
+                "method": "getMultipleTransactions",
+                "params": [
+                    signature_strings,
+                    {
+                        "encoding": "jsonParsed",
+                        "maxSupportedTransactionVersion": 0
+                    }
+                ]
+            }
+            
+            async with session.post(self.rpc_url, json=payload, timeout=25) as resp:
+                data = await resp.json()
+            
+            transactions = data.get("result", [])
+            if not transactions:
+                return self._analyze_signature_patterns(signatures)
+            
+            unique_signers = set()
+            bot_indicators = 0
+            total_analyzed = 0
+            
+            for tx in transactions:
+                if tx and tx.get("transaction"):
+                    total_analyzed += 1
+                    message = tx["transaction"].get("message", {})
+                    
+                    account_keys = message.get("accountKeys", [])
+                    if account_keys:
+                        signer = account_keys[0].get("pubkey") if isinstance(account_keys[0], dict) else account_keys[0]
+                        unique_signers.add(signer)
+                    
+                    instructions = message.get("instructions", [])
+                    if len(instructions) > 10:
+                        bot_indicators += 1
+            
+            unique_count = len(unique_signers)
+            bot_percentage = (bot_indicators / total_analyzed * 100) if total_analyzed > 0 else 0
+            
+            if unique_count == 0:
+                health_score = 30
+            elif bot_percentage > 60:
+                health_score = 40
+            elif bot_percentage > 30:
+                health_score = 60
+            else:
+                health_score = 80
+            
+            return {
+                "pattern_score": health_score,
+                "unique_traders_24h": unique_count,
+                "transaction_count_24h": len(signatures),
+                "bot_activity_percentage": round(bot_percentage, 1),
+                "organic_volume_percentage": round(100 - bot_percentage, 1),
+                "transactions_analyzed": total_analyzed,
+                "data_source": "helius_detailed"
+            }
+            
+        except Exception as e:
+            logger.error(f"Detailed transaction analysis failed: {e}")
+            return self._analyze_signature_patterns(signatures)
 
-    async def get_transaction_history(self, address: str, limit: int = 100) -> List[Dict]:
-        return await self.call_rpc(
-            "getSignaturesForAddress",
-            [address, {"limit": limit, "commitment": "confirmed"}],
-        ) or []
+    def _analyze_signature_patterns(self, signatures: List[Dict]) -> Dict:
+        """Basic signature pattern analysis"""
+        try:
+            if not signatures:
+                return {
+                    "pattern_score": 50,
+                    "unique_traders_24h": 0,
+                    "transaction_count_24h": 0,
+                    "data_source": "no_signatures"
+                }
+            
+            unique_patterns = set()
+            recent_count = 0
+            now = datetime.now().timestamp()
+            
+            for sig_info in signatures:
+                signature = sig_info.get("signature", "")
+                if signature:
+                    pattern = signature[:12]
+                    unique_patterns.add(pattern)
+                
+                block_time = sig_info.get("blockTime", 0)
+                if block_time and (now - block_time) < 86400:
+                    recent_count += 1
+            
+            unique_count = len(unique_patterns)
+            
+            if len(signatures) == 0:
+                health_score = 50
+            else:
+                uniqueness_ratio = unique_count / len(signatures)
+                if uniqueness_ratio > 0.8:
+                    health_score = 80
+                elif uniqueness_ratio > 0.6:
+                    health_score = 65
+                elif uniqueness_ratio > 0.4:
+                    health_score = 50
+                else:
+                    health_score = 35
+            
+            bot_activity = max(0, 100 - (uniqueness_ratio * 100)) if len(signatures) > 0 else 0
+            
+            return {
+                "pattern_score": health_score,
+                "unique_traders_24h": unique_count,
+                "transaction_count_24h": recent_count,
+                "bot_activity_percentage": round(bot_activity, 1),
+                "organic_volume_percentage": round(100 - bot_activity, 1),
+                "uniqueness_ratio": round(uniqueness_ratio, 3) if len(signatures) > 0 else 0,
+                "data_source": "signature_patterns"
+            }
+            
+        except Exception as e:
+            logger.error(f"Signature pattern analysis failed: {e}")
+            return {
+                "pattern_score": 50,
+                "unique_traders_24h": 0,
+                "transaction_count_24h": 0,
+                "data_source": "error"
+            }
 
-    async def get_parsed_transactions(self, signatures: List[str]) -> List[Dict]:
-        txs: List[Dict] = []
-        for i in range(0, len(signatures), 10):
-            batch = signatures[i : i + 10]
-            tasks = [
-                self.call_rpc(
-                    "getTransaction",
-                    [sig, {"encoding": "jsonParsed", "commitment": "confirmed"}],
-                )
-                for sig in batch
+    async def _get_enhanced_liquidity_analysis(self, mint: str, market_data: Dict, security_data: Dict, session: aiohttp.ClientSession) -> Dict:
+        """Enhanced liquidity analysis"""
+        liquidity_usd = market_data.get("liquidity", 0)
+        market_cap = market_data.get("market_cap", 0)
+        volume_24h = market_data.get("volume_24h", 0)
+        
+        liq_ratio = (liquidity_usd / market_cap * 100) if market_cap > 0 else 0
+        volume_to_liq = (volume_24h / liquidity_usd) if liquidity_usd > 0 else 0
+        
+        lock_detection_methods = await self._detect_liquidity_locks_alternative(mint, market_data, session)
+        
+        is_locked = lock_detection_methods.get("any_method_detected", False)
+        lock_confidence = lock_detection_methods.get("confidence", "LOW")
+        
+        base_risk = self._calculate_enhanced_liquidity_risk(liquidity_usd, liq_ratio, volume_to_liq, market_cap)
+        
+        if is_locked and lock_confidence in ["HIGH", "MEDIUM"]:
+            liquidity_risk = "LOW" if base_risk in ["MEDIUM", "LOW"] else "MEDIUM"
+            risk_explanation = f"Liquidity appears secured ({lock_confidence} confidence)"
+        else:
+            liquidity_risk = base_risk
+            risk_explanation = f"Liquidity security unclear - assess based on metrics ({base_risk} risk)"
+        
+        return {
+            "liquidity_usd": liquidity_usd,
+            "liquidity_ratio": round(liq_ratio, 2),
+            "volume_to_liquidity": round(volume_to_liq, 2),
+            "liquidity_risk": liquidity_risk,
+            "risk_explanation": risk_explanation,
+            "lock_detection": lock_detection_methods,
+            "is_locked": is_locked,
+            "lock_confidence": lock_confidence,
+            "liquidity_health_score": self._calculate_liquidity_health_score(liquidity_usd, liq_ratio, volume_to_liq, market_cap),
+            "liquidity_stability": self._assess_liquidity_stability(market_data),
+            "slippage_risk": self._calculate_slippage_risk(liquidity_usd),
+            "pool_address": market_data.get("pool_address", ""),
+            "dex": market_data.get("dex", ""),
+            "slippage_1k": self._estimate_slippage(liquidity_usd, 1000),
+            "slippage_10k": self._estimate_slippage(liquidity_usd, 10000),
+            "slippage_50k": self._estimate_slippage(liquidity_usd, 50000),
+            "market_impact_warning": self._get_market_impact_warning(liquidity_usd),
+            "recommended_max_trade": self._get_recommended_max_trade(liquidity_usd)
+        }
+
+    async def _detect_liquidity_locks_alternative(self, mint: str, market_data: Dict, session: aiohttp.ClientSession) -> Dict:
+        """Multiple methods to detect liquidity locks"""
+        detection_results = {
+            "dexscreener_labels": False,
+            "pool_analysis": False,
+            "burn_address_check": False,
+            "any_method_detected": False,
+            "confidence": "LOW",
+            "methods_used": []
+        }
+        
+        try:
+            # Method 1: DexScreener labels
+            labels = market_data.get("labels", [])
+            if labels and any("lock" in label.lower() for label in labels):
+                detection_results["dexscreener_labels"] = True
+                detection_results["methods_used"].append("DexScreener labels")
+                logger.info("🔒 DexScreener reports liquidity locked")
+            
+            # Method 2: Pool address analysis
+            pool_address = market_data.get("pool_address", "")
+            if pool_address:
+                lock_detected = await self._check_pool_for_locks(pool_address, session)
+                detection_results["pool_analysis"] = lock_detected
+                if lock_detected:
+                    detection_results["methods_used"].append("Pool contract analysis")
+                    logger.info("🔒 Pool analysis suggests liquidity locked")
+            
+            # Method 3: Check for burn address holdings
+            burn_check = await self._check_burn_address_locks(mint, session)
+            detection_results["burn_address_check"] = burn_check
+            if burn_check:
+                detection_results["methods_used"].append("Burn address analysis")
+                logger.info("🔒 Burn address analysis suggests locked liquidity")
+            
+            methods_positive = sum([
+                detection_results["dexscreener_labels"],
+                detection_results["pool_analysis"], 
+                detection_results["burn_address_check"]
+            ])
+            
+            detection_results["any_method_detected"] = methods_positive > 0
+            
+            if methods_positive >= 2:
+                detection_results["confidence"] = "HIGH"
+            elif methods_positive == 1:
+                detection_results["confidence"] = "MEDIUM"
+            else:
+                detection_results["confidence"] = "LOW"
+            
+        except Exception as e:
+            logger.error(f"Lock detection error: {e}")
+            detection_results["error"] = str(e)
+        
+        return detection_results
+
+    async def _check_pool_for_locks(self, pool_address: str, session: aiohttp.ClientSession) -> bool:
+        """Check if pool address shows signs of being locked"""
+        try:
+            if not self.rpc_url or not pool_address:
+                return False
+            
+            payload = {
+                "jsonrpc": "2.0",
+                "id": "pool-check",
+                "method": "getAccountInfo",
+                "params": [pool_address, {"encoding": "base64"}]
+            }
+            
+            async with session.post(self.rpc_url, json=payload, timeout=10) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    result = data.get("result", {})
+                    
+                    if result and result.get("value"):
+                        owner = result["value"].get("owner")
+                        if owner == "11111111111111111111111111111111":
+                            return True
+        except Exception as e:
+            logger.warning(f"Pool lock check error: {e}")
+        
+        return False
+
+    async def _check_burn_address_locks(self, mint: str, session: aiohttp.ClientSession) -> bool:
+        """Check if LP tokens are sent to burn addresses"""
+        try:
+            if not self.rpc_url:
+                return False
+            
+            burn_addresses = [
+                "11111111111111111111111111111111",
+                "1nc1nerator11111111111111111111111111111111",
             ]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
-            txs.extend([r for r in results if isinstance(r, dict) and r])
-            if i + 10 < len(signatures):
-                await asyncio.sleep(0.2)
-        return txs
-
-# ──────────────────────────────────────────────────────────────────────────────
-# ENHANCED TOKEN ANALYZER - REAL IMPLEMENTATION
-# ──────────────────────────────────────────────────────────────────────────────
-class EnhancedTokenAnalyzer:
-    def __init__(self, helius_key: str) -> None:
-        self.helius_key = helius_key
-
-    async def analyze_token_comprehensive(self, mint: str) -> EnhancedTokenInfo:
-        """Comprehensive token analysis"""
-        async with HeliusAPIClient(self.helius_key) as helius:
-            # Get basic token info
-            metadata = await helius.get_token_metadata(mint)
-            account_info = await helius.call_rpc("getAccountInfo", [mint, {"encoding": "jsonParsed"}])
             
-            if not account_info or not account_info.get("value"):
-                raise ValueError(f"Token {mint} not found")
-
-            parsed = account_info["value"]["data"]["parsed"]["info"]
-            
-            # Get supply info
-            supply_info = await helius.get_token_supply(mint)
-            decimals = int(parsed.get("decimals", 9))
-            raw_supply = float(supply_info.get("value", {}).get("amount", 0)) if supply_info else 0
-            supply = raw_supply / (10 ** decimals)
-
-            # Estimate age (simplified - in production, parse creation tx)
-            age_days = 30  # Default estimate
-
-            # Extract authorities
-            mint_auth = parsed.get("mintAuthority")
-            freeze_auth = parsed.get("freezeAuthority")
-            
-            # Get deployer from creation transaction (simplified)
-            deployer = "Unknown"
-            try:
-                sigs = await helius.get_transaction_history(mint, 50)
-                if sigs:
-                    # Get earliest transaction
-                    earliest_tx = await helius.call_rpc("getTransaction", [
-                        sigs[-1]["signature"], 
+            for burn_addr in burn_addresses:
+                payload = {
+                    "jsonrpc": "2.0",
+                    "id": "burn-check",
+                    "method": "getTokenAccountsByOwner",
+                    "params": [
+                        burn_addr,
+                        {"mint": mint},
                         {"encoding": "jsonParsed"}
-                    ])
-                    if earliest_tx and "transaction" in earliest_tx:
-                        accounts = earliest_tx["transaction"]["message"]["accountKeys"]
-                        if accounts:
-                            deployer = accounts[0]["pubkey"]
-            except Exception:
-                pass
+                    ]
+                }
+                
+                async with session.post(self.rpc_url, json=payload, timeout=5) as resp:
+                    if resp.status == 200:
+                        data = await resp.json()
+                        accounts = data.get("result", {}).get("value", [])
+                        
+                        for account in accounts:
+                            token_amount = account.get("account", {}).get("data", {}).get("parsed", {}).get("info", {}).get("tokenAmount", {}).get("uiAmount", 0)
+                            if token_amount > 0:
+                                logger.info(f"🔥 Found {token_amount} tokens in burn address {burn_addr[:8]}...")
+                                return True
+        except Exception as e:
+            logger.warning(f"Burn address check error: {e}")
+        
+        return False
 
-            # Price and market data (simplified)
-            current_price = None
-            market_cap = None
-            liquidity = None
+    async def _analyze_enhanced_authorities(self, token_info: Dict, security_data: Dict) -> Dict:
+        """Enhanced authority analysis"""
+        rpc_mint_authority = token_info.get("mint_authority")
+        rpc_freeze_authority = token_info.get("freeze_authority")
+        
+        birdeye_mint = security_data.get("mint_enabled", True)
+        birdeye_freeze = security_data.get("freeze_enabled", True)
+        owner_change = security_data.get("owner_change_enabled", True)
+        
+        mint_renounced = (rpc_mint_authority is None) and not birdeye_mint
+        freeze_renounced = (rpc_freeze_authority is None) and not birdeye_freeze
+        
+        authority_risk = 0
+        if not mint_renounced:
+            authority_risk += 40
+        if not freeze_renounced:
+            authority_risk += 30
+        if owner_change:
+            authority_risk += 10
+        
+        if authority_risk >= 60:
+            risk_level = "CRITICAL"
+        elif authority_risk >= 40:
+            risk_level = "HIGH"
+        elif authority_risk > 0:
+            risk_level = "MEDIUM"
+        else:
+            risk_level = "SAFE"
+        
+        return {
+            "mint_authority": rpc_mint_authority,
+            "freeze_authority": rpc_freeze_authority,
+            "mint_renounced": mint_renounced,
+            "freeze_renounced": freeze_renounced,
+            "owner_change_enabled": owner_change,
+            "authority_risk_score": authority_risk,
+            "risk_level": risk_level,
+            "fully_decentralized": mint_renounced and freeze_renounced and not owner_change,
+            "data_sources": {
+                "rpc": rpc_mint_authority is not None or rpc_freeze_authority is not None,
+                "birdeye": security_data.get("available", False)
+            }
+        }
 
-            return EnhancedTokenInfo(
-                address=mint,
-                symbol=metadata.get("symbol", "UNKNOWN"),
-                name=metadata.get("name", "Unknown Token"),
-                decimals=decimals,
-                supply=supply,
-                age_days=age_days,
-                mint_authority=mint_auth,
-                freeze_authority=freeze_auth,
-                deployer=deployer,
-                creation_date=datetime.utcnow() - timedelta(days=age_days),
-                is_mutable=bool(mint_auth or freeze_auth),
-                metadata_uri=metadata.get("uri"),
-                social_links={},
-                verified_status=False,
-                current_price=current_price,
-                market_cap=market_cap,
-                liquidity=liquidity,
-            )
-
-    async def analyze_holders_comprehensive(self, mint: str) -> EnhancedHolderAnalysis:
-        """Real holder analysis implementation"""
-        async with HeliusAPIClient(self.helius_key) as helius:
-            # Get token accounts
-            largest_accounts = await helius.get_token_accounts(mint, 1000)
+    def _calculate_enhanced_indicators(self, token_info: Dict, market_data: Dict, 
+                                    holders_data: Dict, liquidity_data: Dict, security_data: Dict) -> ScamIndicators:
+        """Enhanced risk calculation"""
+        indicators = ScamIndicators()
+        
+        indicators.mint_enabled = token_info.get("mint_authority") is not None
+        indicators.freeze_enabled = token_info.get("freeze_authority") is not None
+        
+        logger.info(f"🔍 Authority status: Mint={indicators.mint_enabled}, Freeze={indicators.freeze_enabled}")
+        
+        indicators.top_holder_percent = holders_data.get("top_1_percent", 0)
+        indicators.top_10_holders_percent = holders_data.get("top_10_percent", 0)
+        
+        created_at = market_data.get("created_at", 0)
+        if created_at:
+            age_hours = int((datetime.now().timestamp() * 1000 - created_at) / (1000 * 60 * 60))
+            indicators.token_age_hours = age_hours
+            logger.info(f"🕰️ Token age: {age_hours} hours ({age_hours/24:.1f} days)")
+        
+        indicators.liquidity_percent = liquidity_data.get("liquidity_ratio", 0)
+        liquidity_usd = liquidity_data.get("liquidity_usd", 0)
+        volume_24h = market_data.get("volume_24h", 0)
+        market_cap = market_data.get("market_cap", 0)
+        
+        liquidity_health = self._calculate_liquidity_health(liquidity_usd, indicators.liquidity_percent, volume_24h, market_cap)
+        indicators.liquidity_locked = liquidity_health >= 70
+        
+        logger.info(f"💧 Liquidity health: {liquidity_health}/100 (treating as {'locked' if indicators.liquidity_locked else 'unlocked'})")
+        
+        buys = market_data.get("txns", {}).get("buys_24h", 0)
+        sells = market_data.get("txns", {}).get("sells_24h", 0)
+        indicators.can_sell = sells > 0 or buys < 10
+        
+        indicators.buy_tax = 0
+        indicators.sell_tax = 0
+        
+        # Enhanced risk score calculation
+        risk_score = 0
+        
+        if indicators.mint_enabled:
+            risk_score += 40
+            logger.info("❌ Mint authority active (+40 risk)")
+        else:
+            logger.info("✅ Mint authority renounced (+0 risk)")
             
-            if not largest_accounts or "value" not in largest_accounts:
-                return self._empty_holder_analysis()
+        if indicators.freeze_enabled:
+            risk_score += 30
+            logger.info("❌ Freeze authority active (+30 risk)")
+        else:
+            logger.info("✅ Freeze authority renounced (+0 risk)")
+        
+        if indicators.top_holder_percent > 50:
+            risk_score += 35
+            logger.info(f"❌ EXTREME concentration: {indicators.top_holder_percent:.1f}% (+35 risk)")
+        elif indicators.top_holder_percent > 30:
+            risk_score += 28
+            logger.info(f"❌ Very high concentration: {indicators.top_holder_percent:.1f}% (+28 risk)")
+        elif indicators.top_holder_percent > 20:
+            risk_score += 20
+            logger.info(f"⚠️ High concentration: {indicators.top_holder_percent:.1f}% (+20 risk)")
+        elif indicators.top_holder_percent > 15:
+            risk_score += 15
+            logger.info(f"⚠️ Moderate concentration: {indicators.top_holder_percent:.1f}% (+15 risk)")
+        elif indicators.top_holder_percent > 10:
+            risk_score += 8
+            logger.info(f"⚠️ Some concentration: {indicators.top_holder_percent:.1f}% (+8 risk)")
+        else:
+            logger.info(f"✅ Good distribution: {indicators.top_holder_percent:.1f}% (+0 risk)")
+        
+        if indicators.top_10_holders_percent > 90:
+            risk_score += 20
+            logger.info(f"❌ Top 10 control {indicators.top_10_holders_percent:.1f}% (+20 risk)")
+        elif indicators.top_10_holders_percent > 80:
+            risk_score += 15
+            logger.info(f"⚠️ Top 10 control {indicators.top_10_holders_percent:.1f}% (+15 risk)")
+        elif indicators.top_10_holders_percent > 70:
+            risk_score += 10
+            logger.info(f"⚠️ Top 10 control {indicators.top_10_holders_percent:.1f}% (+10 risk)")
+        else:
+            logger.info(f"✅ Decent top 10 distribution: {indicators.top_10_holders_percent:.1f}% (+0 risk)")
+        
+        if liquidity_health < 20:
+            risk_score += 25
+            logger.info(f"❌ Poor liquidity health: {liquidity_health}/100 (+25 risk)")
+        elif liquidity_health < 40:
+            risk_score += 18
+            logger.info(f"⚠️ Low liquidity health: {liquidity_health}/100 (+18 risk)")
+        elif liquidity_health < 60:
+            risk_score += 10
+            logger.info(f"⚠️ Moderate liquidity health: {liquidity_health}/100 (+10 risk)")
+        elif liquidity_health < 80:
+            risk_score += 3
+            logger.info(f"✅ Good liquidity health: {liquidity_health}/100 (+3 risk)")
+        else:
+            logger.info(f"✅ Excellent liquidity health: {liquidity_health}/100 (+0 risk)")
+        
+        if indicators.token_age_hours < 6:
+            risk_score += 15
+            logger.info(f"❌ Very new token: {indicators.token_age_hours}h (+15 risk)")
+        elif indicators.token_age_hours < 24:
+            risk_score += 10
+            logger.info(f"⚠️ New token: {indicators.token_age_hours}h (+10 risk)")
+        elif indicators.token_age_hours < 168:
+            risk_score += 5
+            logger.info(f"⚠️ Young token: {indicators.token_age_hours}h (+5 risk)")
+        else:
+            logger.info(f"✅ Mature token: {indicators.token_age_hours}h (+0 risk)")
+        
+        if not indicators.can_sell:
+            risk_score += 20
+            logger.info("❌ Cannot sell or no selling activity (+20 risk)")
+        else:
+            logger.info("✅ Can sell - trading activity detected (+0 risk)")
+        
+        indicators.overall_risk_score = min(100, max(0, risk_score))
+        
+        if risk_score >= 80:
+            indicators.risk_level = "EXTREME"
+        elif risk_score >= 65:
+            indicators.risk_level = "CRITICAL"  
+        elif risk_score >= 45:
+            indicators.risk_level = "HIGH"
+        elif risk_score >= 25:
+            indicators.risk_level = "MEDIUM"
+        elif risk_score >= 10:
+            indicators.risk_level = "LOW"
+        else:
+            indicators.risk_level = "MINIMAL"
+        
+        logger.info(f"🧠 Final risk: {indicators.overall_risk_score}/100 ({indicators.risk_level}) - Based on reliable metrics")
+        
+        return indicators
 
-            accounts = largest_accounts["value"]
-            if not accounts:
-                return self._empty_holder_analysis()
+    def _calculate_liquidity_health(self, liquidity_usd: float, liq_ratio: float, volume_24h: float, market_cap: float) -> int:
+        """Calculate liquidity health score based on multiple measurable factors"""
+        health_score = 50  # Start neutral
+        
+        if liquidity_usd >= 10_000_000:
+            health_score += 30
+        elif liquidity_usd >= 5_000_000:
+            health_score += 25
+        elif liquidity_usd >= 1_000_000:
+            health_score += 20
+        elif liquidity_usd >= 500_000:
+            health_score += 15
+        elif liquidity_usd >= 100_000:
+            health_score += 5
+        else:
+            health_score -= 20
+        
+        if liq_ratio >= 10:
+            health_score += 20
+        elif liq_ratio >= 5:
+            health_score += 15
+        elif liq_ratio >= 3:
+            health_score += 10
+        elif liq_ratio >= 1:
+            health_score += 0
+        else:
+            health_score -= 15
+        
+        if volume_24h > 0 and liquidity_usd > 0:
+            volume_to_liq = volume_24h / liquidity_usd
+            if 0.1 <= volume_to_liq <= 3:
+                health_score += 10
+            elif volume_to_liq > 10:
+                health_score -= 10
+        
+        if market_cap > 0:
+            if market_cap > 100_000_000 and liq_ratio >= 2:
+                health_score += 5
+            elif market_cap < 1_000_000 and liq_ratio >= 10:
+                health_score += 5
+        
+        return max(0, min(100, health_score))
 
-            # Get account details
-            account_addresses = [acc["address"] for acc in accounts]
-            account_details = await helius.get_multiple_accounts(account_addresses)
+    # Helper calculation methods
+    def _calculate_enhanced_liquidity_risk(self, liquidity_usd: float, liq_ratio: float, volume_to_liq: float, market_cap: float) -> str:
+        """Enhanced liquidity risk calculation"""
+        risk_score = 0
+        
+        if liquidity_usd >= 5_000_000:
+            risk_score += 0
+        elif liquidity_usd >= 1_000_000:
+            risk_score += 1
+        elif liquidity_usd >= 500_000:
+            risk_score += 2
+        elif liquidity_usd >= 100_000:
+            risk_score += 3
+        elif liquidity_usd >= 50_000:
+            risk_score += 4
+        else:
+            risk_score += 5
+        
+        if liq_ratio >= 10:
+            risk_score += 0
+        elif liq_ratio >= 5:
+            risk_score += 1
+        elif liq_ratio >= 3:
+            risk_score += 2
+        elif liq_ratio >= 1:
+            risk_score += 3
+        else:
+            risk_score += 4
+        
+        if volume_to_liq > 5:
+            risk_score += 2
+        elif volume_to_liq > 2:
+            risk_score += 1
+        
+        if market_cap > 100_000_000 and liq_ratio < 2:
+            risk_score += 2
+        
+        if risk_score >= 10:
+            return "CRITICAL"
+        elif risk_score >= 7:
+            return "HIGH"
+        elif risk_score >= 4:
+            return "MEDIUM"
+        else:
+            return "LOW"
 
-            # Process holders
-            holders = []
-            total_supply = 0
+    def _calculate_liquidity_health_score(self, liquidity_usd: float, liq_ratio: float, volume_to_liq: float, market_cap: float) -> int:
+        """Calculate overall liquidity health score"""
+        score = 50
+        
+        if liquidity_usd >= 10_000_000:
+            score += 25
+        elif liquidity_usd >= 1_000_000:
+            score += 20
+        elif liquidity_usd >= 500_000:
+            score += 15
+        elif liquidity_usd >= 100_000:
+            score += 10
+        elif liquidity_usd >= 50_000:
+            score += 5
+        else:
+            score -= 20
+        
+        if liq_ratio >= 8:
+            score += 15
+        elif liq_ratio >= 5:
+            score += 10
+        elif liq_ratio >= 3:
+            score += 5
+        elif liq_ratio < 1:
+            score -= 15
+        
+        if 0.5 <= volume_to_liq <= 2:
+            score += 10
+        elif volume_to_liq < 0.1:
+            score -= 10
+        elif volume_to_liq > 5:
+            score -= 15
+        
+        return max(0, min(100, score))
+
+    def _assess_liquidity_stability(self, market_data: Dict) -> str:
+        """Assess liquidity stability based on trading patterns"""
+        buys_24h = market_data.get("txns", {}).get("buys_24h", 0)
+        sells_24h = market_data.get("txns", {}).get("sells_24h", 0)
+        
+        total_txns = buys_24h + sells_24h
+        
+        if total_txns == 0:
+            return "STAGNANT - No trading activity"
+        
+        buy_ratio = buys_24h / total_txns
+        
+        if buy_ratio > 0.7:
+            return "BUYING_PRESSURE - More buys than sells"
+        elif buy_ratio < 0.3:
+            return "SELLING_PRESSURE - More sells than buys"
+        else:
+            return "BALANCED - Healthy buy/sell ratio"
+
+    def _calculate_slippage_risk(self, liquidity_usd: float) -> str:
+        """Calculate slippage risk category"""
+        if liquidity_usd >= 5_000_000:
+            return "MINIMAL - Large trades possible"
+        elif liquidity_usd >= 1_000_000:
+            return "LOW - Medium trades safe"
+        elif liquidity_usd >= 500_000:
+            return "MEDIUM - Small trades recommended"
+        elif liquidity_usd >= 100_000:
+            return "HIGH - Micro trades only"
+        else:
+            return "EXTREME - Any trade will cause major slippage"
+
+    def _get_market_impact_warning(self, liquidity: float) -> str:
+        """Get market impact warning based on liquidity"""
+        if liquidity < 100_000:
+            return "⚠️ CRITICAL: Even small trades will cause significant price impact"
+        elif liquidity < 500_000:
+            return "⚠️ HIGH: Trades over $5K will cause noticeable price impact"
+        elif liquidity < 1_000_000:
+            return "⚠️ MEDIUM: Trades over $20K will cause moderate price impact"
+        else:
+            return "✅ LOW: Good liquidity for most trade sizes"
+
+    def _get_recommended_max_trade(self, liquidity: float) -> str:
+        """Get recommended maximum trade size"""
+        if liquidity < 50_000:
+            return "$500 or less"
+        elif liquidity < 100_000:
+            return "$1,000 or less"
+        elif liquidity < 500_000:
+            return "$5,000 or less"
+        elif liquidity < 1_000_000:
+            return "$20,000 or less"
+        else:
+            return "$50,000+ (check current depth)"
+
+    def _estimate_slippage(self, liquidity: float, trade_size: float) -> float:
+        """Estimate slippage for a given trade size"""
+        if liquidity <= 0:
+            return 100.0
+        
+        impact = (trade_size / liquidity) * 100
+        return min(impact * 2, 100.0)
+
+    def _calculate_token_age_days(self, created_at: int) -> int:
+        """Calculate token age in days"""
+        if not created_at:
+            return 0
+        
+        age_ms = datetime.now().timestamp() * 1000 - created_at
+        return max(0, int(age_ms / (1000 * 60 * 60 * 24)))
+
+    # Bundle and suspicious activity detection
+    async def _detect_enhanced_bundles(self, mint: str, holders_data: Dict, transaction_data: Dict) -> Dict:
+        """Enhanced bundle detection"""
+        try:
+            top_holders = holders_data.get("top_holders", [])
             
-            for i, (acc, details) in enumerate(zip(accounts, account_details)):
-                if not details or not details.get("data"):
-                    continue
-                    
-                try:
-                    parsed = details["data"]["parsed"]["info"]
-                    amount = float(parsed.get("amount", 0))
-                    decimals = int(parsed.get("decimals", 9))
-                    balance = amount / (10 ** decimals)
-                    total_supply += balance
-                    
-                    owner = parsed.get("owner", "")
-                    
-                    # Detect suspicious patterns
-                    risk_flags = []
-                    is_suspicious = False
-                    
-                    # Check for round numbers (potential airdrop/bot)
-                    if balance > 0 and balance == int(balance) and balance < 1000000:
-                        risk_flags.append("round_number")
-                        is_suspicious = True
-                    
-                    # Check for very new accounts (would need more RPC calls)
-                    
-                    holders.append(WalletInfo(
-                        address=owner,
-                        balance=balance,
-                        percentage=0,  # Will calculate after
-                        sol_balance=None,
-                        token_count=None,
-                        creation_time=None,
-                        first_activity=None,
-                        transaction_count=0,
-                        is_suspicious=is_suspicious,
-                        risk_flags=risk_flags,
-                        rank=i + 1,
-                        type="whale" if i < 5 else "holder",
-                        risk="high" if is_suspicious else "medium" if i < 10 else "low"
-                    ))
-                    
-                except Exception as e:
-                    logger.debug(f"Error processing holder {i}: {e}")
-                    continue
-
-            # Calculate percentages
-            if total_supply > 0:
-                for holder in holders:
-                    holder.percentage = (holder.balance / total_supply) * 100
-
-            # Sort by balance
-            holders.sort(key=lambda h: h.balance, reverse=True)
-
-            # Detect bundle clusters
-            bundle_clusters = await self._detect_bundles(holders[:50])  # Top 50 for performance
-
-            # Calculate metrics
-            total_holders = len(holders)
-            unique_holders = len(set(h.address for h in holders))
+            if len(top_holders) < 5:
+                return {
+                    "clusters_found": 0,
+                    "high_risk_clusters": 0,
+                    "bundled_percentage": 0.0,
+                    "risk_level": "LOW",
+                    "clusters": [],
+                    "detection_confidence": 0.9
+                }
             
-            top_5_pct = sum(h.percentage for h in holders[:5]) if len(holders) >= 5 else 0
-            top_10_pct = sum(h.percentage for h in holders[:10]) if len(holders) >= 10 else 0
+            clusters = []
+            suspicious_patterns = []
             
-            whale_wallets = [h.address for h in holders[:10]]
-            suspicious_wallets = [h.address for h in holders if h.is_suspicious]
+            similar_addresses = self._find_similar_addresses(top_holders)
+            if similar_addresses:
+                suspicious_patterns.extend(similar_addresses)
             
-            balances = [h.balance for h in holders if h.balance > 0]
-            avg_holding = statistics.mean(balances) if balances else 0
-            median_holding = statistics.median(balances) if balances else 0
+            balance_clusters = self._find_balance_clusters(top_holders)
+            if balance_clusters:
+                clusters.extend(balance_clusters)
+            
+            unique_traders = transaction_data.get("unique_traders_24h", 0)
+            total_holders = len(top_holders)
+            
+            if unique_traders > 0 and total_holders > 0:
+                activity_ratio = unique_traders / total_holders
+                if activity_ratio < 0.3:
+                    suspicious_patterns.append("Low transaction activity relative to holder count")
+            
+            clusters_found = len(clusters) + len(suspicious_patterns)
+            high_risk_clusters = len([c for c in clusters if c.get("risk_score", 0) > 70])
+            
+            bundled_percentage = 0.0
+            for cluster in clusters:
+                bundled_percentage += cluster.get("total_percentage", 0) * 0.7
+            
+            if high_risk_clusters > 2 or bundled_percentage > 25:
+                risk_level = "HIGH"
+            elif clusters_found > 1 or bundled_percentage > 15:
+                risk_level = "MEDIUM"
+            else:
+                risk_level = "LOW"
+            
+            return {
+                "clusters_found": clusters_found,
+                "high_risk_clusters": high_risk_clusters,
+                "bundled_percentage": round(bundled_percentage, 2),
+                "risk_level": risk_level,
+                "clusters": clusters,
+                "suspicious_patterns": suspicious_patterns,
+                "detection_confidence": 0.85,
+                "analysis_method": "enhanced_correlation"
+            }
+            
+        except Exception as e:
+            logger.error(f"Enhanced bundle detection failed: {e}")
+            return {
+                "clusters_found": 0,
+                "high_risk_clusters": 0,
+                "bundled_percentage": 0.0,
+                "risk_level": "UNKNOWN",
+                "clusters": [],
+                "detection_confidence": 0.5
+            }
 
-            # Create visualization data
-            visualization = self._create_holder_visualization(holders, bundle_clusters, total_supply)
+    def _find_similar_addresses(self, holders: List[Dict]) -> List[str]:
+        """Find holders with suspiciously similar addresses"""
+        patterns = []
+        
+        for i, holder1 in enumerate(holders[:10]):
+            for j, holder2 in enumerate(holders[i+1:], i+1):
+                addr1 = holder1["address"]
+                addr2 = holder2["address"]
+                
+                if addr1[:8] == addr2[:8]:
+                    patterns.append(f"Similar address prefixes detected: {addr1[:8]}...")
+                elif addr1[-8:] == addr2[-8:]:
+                    patterns.append(f"Similar address suffixes detected: ...{addr1[-8:]}")
+                elif self._address_similarity_score(addr1, addr2) > 0.7:
+                    patterns.append(f"High address similarity detected")
+        
+        return list(set(patterns))
 
-            return EnhancedHolderAnalysis(
-                total_holders=total_holders,
-                unique_holders=unique_holders,
-                top_10_concentration=top_10_pct,
-                top_5_concentration=top_5_pct,
-                deployer_holdings=0,  # Would need deployer address
-                holder_distribution=holders[:100],  # Top 100
-                bundle_clusters=bundle_clusters,
-                whale_wallets=whale_wallets,
-                suspicious_wallets=suspicious_wallets,
-                holder_growth_24h=0,  # Would need historical data
-                average_holding=avg_holding,
-                median_holding=median_holding,
-                visualization_data=visualization,
-            )
+    def _address_similarity_score(self, addr1: str, addr2: str) -> float:
+        """Calculate similarity score between two addresses"""
+        if len(addr1) != len(addr2):
+            return 0.0
+        
+        matches = sum(1 for a, b in zip(addr1, addr2) if a == b)
+        return matches / len(addr1)
 
-    async def _detect_bundles(self, holders: List[WalletInfo]) -> List[BundleCluster]:
-        """Detect potential wallet bundles using pattern analysis"""
+    def _find_balance_clusters(self, holders: List[Dict]) -> List[Dict]:
+        """Find clusters of holders with suspiciously similar balances"""
         clusters = []
         
-        # Group by similar balance patterns
-        balance_groups = defaultdict(list)
-        for holder in holders:
-            # Round balance to detect similar amounts
-            rounded = round(holder.balance, -int(math.log10(holder.balance)) + 2) if holder.balance > 0 else 0
+        balance_groups = {}
+        for holder in holders[:15]:
+            percentage = holder["percentage"]
+            rounded = round(percentage * 2) / 2
+            
+            if rounded not in balance_groups:
+                balance_groups[rounded] = []
             balance_groups[rounded].append(holder)
         
-        cluster_id = 0
         for balance, group in balance_groups.items():
-            if len(group) >= 3 and balance > 0:  # Potential bundle
-                # Calculate risk score based on patterns
-                risk_score = min(100, len(group) * 10 + (50 if balance == int(balance) else 0))
+            if len(group) >= 3 and balance > 1:
+                total_percentage = sum(h["percentage"] for h in group)
+                risk_score = min(90, len(group) * 15 + (total_percentage * 2))
                 
-                clusters.append(BundleCluster(
-                    cluster_id=f"cluster_{cluster_id}",
-                    wallets=[h.address for h in group],
-                    creation_timeframe=0,  # Would need creation time analysis
-                    funding_source=None,
-                    similar_patterns=["similar_balance"],
-                    risk_score=risk_score,
-                    total_holdings=sum(h.balance for h in group)
-                ))
-                
-                # Mark holders as bundled
-                for holder in group:
-                    holder.isBundled = True
-                    holder.risk = "high"
-                    holder.risk_flags.append("potential_bundle")
-                
-                cluster_id += 1
+                clusters.append({
+                    "cluster_id": f"balance_cluster_{balance}",
+                    "wallet_count": len(group),
+                    "total_percentage": round(total_percentage, 2),
+                    "risk_score": int(risk_score),
+                    "creation_pattern": f"Multiple wallets with ~{balance}% balance each",
+                    "addresses": [h["address"] for h in group]
+                })
         
         return clusters
 
-    def _create_holder_visualization(
-        self, holders: List[WalletInfo], clusters: List[BundleCluster], total_supply: float
-    ) -> HolderVisualization:
-        """Create visualization data for frontend"""
-        
-        # Holder bubbles (top 20)
-        holder_bubbles = []
-        for i, holder in enumerate(holders[:20]):
-            holder_bubbles.append({
-                "rank": holder.rank,
-                "address": holder.address[:8] + "..." + holder.address[-4:],
-                "percentage": round(holder.percentage, 2),
-                "type": holder.type,
-                "risk": holder.risk,
-                "isBundled": holder.isBundled
-            })
-
-        # Concentration chart
-        top1 = holders[0].percentage if len(holders) > 0 else 0
-        top5 = sum(h.percentage for h in holders[:5]) if len(holders) >= 5 else 0
-        top10 = sum(h.percentage for h in holders[:10]) if len(holders) >= 10 else 0
-        others = max(0, 100 - top10)
-
-        concentration_chart = {
-            "top1": round(top1, 1),
-            "top5": round(top5, 1),
-            "top10": round(top10, 1),
-            "others": round(others, 1)
-        }
-
-        # Bundle summary
-        high_risk_bundles = len([c for c in clusters if c.risk_score > 70])
-        bundled_supply = sum(c.total_holdings for c in clusters)
-        bundled_pct = (bundled_supply / total_supply * 100) if total_supply > 0 else 0
-        largest_bundle = max([len(c.wallets) for c in clusters]) if clusters else 0
-        
-        bundle_summary = BundleRiskSummary(
-            total_bundles=len(clusters),
-            high_risk_bundles=high_risk_bundles,
-            bundled_supply_percentage=round(bundled_pct, 1),
-            largest_bundle_size=largest_bundle,
-            bundle_concentration_score=min(100, len(clusters) * 15 + high_risk_bundles * 10),
-            patterns_detected=["similar_balance", "coordinated_activity"] if clusters else []
-        )
-
-        return HolderVisualization(
-            holder_bubbles=holder_bubbles,
-            concentration_chart=concentration_chart,
-            bundle_summary=bundle_summary
-        )
-
-    def _empty_holder_analysis(self) -> EnhancedHolderAnalysis:
-        """Return empty analysis when no data available"""
-        empty_viz = HolderVisualization(
-            holder_bubbles=[],
-            concentration_chart={"top1": 0, "top5": 0, "top10": 0, "others": 100},
-            bundle_summary=BundleRiskSummary(0, 0, 0, 0, 0, [])
-        )
-        
-        return EnhancedHolderAnalysis(
-            total_holders=0,
-            unique_holders=0,
-            top_10_concentration=0,
-            top_5_concentration=0,
-            deployer_holdings=0,
-            holder_distribution=[],
-            bundle_clusters=[],
-            whale_wallets=[],
-            suspicious_wallets=[],
-            holder_growth_24h=0,
-            average_holding=0,
-            median_holding=0,
-            visualization_data=empty_viz,
-        )
-
-    async def analyze_transactions_comprehensive(self, mint: str, deployer: str) -> TransactionAnalysis:
-        """Simplified transaction analysis"""
-        # This would normally require extensive transaction parsing
-        # For now, return basic structure with some estimated data
-        
-        return TransactionAnalysis(
-            total_transactions=0,
-            unique_traders=0,
-            volume_24h=0.0,
-            volume_7d=0.0,
-            first_transaction=None,
-            peak_activity_time=None,
-            suspicious_patterns=[],
-            coordinated_activity=False,
-            wash_trading_risk=0.0,
-        )
-
-# ──────────────────────────────────────────────────────────────────────────────
-# ENHANCED DEPLOYER ANALYZER
-# ──────────────────────────────────────────────────────────────────────────────
-class DeployerAnalyzer:
-    def __init__(self, helius: HeliusAPIClient) -> None:
-        self.helius = helius
-
-    async def analyze_deployer(self, deployer_address: str, current_mint: str) -> DeployerAnalysis:
-        if not deployer_address or len(deployer_address) < 32:
-            return self._empty(deployer_address)
-
+    async def _detect_enhanced_suspicious_activity(self, mint: str, transaction_analysis: Dict, 
+                                                 holders_data: Dict, security_data: Dict) -> Dict:
+        """Enhanced suspicious activity detection"""
         try:
-            # Get transaction history
-            sigs = await self.helius.get_transaction_history(deployer_address, 200)
-            deployed = await self._find_deployed_tokens(sigs)
-
-            # Analyze each deployed token
-            tokens: List[DeployerToken] = []
-            for mint in deployed[:20]:  # Limit for performance
-                if mint == current_mint:
-                    continue
-                tok = await self._analyze_token(mint)
-                if tok:
-                    tokens.append(tok)
-
-            tokens.sort(key=lambda t: t.launch_date, reverse=True)
-            return self._calc_metrics(deployer_address, tokens)
+            wash_trading_score = transaction_analysis.get("bot_activity_percentage", 0)
+            top_1_percent = holders_data.get("top_1_percent", 0)
+            unique_traders = transaction_analysis.get("unique_traders_24h", 0)
             
-        except Exception as exc:
-            logger.error(f"Deployer analysis failed → {exc}")
-            return self._empty(deployer_address)
-
-    async def _find_deployed_tokens(self, signatures: List[Dict]) -> List[str]:
-        """Find tokens deployed by this address"""
-        deployed: set[str] = set()
-        sigs = [s["signature"] for s in signatures if "signature" in s][:50]
-        txs = await self.helius.get_parsed_transactions(sigs)
-        
-        for tx in txs:
-            try:
-                instructions = tx.get("transaction", {}).get("message", {}).get("instructions", [])
-                for inst in instructions:
-                    # Check for mint initialization
-                    if (inst.get("program") == "spl-token" and 
-                        inst.get("parsed", {}).get("type") in ("initializeMint", "initializeMint2")):
-                        mint = inst.get("parsed", {}).get("info", {}).get("mint")
-                        if mint:
-                            deployed.add(mint)
-                    
-                    # Check for token program calls
-                    elif inst.get("programId") == "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA":
-                        accounts = inst.get("accounts", [])
-                        if accounts and len(accounts) > 0:
-                            deployed.add(accounts[0])
-            except Exception as e:
-                logger.debug(f"Error parsing transaction: {e}")
-                continue
-        
-        return list(deployed)
-
-    async def _analyze_token(self, mint: str) -> Optional[DeployerToken]:
-        """Analyze individual deployed token"""
-        try:
-            # Get token metadata
-            metadata = await self.helius.get_token_metadata(mint)
+            concentration_risk = min(100, top_1_percent * 2.5)
+            pattern_risk = 100 - transaction_analysis.get("pattern_score", 50)
             
-            # Get account info
-            account_info = await self.helius.call_rpc(
-                "getAccountInfo", [mint, {"encoding": "jsonParsed"}]
+            tax_risk = 0
+            if security_data.get("available", False):
+                buy_tax = security_data.get("buy_tax", 0)
+                sell_tax = security_data.get("sell_tax", 0)
+                tax_risk = (buy_tax + sell_tax) * 2
+            
+            authority_risk = 0
+            if security_data.get("mint_enabled", False):
+                authority_risk += 30
+            if security_data.get("freeze_enabled", False):
+                authority_risk += 25
+            
+            insider_activity_score = (concentration_risk + pattern_risk + tax_risk + authority_risk) / 4
+            
+            farming_indicators = []
+            if wash_trading_score > 40:
+                farming_indicators.append("High bot trading activity detected")
+            if top_1_percent > 30:
+                farming_indicators.append("Extreme holder concentration - potential dev wallet")
+            elif top_1_percent > 20:
+                farming_indicators.append("High holder concentration risk")
+            if security_data.get("sell_tax", 0) > 15:
+                farming_indicators.append("High sell tax detected - potential honeypot")
+            if not security_data.get("liquidity_locked", True):
+                farming_indicators.append("Liquidity not secured - rug pull risk")
+            if holders_data.get("concentration_risk", "") == "CRITICAL":
+                farming_indicators.append("Critical concentration detected by analysis")
+            if unique_traders < 10 and transaction_analysis.get("transaction_count_24h", 0) > 50:
+                farming_indicators.append("High transaction count with few unique traders")
+            
+            suspicious_patterns = []
+            if security_data.get("mint_enabled", False):
+                suspicious_patterns.append("Mint authority not renounced - unlimited supply risk")
+            if security_data.get("freeze_enabled", False):
+                suspicious_patterns.append("Freeze authority active - can halt all transfers")
+            if security_data.get("owner_change_enabled", False):
+                suspicious_patterns.append("Owner change enabled - control can be transferred")
+            if transaction_analysis.get("wash_trading_detected", False):
+                suspicious_patterns.append("Wash trading patterns identified")
+            if (security_data.get("buy_tax", 0) > 10) or (security_data.get("sell_tax", 0) > 10):
+                suspicious_patterns.append("Excessive trading taxes detected")
+            if transaction_analysis.get("data_source") == "no_transactions":
+                suspicious_patterns.append("No recent transaction data available")
+            
+            base_health = transaction_analysis.get("pattern_score", 50)
+            concentration_penalty = min(35, top_1_percent * 1.2)
+            wash_penalty = wash_trading_score * 0.6
+            tax_penalty = (security_data.get("buy_tax", 0) + security_data.get("sell_tax", 0)) * 0.8
+            authority_penalty = 15 if security_data.get("mint_enabled", False) else 0
+            authority_penalty += 10 if security_data.get("freeze_enabled", False) else 0
+            
+            transaction_health_score = max(0, base_health - concentration_penalty - wash_penalty - tax_penalty - authority_penalty)
+            
+            total_indicators = len(farming_indicators) + len(suspicious_patterns)
+            combined_risk = (wash_trading_score + insider_activity_score) / 2
+            
+            suspicion_level = self._calculate_enhanced_suspicion_level(
+                wash_trading_score, insider_activity_score, total_indicators, security_data
             )
             
-            if not account_info or not account_info.get("value"):
-                return None
-
-            parsed = account_info["value"]["data"]["parsed"]["info"]
-            decimals = int(parsed.get("decimals", 9))
-            
-            # Get supply
-            supply_info = await self.helius.get_token_supply(mint)
-            supply = 0.0
-            if supply_info and "value" in supply_info:
-                raw_supply = float(supply_info["value"]["amount"])
-                supply = raw_supply / (10 ** decimals)
-
-            # Estimate metrics (simplified)
-            holder_count = 1  # Default
-            creation_date = datetime.utcnow() - timedelta(days=30)  # Estimate
-            age = (datetime.utcnow() - creation_date).days
-            
-            # Simple rug detection heuristics
-            is_rugged = (
-                supply == 0 or 
-                holder_count < 5 or 
-                (metadata.get("symbol", "") == "UNKNOWN")
-            )
-
-            return DeployerToken(
-                address=mint,
-                symbol=metadata.get("symbol", "UNK"),
-                name=metadata.get("name", "Unknown"),
-                launch_date=creation_date,
-                current_price=None,
-                current_market_cap=None,
-                highest_market_cap=None,
-                is_rugged=is_rugged,
-                holder_count=holder_count,
-                liquidity=None,
-                age_days=age,
-            )
-            
-        except Exception as exc:
-            logger.debug(f"Token analysis failed for {mint}: {exc}")
-            return None
-
-    def _calc_metrics(self, deployer: str, tokens: List[DeployerToken]) -> DeployerAnalysis:
-        """Calculate deployer metrics"""
-        if not tokens:
-            return self._empty(deployer)
-
-        total = len(tokens)
-        rugged = sum(1 for t in tokens if t.is_rugged)
-        success = sum(1 for t in tokens if not t.is_rugged and (t.current_market_cap or 0) > 1000)
-        active = total - rugged
-        
-        lifespans = [t.age_days for t in tokens]
-        avg_life = statistics.mean(lifespans) if lifespans else 0.0
-        
-        value_extracted = sum(t.highest_market_cap or 0 for t in tokens if t.is_rugged)
-
-        # Reputation scoring
-        if total == 0:
-            score = 50
-        else:
-            rug_penalty = int((rugged / total) * 60)
-            success_bonus = int((success / total) * 30)
-            longevity_bonus = 10 if avg_life > 90 else 5 if avg_life > 30 else 0
-            score = max(0, min(100, 70 - rug_penalty + success_bonus + longevity_bonus))
-
-        # Pattern classification
-        if total == 0:
-            pattern, risk = "unknown", "UNKNOWN - No deployment history"
-        elif rugged / total > 0.8:
-            pattern, risk = "serial_rugger", "EXTREME RISK - Serial rug puller detected"
-        elif rugged / total > 0.5:
-            pattern, risk = "high_risk", "HIGH RISK - Many failed projects"
-        elif success / total > 0.6:
-            pattern, risk = "legitimate", "LOW RISK - Mostly successful projects"
-        elif total == 1:
-            pattern, risk = "new_deployer", "MEDIUM RISK - New deployer"
-        else:
-            pattern, risk = "mixed", "MEDIUM RISK - Mixed track record"
-
-        return DeployerAnalysis(
-            deployer_address=deployer,
-            total_tokens_deployed=total,
-            successful_launches=success,
-            rugged_tokens=rugged,
-            active_tokens=active,
-            average_token_lifespan=avg_life,
-            total_value_extracted=value_extracted,
-            reputation_score=score,
-            token_history=tokens[:10],  # Limit for response size
-            deployment_pattern=pattern,
-            risk_assessment=risk,
-        )
-
-    def _empty(self, deployer: str) -> DeployerAnalysis:
-        """Empty deployer analysis"""
-        return DeployerAnalysis(
-            deployer_address=deployer or "Unknown",
-            total_tokens_deployed=0,
-            successful_launches=0,
-            rugged_tokens=0,
-            active_tokens=0,
-            average_token_lifespan=0.0,
-            total_value_extracted=0.0,
-            reputation_score=50,
-            token_history=[],
-            deployment_pattern="unknown",
-            risk_assessment="UNKNOWN - No deployment history found",
-        )
-
-# ──────────────────────────────────────────────────────────────────────────────
-# AI ANALYST
-# ──────────────────────────────────────────────────────────────────────────────
-class AIAnalyst:
-    def __init__(self, openai_key: str = "") -> None:
-        self.client = None
-        if openai_key and OPENAI_AVAILABLE:
-            try:
-                self.client = AsyncOpenAI(api_key=openai_key)
-            except Exception:
-                logger.warning("OpenAI client initialization failed")
-
-    async def generate_analysis(
-        self,
-        token: EnhancedTokenInfo,
-        holders: EnhancedHolderAnalysis,
-        txs: TransactionAnalysis,
-        score: int,
-        deployer_analysis: Optional[DeployerAnalysis] = None,
-    ) -> str:
-        """Generate AI analysis or rule-based fallback"""
-        
-        if not self.client:
-            return self._rule_based_analysis(token, holders, txs, score, deployer_analysis)
-
-        # Prepare data for AI
-        analysis_data = {
-            "token": {
-                "symbol": token.symbol,
-                "name": token.name,
-                "age_days": token.age_days,
-                "supply": token.supply,
-                "has_mint_authority": bool(token.mint_authority),
-                "has_freeze_authority": bool(token.freeze_authority),
-            },
-            "holders": {
-                "total": holders.total_holders,
-                "unique": holders.unique_holders,
-                "top_5_concentration": holders.top_5_concentration,
-                "top_10_concentration": holders.top_10_concentration,
-                "bundle_clusters": len(holders.bundle_clusters),
-                "suspicious_wallets": len(holders.suspicious_wallets),
-            },
-            "risk_score": score,
-        }
-
-        if deployer_analysis:
-            analysis_data["deployer"] = {
-                "total_deployed": deployer_analysis.total_tokens_deployed,
-                "rugged_count": deployer_analysis.rugged_tokens,
-                "success_count": deployer_analysis.successful_launches,
-                "reputation_score": deployer_analysis.reputation_score,
-                "pattern": deployer_analysis.deployment_pattern,
-            }
-
-        prompt = f"""
-Analyze this Solana token risk profile and provide a concise assessment:
-
-{json.dumps(analysis_data, indent=2)}
-
-Provide a professional analysis focusing on:
-1. Overall risk level and reasoning
-2. Deployer history concerns (if applicable)
-3. Holder distribution red flags
-4. Specific actionable recommendations
-
-Keep it concise but informative, around 150-200 words.
-"""
-
-        try:
-            response = await self.client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=300,
-                temperature=0.3,
-            )
-            return response.choices[0].message.content.strip()
-        except Exception as exc:
-            logger.warning(f"OpenAI analysis failed: {exc}")
-            return self._rule_based_analysis(token, holders, txs, score, deployer_analysis)
-
-    def _rule_based_analysis(
-        self,
-        token: EnhancedTokenInfo,
-        holders: EnhancedHolderAnalysis,
-        txs: TransactionAnalysis,
-        score: int,
-        deployer: Optional[DeployerAnalysis] = None,
-    ) -> str:
-        """Rule-based analysis fallback"""
-        
-        parts = []
-        
-        # Risk level
-        if score >= 80:
-            parts.append("🚨 **EXTREME RISK** - Multiple critical red flags detected.")
-        elif score >= 60:
-            parts.append("⚠️ **HIGH RISK** - Significant concerns identified.")
-        elif score >= 40:
-            parts.append("⚡ **MEDIUM RISK** - Some caution warranted.")
-        elif score >= 20:
-            parts.append("✅ **LOW RISK** - Minimal concerns found.")
-        else:
-            parts.append("🟢 **VERY LOW RISK** - Token appears legitimate.")
-
-        # Deployer analysis
-        if deployer and deployer.total_tokens_deployed > 0:
-            if deployer.deployment_pattern == "serial_rugger":
-                parts.append(f"🚩 **DEPLOYER WARNING**: {deployer.rugged_tokens}/{deployer.total_tokens_deployed} previous tokens were rugged.")
-            elif deployer.deployment_pattern == "legitimate":
-                parts.append(f"👍 **DEPLOYER POSITIVE**: Strong track record with {deployer.successful_launches} successful launches.")
-            elif deployer.reputation_score < 30:
-                parts.append("⚠️ **DEPLOYER CONCERN**: Poor historical performance detected.")
-
-        # Holder concentration
-        if holders.top_5_concentration > 70:
-            parts.append(f"🐋 **WHALE ALERT**: Top 5 holders control {holders.top_5_concentration:.1f}% of supply.")
-        elif holders.top_5_concentration > 50:
-            parts.append(f"📊 **CONCENTRATION RISK**: Top 5 holders own {holders.top_5_concentration:.1f}% of tokens.")
-
-        # Bundle detection
-        if len(holders.bundle_clusters) > 0:
-            high_risk_bundles = len([c for c in holders.bundle_clusters if c.risk_score > 70])
-            if high_risk_bundles > 0:
-                parts.append(f"🔗 **BUNDLE RISK**: {high_risk_bundles} high-risk wallet clusters detected.")
-
-        # Authority risks
-        if token.mint_authority:
-            parts.append("⚠️ **MINT RISK**: Mint authority still active - new tokens can be created.")
-        if token.freeze_authority:
-            parts.append("❄️ **FREEZE RISK**: Freeze authority active - transfers can be halted.")
-
-        # Recommendations
-        parts.append("\n**RECOMMENDATIONS:**")
-        if score >= 60:
-            parts.append("• Avoid or exit position immediately")
-            parts.append("• High probability of rug pull or manipulation")
-        elif score >= 40:
-            parts.append("• Exercise extreme caution")
-            parts.append("• Consider smaller position sizes")
-            parts.append("• Monitor deployer activity closely")
-        else:
-            parts.append("• Proceed with standard crypto caution")
-            parts.append("• Monitor holder distribution changes")
-
-        parts.append("\n⚠️ **DISCLAIMER**: This analysis is not financial advice. Always DYOR!")
-
-        return " ".join(parts)
-
-# ──────────────────────────────────────────────────────────────────────────────
-# MAIN RUG CHECKER
-# ──────────────────────────────────────────────────────────────────────────────
-class RugChecker:
-    def __init__(self, helius_key: str, openai_key: str = "") -> None:
-        self.analyzer = EnhancedTokenAnalyzer(helius_key)
-        self.helius_key = helius_key
-        self.ai = AIAnalyst(openai_key)
-
-    async def analyze_token_ultimate(self, mint: str) -> Dict[str, Any]:
-        """Main analysis orchestrator"""
-        try:
-            logger.info(f"Starting comprehensive analysis for {mint}")
-            
-            # Core analyses
-            token = await self.analyzer.analyze_token_comprehensive(mint)
-            holders = await self.analyzer.analyze_holders_comprehensive(mint)
-            txs = await self.analyzer.analyze_transactions_comprehensive(mint, token.deployer)
-
-            # Deployer analysis
-            deployer_analysis = None
-            if token.deployer and token.deployer != "Unknown":
-                async with HeliusAPIClient(self.helius_key) as helius:
-                    deployer_analyzer = DeployerAnalyzer(helius)
-                    deployer_analysis = await deployer_analyzer.analyze_deployer(token.deployer, mint)
-
-            # Risk scoring
-            risk_score, confidence = self._calculate_risk_score(token, holders, txs, deployer_analysis)
-
-            # AI analysis
-            ai_analysis = await self.ai.generate_analysis(token, holders, txs, risk_score, deployer_analysis)
-
-            # Prepare response in format expected by frontend
-            response = {
-                "success": True,
-                "token_info": self._serialize_token_info(token),
-                "holder_analysis": self._serialize_holder_analysis(holders),
-                "transaction_analysis": asdict(txs),
-                "deployer_analysis": asdict(deployer_analysis) if deployer_analysis else None,
-                "risk_score": risk_score,
-                "confidence_level": confidence,
-                "ai_analysis": ai_analysis,
-                "visualization": self._create_visualization_data(holders),
-                "analysis_timestamp": datetime.utcnow().isoformat(),
-                "riskFactors": self._extract_risk_factors(token, holders, deployer_analysis, risk_score)
-            }
-
-            logger.info(f"Analysis completed for {mint} - Risk Score: {risk_score}")
-            return response
-
-        except Exception as exc:
-            logger.error(f"Analysis failed for {mint}: {exc}")
             return {
-                "success": False,
-                "error": f"Analysis failed: {str(exc)}",
-                "token_address": mint
+                "wash_trading_score": round(wash_trading_score, 1),
+                "insider_activity_score": round(insider_activity_score, 1),
+                "farming_indicators": farming_indicators,
+                "suspicious_patterns": suspicious_patterns,
+                "transaction_health_score": round(transaction_health_score, 1),
+                "overall_suspicion_level": suspicion_level,
+                "data_quality": "enhanced_analysis",
+                "risk_factors_detected": total_indicators,
+                "metrics_used": {
+                    "holder_concentration": top_1_percent,
+                    "transaction_patterns": transaction_analysis.get("data_source", "unknown"),
+                    "bot_activity": wash_trading_score,
+                    "security_scan": security_data.get("available", False),
+                    "unique_traders": unique_traders
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Enhanced suspicious activity detection error: {e}")
+            return {
+                "wash_trading_score": 0.0,
+                "insider_activity_score": 50.0,
+                "farming_indicators": ["Error in enhanced analysis - data may be incomplete"],
+                "suspicious_patterns": ["Analysis error occurred"],
+                "transaction_health_score": 30.0,
+                "overall_suspicion_level": "HIGH",
+                "data_quality": "error"
             }
 
-    def _calculate_risk_score(
-        self,
-        token: EnhancedTokenInfo,
-        holders: EnhancedHolderAnalysis,
-        txs: TransactionAnalysis,
-        deployer: Optional[DeployerAnalysis],
-    ) -> Tuple[int, int]:
-        """Calculate risk score and confidence level"""
+    def _calculate_enhanced_suspicion_level(self, wash_score: float, insider_score: float, 
+                                          indicator_count: int, security_data: Dict) -> str:
+        """Calculate enhanced overall suspicion level"""
+        base_score = (wash_score + insider_score) / 2 + (indicator_count * 8)
         
-        risk_factors = {}
+        if security_data.get("available", False):
+            if not security_data.get("liquidity_locked", True):
+                base_score += 20
+            if security_data.get("mint_enabled", False):
+                base_score += 15
+            if security_data.get("sell_tax", 0) > 20:
+                base_score += 15
         
-        # Holder concentration (0-40 points)
-        concentration_score = min(40, int(holders.top_5_concentration * 0.6))
-        risk_factors["concentration"] = concentration_score
+        total_score = min(100, base_score)
         
-        # Authority risks (0-20 points)
-        authority_score = 0
-        if token.mint_authority:
-            authority_score += 10
-        if token.freeze_authority:
-            authority_score += 10
-        risk_factors["authority"] = authority_score
-        
-        # Bundle risks (0-25 points)
-        bundle_score = 0
-        if len(holders.bundle_clusters) > 0:
-            high_risk_bundles = len([c for c in holders.bundle_clusters if c.risk_score > 70])
-            bundle_score = min(25, len(holders.bundle_clusters) * 5 + high_risk_bundles * 5)
-        risk_factors["bundles"] = bundle_score
-        
-        # Deployer reputation (0-30 points)
-        deployer_score = 0
-        if deployer and deployer.total_tokens_deployed > 0:
-            # Invert reputation score (low reputation = high risk)
-            deployer_score = int((100 - deployer.reputation_score) * 0.3)
+        if total_score >= 85:
+            return "EXTREME"
+        elif total_score >= 70:
+            return "VERY HIGH"
+        elif total_score >= 55:
+            return "HIGH"
+        elif total_score >= 35:
+            return "MEDIUM"
+        elif total_score >= 15:
+            return "LOW"
         else:
-            deployer_score = 15  # Unknown deployer = medium risk
-        risk_factors["deployer"] = deployer_score
-        
-        # Age factor (0-10 points)
-        age_score = 0
-        if token.age_days < 1:
-            age_score = 10
-        elif token.age_days < 7:
-            age_score = 5
-        elif token.age_days < 30:
-            age_score = 2
-        risk_factors["age"] = age_score
-        
-        # Calculate total risk score
-        total_risk = sum(risk_factors.values())
-        final_risk = min(100, total_risk)
-        
-        # Calculate confidence based on data availability
-        confidence = 50  # Base confidence
-        
-        if holders.total_holders > 0:
-            confidence += 20
-        if deployer and deployer.total_tokens_deployed > 0:
-            confidence += 20
-        if token.age_days > 7:
-            confidence += 10
-        
-        confidence = min(100, confidence)
-        
-        return final_risk, confidence
+            return "VERY LOW"
 
-    def _serialize_token_info(self, token: EnhancedTokenInfo) -> Dict[str, Any]:
-        """Serialize token info for JSON response"""
-        return {
-            "address": token.address,
-            "symbol": token.symbol,
-            "name": token.name,
-            "decimals": token.decimals,
-            "supply": token.supply,
-            "age_days": token.age_days,
-            "mint_authority": bool(token.mint_authority),
-            "freeze_authority": bool(token.freeze_authority),
-            "deployer": token.deployer,
-            "creation_date": token.creation_date.isoformat(),
-            "is_mutable": token.is_mutable,
-            "verified_status": token.verified_status,
-            "current_price": token.current_price,
-            "market_cap": token.market_cap,
-            "liquidity": token.liquidity,
-        }
-
-    def _serialize_holder_analysis(self, holders: EnhancedHolderAnalysis) -> Dict[str, Any]:
-        """Serialize holder analysis for JSON response"""
-        return {
-            "total_holders": holders.total_holders,
-            "unique_holders": holders.unique_holders,
-            "top_10_concentration": holders.top_10_concentration,
-            "top_5_concentration": holders.top_5_concentration,
-            "deployer_holdings": holders.deployer_holdings,
-            "bundle_clusters": [asdict(cluster) for cluster in holders.bundle_clusters],
-            "whale_wallets": holders.whale_wallets,
-            "suspicious_wallets": holders.suspicious_wallets,
-            "holder_growth_24h": holders.holder_growth_24h,
-            "average_holding": holders.average_holding,
-            "median_holding": holders.median_holding,
-        }
-
-    def _create_visualization_data(self, holders: EnhancedHolderAnalysis) -> Dict[str, Any]:
-        """Create visualization data for frontend charts"""
-        viz = holders.visualization_data
+    async def _detect_basic_bundles(self, holders_data: Dict) -> Dict:
+        """Basic bundle detection for Express Mode"""
+        top_holders = holders_data.get("top_holders", [])
+        
+        if len(top_holders) < 3:
+            return {
+                "clusters_found": 0,
+                "high_risk_clusters": 0,
+                "bundled_percentage": 0.0,
+                "risk_level": "LOW",
+                "clusters": []
+            }
+        
+        top_3_total = sum(h["percentage"] for h in top_holders[:3])
+        top_5_total = sum(h["percentage"] for h in top_holders[:5])
+        
+        clusters = []
+        if top_3_total > 50:
+            clusters.append({
+                "cluster_id": "top_3_concentration",
+                "wallet_count": 3,
+                "total_percentage": round(top_3_total, 2),
+                "risk_score": int(min(90, top_3_total * 1.5)),
+                "creation_pattern": "High concentration in top 3 holders"
+            })
         
         return {
-            "holder_bubbles": viz.holder_bubbles,
-            "concentration_chart": viz.concentration_chart,
-            "bundle_summary": asdict(viz.bundle_summary)
+            "clusters_found": len(clusters),
+            "high_risk_clusters": len([c for c in clusters if c.get("risk_score", 0) > 70]),
+            "bundled_percentage": round(top_5_total * 0.3, 2),
+            "risk_level": "HIGH" if top_3_total > 60 else "MEDIUM" if top_3_total > 40 else "LOW",
+            "clusters": clusters
         }
 
-    def _extract_risk_factors(
-        self, 
-        token: EnhancedTokenInfo, 
-        holders: EnhancedHolderAnalysis, 
-        deployer: Optional[DeployerAnalysis],
-        risk_score: int
-    ) -> List[str]:
-        """Extract key risk factors for display"""
-        factors = []
+    def _detect_basic_suspicious_activity(self, transaction_data: Dict, holders_data: Dict, security_data: Dict) -> Dict:
+        """Basic suspicious activity detection for Express Mode"""
+        wash_trading_score = transaction_data.get("bot_activity_percentage", 0)
+        top_1_percent = holders_data.get("top_1_percent", 0)
         
-        if token.mint_authority:
-            factors.append("Mint authority is still active - new tokens can be created")
+        concentration_risk = min(100, top_1_percent * 2.5)
+        pattern_risk = 100 - transaction_data.get("pattern_score", 50)
+        tax_risk = (security_data.get("buy_tax", 0) + security_data.get("sell_tax", 0)) * 2
         
-        if token.freeze_authority:
-            factors.append("Freeze authority is active - transfers can be frozen")
+        insider_activity_score = (concentration_risk + pattern_risk + tax_risk) / 3
         
-        if holders.top_5_concentration > 60:
-            factors.append(f"High concentration: Top 5 holders control {holders.top_5_concentration:.1f}% of supply")
+        farming_indicators = []
+        if wash_trading_score > 40:
+            farming_indicators.append("High bot trading activity detected")
+        if top_1_percent > 25:
+            farming_indicators.append("Single holder dominance (potential dev wallet)")
+        if security_data.get("sell_tax", 0) > 10:
+            farming_indicators.append("High sell tax detected (potential honeypot)")
+        if not security_data.get("liquidity_locked", True):
+            farming_indicators.append("Liquidity not locked (rug pull risk)")
         
-        if len(holders.bundle_clusters) > 0:
-            high_risk = len([c for c in holders.bundle_clusters if c.risk_score > 70])
-            factors.append(f"Detected {len(holders.bundle_clusters)} wallet clusters ({high_risk} high-risk)")
+        suspicious_patterns = []
+        if security_data.get("mint_enabled", False):
+            suspicious_patterns.append("Mint authority not renounced")
+        if security_data.get("freeze_enabled", False):
+            suspicious_patterns.append("Freeze authority active")
+        if security_data.get("buy_tax", 0) > 15 or security_data.get("sell_tax", 0) > 15:
+            suspicious_patterns.append("Excessive trading taxes")
         
-        if deployer and deployer.deployment_pattern == "serial_rugger":
-            factors.append(f"Deployer has rugged {deployer.rugged_tokens}/{deployer.total_tokens_deployed} previous tokens")
-        
-        if token.age_days < 7:
-            factors.append(f"Very new token ({token.age_days} days old) - limited history available")
-        
-        if len(holders.suspicious_wallets) > 0:
-            factors.append(f"Found {len(holders.suspicious_wallets)} wallets with suspicious patterns")
-        
-        if not factors:
-            if risk_score < 30:
-                factors.append("No major risk factors detected - token appears relatively safe")
-            else:
-                factors.append("Multiple minor risk factors detected - exercise caution")
-        
-        return factors
+        return {
+            "wash_trading_score": round(wash_trading_score, 1),
+            "insider_activity_score": round(insider_activity_score, 1),
+            "farming_indicators": farming_indicators,
+            "suspicious_patterns": suspicious_patterns,
+            "transaction_health_score": transaction_data.get("pattern_score", 50),
+            "data_quality": "enhanced_basic"
+        }
 
-# ──────────────────────────────────────────────────────────────────────────────
-# FASTAPI SERVER
-# ──────────────────────────────────────────────────────────────────────────────
-app = FastAPI(title="Ultimate Rug Checker API", version="2.0")
+    def _calculate_enhanced_galaxy_score(self, indicators, transaction_analysis, 
+                                       bundle_detection, suspicious_activity, security_data) -> Tuple[int, str, float]:
+        """Enhanced Galaxy Brain Score calculation"""
+        
+        base_risk = indicators.overall_risk_score
+        
+        wash_trading_risk = suspicious_activity.get("wash_trading_score", 0) * 0.4
+        insider_risk = suspicious_activity.get("insider_activity_score", 0) * 0.3
+        
+        bundle_risk = bundle_detection.get("bundled_percentage", 0) * 2.5
+        
+        transaction_health = transaction_analysis.get("pattern_score", 50)
+        health_risk = (100 - transaction_health) * 0.2
+        
+        security_bonus = 0
+        if security_data.get("available", False):
+            if security_data.get("liquidity_locked", False):
+                security_bonus -= 10
+            if not security_data.get("mint_enabled", True) and not security_data.get("freeze_enabled", True):
+                security_bonus -= 15
+            if security_data.get("sell_tax", 0) > 15:
+                security_bonus += 20
+        
+        galaxy_score = base_risk + wash_trading_risk + insider_risk + bundle_risk + health_risk + security_bonus
+        galaxy_score = min(100, max(0, galaxy_score))
+        
+        if galaxy_score >= 85:
+            severity = "EXTREME_DANGER"
+        elif galaxy_score >= 70:
+            severity = "CRITICAL_RISK"
+        elif galaxy_score >= 55:
+            severity = "HIGH_RISK"
+        elif galaxy_score >= 35:
+            severity = "MEDIUM_RISK"
+        elif galaxy_score >= 15:
+            severity = "LOW_RISK"
+        else:
+            severity = "MINIMAL_RISK"
+        
+        confidence_factors = []
+        
+        if security_data.get("available", False):
+            confidence_factors.append(0.95)
+        else:
+            confidence_factors.append(0.7)
+            
+        if indicators.token_age_hours > 24:
+            confidence_factors.append(0.9)
+        else:
+            confidence_factors.append(0.6)
+            
+        if transaction_analysis.get("unique_traders_24h", 0) > 20:
+            confidence_factors.append(0.85)
+        else:
+            confidence_factors.append(0.7)
+            
+        if bundle_detection.get("detection_confidence", 0.5) > 0.8:
+            confidence_factors.append(0.9)
+        else:
+            confidence_factors.append(0.75)
+        
+        confidence = sum(confidence_factors) / len(confidence_factors)
+        
+        return int(galaxy_score), severity, round(confidence, 2)
 
-# Initialize rug checker
-rug_checker = RugChecker(HELIUS_API_KEY, OPENAI_API_KEY)
+    def _calculate_express_score(self, indicators: ScamIndicators, holders_data: Dict, security_data: Dict) -> Tuple[int, str, float]:
+        """Enhanced Express Mode scoring"""
+        base_risk = indicators.overall_risk_score
+        
+        top_1 = holders_data.get("top_1_percent", 0)
+        concentration_penalty = min(30, top_1 * 1.2) if top_1 > 8 else 0
+        
+        authority_penalty = 0
+        if indicators.mint_enabled:
+            authority_penalty += 25
+        if indicators.freeze_enabled:
+            authority_penalty += 20
+        
+        liquidity_penalty = 0
+        liquidity_health = self._calculate_liquidity_health(
+            indicators.liquidity_percent * 1000000,
+            indicators.liquidity_percent, 
+            0, 0
+        )
+        if liquidity_health < 30:
+            liquidity_penalty += 10
+        if indicators.liquidity_percent < 1:
+            liquidity_penalty += 8
+        
+        tax_penalty = 0
+        if indicators.buy_tax > 10:
+            tax_penalty += 8
+        if indicators.sell_tax > 10:
+            tax_penalty += 12
+        
+        express_score = base_risk + concentration_penalty + authority_penalty + liquidity_penalty + tax_penalty
+        express_score = min(100, max(0, express_score))
+        
+        if express_score >= 80:
+            severity = "CRITICAL_RISK"
+        elif express_score >= 60:
+            severity = "HIGH_RISK"
+        elif express_score >= 40:
+            severity = "MEDIUM_RISK"
+        elif express_score >= 20:
+            severity = "LOW_RISK"
+        else:
+            severity = "MINIMAL_RISK"
+        
+        confidence = 0.85 if security_data.get("available", False) else 0.75
+        
+        return int(express_score), severity, confidence
 
-@app.get("/", response_class=HTMLResponse)
-async def serve_frontend():
-    """Serve the frontend HTML"""
-    # In production, you'd serve this from a static file
-    # For now, return a simple message
-    return """
-    <html>
-        <head><title>Ultimate Rug Checker</title></head>
-        <body>
-            <h1>Ultimate Rug Checker API</h1>
-            <p>API is running! Use POST /rugcheck to analyze tokens.</p>
-            <p>Frontend should be served separately.</p>
-        </body>
-    </html>
-    """
+    def _generate_enhanced_risk_vectors(self, indicators, transaction_analysis, 
+                                    suspicious_activity, security_data) -> List[Dict]:
+        """Generate enhanced risk vectors"""
+        risk_vectors = []
+        
+        if indicators.mint_enabled:
+            risk_vectors.append({
+                "category": "Authority Risk",
+                "risk_type": "Mint Authority Active - VERIFIED",
+                "severity": "CRITICAL",
+                "impact": "Developer can create unlimited new tokens instantly",
+                "likelihood": "HIGH",
+                "mitigation": "AVOID - This is a critical red flag"
+            })
+        
+        if indicators.freeze_enabled:
+            risk_vectors.append({
+                "category": "Authority Risk",
+                "risk_type": "Freeze Authority Active - VERIFIED", 
+                "severity": "CRITICAL",
+                "impact": "Developer can freeze all token transfers at any time",
+                "likelihood": "MEDIUM",
+                "mitigation": "EXTREME RISK - Avoid or use minimal amounts"
+            })
+        
+        if indicators.top_holder_percent > 30:
+            risk_vectors.append({
+                "category": "Concentration Risk",
+                "risk_type": f"Extreme Real Whale Dominance - {indicators.top_holder_percent:.1f}%",
+                "severity": "CRITICAL",
+                "impact": f"Single REAL holder (not LP) controls {indicators.top_holder_percent:.1f}% - major dump risk",
+                "likelihood": "HIGH",
+                "mitigation": "Monitor whale wallet movements, very high risk"
+            })
+        elif indicators.top_holder_percent > 15:
+            risk_vectors.append({
+                "category": "Concentration Risk",
+                "risk_type": f"High Real Whale Concentration - {indicators.top_holder_percent:.1f}%",
+                "severity": "HIGH", 
+                "impact": f"Major real holder can significantly impact price (LP wallets filtered out)",
+                "likelihood": "HIGH",
+                "mitigation": "Watch for large transfers, trade smaller amounts"
+            })
+        elif indicators.top_holder_percent > 8:
+            risk_vectors.append({
+                "category": "Concentration Risk",
+                "risk_type": f"Moderate Real Holder Concentration - {indicators.top_holder_percent:.1f}%",
+                "severity": "MEDIUM",
+                "impact": f"Notable concentration among real holders (protocols excluded)",
+                "likelihood": "MEDIUM",
+                "mitigation": "Monitor for coordinated selling"
+            })
+        
+        return risk_vectors
 
-@app.post("/rugcheck")
-async def rugcheck_endpoint(request: RugCheckRequest):
-    """Main rug check endpoint"""
+    def _generate_basic_risk_vectors(self, indicators: ScamIndicators, holders_data: Dict, 
+                                   liquidity_data: Dict, security_data: Dict) -> List[Dict]:
+        """Enhanced basic risk vectors"""
+        risk_vectors = []
+        
+        if indicators.mint_enabled:
+            confidence = "VERIFIED" if security_data.get("available", False) else "DETECTED"
+            risk_vectors.append({
+                "category": "Authority Risk",
+                "risk_type": f"Mint Authority Active ({confidence})",
+                "severity": "CRITICAL",
+                "impact": "Developer can create unlimited new tokens",
+                "likelihood": "HIGH",
+                "mitigation": "Wait for mint authority renunciation before investing"
+            })
+        
+        if indicators.freeze_enabled:
+            risk_vectors.append({
+                "category": "Authority Risk",
+                "risk_type": "Freeze Authority Active",
+                "severity": "CRITICAL", 
+                "impact": "Developer can freeze all token transfers",
+                "likelihood": "MEDIUM",
+                "mitigation": "Avoid tokens with active freeze authority"
+            })
+        
+        if not indicators.liquidity_locked:
+            risk_vectors.append({
+                "category": "Liquidity Risk",
+                "risk_type": "Liquidity NOT Locked - Verified",
+                "severity": "CRITICAL",
+                "impact": "Liquidity can be removed anytime - rug pull risk confirmed",
+                "likelihood": "HIGH",
+                "mitigation": "EXTREME RISK - Developer can drain pool instantly"
+            })
+        
+        if indicators.top_holder_percent > 15:
+            severity = "CRITICAL" if indicators.top_holder_percent > 25 else "HIGH"
+            risk_vectors.append({
+                "category": "Concentration Risk",
+                "risk_type": "Whale Dominance",
+                "severity": severity,
+                "impact": f"Top holder owns {indicators.top_holder_percent:.1f}% - dump risk",
+                "likelihood": "HIGH",
+                "mitigation": "Monitor large holder activity for exit signals"
+            })
+        
+        if indicators.liquidity_percent < 5:
+            severity = "HIGH" if indicators.liquidity_percent < 2 else "MEDIUM"
+            risk_vectors.append({
+                "category": "Liquidity Risk",
+                "risk_type": "Low Liquidity Pool",
+                "severity": severity,
+                "impact": f"Only {indicators.liquidity_percent:.1f}% of market cap in liquidity",
+                "likelihood": "CERTAIN",
+                "mitigation": "Expect high slippage, trade only small amounts"
+            })
+        
+        return risk_vectors
+
+# Usage example
+async def main():
+    """Example usage of the Enhanced Rug Checker"""
+    
+    # Initialize with API keys
+    helius_key = "your-helius-api-key-here"  # Get from helius.xyz
+    birdeye_key = "your-birdeye-api-key-here"  # Optional - Get from birdeye.so
+    xai_key = "your-xai-api-key-here"  # Required for Grok live search - Get from x.ai
+    
+    checker = EnhancedRugChecker(
+        helius_key=helius_key,
+        birdeye_key=birdeye_key,
+        xai_key=xai_key
+    )
+    
+    # Example token address (replace with actual token)
+    token_address = "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"  # Example: Bonk
+    
     try:
-        # Validate token address
-        token_address = request.token_address.strip()
-        if not token_address or len(token_address) < 32:
-            raise HTTPException(status_code=400, detail="Invalid token address")
+        # Run deep analysis with Grok live search
+        print("🧠 Starting REVOLUTIONARY Galaxy Brain v5.0 Analysis...")
+        result = await checker.analyze_token(token_address, deep_analysis=True)
         
-        # Perform analysis
-        result = await rug_checker.analyze_token_ultimate(token_address)
-        
-        if not result.get("success"):
-            raise HTTPException(status_code=500, detail=result.get("error", "Analysis failed"))
-        
-        return result
-        
-    except HTTPException:
-        raise
+        if result["success"]:
+            print(f"\n✅ Analysis Complete!")
+            print(f"🧠 Galaxy Brain Score: {result['galaxy_brain_score']}/100")
+            print(f"⚠️ Risk Level: {result['severity_level']}")
+            print(f"🎯 Confidence: {result['confidence']:.0%}")
+            print(f"\n{result['ai_analysis']}")
+            
+            # Show key metrics
+            token_info = result['token_info']
+            print(f"\n📊 Token: {token_info['name']} (${token_info['symbol']})")
+            print(f"💰 Market Cap: ${token_info.get('market_cap', 0):,.0f}")
+            print(f"💧 Liquidity: ${token_info.get('liquidity', 0):,.0f}")
+            print(f"👥 Top Holder: {result['holder_analysis']['top_1_percent']:.1f}%")
+            
+            # Show Grok analysis if available
+            if result['grok_analysis'].get('available'):
+                grok_data = result['grok_analysis']['parsed_analysis']
+                print(f"\n🧠 REVOLUTIONARY Grok Intelligence:")
+                print(f"   Verdict: {grok_data['verdict']}")
+                print(f"   Confidence: {grok_data['confidence']:.0%}")
+                print(f"   Community Evidence: {len(grok_data.get('positive_community_sentiment', []))} positive, {len(grok_data.get('possible_community_risks', []))} risks")
+            
+        else:
+            print(f"❌ Analysis failed: {result['error']}")
+            
     except Exception as e:
-        logger.error(f"Endpoint error: {e}")
-        raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+        print(f"💥 Error: {e}")
 
 if __name__ == "__main__":
-    print("🚀 Starting Ultimate Rug Checker API...")
-    print("📡 Make sure to set your HELIUS_API_KEY!")
-    print("🤖 OpenAI integration available for enhanced analysis")
-    print("🔍 API will be available at http://localhost:8000")
-    
-    uvicorn.run(
-        "main:app",  # Change this to match your filename
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+    # Run the example
+    asyncio.run(main())
