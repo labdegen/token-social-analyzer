@@ -1083,6 +1083,40 @@ padding:0px 10px 0px 0px;
     gap: 2px;
 }
 
+.safety-tab-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.account-handle a{coloor:red}
+
+.safety-tab-btn:hover {
+    color: #b0b7ff;
+    background: rgba(108, 92, 231, 0.1);
+}
+
+.safety-tab-btn.active {
+    color: #ffffff;
+    background: rgba(108, 92, 231, 0.2);
+    border-bottom: 2px solid #6c5ce7;
+}
+
+.safety-tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.safety-tab-content.active {
+    display: block;
+}
+
 .metric-label {
     font-size: 0.7rem;
     color: #b0b7ff;
@@ -1463,6 +1497,8 @@ padding:0px 10px 0px 0px;
 			padding:0px 15px 0px 15px;
 			float:left;
         }
+
+.hideme{display:none!important}
 
         .crypto-change {
             font-size: 0.75rem;

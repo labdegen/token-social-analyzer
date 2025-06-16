@@ -29,6 +29,9 @@
                  <a href="/history" class="nav-link active">History</a>
                 <a href="/charts" class="nav-link active">Chart Analysis</a>
             </nav>
+            <button class="analyze-btn"  data-dashlane-label="true" data-dashlane-rid="7ea2717add52dd52" data-dashlane-classification="other">
+                           Connect
+                        </button>
         </div>
     </header>
 
@@ -912,7 +915,7 @@
     </div>
 
     <!-- Galaxy Brain Score Summary -->
-    <div class="galaxy-brain-summary" id="galaxySafetySummary">
+    <div class="galaxy-brain-summary hideme" id="galaxySafetySummary">
         <div style="display: grid; grid-template-columns: 200px 1fr 200px; gap: 30px; align-items: center;">
             <div class="galaxy-score-display">
                 <div class="galaxy-score" id="galaxyBrainScore">0</div>
@@ -943,7 +946,7 @@
     </div>
 
     <!-- Grok Intelligence Panel -->
-    <div class="grok-intelligence-panel" id="grokIntelligencePanel" style="display: none;">
+    <div class="grok-intelligence-panel hideme" id="grokIntelligencePanel" style="display: none;">
         <div class="grok-header">
             <div class="grok-brain-icon">🤖</div>
             <div class="grok-title">Live Grok Community Intelligence</div>
@@ -975,7 +978,7 @@
 
     <!-- Safety Charts Section -->
     <div class="safety-charts-section">
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 25px;">
             <!-- Revolutionary Risk Chart -->
             <div class="chart-card">
                 <h3>🧠 Revolutionary Risk</h3>
@@ -1008,31 +1011,31 @@
 
     <!-- Detailed Safety Tabs -->
     <div class="detailed-safety-analysis">
-        <div class="analysis-tabs">
-            <button class="tab-btn active" onclick="showSafetyTab('holders')">👥 Holders</button>
-            <button class="tab-btn" onclick="showSafetyTab('transactions')">🔄 Transactions</button>
-            <button class="tab-btn" onclick="showSafetyTab('bundles')">🕷️ Bundles</button>
-            <button class="tab-btn" onclick="showSafetyTab('liquidity')">💧 Liquidity</button>
-            <button class="tab-btn" onclick="showSafetyTab('authority')">🔐 Authority</button>
-        </div>
+<div class="analysis-tabs">
+    <button class="safety-tab-btn active" onclick="showSafetyTab('holders')">👥 Holders</button>
+    <button class="safety-tab-btn" onclick="showSafetyTab('transactions')">🔄 Transactions</button>
+    <button class="safety-tab-btn" onclick="showSafetyTab('bundles')">🕷️ Bundles</button>
+    <button class="safety-tab-btn" onclick="showSafetyTab('liquidity')">💧 Liquidity</button>
+    <button class="safety-tab-btn" onclick="showSafetyTab('authority')">🔐 Authority</button>
+</div>
         
-        <div class="tab-content active" id="holders-safety-tab">
+        <div class="safety-tab-content active" id="holders-safety-tab">
             <div id="holdersSafetyAnalysis"></div>
         </div>
         
-        <div class="tab-content" id="transactions-safety-tab">
+        <div class="safety-tab-content" id="transactions-safety-tab">
             <div id="transactionsSafetyAnalysis"></div>
         </div>
         
-        <div class="tab-content" id="bundles-safety-tab">
+        <div class="safety-tab-content" id="bundles-safety-tab">
             <div id="bundlesSafetyAnalysis"></div>
         </div>
         
-        <div class="tab-content" id="liquidity-safety-tab">
+        <div class="safety-tab-content" id="liquidity-safety-tab">
             <div id="liquiditySafetyAnalysis"></div>
         </div>
         
-        <div class="tab-content" id="authority-safety-tab">
+        <div class="safety-tab-content" id="authority-safety-tab">
             <div id="authoritySafetyAnalysis"></div>
         </div>
     </div>
@@ -1273,7 +1276,7 @@
 }
 
 .metric-value {
-    font-size: 1.8rem;
+    font-size: 1.3rem;
     font-weight: bold;
     color: #fff;
     margin-bottom: 8px;
@@ -6129,15 +6132,14 @@ function updateHistoryBadge() {
     }
 }
 
-// Tab switching function for safety analysis
 function showSafetyTab(tabName) {
-    // Hide all safety tab contents
-    document.querySelectorAll('#safetyAnalysisDashboard .tab-content').forEach(tab => {
+    // Hide all SAFETY tab contents
+    document.querySelectorAll('#safetyAnalysisDashboard .safety-tab-content').forEach(tab => {
         tab.classList.remove('active');
     });
     
-    // Remove active class from all safety tab buttons
-    document.querySelectorAll('#safetyAnalysisDashboard .tab-btn').forEach(btn => {
+    // Remove active class from all SAFETY tab buttons
+    document.querySelectorAll('#safetyAnalysisDashboard .safety-tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     
