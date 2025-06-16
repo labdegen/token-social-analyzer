@@ -305,6 +305,394 @@
     background: linear-gradient(135deg, #10b981, #059669);
 }
 
+
+/* Safety Analysis Dashboard Styles */
+.safety-analysis-dashboard {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 16px;
+    padding: 25px;
+    margin: 20px 0;
+    border: 1px solid rgba(255, 107, 107, 0.2);
+}
+
+.galaxy-brain-summary {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(26, 26, 46, 0.9));
+    backdrop-filter: blur(15px);
+    padding: 30px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+.galaxy-score-display {
+    text-align: center;
+}
+
+.galaxy-score {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin: 10px 0;
+    text-shadow: 0 0 30px currentColor;
+    position: relative;
+    z-index: 1;
+}
+
+.galaxy-score.minimal_risk { 
+    color: #51cf66; 
+    border-color: #51cf66;
+}
+.galaxy-score.low_risk { 
+    color: #339af0; 
+    border-color: #339af0;
+}
+.galaxy-score.medium_risk { 
+    color: #ffd93d; 
+    border-color: #ffd93d;
+}
+.galaxy-score.high_risk { 
+    color: #ff6b6b; 
+    border-color: #ff6b6b;
+}
+.galaxy-score.critical_risk { 
+    color: #ff3838; 
+    border-color: #ff3838;
+}
+
+.galaxy-score-label {
+    font-size: 0.9rem;
+    color: #b0b7ff;
+    font-weight: 600;
+}
+
+.safety-analysis-center {
+    text-align: center;
+}
+
+.severity-level {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.confidence-bar {
+    width: 100%;
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b6b, #ffd93d, #51cf66);
+    border-radius: 4px;
+    transition: width 1s ease;
+}
+
+.safety-status-indicators {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-icon {
+    font-size: 1.5rem;
+}
+
+.status-text {
+    font-size: 0.9rem;
+    color: #b0b7ff;
+    font-weight: 600;
+}
+
+.status-value {
+    font-size: 0.8rem;
+    color: #ffffff;
+    margin-left: auto;
+    font-weight: bold;
+}
+
+/* Grok Intelligence Panel */
+.grok-intelligence-panel {
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(255, 107, 107, 0.15));
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 15px;
+    margin: 20px 0;
+    border: 2px solid;
+    border-image: linear-gradient(135deg, #6c5ce7, #ff6b6b) 1;
+    animation: grokGlow 4s ease-in-out infinite;
+}
+
+@keyframes grokGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(108, 92, 231, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(255, 107, 107, 0.5); }
+}
+
+.grok-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.grok-brain-icon {
+    font-size: 1.8rem;
+    animation: brainPulse 2s ease-in-out infinite;
+}
+
+@keyframes brainPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.grok-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #6c5ce7, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.grok-verdict {
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-left: auto;
+}
+
+.grok-verdict.revolutionary_safe {
+    background: linear-gradient(135deg, #51cf66, #40c057);
+    color: #fff;
+}
+
+.grok-verdict.caution_advised {
+    background: linear-gradient(135deg, #ffd93d, #fcc419);
+    color: #000;
+}
+
+.grok-verdict.danger_detected {
+    background: linear-gradient(135deg, #ff6b6b, #ff5252);
+    color: #fff;
+}
+
+/* Risk Vectors */
+.risk-vectors-section {
+    margin: 25px 0;
+}
+
+.risk-vectors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.risk-vector-card {
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    transition: all 0.3s ease;
+}
+
+.risk-vector-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.risk-vector-card.critical {
+    border-color: #ff3838;
+    background: rgba(255, 56, 56, 0.1);
+}
+
+.risk-vector-card.high {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.risk-vector-card.medium {
+    border-color: #ffd93d;
+    background: rgba(255, 217, 61, 0.1);
+}
+
+.risk-vector-card.low {
+    border-color: #51cf66;
+    background: rgba(81, 207, 102, 0.1);
+}
+
+.vector-category {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.vector-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.vector-impact {
+    color: #ccc;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.vector-mitigation {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-left: 3px solid #6c5ce7;
+}
+
+/* Advanced Safety Metrics */
+.advanced-safety-metrics {
+    margin: 25px 0;
+}
+
+.safety-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+.safety-metric-card {
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.safety-metric-card:hover {
+    transform: translateY(-2px);
+    border-color: #6c5ce7;
+    box-shadow: 0 8px 20px rgba(108, 92, 231, 0.2);
+}
+
+.safety-metric-label {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.safety-metric-value {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 6px;
+}
+
+.safety-metric-subtitle {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+/* Safety Charts Section */
+.safety-charts-section {
+    margin: 25px 0;
+}
+
+/* Detailed Safety Analysis Tabs */
+.detailed-safety-analysis {
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid #333;
+    margin: 25px 0;
+}
+
+.analysis-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    overflow-x: auto;
+}
+
+.analysis-tabs .tab-btn {
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.analysis-tabs .tab-btn.active {
+    color: #6c5ce7;
+    border-bottom-color: #6c5ce7;
+}
+
+.analysis-tabs .tab-btn:hover {
+    color: #a29bfe;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .galaxy-brain-summary > div {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .safety-status-indicators {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    
+    .status-indicator {
+        flex-direction: column;
+        text-align: center;
+        gap: 5px;
+    }
+    
+    .risk-vectors-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .safety-metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .safety-charts-section > div {
+        grid-template-columns: 1fr;
+    }
+    
+    .analysis-tabs {
+        justify-content: flex-start;
+    }
+}
+
         /* News Ticker */
 .news-ticker-container {
 
