@@ -23,9 +23,10 @@
             <a href="#" class="logo"><img style="max-height:60px;" src="https://jeetsvsdegens.com/ask-logo.png"></a>
              <nav class="nav-links">
                 <a href="/" class="nav-link">Dashboard</a>
-				 <a href="/charts" class="nav-link active">Rug Check</a>
+				 <a href="/academy" class="nav-link active">Academy</a>
                 <a href="/resources" class="nav-link">Resources</a>
-                <a href="/dictionary" class="nav-link">Degen Academy</a>
+                <a href="/dictionary" class="nav-link">Dictionary</a>
+                 <a href="/history" class="nav-link active">History</a>
                 <a href="/charts" class="nav-link active">Chart Analysis</a>
             </nav>
         </div>
@@ -33,7 +34,7 @@
 
 
     <div class="dashboard-container">
-<div class="news-ticker-container"><span style="background-color:#000; z-index:9;">News:</span>
+<div class="news-ticker-container"><span style="background-color:#000; z-index:9; padding-left:10px;">News:</span>
     <div class="news-ticker-content" id="newsTicker">
         <div class="ticker-item">📈 Loading crypto news... Market analysis in progress</div>
     </div>
@@ -67,7 +68,7 @@
             🔥 Trending Now
         </button>
         <button class="tab-btn" onclick="switchTab('volume')" data-tab="volume">
-            💰 Highest Volume
+            💰 Volume Spike
         </button>
         <button class="tab-btn" onclick="switchTab('latest')" data-tab="latest">
             ✨ Latest Tokens
@@ -204,143 +205,7 @@
                     </div>
                 </div>
 
-                <!-- Safety Analysis Dashboard - Add after tokenProfile -->
-<div class="safety-analysis-dashboard" id="safetyAnalysisDashboard" style="display: none;">
-    <div class="section-header">
-        <span style="font-size: 1.5rem;">🧠</span>
-        <div class="section-title">Revolutionary Galaxy Brain Safety Analysis</div>
-        <div class="live-data-badge">
-            <div class="live-dot"></div>
-            LIVE GROK INTELLIGENCE
-        </div>
-    </div>
-
-    <!-- Galaxy Brain Score Summary -->
-    <div class="galaxy-brain-summary" id="galaxySafetySummary">
-        <div style="display: grid; grid-template-columns: 200px 1fr 200px; gap: 30px; align-items: center;">
-            <div class="galaxy-score-display">
-                <div class="galaxy-score" id="galaxyBrainScore">0</div>
-                <div class="galaxy-score-label">Galaxy Brain Score</div>
-            </div>
-            
-            <div class="safety-analysis-center">
-                <div class="severity-level" id="safetyLevel">ANALYZING...</div>
-                <div class="confidence-bar">
-                    <div class="confidence-fill" id="safetyConfidenceFill"></div>
-                </div>
-                <p id="safetyConfidenceText">Confidence: 0%</p>
-            </div>
-            
-            <div class="safety-status-indicators">
-                <div class="status-indicator" id="authorityStatus">
-                    <div class="status-icon">🔐</div>
-                    <div class="status-text">Authorities</div>
-                    <div class="status-value">Checking...</div>
-                </div>
-                <div class="status-indicator" id="liquidityStatus">
-                    <div class="status-icon">💧</div>
-                    <div class="status-text">Liquidity</div>
-                    <div class="status-value">Checking...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Grok Intelligence Panel -->
-    <div class="grok-intelligence-panel" id="grokIntelligencePanel" style="display: none;">
-        <div class="grok-header">
-            <div class="grok-brain-icon">🤖</div>
-            <div class="grok-title">Live Grok Community Intelligence</div>
-            <div class="grok-verdict" id="grokVerdict">ANALYZING</div>
-        </div>
-        <div class="grok-content" id="grokAnalysisContent">
-            <!-- Grok analysis will be populated here -->
-        </div>
-    </div>
-
-    <!-- Risk Vectors Grid -->
-    <div class="risk-vectors-section">
-        <h3 style="color: #ff6b6b; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-            ⚠️ Risk Vectors Analysis
-            <span style="font-size: 0.8rem; color: #888;">(Live Detection)</span>
-        </h3>
-        <div class="risk-vectors-grid" id="riskVectorsGrid">
-            <div class="loading-state">Analyzing risk factors...</div>
-        </div>
-    </div>
-
-    <!-- Advanced Safety Metrics -->
-    <div class="advanced-safety-metrics">
-        <h3 style="color: #10b981; margin-bottom: 20px;">📊 Advanced Safety Metrics</h3>
-        <div class="safety-metrics-grid" id="safetyMetricsGrid">
-            <!-- Safety metrics cards will be populated here -->
-        </div>
-    </div>
-
-    <!-- Safety Charts Section -->
-    <div class="safety-charts-section">
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px;">
-            <!-- Holder Distribution Chart -->
-            <div class="chart-card">
-                <h3>👥 Holder Distribution Risk</h3>
-                <canvas id="holderDistributionChart" width="300" height="200"></canvas>
-                <div class="chart-value" id="holderRiskValue">Analyzing...</div>
-            </div>
-            
-            <!-- Transaction Health Chart -->
-            <div class="chart-card">
-                <h3>🔄 Transaction Health Score</h3>
-                <canvas id="transactionHealthChart" width="300" height="200"></canvas>
-                <div class="chart-value" id="transactionHealthValue">Analyzing...</div>
-            </div>
-            
-            <!-- Bundle Detection Chart -->
-            <div class="chart-card">
-                <h3>🕷️ Bundle Detection Results</h3>
-                <canvas id="bundleDetectionChart" width="300" height="200"></canvas>
-                <div class="chart-value" id="bundleDetectionValue">Analyzing...</div>
-            </div>
-            
-            <!-- Authority Analysis Chart -->
-            <div class="chart-card">
-                <h3>🔐 Authority & Control Analysis</h3>
-                <canvas id="authorityAnalysisChart" width="300" height="200"></canvas>
-                <div class="chart-value" id="authorityAnalysisValue">Analyzing...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Detailed Safety Tabs -->
-    <div class="detailed-safety-analysis">
-        <div class="analysis-tabs">
-            <button class="tab-btn active" onclick="showSafetyTab('holders')">👥 Holders</button>
-            <button class="tab-btn" onclick="showSafetyTab('transactions')">🔄 Transactions</button>
-            <button class="tab-btn" onclick="showSafetyTab('bundles')">🕷️ Bundles</button>
-            <button class="tab-btn" onclick="showSafetyTab('liquidity')">💧 Liquidity</button>
-            <button class="tab-btn" onclick="showSafetyTab('authority')">🔐 Authority</button>
-        </div>
-        
-        <div class="tab-content active" id="holders-safety-tab">
-            <div id="holdersSafetyAnalysis"></div>
-        </div>
-        
-        <div class="tab-content" id="transactions-safety-tab">
-            <div id="transactionsSafetyAnalysis"></div>
-        </div>
-        
-        <div class="tab-content" id="bundles-safety-tab">
-            <div id="bundlesSafetyAnalysis"></div>
-        </div>
-        
-        <div class="tab-content" id="liquidity-safety-tab">
-            <div id="liquiditySafetyAnalysis"></div>
-        </div>
-        
-        <div class="tab-content" id="authority-safety-tab">
-            <div id="authoritySafetyAnalysis"></div>
-        </div>
-    </div>
-</div>
+                
 
                 <!-- Results Section -->
                 <div class="results-section" id="resultsSection">
@@ -1034,31 +899,521 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Sticky Sidebar -->
-            <div class="sidebar">
-                <!-- Crypto News -->
-                <div class="sidebar-section">
-        <div class="section-header">
-            <span style="font-size: 1.5rem;">📊</span>
-            <div class="section-title">Token History</div>
-            <button class="clear-history-btn" onclick="clearTokenHistory()" title="Clear History">🗑️</button>
+<!-- Safety Analysis Dashboard - Replace the existing one in index.html -->
+<div class="safety-analysis-dashboard" id="safetyAnalysisDashboard" style="display: none;">
+    <div class="section-header">
+        <span style="font-size: 1.5rem;">🧠</span>
+        <div class="section-title">Revolutionary Galaxy Brain Safety Analysis</div>
+        <div class="live-data-badge">
+            <div class="live-dot"></div>
+            LIVE GROK INTELLIGENCE
         </div>
-        <div class="sidebar-content">
-            <div class="token-history-list" id="tokenHistoryList">
-                <div class="history-empty">
-                    <div style="text-align: center; padding: 20px; color: #666;">
-                        <div style="font-size: 2rem; margin-bottom: 10px;">📈</div>
-                        <p>Analyze tokens to build your history</p>
-                    </div>
+    </div>
+
+    <!-- Galaxy Brain Score Summary -->
+    <div class="galaxy-brain-summary" id="galaxySafetySummary">
+        <div style="display: grid; grid-template-columns: 200px 1fr 200px; gap: 30px; align-items: center;">
+            <div class="galaxy-score-display">
+                <div class="galaxy-score" id="galaxyBrainScore">0</div>
+                <div class="galaxy-score-label">Galaxy Brain Score</div>
+            </div>
+            
+            <div class="safety-analysis-center">
+                <div class="severity-level" id="safetyLevel">ANALYZING...</div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="safetyConfidenceFill"></div>
+                </div>
+                <p id="safetyConfidenceText">Confidence: 0%</p>
+            </div>
+            
+            <div class="safety-status-indicators">
+                <div class="status-indicator" id="authorityStatus">
+                    <div class="status-icon">🔐</div>
+                    <div class="status-text">Authorities</div>
+                    <div class="status-value">Checking...</div>
+                </div>
+                <div class="status-indicator" id="liquidityStatus">
+                    <div class="status-icon">💧</div>
+                    <div class="status-text">Liquidity</div>
+                    <div class="status-value">Checking...</div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Grok Intelligence Panel -->
+    <div class="grok-intelligence-panel" id="grokIntelligencePanel" style="display: none;">
+        <div class="grok-header">
+            <div class="grok-brain-icon">🤖</div>
+            <div class="grok-title">Live Grok Community Intelligence</div>
+            <div class="grok-verdict" id="grokVerdict">ANALYZING</div>
+        </div>
+        <div class="grok-content" id="grokAnalysisContent">
+            <!-- Grok analysis will be populated here -->
+        </div>
+    </div>
+
+    <!-- Risk Vectors Grid -->
+    <div class="risk-vectors-section">
+        <h3 style="color: #ff6b6b; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            ⚠️ Risk Vectors Analysis
+            <span style="font-size: 0.8rem; color: #888;">(Live Detection)</span>
+        </h3>
+        <div class="risk-vectors-grid" id="riskVectorsGrid">
+            <div class="loading-state">Analyzing risk factors...</div>
+        </div>
+    </div>
+
+    <!-- Advanced Safety Metrics -->
+    <div class="advanced-safety-metrics">
+        <h3 style="color: #10b981; margin-bottom: 20px;">📊 Advanced Safety Metrics</h3>
+        <div class="safety-metrics-grid" id="safetyMetricsGrid">
+            <!-- Safety metrics cards will be populated here -->
+        </div>
+    </div>
+
+    <!-- Safety Charts Section -->
+    <div class="safety-charts-section">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px;">
+            <!-- Revolutionary Risk Chart -->
+            <div class="chart-card">
+                <h3>🧠 Revolutionary Risk</h3>
+                <canvas id="revolutionaryRiskChart" width="300" height="200"></canvas>
+                <div class="chart-value" id="revolutionaryRiskValue">Analyzing...</div>
             </div>
+            
+            <!-- Holder Distribution Chart -->
+            <div class="chart-card">
+                <h3>👥 Holder Distribution Risk</h3>
+                <canvas id="holderDistributionChart" width="300" height="200"></canvas>
+                <div class="chart-value" id="holderRiskValue">Analyzing...</div>
+            </div>
+            
+            <!-- Transaction Health Chart -->
+            <div class="chart-card">
+                <h3>🔄 Transaction Health Score</h3>
+                <canvas id="transactionHealthChart" width="300" height="200"></canvas>
+                <div class="chart-value" id="transactionHealthValue">Analyzing...</div>
+            </div>
+            
+            <!-- Bundle Detection Chart -->
+            <div class="chart-card">
+                <h3>🕷️ Bundle Detection Results</h3>
+                <canvas id="bundleDetectionChart" width="300" height="200"></canvas>
+                <div class="chart-value" id="bundleDetectionValue">Analyzing...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Safety Tabs -->
+    <div class="detailed-safety-analysis">
+        <div class="analysis-tabs">
+            <button class="tab-btn active" onclick="showSafetyTab('holders')">👥 Holders</button>
+            <button class="tab-btn" onclick="showSafetyTab('transactions')">🔄 Transactions</button>
+            <button class="tab-btn" onclick="showSafetyTab('bundles')">🕷️ Bundles</button>
+            <button class="tab-btn" onclick="showSafetyTab('liquidity')">💧 Liquidity</button>
+            <button class="tab-btn" onclick="showSafetyTab('authority')">🔐 Authority</button>
+        </div>
+        
+        <div class="tab-content active" id="holders-safety-tab">
+            <div id="holdersSafetyAnalysis"></div>
+        </div>
+        
+        <div class="tab-content" id="transactions-safety-tab">
+            <div id="transactionsSafetyAnalysis"></div>
+        </div>
+        
+        <div class="tab-content" id="bundles-safety-tab">
+            <div id="bundlesSafetyAnalysis"></div>
+        </div>
+        
+        <div class="tab-content" id="liquidity-safety-tab">
+            <div id="liquiditySafetyAnalysis"></div>
+        </div>
+        
+        <div class="tab-content" id="authority-safety-tab">
+            <div id="authoritySafetyAnalysis"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Safety Analysis Dashboard Styles */
+.safety-analysis-dashboard {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(26, 26, 46, 0.95));
+    backdrop-filter: blur(15px);
+    border: 2px solid;
+    border-image: linear-gradient(135deg, #6c5ce7, #ff6b6b) 1;
+    border-radius: 20px;
+    padding: 30px;
+    margin: 25px 0;
+    position: relative;
+    overflow: hidden;
+    animation: safetyGlow 4s ease-in-out infinite;
+}
+
+@keyframes safetyGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(108, 92, 231, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(255, 107, 107, 0.5); }
+}
+
+.galaxy-brain-summary {
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(255, 107, 107, 0.15));
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(108, 92, 231, 0.3);
+}
+
+.galaxy-score-display {
+    text-align: center;
+}
+
+.galaxy-score {
+    font-size: 4rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+    text-shadow: 0 0 30px currentColor;
+    background: linear-gradient(135deg, #6c5ce7, #ff6b6b, #ffd93d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 400% 400%;
+    animation: scoreGradient 3s ease-in-out infinite;
+}
+
+@keyframes scoreGradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.galaxy-score-label {
+    color: #b0b7ff;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.safety-analysis-center {
+    text-align: center;
+}
+
+.severity-level {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+
+.confidence-bar {
+    width: 100%;
+    height: 8px;
+    background: #333;
+    border-radius: 4px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b6b, #ffd93d, #51cf66);
+    border-radius: 4px;
+    transition: width 1s ease;
+    width: 0%;
+}
+
+.safety-status-indicators {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.status-indicator {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.status-text {
+    color: #b0b7ff;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.status-value {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.grok-intelligence-panel {
+    background: rgba(108, 92, 231, 0.1);
+    border: 1px solid #6c5ce7;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.grok-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.grok-brain-icon {
+    font-size: 2rem;
+    animation: brainPulse 2s ease-in-out infinite;
+}
+
+@keyframes brainPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.grok-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #a29bfe;
+    flex: 1;
+}
+
+.grok-verdict {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.grok-content {
+    color: #e0e0e0;
+    line-height: 1.6;
+}
+
+.risk-vectors-section {
+    margin-bottom: 30px;
+}
+
+.risk-vectors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.risk-vector-card {
+    background: rgba(26, 26, 26, 0.8);
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.risk-vector-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.risk-vector-card.critical {
+    border-color: #ff3838;
+    background: rgba(255, 56, 56, 0.1);
+}
+
+.risk-vector-card.high {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.risk-vector-card.medium {
+    border-color: #ffd93d;
+    background: rgba(255, 217, 61, 0.1);
+}
+
+.risk-vector-card.low {
+    border-color: #51cf66;
+    background: rgba(81, 207, 102, 0.1);
+}
+
+.advanced-safety-metrics {
+    margin-bottom: 30px;
+}
+
+.safety-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.metric-card {
+    background: rgba(26, 26, 26, 0.8);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-3px);
+    border-color: #6c5ce7;
+    box-shadow: 0 10px 30px rgba(108, 92, 231, 0.2);
+}
+
+.metric-label {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.metric-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.metric-subtitle {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.safety-charts-section {
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    background: rgba(26, 26, 26, 0.8);
+    border: 1px solid #333;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    height: 320px;
+}
+
+.chart-card h3 {
+    color: #6c5ce7;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.chart-card canvas {
+    max-height: 200px;
+    margin-bottom: 10px;
+}
+
+.chart-value {
+    color: #b0b7ff;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.detailed-safety-analysis {
+    background: rgba(26, 26, 26, 0.6);
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid #333;
+}
+
+.analysis-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.tab-btn:hover {
+    color: #b0b7ff;
+    background: rgba(108, 92, 231, 0.1);
+}
+
+.tab-btn.active {
+    color: #ffffff;
+    background: rgba(108, 92, 231, 0.2);
+    border-bottom: 2px solid #6c5ce7;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.loading-state {
+    text-align: center;
+    color: #888;
+    padding: 40px;
+    font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .galaxy-brain-summary > div {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .safety-charts-section > div {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .safety-analysis-dashboard {
+        padding: 20px;
+    }
+    
+    .galaxy-score {
+        font-size: 3rem;
+    }
+    
+    .analysis-tabs {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .tab-btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+</style>
+
+
+                </div>
+            </div>
+
+
         </div>
 
         <div class="powered-by">
@@ -1111,6 +1466,7 @@
             initializeFearGreedChart();
             updateTokenHistoryDisplay(); // Load token history
             disableChatPopup(); // Initialize chat as disabled
+            updateHistoryBadge();
             
             // Initialize trending tokens system
             setupTrendingTokenHandlers();
@@ -1120,6 +1476,13 @@
                 // Fallback to trending manager if unified cache system not available
                 initializeTrendingManager();
             }
+
+            document.addEventListener('click', function(event) {
+        const historyWidget = document.querySelector('.floating-history-widget');
+        if (historyPopupOpen && historyWidget && !historyWidget.contains(event.target)) {
+            toggleHistory();
+        }
+    });
             
             // Allow Enter key for inputs
             document.getElementById('tokenAddress').addEventListener('keypress', function(e) {
@@ -1763,7 +2126,7 @@ function addToTokenHistory(tokenData) {
         price_change_24h: tokenData.price_change_24h,
         market_cap: tokenData.market_cap,
         timestamp: new Date().toISOString(),
-        analysis_data: tokenData // Store full analysis for quick access
+        analysis_data: tokenData
     };
     
     tokenHistory.unshift(historyItem);
@@ -1776,19 +2139,32 @@ function addToTokenHistory(tokenData) {
     // Save to session storage
     sessionStorage.setItem('tokenHistory', JSON.stringify(tokenHistory));
     
-    updateTokenHistoryDisplay();
+    // Update display if popup is open, otherwise just update badge
+    if (historyPopupOpen) {
+        updateTokenHistoryDisplay();
+    } else {
+        updateHistoryBadge();
+    }
 }
 
 function updateTokenHistoryDisplay() {
-    const historyContainer = document.getElementById('tokenHistoryList');
+    const historyContainer = document.getElementById('historyPopupContent');
+    const subtitle = document.getElementById('historySubtitle');
+    const countBadge = document.getElementById('historyCountBadge');
+    const trigger = document.getElementById('historyTrigger');
+    
+    // Update count badge and subtitle
+    const count = tokenHistory.length;
+    updateHistoryBadge();
+    
+    if (!historyContainer) return;
     
     if (tokenHistory.length === 0) {
         historyContainer.innerHTML = `
-            <div class="history-empty">
-                <div style="text-align: center; padding: 20px; color: #666;">
-                    <div style="font-size: 2rem; margin-bottom: 10px;">📈</div>
-                    <p>Analyze tokens to build your history</p>
-                </div>
+            <div class="popup-history-empty">
+                <div class="empty-icon">📈</div>
+                <h3>No Token History</h3>
+                <p>Analyze tokens to build your history and quickly access previous analyses.</p>
             </div>
         `;
         return;
@@ -1801,17 +2177,23 @@ function updateTokenHistoryDisplay() {
         const changeSign = item.price_change_24h >= 0 ? '+' : '';
         
         historyHtml += `
-            <div class="history-item" onclick="loadFromHistory('${item.token_address}')">
-                <div class="history-symbol">${item.token_symbol}</div>
-                <div class="history-name">${item.token_name}</div>
-                <div class="history-meta">
-                    <span class="history-price">$${(item.price_usd || 0).toFixed(8)}</span>
-                    <span class="history-change ${changeClass}">${changeSign}${(item.price_change_24h || 0).toFixed(2)}%</span>
+            <div class="popup-history-item" onclick="loadFromHistory('${item.token_address}')">
+                <div class="popup-history-symbol">
+                    ${item.token_symbol}
+                    <span style="font-size: 12px; color: #888;">#${tokenHistory.indexOf(item) + 1}</span>
                 </div>
-                <div class="history-meta">
-                    <span>${timeAgo}</span>
-                    <span>$${formatNumber(item.market_cap || 0)}</span>
+                <div class="popup-history-name">${item.token_name}</div>
+                <div class="popup-history-meta">
+                    <span class="popup-history-price">$${(item.price_usd || 0).toFixed(8)}</span>
+                    <span class="popup-history-change ${changeClass}">
+                        ${changeSign}${(item.price_change_24h || 0).toFixed(2)}%
+                    </span>
                 </div>
+                <div class="popup-history-meta">
+                    <span style="font-size: 11px; color: #888;">MC: ${formatNumber(item.market_cap || 0)}</span>
+                    <span style="font-size: 11px; color: #888;">Vol: ${formatNumber(item.volume_24h || 0)}</span>
+                </div>
+                <div class="popup-history-time">${timeAgo}</div>
             </div>
         `;
     });
@@ -4504,7 +4886,7 @@ function hideResults() {
 
 const FREE_TIER_CONFIG = {
     categories: ['trending', 'volume', 'latest'],
-    categoryNames: ['🔥 Trending', '💰 Highest Volume', '✨ Latest Tokens'],
+    categoryNames: ['🔥 Trending', '💰 Volume Spike', '✨ Latest Tokens'],
     loadOnDemand: true,  // Only load when tab is clicked
     cacheTime: 30 * 60 * 1000,  // 30 minutes cache
     retryDelay: 5000  // 5 seconds before retry on error
@@ -5012,6 +5394,794 @@ document.addEventListener('keydown', e => {
     window.scrollBy({ top: -STEP, behavior: 'smooth' });
   }
 });
+
+
+// Safety Analysis Functions - Add these to your existing index.html script section
+
+// Global variables for safety charts
+let revolutionaryRiskChart = null;
+let holderDistributionChart = null;
+let transactionHealthChart = null;
+let bundleDetectionChart = null;
+
+// Main function to update safety dashboard
+function updateSafetyDashboard(data) {
+    console.log('Updating safety dashboard with data:', data);
+    
+    // Show the safety dashboard
+    document.getElementById('safetyAnalysisDashboard').style.display = 'block';
+    
+    // Extract safety data from the response
+    const rugAnalysis = data.rug_analysis || {};
+    const safetyMetrics = data.safety_metrics || rugAnalysis;
+    
+    // Update Galaxy Brain Score
+    updateGalaxyBrainScore(safetyMetrics);
+    
+    // Update Grok Intelligence if available
+    updateGrokIntelligence(rugAnalysis.grok_analysis);
+    
+    // Update Risk Vectors
+    updateRiskVectors(rugAnalysis.risk_vectors || []);
+    
+    // Update Advanced Metrics
+    updateAdvancedSafetyMetrics(rugAnalysis);
+    
+    // Update Safety Charts
+    updateSafetyCharts(rugAnalysis);
+    
+    // Update Detailed Analysis Tabs
+    updateDetailedSafetyTabs(rugAnalysis);
+}
+
+// Update Galaxy Brain Score display
+function updateGalaxyBrainScore(safetyMetrics) {
+    const score = safetyMetrics.galaxy_brain_score || 0;
+    const severity = safetyMetrics.severity_level || 'UNKNOWN';
+    const confidence = safetyMetrics.confidence || 0;
+    
+    // Animate score counting up
+    animateScoreCounter('galaxyBrainScore', score);
+    
+    // Update severity level with color coding
+    const severityEl = document.getElementById('safetyLevel');
+    severityEl.textContent = severity.replace(/_/g, ' ');
+    severityEl.className = `severity-level ${severity.toLowerCase()}`;
+    
+    // Update confidence bar
+    const confidenceFill = document.getElementById('safetyConfidenceFill');
+    const confidenceText = document.getElementById('safetyConfidenceText');
+    
+    setTimeout(() => {
+        confidenceFill.style.width = `${confidence * 100}%`;
+        confidenceText.textContent = `Confidence: ${Math.round(confidence * 100)}%`;
+    }, 500);
+    
+    // Update authority status
+    updateAuthorityStatus(safetyMetrics.token_info || {});
+    
+    // Update liquidity status  
+    updateLiquidityStatus(safetyMetrics.liquidity_analysis || {});
+}
+
+// Animate score counter
+function animateScoreCounter(elementId, targetScore) {
+    const element = document.getElementById(elementId);
+    let currentScore = 0;
+    const increment = targetScore / 60; // 60 frames for 1 second animation
+    
+    const counter = setInterval(() => {
+        currentScore += increment;
+        if (currentScore >= targetScore) {
+            currentScore = targetScore;
+            clearInterval(counter);
+        }
+        element.textContent = Math.round(currentScore);
+    }, 16); // ~60fps
+}
+
+// Update authority status indicator
+function updateAuthorityStatus(tokenInfo) {
+    const statusEl = document.getElementById('authorityStatus');
+    const valueEl = statusEl.querySelector('.status-value');
+    const iconEl = statusEl.querySelector('.status-icon');
+    
+    if (tokenInfo.is_mutable === false) {
+        valueEl.textContent = 'Renounced';
+        valueEl.style.color = '#51cf66';
+        iconEl.textContent = '✅';
+    } else {
+        valueEl.textContent = 'Active';
+        valueEl.style.color = '#ff6b6b';
+        iconEl.textContent = '⚠️';
+    }
+}
+
+// Update liquidity status indicator
+function updateLiquidityStatus(liquidityAnalysis) {
+    const statusEl = document.getElementById('liquidityStatus');
+    const valueEl = statusEl.querySelector('.status-value');
+    
+    const liquidity = liquidityAnalysis.liquidity_usd || 0;
+    const ratio = liquidityAnalysis.liquidity_ratio || 0;
+    
+    if (ratio > 5) {
+        valueEl.textContent = 'Strong';
+        valueEl.style.color = '#51cf66';
+    } else if (ratio > 2) {
+        valueEl.textContent = 'Medium';
+        valueEl.style.color = '#ffd93d';
+    } else {
+        valueEl.textContent = 'Weak';
+        valueEl.style.color = '#ff6b6b';
+    }
+}
+
+// Update Grok Intelligence panel
+function updateGrokIntelligence(grokAnalysis) {
+    const panel = document.getElementById('grokIntelligencePanel');
+    const content = document.getElementById('grokAnalysisContent');
+    const verdict = document.getElementById('grokVerdict');
+    
+    if (!grokAnalysis || !grokAnalysis.available) {
+        panel.style.display = 'none';
+        return;
+    }
+    
+    const parsedAnalysis = grokAnalysis.parsed_analysis || {};
+    const verdictText = parsedAnalysis.verdict || 'CAUTION_ADVISED';
+    
+    verdict.textContent = verdictText.replace(/_/g, ' ');
+    verdict.className = `grok-verdict ${verdictText.toLowerCase()}`;
+    
+    // Display community intelligence
+    content.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div>
+                <h4 style="color: #51cf66; margin-bottom: 10px;">✅ Positive Signals</h4>
+                ${(parsedAnalysis.positive_community_sentiment || []).map(signal => 
+                    `<p style="color: #ccc; margin-bottom: 8px;">• ${signal}</p>`
+                ).join('') || '<p style="color: #888;">No specific positive signals found</p>'}
+            </div>
+            <div>
+                <h4 style="color: #ff6b6b; margin-bottom: 10px;">⚠️ Risk Signals</h4>
+                ${(parsedAnalysis.possible_community_risks || []).map(risk => 
+                    `<p style="color: #ccc; margin-bottom: 8px;">• ${risk}</p>`
+                ).join('') || '<p style="color: #888;">No specific risk signals found</p>'}
+            </div>
+        </div>
+        <div style="margin-top: 15px; padding: 15px; background: rgba(108, 92, 231, 0.1); border-radius: 8px;">
+            <p style="color: #a29bfe;"><strong>Revolutionary Insight:</strong> ${parsedAnalysis.revolutionary_insight || 'Analysis in progress...'}</p>
+        </div>
+    `;
+    
+    panel.style.display = 'block';
+}
+
+// Update risk vectors grid
+function updateRiskVectors(riskVectors) {
+    const grid = document.getElementById('riskVectorsGrid');
+    
+    if (!riskVectors || riskVectors.length === 0) {
+        grid.innerHTML = `
+            <div class="risk-vector-card low">
+                <h4>✅ No Critical Risk Vectors Detected</h4>
+                <p>Revolutionary Galaxy Brain analysis found no major risk patterns in this token.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = riskVectors.map(vector => `
+        <div class="risk-vector-card ${vector.severity.toLowerCase()}">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h4>${getSeverityIcon(vector.severity)} ${vector.risk_type}</h4>
+                <span style="color: ${getSeverityColor(vector.severity)}; font-weight: bold;">
+                    ${vector.severity}
+                </span>
+            </div>
+            <p style="color: #ccc; margin-bottom: 15px;">${vector.impact}</p>
+            <div style="background: rgba(255, 255, 255, 0.1); padding: 12px; border-radius: 8px;">
+                <strong>Mitigation:</strong> ${vector.mitigation}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Update advanced safety metrics
+function updateAdvancedSafetyMetrics(rugAnalysis) {
+    const grid = document.getElementById('safetyMetricsGrid');
+    
+    const tokenInfo = rugAnalysis.token_info || {};
+    const holderAnalysis = rugAnalysis.holder_analysis || {};
+    const liquidityAnalysis = rugAnalysis.liquidity_analysis || {};
+    const suspiciousActivity = rugAnalysis.suspicious_activity || {};
+    const bundleDetection = rugAnalysis.bundle_detection || {};
+    
+    const metrics = [
+        {
+            label: 'Market Cap',
+            value: formatCurrency(tokenInfo.market_cap || 0),
+            subtitle: 'Total Value'
+        },
+        {
+            label: 'Liquidity',
+            value: formatCurrency(tokenInfo.liquidity || 0),
+            subtitle: `${(liquidityAnalysis.liquidity_ratio || 0).toFixed(1)}% of MC`
+        },
+        {
+            label: 'Token Age',
+            value: Math.floor(tokenInfo.age_days || 0),
+            subtitle: 'Days Old'
+        },
+        {
+            label: 'Top Holder',
+            value: `${(holderAnalysis.top_1_percent || 0).toFixed(1)}%`,
+            subtitle: 'Concentration Risk'
+        },
+        {
+            label: 'Wash Trading',
+            value: `${(suspiciousActivity.wash_trading_score || 0).toFixed(0)}%`,
+            subtitle: 'Manipulation Risk'
+        },
+        {
+            label: 'Bundle Risk',
+            value: `${(bundleDetection.bundled_percentage || 0).toFixed(1)}%`,
+            subtitle: `${bundleDetection.clusters_found || 0} Clusters`
+        },
+        {
+            label: 'Transaction Health',
+            value: `${(suspiciousActivity.transaction_health_score || 50).toFixed(0)}%`,
+            subtitle: 'Quality Score'
+        },
+        {
+            label: 'Authorities',
+            value: tokenInfo.is_mutable ? '🔴 Active' : '✅ Renounced',
+            subtitle: 'Mint/Freeze Status'
+        }
+    ];
+    
+    grid.innerHTML = metrics.map(metric => `
+        <div class="metric-card">
+            <div class="metric-label">${metric.label}</div>
+            <div class="metric-value">${metric.value}</div>
+            <div class="metric-subtitle">${metric.subtitle}</div>
+        </div>
+    `).join('');
+}
+
+// Update safety charts
+function updateSafetyCharts(rugAnalysis) {
+    // Destroy existing charts
+    [revolutionaryRiskChart, holderDistributionChart, transactionHealthChart, bundleDetectionChart].forEach(chart => {
+        if (chart) chart.destroy();
+    });
+    
+    setTimeout(() => {
+        createRevolutionaryRiskChart(rugAnalysis);
+        createHolderDistributionChart(rugAnalysis.holder_analysis || {});
+        createTransactionHealthChart(rugAnalysis.suspicious_activity || {});
+        createBundleDetectionChart(rugAnalysis.bundle_detection || {});
+    }, 100);
+}
+
+// Create revolutionary risk chart
+function createRevolutionaryRiskChart(rugAnalysis) {
+    const canvas = document.getElementById('revolutionaryRiskChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const riskVectors = rugAnalysis.risk_vectors || [];
+    
+    let labels = [];
+    let data = [];
+    let colors = [];
+    
+    if (riskVectors.length > 0) {
+        labels = riskVectors.map(v => v.risk_type);
+        data = riskVectors.map(v => {
+            const severityScores = { 'CRITICAL': 90, 'HIGH': 70, 'MEDIUM': 50, 'LOW': 30 };
+            return severityScores[v.severity] || 25;
+        });
+        colors = riskVectors.map(v => getSeverityColor(v.severity));
+    } else {
+        labels = ['No Major Risks'];
+        data = [10];
+        colors = ['#51cf66'];
+    }
+    
+    revolutionaryRiskChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors,
+                borderWidth: 2,
+                borderColor: '#1a1a1a'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#fff',
+                        padding: 10,
+                        font: { size: 11 }
+                    }
+                }
+            }
+        }
+    });
+    
+    document.getElementById('revolutionaryRiskValue').textContent = 
+        riskVectors.length > 0 ? `${riskVectors.length} risk factors detected` : 'No major risks detected';
+}
+
+// Create holder distribution chart
+function createHolderDistributionChart(holderData) {
+    const canvas = document.getElementById('holderDistributionChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    const top1 = holderData.top_1_percent || 0;
+    const top5 = (holderData.top_5_percent || 0) - top1;
+    const top10 = (holderData.top_10_percent || 0) - (holderData.top_5_percent || 0);
+    const others = 100 - (holderData.top_10_percent || 0);
+    
+    holderDistributionChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Top 1 Holder', 'Top 2-5 Holders', 'Top 6-10 Holders', 'Others'],
+            datasets: [{
+                data: [top1, top5, top10, others],
+                backgroundColor: ['#ff3838', '#ff6b6b', '#ffd93d', '#51cf66'],
+                borderWidth: 2,
+                borderColor: '#1a1a1a'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#fff',
+                        padding: 10,
+                        font: { size: 11 }
+                    }
+                }
+            }
+        }
+    });
+    
+    document.getElementById('holderRiskValue').textContent = 
+        top1 > 15 ? 'High concentration risk' : top1 > 8 ? 'Medium risk' : 'Healthy distribution';
+}
+
+// Create transaction health chart
+function createTransactionHealthChart(suspiciousData) {
+    const canvas = document.getElementById('transactionHealthChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    const healthScore = suspiciousData.transaction_health_score || 50;
+    const washScore = suspiciousData.wash_trading_score || 0;
+    const organicScore = 100 - washScore;
+    
+    transactionHealthChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Health Score', 'Organic Activity', 'Wash Risk'],
+            datasets: [{
+                label: 'Score %',
+                data: [healthScore, organicScore, washScore],
+                backgroundColor: [
+                    healthScore > 70 ? '#51cf66' : healthScore > 40 ? '#ffd93d' : '#ff6b6b',
+                    organicScore > 70 ? '#51cf66' : organicScore > 40 ? '#ffd93d' : '#ff6b6b',
+                    washScore < 30 ? '#51cf66' : washScore < 60 ? '#ffd93d' : '#ff6b6b'
+                ],
+                borderWidth: 1,
+                borderColor: '#1a1a1a'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: { color: '#fff', font: { size: 10 } },
+                    grid: { color: '#333' }
+                },
+                x: {
+                    ticks: { color: '#fff', font: { size: 10 } },
+                    grid: { color: '#333' }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+    
+    document.getElementById('transactionHealthValue').textContent = `${healthScore}% healthy transactions`;
+}
+
+// Create bundle detection chart
+function createBundleDetectionChart(bundleData) {
+    const canvas = document.getElementById('bundleDetectionChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    const clustersFound = bundleData.clusters_found || 0;
+    const bundledPercentage = bundleData.bundled_percentage || 0;
+    const organicPercentage = 100 - bundledPercentage;
+    
+    bundleDetectionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Organic Holdings', 'Bundled Holdings'],
+            datasets: [{
+                data: [organicPercentage, bundledPercentage],
+                backgroundColor: ['#51cf66', bundledPercentage > 50 ? '#ff3838' : bundledPercentage > 20 ? '#ffd93d' : '#ff6b6b'],
+                borderWidth: 2,
+                borderColor: '#1a1a1a'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#fff',
+                        padding: 10,
+                        font: { size: 11 }
+                    }
+                }
+            }
+        }
+    });
+    
+    document.getElementById('bundleDetectionValue').textContent = 
+        clustersFound > 0 ? `${clustersFound} clusters detected` : 'No bundle clusters detected';
+}
+
+// Update detailed safety tabs
+function updateDetailedSafetyTabs(rugAnalysis) {
+    updateHoldersSafetyTab(rugAnalysis.holder_analysis || {});
+    updateTransactionsSafetyTab(rugAnalysis.transaction_analysis || {}, rugAnalysis.suspicious_activity || {});
+    updateBundlesSafetyTab(rugAnalysis.bundle_detection || {});
+    updateLiquiditySafetyTab(rugAnalysis.liquidity_analysis || {});
+    updateAuthoritySafetyTab(rugAnalysis.token_info || {});
+}
+
+// Safety tab functions
+function updateHoldersSafetyTab(holderData) {
+    const container = document.getElementById('holdersSafetyAnalysis');
+    const holders = holderData.top_holders || [];
+    
+    container.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div class="metric-card">
+                <div class="metric-label">Top 1 Holder</div>
+                <div class="metric-value">${(holderData.top_1_percent || 0).toFixed(1)}%</div>
+                <div class="metric-subtitle">Concentration risk</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Top 5 Holders</div>
+                <div class="metric-value">${(holderData.top_5_percent || 0).toFixed(1)}%</div>
+                <div class="metric-subtitle">Combined ownership</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Top 10 Holders</div>
+                <div class="metric-value">${(holderData.top_10_percent || 0).toFixed(1)}%</div>
+                <div class="metric-subtitle">Total concentration</div>
+            </div>
+        </div>
+        
+        ${holders.length > 0 ? `
+        <h4 style="margin-bottom: 15px;">🐋 Top Holders List</h4>
+        <div style="background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 15px;">
+            ${holders.map(holder => `
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333;">
+                    <span style="font-family: monospace;">#${holder.rank} ${formatAddress(holder.address)}</span>
+                    <span style="font-weight: bold; color: ${holder.percentage > 15 ? '#ff3838' : holder.percentage > 8 ? '#ffd93d' : '#51cf66'}">
+                        ${holder.percentage.toFixed(2)}%
+                    </span>
+                </div>
+            `).join('')}
+        </div>
+        ` : '<p style="color: #888; text-align: center;">No detailed holder data available</p>'}
+    `;
+}
+
+function updateTransactionsSafetyTab(transactionData, suspiciousData) {
+    const container = document.getElementById('transactionsSafetyAnalysis');
+    
+    container.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div class="metric-card">
+                <div class="metric-label">Health Score</div>
+                <div class="metric-value">${(suspiciousData.transaction_health_score || 50).toFixed(0)}%</div>
+                <div class="metric-subtitle">Transaction quality</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Wash Trading</div>
+                <div class="metric-value">${(suspiciousData.wash_trading_score || 0).toFixed(1)}%</div>
+                <div class="metric-subtitle">Manipulation risk</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Insider Activity</div>
+                <div class="metric-value">${(suspiciousData.insider_activity_score || 0).toFixed(1)}%</div>
+                <div class="metric-subtitle">Coordinated trading</div>
+            </div>
+        </div>
+        
+        ${suspiciousData.suspicious_patterns && suspiciousData.suspicious_patterns.length > 0 ? `
+        <div style="background: rgba(255, 217, 61, 0.1); padding: 20px; border-radius: 10px; border: 1px solid #ffd93d; margin-bottom: 15px;">
+            <h4 style="color: #ffd93d; margin-bottom: 15px;">⚠️ Suspicious Patterns Detected</h4>
+            ${suspiciousData.suspicious_patterns.map(pattern => `<p>• ${pattern}</p>`).join('')}
+        </div>
+        ` : ''}
+        
+        ${suspiciousData.farming_indicators && suspiciousData.farming_indicators.length > 0 ? `
+        <div style="background: rgba(255, 107, 107, 0.1); padding: 20px; border-radius: 10px; border: 1px solid #ff6b6b;">
+            <h4 style="color: #ff6b6b; margin-bottom: 15px;">🚨 Farming Indicators</h4>
+            ${suspiciousData.farming_indicators.map(indicator => `<p>• ${indicator}</p>`).join('')}
+        </div>
+        ` : '<p style="color: #51cf66; text-align: center;">✅ No suspicious transaction patterns detected</p>'}
+    `;
+}
+
+function updateBundlesSafetyTab(bundleData) {
+    const container = document.getElementById('bundlesSafetyAnalysis');
+    const clusters = bundleData.clusters || [];
+    
+    container.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div class="metric-card">
+                <div class="metric-label">Clusters Found</div>
+                <div class="metric-value">${bundleData.clusters_found || 0}</div>
+                <div class="metric-subtitle">Bundle groups</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">High Risk</div>
+                <div class="metric-value">${bundleData.high_risk_clusters || 0}</div>
+                <div class="metric-subtitle">Dangerous clusters</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Bundled %</div>
+                <div class="metric-value">${(bundleData.bundled_percentage || 0).toFixed(1)}%</div>
+                <div class="metric-subtitle">Of total supply</div>
+            </div>
+        </div>
+        
+        ${clusters.length > 0 ? `
+        <h4 style="margin-bottom: 15px;">🕷️ Detected Clusters</h4>
+        ${clusters.map(cluster => `
+            <div style="background: rgba(255, 107, 107, 0.1); border-left: 4px solid #ff6b6b; padding: 15px; margin: 10px 0; border-radius: 5px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <strong>${cluster.cluster_id}</strong>
+                    <span style="color: ${cluster.risk_score > 70 ? '#ff3838' : cluster.risk_score > 40 ? '#ffd93d' : '#51cf66'}">
+                        Risk: ${cluster.risk_score}%
+                    </span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; font-size: 0.9rem; color: #ccc;">
+                    <div>Wallets: ${cluster.wallet_count}</div>
+                    <div>Holdings: ${cluster.total_percentage.toFixed(1)}%</div>
+                    <div>Pattern: ${cluster.creation_pattern}</div>
+                </div>
+            </div>
+        `).join('')}
+        ` : '<p style="color: #51cf66; text-align: center;">✅ No bundle clusters detected - this is good!</p>'}
+    `;
+}
+
+function updateLiquiditySafetyTab(liquidityData) {
+    const container = document.getElementById('liquiditySafetyAnalysis');
+    
+    container.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div class="metric-card">
+                <div class="metric-label">Liquidity USD</div>
+                <div class="metric-value">${formatCurrency(liquidityData.liquidity_usd || 0)}</div>
+                <div class="metric-subtitle">Available liquidity</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Liquidity Ratio</div>
+                <div class="metric-value">${(liquidityData.liquidity_ratio || 0).toFixed(1)}%</div>
+                <div class="metric-subtitle">Of market cap</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Volume/Liquidity</div>
+                <div class="metric-value">${(liquidityData.volume_to_liquidity || 0).toFixed(1)}x</div>
+                <div class="metric-subtitle">Trading intensity</div>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+            <div style="background: rgba(255, 217, 61, 0.1); padding: 20px; border-radius: 10px; border: 1px solid #ffd93d;">
+                <h4 style="color: #ffd93d; margin-bottom: 15px;">📊 Slippage Estimates</h4>
+                <div style="display: grid; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>$1K Trade:</span>
+                        <span style="font-weight: bold;">${(liquidityData.slippage_1k || 0).toFixed(1)}%</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>$10K Trade:</span>
+                        <span style="font-weight: bold;">${(liquidityData.slippage_10k || 0).toFixed(1)}%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: rgba(108, 92, 231, 0.1); padding: 20px; border-radius: 10px; border: 1px solid #6c5ce7;">
+                <h4 style="color: #6c5ce7; margin-bottom: 15px;">🔒 Liquidity Lock</h4>
+                <div style="display: grid; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Locked:</span>
+                        <span style="font-weight: bold; color: ${liquidityData.is_locked ? '#51cf66' : '#ff6b6b'}">
+                            ${liquidityData.is_locked ? 'Yes' : 'No'}
+                        </span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Duration:</span>
+                        <span style="font-weight: bold;">${liquidityData.lock_duration || 'N/A'}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function updateAuthoritySafetyTab(tokenInfo) {
+    const container = document.getElementById('authoritySafetyAnalysis');
+    
+    container.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div class="metric-card">
+                <div class="metric-label">Mint Authority</div>
+                <div class="metric-value" style="color: ${tokenInfo.mint_authority ? '#ff6b6b' : '#51cf66'}">
+                    ${tokenInfo.mint_authority ? 'Active' : 'Renounced'}
+                </div>
+                <div class="metric-subtitle">Can create new tokens</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Freeze Authority</div>
+                <div class="metric-value" style="color: ${tokenInfo.freeze_authority ? '#ff6b6b' : '#51cf66'}">
+                    ${tokenInfo.freeze_authority ? 'Active' : 'Renounced'}
+                </div>
+                <div class="metric-subtitle">Can freeze accounts</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Mutable</div>
+                <div class="metric-value" style="color: ${tokenInfo.is_mutable ? '#ff6b6b' : '#51cf66'}">
+                    ${tokenInfo.is_mutable ? 'Yes' : 'No'}
+                </div>
+                <div class="metric-subtitle">Can be modified</div>
+            </div>
+        </div>
+        
+        <div style="background: rgba(${tokenInfo.is_mutable ? '255, 107, 107' : '81, 207, 102'}, 0.1); padding: 20px; border-radius: 10px; border: 1px solid ${tokenInfo.is_mutable ? '#ff6b6b' : '#51cf66'};">
+            <h4 style="color: ${tokenInfo.is_mutable ? '#ff6b6b' : '#51cf66'}; margin-bottom: 15px;">
+                ${tokenInfo.is_mutable ? '⚠️ Authority Risk Assessment' : '✅ Authority Status'}
+            </h4>
+            <p style="color: #ccc;">
+                ${tokenInfo.is_mutable 
+                    ? 'This token has active authorities that could pose risks. The token creator can still mint new tokens or freeze accounts.' 
+                    : 'All authorities have been renounced. The token cannot be modified, minted, or frozen by the creator.'}
+            </p>
+        </div>
+    `;
+}
+
+// Global variable for history popup
+let historyPopupOpen = false;
+
+// Toggle history popup
+function toggleHistory() {
+    const historyPopup = document.getElementById('historyPopup');
+    const historyTrigger = document.getElementById('historyTrigger');
+    
+    historyPopupOpen = !historyPopupOpen;
+    
+    if (historyPopupOpen) {
+        historyPopup.classList.add('active');
+        historyTrigger.style.transform = 'scale(0.9)';
+        updateTokenHistoryDisplay();
+    } else {
+        historyPopup.classList.remove('active');
+        historyTrigger.style.transform = 'scale(1)';
+    }
+}
+
+// Update history badge without opening popup
+function updateHistoryBadge() {
+    const countBadge = document.getElementById('historyCountBadge');
+    const trigger = document.getElementById('historyTrigger');
+    const subtitle = document.getElementById('historySubtitle');
+    const count = tokenHistory.length;
+    
+    countBadge.textContent = count;
+    
+    if (count > 0) {
+        countBadge.classList.add('show');
+        trigger.classList.add('has-history');
+        if (subtitle) {
+            subtitle.textContent = `${count} token${count === 1 ? '' : 's'} analyzed`;
+        }
+    } else {
+        countBadge.classList.remove('show');
+        trigger.classList.remove('has-history');
+        if (subtitle) {
+            subtitle.textContent = 'No tokens analyzed';
+        }
+    }
+}
+
+// Tab switching function for safety analysis
+function showSafetyTab(tabName) {
+    // Hide all safety tab contents
+    document.querySelectorAll('#safetyAnalysisDashboard .tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active class from all safety tab buttons
+    document.querySelectorAll('#safetyAnalysisDashboard .tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(`${tabName}-safety-tab`).classList.add('active');
+    
+    // Add active class to clicked button
+    event.target.classList.add('active');
+}
+
+// Utility functions
+function getSeverityIcon(severity) {
+    const icons = {
+        'CRITICAL': '🚨',
+        'HIGH': '⚠️',
+        'MEDIUM': '🟡',
+        'LOW': '🟢'
+    };
+    return icons[severity] || '⚪';
+}
+
+function getSeverityColor(severity) {
+    const colors = {
+        'CRITICAL': '#ff3838',
+        'HIGH': '#ff6b6b',
+        'MEDIUM': '#ffd93d',
+        'LOW': '#51cf66'
+    };
+    return colors[severity] || '#888';
+}
+
+function formatCurrency(num) {
+    if (num === null || num === undefined || isNaN(num)) return '$0';
+    const numValue = parseFloat(num);
+    if (numValue >= 1e9) return '$' + (numValue / 1e9).toFixed(2) + 'B';
+    if (numValue >= 1e6) return '$' + (numValue / 1e6).toFixed(2) + 'M';
+    if (numValue >= 1e3) return '$' + (numValue / 1e3).toFixed(1) + 'K';
+    return '$' + numValue.toFixed(2);
+}
+
+function formatAddress(address) {
+    if (!address) return '';
+    return address.slice(0, 8) + '...' + address.slice(-6);
+}
 </script>
 <div class="floating-chat-widget">
     <div class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
@@ -5039,6 +6209,37 @@ document.addEventListener('keydown', e => {
             <button class="chat-send-popup" id="chatSendPopup" onclick="sendChatMessagePopup()" disabled>
                 <span>🚀</span>
             </button>
+        </div>
+    </div>
+</div>
+<!-- Floating History Widget -->
+<div class="floating-history-widget">
+    <div class="history-trigger" id="historyTrigger" onclick="toggleHistory()">
+        <div class="history-icon">📊</div>
+        <div class="history-pulse-ring"></div>
+        <div class="history-count-badge" id="historyCountBadge">0</div>
+    </div>
+    
+    <div class="history-popup" id="historyPopup">
+        <div class="history-popup-header">
+            <div class="history-title">
+                <span>📊 Token History</span>
+                <div class="history-subtitle" id="historySubtitle">No tokens analyzed</div>
+            </div>
+            <div class="history-actions">
+                <button class="history-clear-btn" onclick="clearTokenHistory()" title="Clear History">
+                    🗑️ Clear
+                </button>
+                <button class="history-close" onclick="toggleHistory()">×</button>
+            </div>
+        </div>
+        
+        <div class="history-popup-content" id="historyPopupContent">
+            <div class="popup-history-empty">
+                <div class="empty-icon">📈</div>
+                <h3>No Token History</h3>
+                <p>Analyze tokens to build your history and quickly access previous analyses.</p>
+            </div>
         </div>
     </div>
 </div>

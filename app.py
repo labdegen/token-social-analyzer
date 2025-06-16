@@ -4707,6 +4707,14 @@ def dictionary():
 def resources():
     return render_template('resources.html')
 
+@app.route('/academy')
+def academy():
+    return render_template('academy.html')
+
+@app.route('/history')
+def history():
+    return render_template('history.html')
+
 @app.route('/charts')
 def charts():
     return render_template('charts.html')
